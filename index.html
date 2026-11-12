@@ -610,7 +610,8 @@ body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;wi
 .monk .mascot{width:46px;height:46px;transform-origin:50% 100%;animation:gmhop .55s ease-in-out infinite}
 .monk.fast .mascot{animation-duration:.3s}
 .gc .gi .mascot{width:40px;height:40px}
-:root[data-theme=dark] .mascot{filter:invert(1) hue-rotate(180deg)}
+:root[data-theme=dark] .mascot{filter:none;background:#efefea;border-radius:16px;padding:4px;box-sizing:border-box}
+:root[data-theme=dark] .monk .mascot,:root[data-theme=dark] .cdmk .mascot{border-radius:14px;padding:2px}
 
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
