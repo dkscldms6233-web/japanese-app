@@ -569,7 +569,7 @@ header .hin::before,#onb .ob-top::before{filter:grayscale(1) contrast(1.15)}
 #onb .ob-top{position:relative;width:100%;background:transparent;padding:calc(34px + env(safe-area-inset-top)) 24px 0;text-align:left;overflow:hidden;flex:none;min-height:270px}
 #onb .ob-top::before{content:"";position:absolute;right:-110px;top:-96px;width:440px;height:477px;background:url(plum-art.webp) no-repeat center/contain;mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(180deg,#000 62%,transparent 98%);mask-image:linear-gradient(180deg,#000 62%,transparent 98%)}
 #onb .ob-top>*{position:relative}
-#onb .obmk{width:70px!important;height:70px!important;margin:0 0 10px!important;background:none;padding:0;box-shadow:none}
+#onb .obmk{width:96px!important;height:90px!important;margin:0 0 8px!important;background:none;padding:0;box-shadow:none}
 #onb .lg2{font-family:"Mochiy Pop One","Hiragino Maru Gothic ProN",sans-serif;font-size:34px;color:var(--text);line-height:1.2}
 #onb .lg2 span{color:var(--accent)}
 #onb .lg2s{display:inline-block;margin-top:6px;font-size:12px;letter-spacing:.14em;color:var(--sub);background:transparent;border:1px solid var(--line);padding:2px 12px;border-radius:999px;font-family:"Jua","Gowun Dodum",sans-serif}
@@ -602,6 +602,15 @@ header .hin::before,#onb .ob-top::before{filter:grayscale(1) contrast(1.15)}
 body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .32 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='.06'/%3E%3C/svg%3E")}
 :root[data-theme=dark] body{background-image:none}
 body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;width:320px;height:226px;background:var(--orchid) no-repeat;background-size:contain;opacity:.28;pointer-events:none;z-index:-1}
+
+/* 마스코트(병아리) 이미지 */
+.mascot{display:block;width:100%;height:100%;object-fit:contain}
+.hmk .mascot,.obmk .mascot,.rmk .mascot,.gi .mascot{width:100%;height:100%}
+.cdmk .mascot{width:72px;height:72px;transform-origin:50% 100%;animation:gmhop .55s ease-in-out infinite}
+.monk .mascot{width:46px;height:46px;transform-origin:50% 100%;animation:gmhop .55s ease-in-out infinite}
+.monk.fast .mascot{animation-duration:.3s}
+.gc .gi .mascot{width:40px;height:40px}
+:root[data-theme=dark] .mascot{filter:drop-shadow(0 0 1.2px rgba(255,255,255,.9))}
 
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -1378,7 +1387,7 @@ function sfx(kind){
   else if(kind==="end"){ [79,76,72,67].forEach((m,i)=>tone(m,t+i*.14,.3,"triangle",.9,o)); }
 }
 const sndBtn = () => `<button class="pill sm" id="gmus" data-act="gmusic">소리 ${soundOn()?"끄기":"켜기"}</button>`;
-const MONKEY=`<svg class='ens' viewBox='0 0 48 48' aria-hidden='true'><defs><filter id='ensf' x='-10%' y='-10%' width='120%' height='120%'><feTurbulence type='fractalNoise' baseFrequency='.04 .5' numOctaves='2' seed='8' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.2' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in' result='c'/><feTurbulence type='fractalNoise' baseFrequency='.08' numOctaves='2' seed='3' result='t'/><feDisplacementMap in='c' in2='t' scale='1.6'/></filter></defs><path d='M30.7 5.6 L32.2 6.2 L33.7 6.8 L35.1 7.6 L36.5 8.6 L37.8 9.6 L39.0 10.7 L40.1 12.0 L41.1 13.3 L42.0 14.7 L42.7 16.2 L43.3 17.8 L43.8 19.4 L44.2 21.0 L44.4 22.7 L44.5 24.4 L44.4 26.1 L44.2 27.8 L43.8 29.5 L43.3 31.1 L42.7 32.7 L41.9 34.2 L41.0 35.6 L40.0 37.0 L38.8 38.2 L37.6 39.4 L36.2 40.4 L34.8 41.4 L33.3 42.2 L31.8 42.8 L30.2 43.3 L28.5 43.7 L26.9 44.0 L25.2 44.1 L23.6 44.0 L21.9 43.9 L20.3 43.5 L18.7 43.1 L17.2 42.5 L15.7 41.8 L14.3 41.0 L13.0 40.0 L11.8 39.0 L10.7 37.8 L9.6 36.6 L8.7 35.3 L7.9 34.0 L7.2 32.6 L6.7 31.1 L6.2 29.6 L5.9 28.1 L5.7 26.6 L5.7 25.1 L5.7 23.6 L5.9 22.1 L6.2 20.6 L6.6 19.1 L7.2 17.8 L7.8 16.4 L8.5 15.1 L9.4 13.9 L10.3 12.8 L11.3 11.7 L12.4 10.7 L13.5 9.9 L14.9 9.3 L16.2 8.6 L17.5 8.0 L18.8 7.5 L20.2 7.1 L21.6 6.8 L21.7 7.7 L20.4 8.0 L19.1 8.3 L17.8 8.8 L16.6 9.4 L15.4 10.1 L14.5 11.2 L13.5 12.0 L12.6 13.0 L11.8 14.0 L11.0 15.0 L10.3 16.2 L9.8 17.3 L9.3 18.5 L8.9 19.8 L8.6 21.0 L8.4 22.3 L8.3 23.6 L8.3 24.9 L8.4 26.2 L8.7 27.5 L9.0 28.8 L9.4 30.0 L9.9 31.2 L10.6 32.3 L11.3 33.4 L12.1 34.5 L13.0 35.5 L13.9 36.3 L15.0 37.2 L16.1 37.9 L17.2 38.5 L18.5 39.0 L19.7 39.5 L21.0 39.8 L22.3 40.0 L23.6 40.1 L25.0 40.1 L26.3 39.9 L27.6 39.7 L28.9 39.3 L30.1 38.9 L31.3 38.3 L32.5 37.6 L33.6 36.8 L34.6 36.0 L35.5 35.0 L36.3 34.0 L37.1 32.9 L37.7 31.8 L38.3 30.6 L38.7 29.4 L39.0 28.1 L39.2 26.9 L39.3 25.6 L39.3 24.3 L39.2 23.0 L38.9 21.8 L38.6 20.6 L38.2 19.4 L37.6 18.3 L37.0 17.3 L36.3 16.3 L35.5 15.4 L34.7 14.5 L33.8 13.8 L32.8 13.1 L31.8 12.5 L30.8 12.1 L29.7 11.7 L28.6 11.4Z' fill='currentColor' filter='url(#ensf)'/></svg>`;
+const MONKEY=`<img class="mascot" src="mascot.png" alt="" draggable="false">`;
 const heart = (on,pop) => `<svg class="${on?"":"off"} ${pop?"pop":""}" viewBox="0 0 24 24"><path d="M12 21S3 14.6 3 8.8C3 6.2 5 4.5 7.3 4.5c1.9 0 3.5 1.1 4.7 3 1.2-1.9 2.8-3 4.7-3C19 4.5 21 6.2 21 8.8 21 14.6 12 21 12 21z"/></svg>`;
 const elapsedPct = ms => 100-Math.min(100,ms/((G&&G.total)||60000)*100);
 const monkX = p => `calc(${p}% - ${(p*.46).toFixed(1)}px)`;
