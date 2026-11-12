@@ -636,7 +636,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-auto.js"></script>
 <script src="words-detail.js"></script>
 <script src="kanji-extra.js"></script>
-<script src="words-wasei.js"></script>
+<script src="words-wasei.js?v=4"></script>
 <script src="daily.js"></script>
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
@@ -953,7 +953,7 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[
 /* 형용사 풀이를 사전형으로 통일: 조용함 → 조용하다 */
 WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
   const FIX2={"편함":"편하다","잘함":"잘하다","딱함":"딱하다","분함":"분하다","멍함":"멍하다","기운참":"기운차다","예쁨":"예쁘다","힘듦":"힘들다","좋음":"좋다","나쁨":"나쁘다","싫음":"싫다","없음":"없다","있음":"있다"};
-  w.ko=w.ko.split("·").map(s=>{ s=s.trim(); if(FIX2[s]) return FIX2[s]; if(s.length>=3&&s.endsWith("함")) return s.slice(0,-1)+"하다"; if(s.length>=4&&s.endsWith("러움")) return s.slice(0,-2)+"럽다"; return s; }).join("·"); });
+  w.ko=w.ko.split("·").map(s=>{ s=s.trim(); if(FIX2[s]) return FIX2[s]; if(s.length>=3&&s.endsWith("함")) return s.slice(0,-1)+"하다"; if(s.length>=4&&s.endsWith("러움")) return s.slice(0,-2)+"럽다"; if(/な形容詞/.test(w.pos)&&/^[가-힣]{2,}$/.test(s)&&!/다$/.test(s)) return s+(s.endsWith("적")?"이다":"하다"); return s; }).join("·"); });
 const BASE = WORDS; BASE.forEach((w,i)=>w.key="b"+i);
 let custom = LS.get("jp-custom",[]);
 let stars  = new Set(LS.get("jp-star",[]).map(x=>typeof x==="number"?"b"+x:x));
