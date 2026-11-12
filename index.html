@@ -435,10 +435,14 @@ body.inq{padding-bottom:0!important}
 
 
 /* ---- 일본 느낌 장식: 파도 무늬 · 낙관 도장 · 벚꽃 ---- */
-:root{--ink:url(plum.svg);--orchid:url(orchid.svg)}
-:root[data-theme=dark]{--ink:url(plum-dark.svg);--orchid:url(orchid-dark.svg)}
-header{background-image:var(--ink);background-repeat:no-repeat;background-position:right -46px top -46px;background-size:210px auto}
+:root{--orchid:url(orchid.svg)}
+:root[data-theme=dark]{--orchid:url(orchid-dark.svg)}
+header{overflow:hidden}
 header .hin{position:relative}
+header .hin::before{content:"";position:absolute;right:-26px;top:-62px;width:300px;height:325px;background:url(plum-art.webp) no-repeat center/contain;mix-blend-mode:multiply;pointer-events:none}
+header .hin>*{position:relative}
+svg.art{mix-blend-mode:multiply}
+:root[data-theme=dark] svg.art,:root[data-theme=dark] header .hin::before,:root[data-theme=dark] #onb .ob-top::before{filter:invert(1) hue-rotate(180deg);mix-blend-mode:screen}
 #onb{background-image:none}
 .hanko{flex:none;margin-left:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:58px;height:58px;border:2.5px solid var(--seal);border-radius:8px;color:var(--seal);transform:rotate(-6deg);font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif KR",serif;line-height:1.05;box-shadow:inset 0 0 0 2px var(--bg),inset 0 0 0 3.5px var(--seal);opacity:.92}
 .hanko b{font-size:22px;font-weight:900}
@@ -562,7 +566,7 @@ header .hin{position:relative}
 /* 새 시작 화면 */
 #onb{padding:0!important;background:var(--bg)!important;background-image:none!important;overflow:auto}
 #onb .ob-top{position:relative;width:100%;background:transparent;padding:calc(34px + env(safe-area-inset-top)) 24px 0;text-align:left;overflow:hidden;flex:none;min-height:270px}
-#onb .ob-top::before{content:"";position:absolute;right:-70px;top:-60px;width:330px;height:486px;background-image:var(--ink);background-repeat:no-repeat;background-size:contain;opacity:.95}
+#onb .ob-top::before{content:"";position:absolute;right:-110px;top:-96px;width:440px;height:477px;background:url(plum-art.webp) no-repeat center/contain;mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(180deg,#000 62%,transparent 98%);mask-image:linear-gradient(180deg,#000 62%,transparent 98%)}
 #onb .ob-top>*{position:relative}
 #onb .obmk{width:70px!important;height:70px!important;margin:0 0 10px!important;background:none;padding:0;box-shadow:none}
 #onb .lg2{font-family:"Mochiy Pop One","Hiragino Maru Gothic ProN",sans-serif;font-size:34px;color:var(--text);line-height:1.2}
@@ -596,8 +600,7 @@ header .hin{position:relative}
 /* 도화지 느낌과 난초 먹그림 */
 body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .32 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='.06'/%3E%3C/svg%3E")}
 :root[data-theme=dark] body{background-image:none}
-body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;width:320px;height:226px;background:var(--orchid) no-repeat;background-size:contain;opacity:.28;pointer-events:none;z-index:0}
-main{position:relative;z-index:1}
+body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;width:320px;height:226px;background:var(--orchid) no-repeat;background-size:contain;opacity:.28;pointer-events:none;z-index:-1}
 
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -1374,7 +1377,7 @@ function sfx(kind){
   else if(kind==="end"){ [79,76,72,67].forEach((m,i)=>tone(m,t+i*.14,.3,"triangle",.9,o)); }
 }
 const sndBtn = () => `<button class="pill sm" id="gmus" data-act="gmusic">소리 ${soundOn()?"끄기":"켜기"}</button>`;
-const MONKEY=`<svg viewBox='0 0 48 48' aria-hidden='true'><defs><radialGradient id='pg' cx='.5' cy='.62' r='.75'><stop offset='0' stop-color='#a4324a' stop-opacity='.92'/><stop offset='.5' stop-color='#d96e84' stop-opacity='.82'/><stop offset='1' stop-color='#d96e84' stop-opacity='.38'/></radialGradient><filter id='rough' x='-5%' y='-5%' width='110%' height='110%'><feTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='3' seed='4' result='t'/><feDisplacementMap in='SourceGraphic' in2='t' scale='5'/></filter><filter id='dry' x='-5%' y='-5%' width='110%' height='110%'><feTurbulence type='fractalNoise' baseFrequency='.03 .55' numOctaves='2' seed='9' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.6 2.3' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in' result='c'/><feTurbulence type='fractalNoise' baseFrequency='.05' numOctaves='3' seed='4' result='t'/><feDisplacementMap in='c' in2='t' scale='4'/></filter><filter id='dryl' x='-5%' y='-5%' width='110%' height='110%'><feTurbulence type='fractalNoise' baseFrequency='.5 .03' numOctaves='2' seed='3' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.2 2.1' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in' result='c'/><feTurbulence type='fractalNoise' baseFrequency='.05' numOctaves='2' seed='6' result='t'/><feDisplacementMap in='c' in2='t' scale='2.5'/></filter><filter id='wash' x='-30%' y='-30%' width='160%' height='160%'><feTurbulence type='fractalNoise' baseFrequency='.09' numOctaves='2' seed='2' result='t'/><feDisplacementMap in='SourceGraphic' in2='t' scale='3' result='d'/><feGaussianBlur in='d' stdDeviation='.5'/></filter><filter id='soft' x='-10%' y='-10%' width='120%' height='120%'><feGaussianBlur stdDeviation='.5'/></filter></defs><g filter='url(#wash)'><ellipse cx='24.6' cy='13.4' rx='8.0' ry='7.4' transform='rotate(3 24.6 13.4)' fill='url(#pg)' stroke='#a4324a' stroke-opacity='.35' stroke-width='.3'/><ellipse cx='34.3' cy='21.3' rx='8.6' ry='8.1' transform='rotate(75 34.3 21.3)' fill='url(#pg)' stroke='#a4324a' stroke-opacity='.35' stroke-width='.3'/><ellipse cx='29.7' cy='33.0' rx='8.3' ry='7.8' transform='rotate(147 29.7 33.0)' fill='url(#pg)' stroke='#a4324a' stroke-opacity='.35' stroke-width='.3'/><ellipse cx='17.2' cy='32.2' rx='9.1' ry='8.5' transform='rotate(219 17.2 32.2)' fill='url(#pg)' stroke='#a4324a' stroke-opacity='.35' stroke-width='.3'/><ellipse cx='14.1' cy='20.1' rx='9.3' ry='8.7' transform='rotate(291 14.1 20.1)' fill='url(#pg)' stroke='#a4324a' stroke-opacity='.35' stroke-width='.3'/><circle cx='24.0' cy='24.0' r='3.6' fill='#a4324a' fill-opacity='.7'/></g><path d='M24.0 24.0 L26.3 14.4' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='26.5' cy='13.6' r='.6' fill='#26231f'/><path d='M24.0 24.0 L32.4 18.8' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='33.1' cy='18.4' r='.6' fill='#26231f'/><path d='M24.0 24.0 L33.6 26.3' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='34.4' cy='26.5' r='.6' fill='#26231f'/><path d='M24.0 24.0 L29.2 32.4' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='29.6' cy='33.1' r='.6' fill='#26231f'/><path d='M24.0 24.0 L21.7 33.6' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='21.5' cy='34.4' r='.6' fill='#26231f'/><path d='M24.0 24.0 L15.6 29.2' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='14.9' cy='29.6' r='.6' fill='#26231f'/><path d='M24.0 24.0 L14.4 21.7' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='13.6' cy='21.5' r='.6' fill='#26231f'/><path d='M24.0 24.0 L18.8 15.6' stroke='#26231f' stroke-width='.45' fill='none'/><circle cx='18.4' cy='14.9' r='.6' fill='#26231f'/></svg>`;
+const MONKEY=`<svg class="art" viewBox="810 315 190 190" aria-hidden="true"><image href="plum-art.webp" width="1205" height="1305"/></svg>`;
 const heart = (on,pop) => `<svg class="${on?"":"off"} ${pop?"pop":""}" viewBox="0 0 24 24"><path d="M12 21S3 14.6 3 8.8C3 6.2 5 4.5 7.3 4.5c1.9 0 3.5 1.1 4.7 3 1.2-1.9 2.8-3 4.7-3C19 4.5 21 6.2 21 8.8 21 14.6 12 21 12 21z"/></svg>`;
 const elapsedPct = ms => 100-Math.min(100,ms/((G&&G.total)||60000)*100);
 const monkX = p => `calc(${p}% - ${(p*.46).toFixed(1)}px)`;
