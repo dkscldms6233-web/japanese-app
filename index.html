@@ -481,6 +481,103 @@ header{background-image:var(--seigai);background-size:60px 30px}
 .jpass p{margin:0 0 .6em}
 .jpass .ab{display:inline-block;background:var(--accent);color:var(--onacc);border-radius:6px;padding:0 8px;font-weight:800;margin-right:6px}
 
+
+/* ---- 새 디자인: 뒤로 가기 · 기록 · 퀴즈 메뉴 ---- */
+.back{display:inline-flex;align-items:center;gap:4px;border:1.5px solid var(--line);border-bottom-width:3px;background:var(--card);color:var(--text);font-weight:800;font-size:15px;padding:8px 14px 8px 8px;border-radius:999px;cursor:pointer;margin:2px 0 10px}
+.back .ic{width:22px;height:22px;stroke-width:2.6;color:var(--accent)}
+.back:active{transform:translateY(1px);border-bottom-width:2px}
+.back:hover{border-color:var(--accent)}
+.qx{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;font-size:24px!important;display:flex;align-items:center;justify-content:center;padding:0!important}
+.kpis{gap:12px!important}
+.kpi{position:relative;border:1px solid var(--line)!important;border-radius:20px!important;padding:14px 16px!important;display:flex;flex-direction:column;gap:2px}
+.kpi .ki{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;background:var(--accent-soft);color:var(--accent)}
+.kpi .ki .ic{width:19px;height:19px}
+.kpi.k2 .ki{background:#fff1d6;color:#c77700}.kpi.k3 .ki{background:#dff3ea;color:#1f8a5b}.kpi.k4 .ki{background:#e6ecff;color:#3d5bd9}
+:root[data-theme=dark] .kpi.k2 .ki{background:#3a2c12;color:#ffb74d}:root[data-theme=dark] .kpi.k3 .ki{background:#14352a;color:#6fd3a5}:root[data-theme=dark] .kpi.k4 .ki{background:#1b2547;color:#8fa8ff}
+.kpi b{font-size:30px!important;letter-spacing:-.02em}
+.kpi b small{font-size:15px;font-weight:700;margin-left:2px;color:var(--sub)}
+.kpi span{font-size:13px!important}
+.wk{border:1px solid var(--line);border-radius:22px;background:var(--card);padding:16px 14px 12px;margin-bottom:14px}
+.wk h3{margin:0;border:0;padding:0;font-size:17px;display:flex;justify-content:space-between;align-items:baseline}
+.wk h3 em{font-style:normal;font-size:13px;font-weight:700;color:var(--sub)}
+.wk .sum{font-size:13px;color:var(--sub);margin:2px 0 12px}
+.wk .sum b{color:var(--accent);font-size:15px}
+.wchart{position:relative;display:flex;gap:6px;align-items:flex-end;height:150px}
+.wchart .goal{position:absolute;left:0;right:0;border-top:1.5px dashed var(--accent);opacity:.45}
+.wchart .goal span{position:absolute;right:0;top:-18px;font-size:11px;font-weight:700;color:var(--accent);background:var(--card);padding:0 4px}
+.wcol{position:relative;flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.wcol .tr{position:relative;width:100%;max-width:34px;flex:1;display:flex;align-items:flex-end;background:var(--chip);border-radius:12px;overflow:hidden}
+.wcol .fl{width:100%;border-radius:12px;background:linear-gradient(180deg,var(--accent),var(--accent-dk));min-height:0;position:relative}
+.wcol .fl::after{content:"";position:absolute;left:0;right:0;top:0;height:var(--miss,0%);background:rgba(255,255,255,.38)}
+.wcol.today .tr{outline:2px solid var(--accent);outline-offset:1px}
+.wcol .n{font-size:12px;font-weight:800;color:var(--text);height:16px;line-height:16px}
+.wlab{display:flex;gap:6px;margin-top:8px}
+.wlab div{flex:1;text-align:center;font-size:12px;color:var(--sub);line-height:1.25}
+.wlab div b{display:block;font-size:13px;color:var(--text)}
+.wlab div.today b{color:var(--accent)}
+.wk .lg{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--sub)}
+.wk .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--accent)}
+.wk .lg i.m{background:var(--accent);opacity:.45}
+.top5 .row{border-radius:14px!important;padding:10px 14px!important;background:var(--card)}
+/* 퀴즈 메뉴 */
+.qm-h{display:flex;align-items:center;justify-content:space-between;margin:2px 0 4px;text-align:left}
+.qm-h h2{margin:0;font-size:26px;letter-spacing:-.02em}
+.qm-h .scope{font-size:13px;color:var(--sub);text-align:right;line-height:1.35}
+.qm-sec{display:flex;align-items:center;gap:8px;margin:22px 0 10px;text-align:left;font-size:17px;font-weight:800}
+.qm-sec .ic{width:22px;height:22px;color:var(--accent)}
+.qm-sec small{font-size:12px;font-weight:600;color:var(--sub);margin-left:auto}
+.jlpt{background:linear-gradient(180deg,var(--accent-soft),var(--card) 75%)!important;border-radius:24px!important}
+.jlpt h3{display:flex;align-items:center;gap:8px;font-size:19px!important}
+.jlpt h3 .ic{width:24px;height:24px;color:var(--accent)}
+.jlv{background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:4px;gap:2px!important;flex-wrap:nowrap!important}
+.jlv .pill{flex:1;border:0!important;background:none!important;color:var(--sub)!important;padding:8px 0!important;border-radius:999px!important;font-weight:800;text-align:center}
+.jlv .pill.on{background:var(--accent)!important;color:var(--onacc)!important}
+.tiles2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.t2{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:var(--card);border:1.5px solid var(--line);border-bottom-width:4px;color:var(--text);border-radius:18px;padding:12px 12px 12px;cursor:pointer;min-height:104px;font-family:inherit}
+.t2:active{transform:translateY(2px);border-bottom-width:2px}
+.t2:hover{border-color:var(--accent)}
+.t2 .ti{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);margin-bottom:4px}
+.t2 .ti .ic{width:20px;height:20px}
+.t2 b{font-size:16px;line-height:1.25}
+.t2 small{font-size:12px;color:var(--sub);line-height:1.4}
+.t2.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;min-height:0}
+.t2.wide .ti{margin:0;flex:none}
+.t2.wide>div{display:flex;flex-direction:column;gap:2px}
+.t2.c1 .ti{background:#fff1d6;color:#c77700}.t2.c2 .ti{background:#dff3ea;color:#1f8a5b}.t2.c3 .ti{background:#e6ecff;color:#3d5bd9}.t2.c4 .ti{background:#fde4ee;color:#c2407a}
+:root[data-theme=dark] .t2.c1 .ti{background:#3a2c12;color:#ffb74d}:root[data-theme=dark] .t2.c2 .ti{background:#14352a;color:#6fd3a5}:root[data-theme=dark] .t2.c3 .ti{background:#1b2547;color:#8fa8ff}:root[data-theme=dark] .t2.c4 .ti{background:#40182c;color:#f28bb5}
+.gcards{display:grid;gap:10px}
+.gc{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--line);border-bottom-width:4px;background:var(--card);color:var(--text);border-radius:20px;padding:12px 14px;cursor:pointer;font-family:inherit}
+.gc:active{transform:translateY(2px);border-bottom-width:2px}
+.gc .gi{width:52px;height:52px;border-radius:16px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex:none}
+.gc .gi svg{width:38px;height:38px}
+.gc b{display:block;font-size:17px}
+.gc small{display:block;font-size:12.5px;color:var(--sub);line-height:1.4}
+.gc .best{display:inline-block;margin-top:4px;font-size:12px;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 10px}
+.qset{margin-top:18px;border:1.5px solid var(--line);border-radius:18px;background:var(--card);padding:4px 14px;text-align:left}
+.qset summary{cursor:pointer;font-weight:800;padding:10px 0;display:flex;align-items:center;gap:8px;list-style:none}
+.qset summary::-webkit-details-marker{display:none}
+.qset summary .ic{width:20px;height:20px;color:var(--accent)}
+.qset .tg{padding:8px 0;border-top:1px solid var(--line);justify-content:space-between!important;width:100%}
+/* 새 시작 화면 */
+#onb{padding:0!important;background:var(--bg)!important;background-image:none!important;overflow:auto}
+#onb .ob-top{position:relative;width:100%;background:var(--accent);padding:calc(26px + env(safe-area-inset-top)) 24px 70px;text-align:center;overflow:hidden;flex:none}
+#onb .ob-top::before{content:"";position:absolute;inset:0;opacity:.14;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30' viewBox='0 0 60 30'%3E%3Cg fill='none' stroke='white' stroke-width='1.3'%3E%3Ccircle cx='30' cy='30' r='6'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Ccircle cx='30' cy='30' r='18'/%3E%3Ccircle cx='0' cy='15' r='6'/%3E%3Ccircle cx='0' cy='15' r='12'/%3E%3Ccircle cx='0' cy='15' r='18'/%3E%3Ccircle cx='60' cy='15' r='6'/%3E%3Ccircle cx='60' cy='15' r='12'/%3E%3Ccircle cx='60' cy='15' r='18'/%3E%3C/g%3E%3C/svg%3E");background-size:60px 30px}
+#onb .ob-top>*{position:relative}
+#onb .obmk{width:132px!important;height:132px!important;margin:6px auto 10px!important;background:#fff;border-radius:50%;padding:12px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+#onb .lg2{font-family:"Mochiy Pop One","Hiragino Maru Gothic ProN",sans-serif;font-size:32px;color:#fff;line-height:1.2}
+#onb .lg2 span{color:#ffe08a}
+#onb .lg2s{display:inline-block;margin-top:6px;font-size:12px;letter-spacing:.14em;color:#fff;background:rgba(255,255,255,.2);padding:3px 12px;border-radius:999px;font-family:"Jua","Gowun Dodum",sans-serif}
+#onb .ob-sheet{position:relative;flex:1;width:100%;max-width:520px;margin:-36px auto 0;background:var(--bg);border-radius:30px 30px 0 0;padding:26px 22px calc(22px + env(safe-area-inset-bottom));text-align:center}
+#onb .ob-sheet h2{font-size:24px;margin:0 0 6px}
+#onb .feat{display:grid;gap:10px;margin:18px 0 22px;text-align:left}
+#onb .feat div{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:10px 12px}
+#onb .feat .fi{width:38px;height:38px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+#onb .feat .fi .ic{width:21px;height:21px}
+#onb .feat b{display:block;font-size:15px}
+#onb .feat span{font-size:13px;color:var(--sub)}
+#onb .ob-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+#onb .obstep{margin:0!important}
+
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media(max-width:560px){.kj{grid-template-columns:48px 1fr}.dh .big{font-size:38px}.qw{font-size:44px}.card .w{font-size:30px}}
@@ -504,6 +601,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-auto.js"></script>
 <script src="words-detail.js"></script>
 <script src="kanji-extra.js"></script>
+<script src="words-wasei.js"></script>
 <script src="daily.js"></script>
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
@@ -526,13 +624,13 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
     </nav>
     <div class="tools"><button class="pill sm" id="profBtn" aria-label="프로필 전환"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
     <div class="theme" id="theme" role="group" aria-label="화면 모드">
-      <button data-t="light" title="화이트 모드" aria-label="화이트 모드"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button>
+      <button data-t="light" title="라이트 모드" aria-label="라이트 모드"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></button>
       <button data-t="dark" title="다크 모드" aria-label="다크 모드"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
       <button data-t="auto" title="기기 설정에 맞춤">자동</button>
     </div></div>
   </div>
   <div class="bar list-only">
-    <input type="search" id="q" placeholder="한자 · 히라가나 · 한국어 뜻으로 검색 (예: 学生, がくせい, 학생)">
+    <input type="search" id="q" placeholder="한자·히라가나·뜻으로 검색">
     <button class="pill add" id="addBtn">＋ 단어 추가</button>
   </div>
   <div class="levels" id="levels"></div>
@@ -773,7 +871,24 @@ const ICONS={
  user:`<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>`,
  star:`<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>`,
  sound:`<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>`,
- refresh:`<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/>`
+ refresh:`<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/>`,
+ back:`<path d="M15 5l-7 7 7 7"/>`,
+ flame:`<path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-6 1-9z"/>`,
+ target:`<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/>`,
+ check:`<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>`,
+ mark:`<path d="M7 4h10v16l-5-3-5 3z"/>`,
+ cards:`<rect x="3" y="6" width="14" height="12" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v10"/>`,
+ choose:`<circle cx="6" cy="7" r="1.5"/><circle cx="6" cy="12" r="1.5"/><circle cx="6" cy="17" r="1.5"/><path d="M10 7h10M10 12h10M10 17h7"/>`,
+ abc:`<path d="M4 18l4-12 4 12M5.5 14h5"/><path d="M15 9h3a2 2 0 0 1 0 4h-3zm0 4h3.5a2 2 0 0 1 0 4H15z"/>`,
+ order:`<rect x="3" y="4" width="8" height="5" rx="1.5"/><rect x="13" y="4" width="8" height="5" rx="1.5"/><rect x="3" y="15" width="12" height="5" rx="1.5"/><path d="M12 11v2"/>`,
+ ear:`<path d="M8 10a4 4 0 1 1 8 0c0 2-2 3-2 5a3 3 0 0 1-5 2"/><path d="M12 10a1 1 0 1 1 2 0"/>`,
+ grammar:`<path d="M4 6h16M4 12h10M4 18h14"/><path d="M17 11l2 2 3-4"/>`,
+ read:`<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h6M9 13h6"/>`,
+ link:`<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>`,
+ game:`<rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/><circle cx="18" cy="14" r=".8"/>`,
+ timer:`<circle cx="12" cy="13" r="7"/><path d="M12 9v4l2 2M9 3h6"/>`,
+ vocab:`<path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/>`,
+ gear:`<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>`
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 
@@ -796,6 +911,14 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[
     if(p[1]&&!(w.ex&&w.ex.length)) w.ex=[{ja:p[1].trim(),ko:(p[2]||"").trim()}];
     if(p[3]&&p[3].trim()&&!w.note) w.note=p[3].trim();
     if(p[4]&&p[4].trim()&&!(w.rel&&w.rel.length)) w.rel=p[4].split(";").map(s=>{ const q=s.split(":"); return q[0]&&q[1]?{f:q[0].trim(),ko:q[1].trim()}:null; }).filter(Boolean); }); })();
+/* 가타카나 외래어 풀이 바로잡기(words-wasei.js): 한국어로 그대로 옮기면 어색하거나 뜻이 달라지는 말 */
+(()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
+  Object.entries(window.KO_FIX||{}).forEach(([k,v])=>{ const w=idx.get(k); if(!w) return;
+    if(v.ko) w.ko=v.ko; if(v.exko&&w.ex&&w.ex[0]) w.ex[0].ko=v.exko; if(v.note) w.note=v.note; }); })();
+/* 형용사 풀이를 사전형으로 통일: 조용함 → 조용하다 */
+WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
+  const FIX2={"편함":"편하다","잘함":"잘하다","딱함":"딱하다","분함":"분하다","멍함":"멍하다","기운참":"기운차다","예쁨":"예쁘다","힘듦":"힘들다","좋음":"좋다","나쁨":"나쁘다","싫음":"싫다","없음":"없다","있음":"있다"};
+  w.ko=w.ko.split("·").map(s=>{ s=s.trim(); if(FIX2[s]) return FIX2[s]; if(s.length>=3&&s.endsWith("함")) return s.slice(0,-1)+"하다"; if(s.length>=4&&s.endsWith("러움")) return s.slice(0,-2)+"럽다"; return s; }).join("·"); });
 const BASE = WORDS; BASE.forEach((w,i)=>w.key="b"+i);
 let custom = LS.get("jp-custom",[]);
 let stars  = new Set(LS.get("jp-star",[]).map(x=>typeof x==="number"?"b"+x:x));
@@ -841,7 +964,7 @@ function renderLevels(){
   const isOn = l => l==="전체" ? (level==="전체"&&!lvSel.size) : LVNUM[l] ? (level==="전체"&&lvSel.has(l)) : l===level;
   $("levels").innerHTML = LEVELS.map(l=>`<button class="pill ${isOn(l)?"on":""}" data-l="${l}" ${LVNUM[l]?'aria-pressed="'+isOn(l)+'"':""}>${l}${l==="오답 노트"&&nw?" ("+nw+")":""}</button>`).join("");
 }
-/* 단어장: 먼저 급수를 고르고(pick) → 단어를 파트별(100개씩)로 나눠 보여줘요(words) */
+/* 단어장: 먼저 급수를 고르고(pick) → 단어를 파트별(100개씩)로 나눠 보여 줘요(words) */
 const PART=100;
 let listStage="pick", listPart=0, listSig="", pickMulti=false, pickSel=new Set();
 function setStage(st){ listStage=st; document.body.dataset.stage=st; }
@@ -852,9 +975,9 @@ function renderPick(){
   const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`)).join("");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
   $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
-   <div class="sub">급수를 고르면 단어를 ${PART}개씩 파트로 나눠서 보여줘요${my.length?` · 내 급수: <b>${lvText(my)}</b>`:""}</div>
+   <div class="sub">급수를 고르면 단어를 ${PART}개씩 파트로 나눠서 보여 줘요${my.length?` · 내 급수: <b>${lvText(my)}</b>`:""}</div>
    <div class="pkgrid five">${lv}</div>
-   <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표 한 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}</div>
+   <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}</div>
    <div class="pkrow"><label class="tg"><input type="checkbox" id="pkMulti" ${pickMulti?"checked":""}> 여러 급수를 함께 보기</label>
      <span>${my.length?`<button class="pill sm" data-pk="my">내 급수로 바로 보기</button> `:""}<button class="pill add sm" data-act="pkadd">＋ 단어 추가</button></span></div>
    ${pickMulti?`<div class="qbtns" style="justify-content:flex-start;margin-top:10px"><button class="pill on" data-act="pkopen" ${pickSel.size?"":"disabled"}>${pickSel.size?"선택한 급수 열기 ("+lvText(pickSel)+")":"위에서 급수를 골라 주세요"}</button></div>`:""}</div>`;
@@ -878,14 +1001,14 @@ function renderGrid(){
   if(sig!==listSig){ listSig=sig; listPart=0; }
   const np=Math.max(1,Math.ceil(list.length/PART)); if(listPart>=np) listPart=np-1;
   const a=listPart*PART, shown=list.slice(a,a+PART);
-  const pager = withSel => np>1 ? `<div class="pbar pg"><button class="pill sm" data-pp="-1" ${listPart?"":"disabled"}>← 이전 파트</button>${withSel
+  const pager = withSel => np>1 ? `<div class="pbar pg"><button class="pill sm" data-pp="-1" ${listPart?"":"disabled"}>‹ 이전 파트</button>${withSel
       ? `<select id="partSel" aria-label="파트 선택">${Array.from({length:np},(_,i)=>`<option value="${i}" ${i===listPart?"selected":""}>파트 ${i+1} · ${i*PART+1}~${Math.min(list.length,(i+1)*PART)}번 · ${E(list[i*PART].text)}…</option>`).join("")}</select>`
       : `<span class="sub">파트 ${listPart+1} / ${np}</span>`}<button class="pill sm" data-pp="1" ${listPart<np-1?"":"disabled"}>다음 파트 →</button></div>` : "";
-  $("partTop").innerHTML=`<div class="pbar"><button class="pill sm" data-act="pkback">← 급수 선택</button><b>${E(scopeLabel())}${posf?" · "+POS[posf][0]:""}</b></div>`+pager(true);
+  $("partTop").innerHTML=`<div class="pbar"><button class="back" data-act="pkback">${ic("back")}급수 선택</button><b>${E(scopeLabel())}${posf?" · "+POS[posf][0]:""}</b></div>`+pager(true);
   $("partBot").innerHTML=pager(false);
   $("count").textContent = list.length + "개 단어" + (np>1?` · 파트 ${listPart+1} / ${np} (${a+1}~${a+shown.length}번)`:"");
   $("grid").className = "grid" + ($("hide").checked ? " hide" : "");
-  const empty = level==="내 단어" ? "아직 추가한 단어가 없어요. 위의 「＋ 단어 추가」를 눌러보세요."
+  const empty = level==="내 단어" ? "아직 추가한 단어가 없어요. 위의 「＋ 단어 추가」를 눌러 보세요."
               : level==="저장함" ? "저장한 단어가 없어요."
               : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요.";
   $("grid").innerHTML = shown.length ? shown.map(w=>`
@@ -1053,36 +1176,38 @@ const gfont = () => GFONTS.some(f=>f[0]===prefs.gfont) ? prefs.gfont : "round";
 function quizSetup(){
   stopG(); document.body.classList.remove("inq","inr");
   const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length;
-  const jl=jlv();
-  $("quizView").innerHTML = `<div class="qbox"><h2>퀴즈</h2>
-   <div class="jlpt"><h3>JLPT 모의시험</h3>
-    <p class="sub" style="margin:0">시험처럼 문자·어휘, 문법, 독해, 청해로 나눠서 풀어요. 이 앱이 직접 만든 연습 문제예요.</p>
+  const jl=jlv(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
+  const tile=(act,attr,cls,icon,title,sub)=>`<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`;
+  $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
+   <div class="qm-h"><h2>퀴즈</h2><div class="scope">범위 · <b>${scopeLabel()}${posf?" · "+POS[posf][0]:""}</b><br>단어 ${n.toLocaleString()}개</div></div>
+   <div class="jlpt"><h3>${ic("target")}JLPT 모의시험</h3>
+    <p class="sub" style="margin:0">시험 구성대로 문자·어휘, 문법, 독해, 청해를 연습해요. 이 앱이 직접 만든 연습 문제예요.</p>
     <div class="jlv">${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div>
-    <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 (약 35문제)</button>
-    <div class="jgrid">
-     <button class="mode" data-act="jstart" data-s="vocab"><b>문자·어휘</b><small>한자 읽기 · 문맥 · 유의 표현</small></button>
-     <button class="mode" data-act="jstart" data-s="pair" style="grid-column:1/-1"><b>유의어 짝 맞추기</b><small>뜻이 가까운 말을 찾고, 두 말의 차이점까지 확인해요</small></button>
-     <button class="mode" data-act="jstart" data-s="gram"><b>문법</b><small>문장 빈칸 채우기</small></button>
-     <button class="mode" data-act="jstart" data-s="listen"><b>청해</b><small>문장을 듣고 뜻 고르기</small></button>
+    <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 풀기</button>
+    <div class="tiles2">
+     ${tile("jstart",'data-s="vocab"',"c1","vocab","문자·어휘","한자 읽기 · 문맥 · 유의 표현")}
+     ${tile("jstart",'data-s="gram"',"c2","grammar","문법","문장 빈칸 채우기")}
+     ${tile("jstart",'data-s="listen"',"c3","ear","청해","문장을 듣고 뜻 고르기")}
+     ${tile("jstart",'data-s="pair"',"c4","link","유의어 짝","뜻이 가까운 말과 차이점")}
     </div>
     ${jrdgBlock(jl)}</div>
-   <h3 style="text-align:left">연습 모드</h3>
-   <p class="sub">범위: <b>${scopeLabel()}</b>${posf?" · "+POS[posf][0]:""} — ${n}개 단어<br>위의 급수·품사 선택으로 범위를 바꿀 수 있어요. (저장함 / 오답 노트 / 내 단어도 선택 가능)</p>
-   <div class="modes">
-    <button class="mode" data-act="start" data-mode="card"><b>플래시카드</b><small>단어를 보고 뜻을 떠올린 뒤 뒤집어서 확인해요</small></button>
-    <button class="mode" data-act="start" data-mode="meaning"><b>뜻 고르기</b><small>단어를 보고 알맞은 한국어 뜻을 4지선다로 골라요</small></button>
-    <button class="mode" data-act="start" data-mode="reading"><b>あ 읽기 고르기</b><small>후리가나 없는 한자를 보고 알맞은 읽기를 골라요</small></button>
-    <button class="mode" data-act="start" data-mode="order"><b>문장 순서 맞추기</b><small>한국어 번역을 보고 흩어진 조각을 올바른 일본어 문장으로 맞춰요 (이 범위에서 ${no}문제 가능)</small></button>
+   <div class="qm-sec">${ic("pencil")}단어 연습<small>범위 안의 단어로 풀어요</small></div>
+   <div class="tiles2">
+    ${tile("start",'data-mode="card"',"c1","cards","플래시카드","보고 떠올린 뒤 뒤집어서 확인")}
+    ${tile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
+    ${tile("start",'data-mode="reading"',"c3","abc","읽기 고르기","후리가나 없는 한자의 읽기")}
+    ${tile("start",'data-mode="order"',"c4","order","문장 순서",`조각을 맞춰 문장 만들기 · ${no}문제`)}
    </div>
-   <h3 style="text-align:left">게임</h3>
-   <div class="modes">
-    <button class="mode" data-act="gstart" data-g="match"><b>짝 맞추기</b><small>왼쪽 단어와 같은 뜻을 오른쪽에서 찾아 짝을 맞춰요. 제한 시간 100초, 틀리면 3초가 줄고 6쌍을 모두 맞히면 12초가 늘어나요${bestTxt("match2")}</small></button>
-    <button class="mode" data-act="gstart" data-g="time"><b>60초 타임어택</b><small>60초 안에 최대한 많이 맞혀요. 연속으로 맞히면 점수가 더 올라가고, 3번 틀리면 끝나요${bestTxt("time")}</small></button>
+   <div class="qm-sec">${ic("game")}게임<small>소리와 효과가 나와요</small></div>
+   <div class="gcards">
+    <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b><small>제한 시간 100초 · 틀리면 3초 감소 · 6쌍을 모두 맞히면 12초 추가</small>${bb("match2")}</span></button>
+    <button class="gc" data-act="gstart" data-g="time"><span class="gi">${MONKEY}</span><span><b>60초 타임어택</b><small>60초 안에 최대한 많이 맞혀요 · 3번 틀리면 끝</small>${bb("time")}</span></button>
    </div>
-   <label class="tg" style="justify-content:center"><input type="checkbox" id="gsnd" ${soundOn()?"checked":""}> 게임 소리 (배경음악·효과음)</label>
-   <label class="tg" style="justify-content:center">게임 글꼴 <select id="gfsel">${GFONTS.map(([v,n])=>`<option value="${v}" ${gfont()===v?"selected":""}>${n}</option>`).join("")}</select></label>
-   <label class="tg" style="justify-content:center">문제 수
-     <select id="qn"><option value="10">10개</option><option value="20">20개</option><option value="0">전체</option></select></label>
+   <details class="qset"><summary>${ic("gear")}퀴즈 설정</summary>
+    <label class="tg"><span>문제 수</span><select id="qn"><option value="10">10개</option><option value="20">20개</option><option value="0">전체</option></select></label>
+    <label class="tg"><span>게임 소리 (배경음악·효과음)</span><input type="checkbox" id="gsnd" ${soundOn()?"checked":""}></label>
+    <label class="tg"><span>게임 글꼴</span><select id="gfsel">${GFONTS.map(([v,nm])=>`<option value="${v}" ${gfont()===v?"selected":""}>${nm}</option>`).join("")}</select></label>
+   </details>
   </div>`;
 }
 function choices(w,key){
@@ -1261,7 +1386,7 @@ function gTick(){
 }
 function gResult({title,big,note,isNew,seen,marks,type,score}){
   stopG();
-  const rk=rankOf(score,type), order={ng:0,no:1,ok:2}, TXT={ng:"틀림",ok:"맞힘",no:"못 풀었어요"};
+  const rk=rankOf(score,type), order={ng:0,no:1,ok:2}, TXT={ng:"틀렸어요",ok:"맞혔어요",no:"풀지 못했어요"};
   const items=[...seen.values()].sort((a,b)=>(marks.has(a.w.key)?-1:0)-(marks.has(b.w.key)?-1:0)||order[a.st]-order[b.st]);
   const nm=marks.size, nng=items.filter(x=>x.st==="ng").length;
   $("quizView").innerHTML=`<div class="qbox gbox"><h2>${title}</h2>
@@ -1526,7 +1651,7 @@ const RDG_NAME={short:"단문",mid:"중문",long:"장문",integ:"통합 이해",
 const RDG_KIND={short:"단문(短文)",mid:"중문(中文)",long:"장문(長文)",integ:"통합 이해(統合理解)",search:"정보 검색(情報検索)"};
 function jrdgBlock(lv){
   const pl=RDG_PLAN[lv]||RDG_PLAN.N5, ty=["short","mid","long","integ","search"].filter(k=>pl[k]);
-  return `<div class="jrdg"><h4>독해</h4><button class="mode" data-act="jstart" data-s="read"><b>${lv} 독해 (시험 구성대로)</b><small>${ty.map(k=>RDG_NAME[k]).join(" · ")} 순서로 풀어요</small></button>
+  return `<div class="jrdg"><button class="t2 wide c1" data-act="jstart" data-s="read"><span class="ti">${ic("read")}</span><div><b>${lv} 독해 (시험 구성대로)</b><small>${ty.map(k=>RDG_NAME[k]).join(" · ")} 순서로 풀어요</small></div></button>
    <div class="jtypes">${ty.map(k=>`<button class="pill" data-act="jstart" data-s="r${k}">${RDG_NAME[k]}</button>`).join("")}<button class="pill" data-act="jstart" data-s="rnews">뉴스 기사 독해</button></div></div>`;
 }
 function rdgDoc(lines){
@@ -1599,7 +1724,7 @@ $("quizView").addEventListener("click",e=>{
 /* ---------- 뉴스: 읽기 기사 + 정부 발표 제목 (모두 앱 안에서 읽어요) ---------- */
 // 저작권 원칙
 //  - 읽기 기사(articles.js)와 삽화(ILLUS)는 이 앱을 위해 직접 만든 것이에요.
-//  - 정부 발표는 제목만, 출처를 표시해서 보여줘요. 본문·사진은 가져오지 않고 외부 링크도 달지 않아요.
+//  - 정부 발표는 제목만, 출처를 표시해서 보여 줘요. 본문·사진은 가져오지 않고 외부 링크도 달지 않아요.
 const NEWS_CATS=[["art","읽기 기사"]];
 const NCATS=["전체","경제","음식","문화","건강","사회","기술","소설"];
 const CAT_OF={food:"음식",econ:"경제",work:"경제",shop:"경제",culture:"문화",story:"소설",health:"건강",tech:"기술"};
@@ -1692,11 +1817,11 @@ function renderNews(){
       : `<div class="empty">조건에 맞는 글이 없어요. 급수나 필터를 바꿔 보세요.</div>`;
   } else {
     const nd=window.NEWS_DATA;
-    if(!nd) body=`<div class="warn">정부 발표 데이터(news-data.js)가 아직 없어요. 이 폴더에서 <code>python3 update_news.py</code> 를 실행하면 만들어져요.</div>`;
+    if(!nd) body=`<div class="warn">정부 발표 목록이 아직 준비되지 않았어요. 잠시 뒤에 다시 확인해 주세요.</div>`;
     else {
       const list=nd.items.map((g,i)=>({g,i,hit:annotate(g.title,ms).hit,read:readSet.has("gov:"+g.link)}))
         .filter(x=>(!newsOnly||x.hit.size)&&(!newsHideRead||!x.read));
-      body=`<div class="sub" style="margin:4px 0 10px">실제 정부 발표의 제목만 보여줘요. 저작권과 이용 조건을 지키기 위해 본문과 사진은 싣지 않았고, 외부 링크도 달지 않았어요. 데이터 갱신: ${E(String(nd.updated).replace("T"," ").slice(0,16))}</div>`
+      body=`<div class="sub" style="margin:4px 0 10px">실제 정부 발표의 제목만 보여 줘요. 저작권과 이용 조건을 지키기 위해 본문과 사진은 싣지 않았고, 외부 링크도 달지 않았어요. 데이터 갱신: ${E(String(nd.updated).replace("T"," ").slice(0,16))}</div>`
         + (list.length ? `<div class="glist">${list.map(x=>`<article class="gcard ${x.read?"read":""}" data-gov="${x.i}" tabindex="0" role="button">
           <div class="gthumb">${illus(govTopic(x.g.title))}</div>
           <div class="nb"><div class="sub">${fmtDate(x.g.date)}${x.read?" · 읽음":""}</div>
@@ -1714,7 +1839,7 @@ function openArt(id){ readCur={kind:"art",id,open:new Set()}; markRead("art:"+id
 function openGov(i){ const g=(window.NEWS_DATA?window.NEWS_DATA.items:[])[i]; if(!g) return; readCur={kind:"gov",g}; markRead("gov:"+g.link); setView("read"); }
 function renderReader(){
   if(!readCur){ setView("news"); return; }
-  const ms=buildMatchers(), back=`<button class="pill sm" data-act="rback">← 목록으로</button>`;
+  const ms=buildMatchers(), back=`<button class="back" data-act="rback">${ic("back")}목록으로</button>`;
   const speech = text => "speechSynthesis" in window ? `<button class="pill sm" data-act="rspeak" data-t="${E(text)}">${ic("sound")} 듣기</button>` : "";
   let inner;
   if(readCur.kind==="art"){
@@ -1739,7 +1864,7 @@ function renderReader(){
      <div class="sub" style="margin-top:12px">${fmtDate(g.date)}</div>
      <h2 class="rtitle gt">${an.html}</h2>
      <div class="rtools">${speech(g.title)}</div>
-     <div class="note">정부 발표의 본문은 저작권과 이용 조건을 지키기 위해 앱에 싣지 않고 제목만 보여줘요. 제목 속 모르는 단어를 드래그해서 뜻을 찾아보세요.</div>
+     <div class="note">정부 발표의 본문은 저작권과 이용 조건을 지키기 위해 앱에 싣지 않고 제목만 보여 줘요. 제목 속 모르는 단어를 드래그해서 뜻을 찾아보세요.</div>
      ${an.hit.size?`<h3>이 제목에 나온 내 단어</h3><div class="chips">${chips(an.hit)}</div>`:""}
      <div class="srcbox"><b>출처</b><br>${SRC_GOV}<br>제목은 원문 그대로이며 가공하지 않았어요(공백만 정리). 삽화는 이 앱을 위해 직접 그린 그림이고, 발표 내용과 직접 관련된 사진이 아니에요.</div>`;
   }
@@ -1816,29 +1941,30 @@ function renderStats(){
   const all=Object.values(log).reduce((a,x)=>({n:a.n+x.n,c:a.c+x.c}),{n:0,c:0});
   const dayStr=i=>new Date(Date.now()-i*864e5).toLocaleDateString("sv-SE");
   let streak=0; for(let i=(log[dayStr(0)]?0:1);log[dayStr(i)]&&log[dayStr(i)].n>0;i++) streak++;
-  const days=[6,5,4,3,2,1,0].map(i=>({d:dayStr(i),...(log[dayStr(i)]||{n:0,c:0})}));
-  const max=Math.max(1,...days.map(x=>x.n));
+  const DOW=["일","월","화","수","목","금","토"], g=goalN();
+  const days=[6,5,4,3,2,1,0].map(i=>{ const d=dayStr(i); return {d,w:DOW[new Date(d+"T00:00:00").getDay()],i,...(log[d]||{n:0,c:0})}; });
+  const scale=Math.max(g,...days.map(x=>x.n),1), weekN=days.reduce((a,x)=>a+x.n,0), weekC=days.reduce((a,x)=>a+x.c,0), active=days.filter(x=>x.n>0).length;
   const top=Object.entries(miss).filter(([k])=>byKey(k)).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const acc=(c,n)=>n?Math.round(c/n*100)+"%":"-";
-  const nw=Object.keys(wrong).length;
+  const acc=(c,n)=>n?Math.round(c/n*100):null, nw=Object.keys(wrong).length;
+  const accT=acc(all.c,all.n), accD=acc(t.c,t.n);
   $("statsView").innerHTML=`<div class="stats">
    <div class="kpis">
-     <div class="kpi"><b>${t.n}</b><span>오늘 푼 문제 (정답률 ${acc(t.c,t.n)})</span></div>
-     <div class="kpi"><b>${streak}일</b><span>연속 학습</span></div>
-     <div class="kpi"><b>${acc(all.c,all.n)}</b><span>전체 정답률 (${all.n}문제)</span></div>
-     <div class="kpi"><b>${nw}</b><span>오답 노트 단어</span></div>
+     <div class="kpi k1"><div class="ki">${ic("check")}</div><b>${t.n}<small>문제</small></b><span>오늘 푼 문제${accD!=null?` · 정답률 ${accD}%`:""}</span></div>
+     <div class="kpi k2"><div class="ki">${ic("flame")}</div><b>${streak}<small>일</small></b><span>연속 학습</span></div>
+     <div class="kpi k3"><div class="ki">${ic("target")}</div><b>${accT!=null?accT:"-"}<small>${accT!=null?"%":""}</small></b><span>전체 정답률 · ${all.n}문제</span></div>
+     <div class="kpi k4"><div class="ki">${ic("mark")}</div><b>${nw}<small>개</small></b><span>오답 노트 단어</span></div>
    </div>
-   <div class="panel"><h3>최근 7일 학습량</h3>
-     <div class="days">${days.map(x=>`<div class="dcol"><span>${x.n||""}</span>
-       <div class="dbar" style="height:${Math.round(x.n/max*100)}%" title="${x.d}: ${x.n}문제 중 ${x.c}개 정답">
-         <i class="miss" style="height:${x.n?Math.round((x.n-x.c)/x.n*100):0}%"></i><i style="height:${x.n?Math.round(x.c/x.n*100):0}%"></i></div>
-       <span>${x.d.slice(5).replace("-","/")}</span></div>`).join("")}</div>
-     <div class="sub" style="margin-top:6px">초록 = 맞힌 문제 · 빨강 = 틀린 문제</div></div>
+   <div class="wk"><h3>최근 7일 학습량<em>하루 목표 ${g}문제</em></h3>
+     <div class="sum">이번 주 <b>${weekN}문제</b>${weekN?` · 정답률 ${Math.round(weekC/weekN*100)}%`:""} · ${active}일 학습</div>
+     <div class="wchart"><div class="goal" style="bottom:calc((100% - 16px) * ${Math.min(1,g/scale).toFixed(3)})"><span>목표</span></div>
+       ${days.map(x=>`<div class="wcol ${x.i===0?"today":""}"><span class="n">${x.n||""}</span><div class="tr" title="${x.d}: ${x.n}문제 중 ${x.c}개 정답"><div class="fl" style="height:${Math.round(x.n/scale*100)}%;--miss:${x.n?Math.round((x.n-x.c)/x.n*100):0}%"></div></div></div>`).join("")}</div>
+     <div class="wlab">${days.map(x=>`<div class="${x.i===0?"today":""}"><b>${x.i===0?"오늘":x.w}</b>${x.d.slice(5).replace("-",".")}</div>`).join("")}</div>
+     <div class="lg"><span><i></i>맞힌 문제</span><span><i class="m"></i>틀린 문제</span></div></div>
    <div class="panel"><h3>자주 틀리는 단어 TOP 5</h3>
      ${top.length?`<div class="top5">${top.map(([k,n])=>{const w=byKey(k);return `<div class="row" data-key="${k}"><span>${R(w.f)} <span class="sub">${E(w.ko)}</span></span><span class="sub">${n}번 틀림</span></div>`;}).join("")}</div>`
        :`<div class="sub">아직 틀린 단어가 없어요. 퀴즈를 풀어 보세요!</div>`}
      <div class="qbtns" style="justify-content:flex-start">${nw?`<button class="pill on" data-act="quizWrong">오답 노트로 퀴즈 풀기</button>`:""}</div></div>
-   <div class="panel"><h3>내 단어장</h3><div class="sub">전체 ${ALL.length}개 · 저장함 ${stars.size}개 · 내가 추가한 단어 ${custom.length}개</div>
+   <div class="panel"><h3>내 단어장</h3><div class="sub">전체 ${ALL.length.toLocaleString()}개 · 저장함 ${stars.size}개 · 직접 추가한 단어 ${custom.length}개</div>
      <div class="qbtns" style="justify-content:flex-start"><button class="pill sm" data-act="resetLog">기록 초기화</button></div></div>
   </div>`;
 }
@@ -1907,7 +2033,7 @@ function renderToday(){
   if(qt){
     todayJa=plain(qt.ja);
     $("todayView").innerHTML=`<div class="today">
-     <button class="pill sm" data-go="home">← 홈</button>
+     <button class="back" data-go="home">${ic("back")}홈으로</button>
      <div class="tbox">
        <div class="lab">${todayOff?"다른 문장":"오늘의 문장"} · ${E(qt.by)}</div>
        <div class="tja">${R(qt.ja)}</div>
@@ -1920,11 +2046,11 @@ function renderToday(){
     </div>`; return;
   }
   const p=todayPick(todayOff);
-  if(!p){ $("todayView").innerHTML=`<div class="today"><button class="pill sm" data-go="home">← 홈</button><div class="empty">예문이 있는 단어가 아직 없어요.</div></div>`; return; }
+  if(!p){ $("todayView").innerHTML=`<div class="today"><button class="back" data-go="home">${ic("back")}홈으로</button><div class="empty">예문이 있는 단어가 아직 없어요.</div></div>`; return; }
   const e=p.ex[0]; todayJa=plain(e.ja);
   const chunks=chunkSentence(todayJa);
   $("todayView").innerHTML=`<div class="today">
-   <button class="pill sm" data-go="home">← 홈</button>
+   <button class="back" data-go="home">${ic("back")}홈으로</button>
    <div class="tbox">
      <div class="lab">${todayOff?"다른 문장":"오늘의 문장"}</div>
      <div class="tja">${R(e.ja)}</div>
@@ -2049,9 +2175,14 @@ function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; L
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
   const dots=`<div class="obstep">${[0,1,2].map(i=>`<i class="${i<=obStep?"on":""}"></i>`).join("")}</div>`;
-  if(obStep===0) o.innerHTML=`<div class="ob"><div class="obmk">${MONKEY}</div><div id="logo2" style="font-family:'Mochiy Pop One',sans-serif;font-size:30px;line-height:1.2">すらすら<span style="color:var(--accent)">日本語</span></div><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어, 퀴즈, 뉴스를 한 곳에서 가볍게 시작해요.</p><button class="cta" data-ob="next" style="margin-top:22px">시작하기</button><button class="obskip" data-ob="skip">이미 써 본 적 있어요</button></div>`;
-  else if(obStep===1) o.innerHTML=`<div class="ob">${dots}<h2>지금 일본어 실력은 어느 정도예요?</h2><p class="sub">나중에 홈에서 언제든 바꿀 수 있어요.</p><div class="obopts">${OB_LV.map((x,i)=>`<button class="mode" data-ob="lv" data-i="${i}"><b>${x[0]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
-  else o.innerHTML=`<div class="ob">${dots}<h2>하루 목표를 정해요</h2><p class="sub">부담 없이 시작하고, 익숙해지면 늘려요.</p><div class="obopts">${OB_GOAL.map(x=>`<button class="mode" data-ob="goal" data-n="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
+  const feat=(i,tt,s)=>`<div><span class="fi">${ic(i)}</span><span><b>${tt}</b><span>${s}</span></span></div>`;
+  const top=small=>`<div class="ob-top" style="${small?"padding-bottom:54px":""}"><div class="obmk" ${small?'style="width:84px!important;height:84px!important;padding:8px"':""}>${MONKEY}</div>${small?"":`<div class="lg2">すらすら<span>日本語</span></div><span class="lg2s">술술 일본어</span>`}</div>`;
+  if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작해요.</p>
+    <div class="feat">${feat("vocab","단어장",`N5~N1 단어 ${ALL.length.toLocaleString()}개와 예문`)}${feat("pencil","퀴즈와 게임","플래시카드 · 짝 맞추기 · 타임어택")}${feat("target","JLPT 모의시험","문자·어휘, 문법, 독해, 청해")}${feat("news","일본 뉴스 읽기","매일 새 기사가 올라와요")}</div>
+    <button class="cta" data-ob="next">시작하기</button><button class="obskip" data-ob="skip">이미 써 본 적 있어요</button></div>`;
+  else if(obStep===1) o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>지금 일본어 실력은 어느 정도예요?</h2><p class="sub">나중에 홈에서 언제든 바꿀 수 있어요.</p><div class="obopts">${OB_LV.map((x,i)=>`<button class="mode" data-ob="lv" data-i="${i}"><b>${x[0]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
+  else o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>하루 목표를 정해요</h2><p class="sub">부담 없이 시작하고, 익숙해지면 늘려 보세요.</p><div class="obopts">${OB_GOAL.map(x=>`<button class="mode" data-ob="goal" data-n="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
+  o.scrollTop=0;
 }
 function openOnb(){ obStep=0; renderOnb(); }
 document.addEventListener("click",e=>{
@@ -2059,6 +2190,7 @@ document.addEventListener("click",e=>{
   const a=b.dataset.ob;
   if(a==="skip"){ closeOnb(); return; }
   if(a==="next"){ obStep=1; renderOnb(); return; }
+  if(a==="prev"){ obStep=Math.max(0,obStep-1); renderOnb(); return; }
   if(a==="lv"){ obLv=OB_LV[+b.dataset.i][1]; obStep=2; renderOnb(); return; }
   if(a==="goal"){
     prefs.goal=+b.dataset.n; prefs.myLevels=obLv||[]; delete prefs.myLevel;
