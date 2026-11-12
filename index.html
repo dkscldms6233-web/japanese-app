@@ -469,6 +469,18 @@ header{background-image:var(--seigai);background-size:60px 30px}
 .jsec .prog{flex:1;margin:0}
 .jsec em{font-style:normal;min-width:44px;text-align:right;color:var(--sub);font-size:14px}
 
+
+.jrdg{margin-top:6px;border-top:1px dashed var(--line);padding-top:10px}
+.jrdg h4{margin:0 0 6px;font-size:16px}
+.jtypes{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px}
+.jdoc{text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;font-size:16px;line-height:1.9}
+.jdoc b.t{display:block;font-size:17px;margin-bottom:4px}
+.jdoc table{border-collapse:collapse;width:100%}
+.jdoc th{width:30%;text-align:left;vertical-align:top;padding:5px 8px 5px 0;color:var(--sub);font-weight:700;font-size:14px;border-top:1px solid var(--line)}
+.jdoc td{padding:5px 0;vertical-align:top;border-top:1px solid var(--line)}
+.jpass p{margin:0 0 .6em}
+.jpass .ab{display:inline-block;background:var(--accent);color:var(--onacc);border-radius:6px;padding:0 8px;font-weight:800;margin-right:6px}
+
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media(max-width:560px){.kj{grid-template-columns:48px 1fr}.dh .big{font-size:38px}.qw{font-size:44px}.card .w{font-size:30px}}
@@ -496,6 +508,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
 <script src="jlpt-readq.js"></script>
+<script src="jlpt-reading.js"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1050,9 +1063,9 @@ function quizSetup(){
      <button class="mode" data-act="jstart" data-s="vocab"><b>문자·어휘</b><small>한자 읽기 · 문맥 · 유의 표현</small></button>
      <button class="mode" data-act="jstart" data-s="pair" style="grid-column:1/-1"><b>유의어 짝 맞추기</b><small>뜻이 가까운 말을 찾고, 두 말의 차이점까지 확인해요</small></button>
      <button class="mode" data-act="jstart" data-s="gram"><b>문법</b><small>문장 빈칸 채우기</small></button>
-     <button class="mode" data-act="jstart" data-s="read"><b>독해</b><small>읽기 기사 내용 이해</small></button>
      <button class="mode" data-act="jstart" data-s="listen"><b>청해</b><small>문장을 듣고 뜻 고르기</small></button>
-    </div></div>
+    </div>
+    ${jrdgBlock(jl)}</div>
    <h3 style="text-align:left">연습 모드</h3>
    <p class="sub">범위: <b>${scopeLabel()}</b>${posf?" · "+POS[posf][0]:""} — ${n}개 단어<br>위의 급수·품사 선택으로 범위를 바꿀 수 있어요. (저장함 / 오답 노트 / 내 단어도 선택 가능)</p>
    <div class="modes">
@@ -1457,9 +1470,11 @@ function jStart(sec){
   if(sec==="vocab") items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2)];
   else if(sec==="pair") items=jPair(lv,8);
   else if(sec==="gram") items=jGram(lv,10);
-  else if(sec==="read") items=jRead(lv,5);
+  else if(sec==="read") items=jRdg(lv,"all");
+  else if(sec==="rnews") items=jRead(lv,5);
+  else if(/^r(short|mid|long|integ|search)$/.test(sec)){ const k=sec.slice(1); if(!(RDG_PLAN[lv]||{})[k]){ toast(lv+" 시험에는 "+RDG_NAME[k]+" 유형이 없어요"); return; } items=jRdg(lv,k); }
   else if(sec==="listen") items=jListen(lv,8);
-  else items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2),...jPair(lv,3),...jGram(lv,12),...jRead(lv,5),...jListen(lv,8)];
+  else items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2),...jPair(lv,3),...jGram(lv,12),...jRdg(lv,"all"),...jListen(lv,8)];
   if(!items.length){ toast("이 급수에는 아직 이 문제가 없어요"); return; }
   Q={mode:"jlpt",lv,sec,items,i:0,score:0,sel:null,done:false,by:{},wrong:[]};
   renderJ();
@@ -1503,6 +1518,40 @@ function jResult(){
     ${Q.wrong.length?`<button class="cta" data-act="jretry">틀린 문제 다시 풀기 (${Q.wrong.length})</button><button class="cta sec" data-go="home">홈으로</button>`:`<button class="cta" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 문제 풀기</button>`}
    </div></div>`;
   if(pct>=70) sakura(pct===100?26:14);
+}
+
+/* ---------- JLPT 독해: 시험 구성(단문·중문·장문·통합 이해·정보 검색) ---------- */
+const RDG_PLAN={N5:{short:2,mid:1,search:1},N4:{short:2,mid:1,search:1},N3:{short:2,mid:1,long:1,search:1},N2:{short:2,mid:1,integ:1,long:1,search:1},N1:{short:1,mid:1,long:1,integ:1,search:1}};
+const RDG_NAME={short:"단문",mid:"중문",long:"장문",integ:"통합 이해",search:"정보 검색"};
+const RDG_KIND={short:"단문(短文)",mid:"중문(中文)",long:"장문(長文)",integ:"통합 이해(統合理解)",search:"정보 검색(情報検索)"};
+function jrdgBlock(lv){
+  const pl=RDG_PLAN[lv]||RDG_PLAN.N5, ty=["short","mid","long","integ","search"].filter(k=>pl[k]);
+  return `<div class="jrdg"><h4>독해</h4><button class="mode" data-act="jstart" data-s="read"><b>${lv} 독해 (시험 구성대로)</b><small>${ty.map(k=>RDG_NAME[k]).join(" · ")} 순서로 풀어요</small></button>
+   <div class="jtypes">${ty.map(k=>`<button class="pill" data-act="jstart" data-s="r${k}">${RDG_NAME[k]}</button>`).join("")}<button class="pill" data-act="jstart" data-s="rnews">뉴스 기사 독해</button></div></div>`;
+}
+function rdgDoc(lines){
+  let title="",rows="",notes="";
+  lines.forEach(l=>{ if(l.startsWith("# ")) title=l.slice(2); else if(l.includes("|")){ const [k,...v]=l.split("|"); rows+=`<tr><th>${R(k)}</th><td>${R(v.join("|"))}</td></tr>`; } else notes+=`<p>${R(l)}</p>`; });
+  return `<div class="jdoc">${title?`<b class="t">${R(title)}</b>`:""}${rows?`<table>${rows}</table>`:""}${notes}</div>`;
+}
+function rdgStem(p){
+  const paras=s=>s.split(/\n+/).filter(Boolean).map(x=>`<p>${R(x)}</p>`).join("");
+  if(p.type==="search") return rdgDoc(p.doc);
+  if(p.type==="integ") return p.texts.map((s,i)=>`<div class="jpass"><span class="ab">${"AB"[i]}</span>${paras(s)}</div>`).join("");
+  return `<div class="jpass">${paras(p.text)}</div>`;
+}
+function rdgItems(p){
+  const kind=(p.lv==="N2"&&p.type==="long")?"주장 이해(主張理解)":RDG_KIND[p.type], stem=rdgStem(p);
+  return p.qs.map(q=>{ const m=jShuf(q.o,0);
+    return {sec:"read",kind,prompt:R(q.q),ph:1,stem,opts:m.o.map(R),a:m.a,exp:E(q.e||"")}; });
+}
+function jRdg(lv,type){
+  const bank=(window.JLPT_RDG||[]).filter(p=>p.lv===lv), pl=RDG_PLAN[lv]||RDG_PLAN.N5;
+  const order=["short","mid","long","integ","search"], out=[];
+  const types=type==="all"?order.filter(k=>pl[k]):[type];
+  types.forEach(k=>{ const n=type==="all"?pl[k]:(k==="short"?2:1);
+    shuffle(bank.filter(p=>p.type===k)).slice(0,n).forEach(p=>out.push(...rdgItems(p))); });
+  return out;
 }
 
 $("quizView").dataset.gf=gfont();
