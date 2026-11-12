@@ -493,6 +493,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kanji-extra.js"></script>
 <script src="daily.js"></script>
 <script src="jlpt-bank.js"></script>
+<script src="jlpt-bank2.js"></script>
+<script src="jlpt-readq.js"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1045,6 +1047,7 @@ function quizSetup(){
     <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 (약 35문제)</button>
     <div class="jgrid">
      <button class="mode" data-act="jstart" data-s="vocab"><b>문자·어휘</b><small>한자 읽기 · 문맥 · 유의 표현</small></button>
+     <button class="mode" data-act="jstart" data-s="pair" style="grid-column:1/-1"><b>유의어 짝 맞추기</b><small>뜻이 가까운 말을 찾고, 두 말의 차이점까지 확인해요</small></button>
      <button class="mode" data-act="jstart" data-s="gram"><b>문법</b><small>문장 빈칸 채우기</small></button>
      <button class="mode" data-act="jstart" data-s="read"><b>독해</b><small>읽기 기사 내용 이해</small></button>
      <button class="mode" data-act="jstart" data-s="listen"><b>청해</b><small>문장을 듣고 뜻 고르기</small></button>
@@ -1374,7 +1377,7 @@ function endTime(){
     note:`${why} · 맞힌 문제 ${g.right} / ${g.asked} · 최고 연속 ${g.maxc}${prev!=null&&!isNew?` · 최고 기록 ${prev}점`:""}`});
 }
 /* ---------- JLPT 모의시험 ---------- */
-const JSEC={vocab:"문자·어휘",gram:"문법",read:"독해",listen:"청해"};
+const JSEC={vocab:"문자·어휘",pair:"유의어",gram:"문법",read:"독해",listen:"청해"};
 const jlv=()=>["N5","N4","N3","N2","N1"].includes(prefs.jl)?prefs.jl:(myLv()[0]||"N5");
 const jWords=lv=>ALL.filter(w=>w.lv===lv);
 function jShuf(opts,ai){ const o=shuffle(opts.map((x,i)=>({x,ok:i===ai}))); return {o:o.map(v=>v.x),a:o.findIndex(v=>v.ok)}; }
@@ -1408,12 +1411,29 @@ function jGram(lv,n){
 }
 function jRead(lv,n){
   const arts=(window.ARTICLES||[]).filter(a=>a.body&&a.body.length>=3);
+  const qOf=a=>(a.qs&&a.qs.length?a.qs:(window.JLPT_READQ||{})[a.id])||null;
   let pool=arts.filter(a=>a.lv===lv); if(pool.length<2) pool=arts;
-  return shuffle(pool).slice(0,n).map(a=>{
+  const withQ=shuffle(pool.filter(qOf)), noQ=shuffle(pool.filter(a=>!qOf(a)));
+  return withQ.concat(noQ).slice(0,n).map(a=>{
+    const passage=`<div class="jpass"><b>${R(a.title)}</b>${a.body.map(b=>R(b.ja)).join("")}</div>`, qs=qOf(a);
+    if(qs){ const q=shuffle(qs)[0], m=jShuf(q.o,0);
+      return {sec:"read",kind:"내용 이해",prompt:q.q,stem:passage,opts:m.o.map(E),a:m.a,exp:E(q.e||"")}; }
     const ok=shuffle(a.body.map(b=>b.ko))[0];
     const wrong=shuffle(arts.filter(x=>x.id!==a.id).flatMap(x=>x.body.map(b=>b.ko)).filter(k=>!a.body.some(b=>b.ko===k))).slice(0,3);
     const m=jShuf([ok,...wrong],0);
-    return {sec:"read",kind:"내용 이해",prompt:"글의 내용과 맞는 것은?",stem:`<div class="jpass"><b>${R(a.title)}</b>${a.body.map(b=>R(b.ja)).join("")}</div>`,opts:m.o.map(E),a:m.a,exp:`글에 나온 문장: ${E(ok)}`};
+    return {sec:"read",kind:"내용 이해",prompt:"글의 내용과 맞는 것은?",stem:passage,opts:m.o.map(E),a:m.a,exp:`글에 나온 문장: ${E(ok)}`};
+  });
+}
+function jPair(lv,n){
+  const all=window.JLPT_SYNPAIR||[]; if(all.length<5) return [];
+  const pool=jBank(all,lv);
+  return shuffle(pool).slice(0,n).map(p=>{
+    const flip=Math.random()<.5, q=flip?p.b:p.a, ans=flip?p.a:p.b;
+    const strip=s=>s.replace(/\[[^\]]*\]/g,"");
+    const near=new Set([strip(p.a),strip(p.b)]); all.forEach(x=>{ if(near.has(strip(x.a))||near.has(strip(x.b))){ near.add(strip(x.a)); near.add(strip(x.b)); } });
+    const wrong=shuffle([...new Set(all.flatMap(x=>[x.a,x.b]))].filter(x=>!near.has(strip(x)))).slice(0,3);
+    const m=jShuf([ans,...wrong],0);
+    return {sec:"pair",kind:"유의어 찾기",prompt:"밑줄 친 말과 뜻이 가장 가까운 말은?",stem:`<div class="qw s" style="margin:14px 0"><u>${R(q)}</u></div>`,opts:m.o.map(R),a:m.a,exp:`<b>${R(p.a)}</b> ≈ <b>${R(p.b)}</b><br><b>차이점</b> ${E(p.d)}`};
   });
 }
 function jListenOk(){ return !!window.speechSynthesis && (speechSynthesis.getVoices().length===0 || speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang))); }
@@ -1434,10 +1454,11 @@ function jListen(lv,n){
 function jStart(sec){
   stopG(); const lv=jlv(); let items=[];
   if(sec==="vocab") items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2)];
+  else if(sec==="pair") items=jPair(lv,8);
   else if(sec==="gram") items=jGram(lv,10);
   else if(sec==="read") items=jRead(lv,5);
   else if(sec==="listen") items=jListen(lv,8);
-  else items=[...jReading(lv,4),...jContext(lv,5),...jSyn(lv,3),...jGram(lv,10),...jRead(lv,5),...jListen(lv,8)];
+  else items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2),...jPair(lv,3),...jGram(lv,12),...jRead(lv,5),...jListen(lv,8)];
   if(!items.length){ toast("이 급수에는 아직 이 문제가 없어요"); return; }
   Q={mode:"jlpt",lv,sec,items,i:0,score:0,sel:null,done:false,by:{},wrong:[]};
   renderJ();
