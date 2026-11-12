@@ -433,6 +433,23 @@ body.inq{padding-bottom:0!important}
 :root[data-theme=dark] .inq .reveal.ng{background:#3b1d19;color:#fbe0da}
 .rmk{width:110px;height:110px;margin:6px auto 0}.rmk svg{width:100%;height:100%}
 
+
+/* ---- 일본 느낌 장식: 파도 무늬 · 낙관 도장 · 벚꽃 ---- */
+:root{--seigai:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30' viewBox='0 0 60 30'%3E%3Cg fill='none' stroke='%23d63d22' stroke-opacity='.10' stroke-width='1.3'%3E%3Ccircle cx='30' cy='30' r='6'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Ccircle cx='30' cy='30' r='18'/%3E%3Ccircle cx='0' cy='15' r='6'/%3E%3Ccircle cx='0' cy='15' r='12'/%3E%3Ccircle cx='0' cy='15' r='18'/%3E%3Ccircle cx='60' cy='15' r='6'/%3E%3Ccircle cx='60' cy='15' r='12'/%3E%3Ccircle cx='60' cy='15' r='18'/%3E%3C/g%3E%3C/svg%3E")}
+:root[data-theme=dark]{--seigai:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30' viewBox='0 0 60 30'%3E%3Cg fill='none' stroke='%23ff7a5c' stroke-opacity='.10' stroke-width='1.3'%3E%3Ccircle cx='30' cy='30' r='6'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Ccircle cx='30' cy='30' r='18'/%3E%3Ccircle cx='0' cy='15' r='6'/%3E%3Ccircle cx='0' cy='15' r='12'/%3E%3Ccircle cx='0' cy='15' r='18'/%3E%3Ccircle cx='60' cy='15' r='6'/%3E%3Ccircle cx='60' cy='15' r='12'/%3E%3Ccircle cx='60' cy='15' r='18'/%3E%3C/g%3E%3C/svg%3E")}
+header{background-image:var(--seigai);background-size:60px 30px}
+#onb{background-image:var(--seigai);background-size:60px 30px}
+.hanko{flex:none;margin-left:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:58px;height:58px;border:2.5px solid var(--accent);border-radius:8px;color:var(--accent);transform:rotate(-6deg);font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif KR",serif;line-height:1.05;box-shadow:inset 0 0 0 2px var(--bg),inset 0 0 0 3.5px var(--accent);opacity:.92}
+.hanko b{font-size:22px;font-weight:900}
+.hanko span{font-size:11px;font-weight:700;letter-spacing:.05em}
+.hanko.lg{width:84px;height:84px;margin:6px auto 0;border-width:3px;animation:stamp .5s cubic-bezier(.2,1.6,.4,1) both}
+.hanko.lg b{font-size:30px;letter-spacing:.04em}
+@keyframes stamp{0%{transform:rotate(-6deg) scale(2.2);opacity:0}100%{transform:rotate(-6deg) scale(1);opacity:.92}}
+.sakura{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.sakura i{position:absolute;top:-24px;width:11px;height:13px;background:#f7b6c5;border-radius:80% 0 80% 0;opacity:.9;animation:fall linear forwards}
+@keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot))}}
+@media(prefers-reduced-motion:reduce){.sakura{display:none}.hanko.lg{animation:none}}
+
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media(max-width:560px){.kj{grid-template-columns:48px 1fr}.dh .big{font-size:38px}.qw{font-size:44px}.card .w{font-size:30px}}
@@ -1088,16 +1105,25 @@ function orderCheck(){
   o.checked=true; Q.sel=0; o.ok?Q.score++:Q.wrong.push(w); record(w,o.ok); renderQ();
 }
 function nextQ(){ Q.i++; Q.sel=null; setOpts(); renderQ(); }
+function sakura(n){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const o=document.createElement("div"); o.className="sakura"; o.setAttribute("aria-hidden","true");
+  for(let i=0;i<n;i++){ const s=document.createElement("i"), d=3.5+Math.random()*2.5;
+    s.style.cssText=`left:${Math.random()*100}%;--dx:${(Math.random()*120-60).toFixed(0)}px;--rot:${(Math.random()*540+180).toFixed(0)}deg;animation-duration:${d.toFixed(1)}s;animation-delay:${(Math.random()*1.2).toFixed(1)}s;transform:scale(${(.7+Math.random()*.7).toFixed(2)})`;
+    o.appendChild(s); }
+  document.body.appendChild(o); setTimeout(()=>o.remove(),7500);
+}
 function renderResult(){
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.list.length;
-  $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.wrong.length?"수고했어요!":"완벽해요!"}</h2>
+  $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.wrong.length?"수고했어요!":"완벽해요!"}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
    <div class="score">${Q.score} / ${t}</div>
    <div class="sub">${Q.wrong.length?"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요":"모두 맞혔어요!"}</div>
    ${Q.wrong.length?`<div class="rel" style="justify-content:center;margin-top:12px">${Q.wrong.map(w=>`<div class="lnk" data-act="open" data-key="${w.key}">${R(w.f)} <small>${E(w.ko)}</small></div>`).join("")}</div>`:""}
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">
      ${Q.wrong.length?`<button class="cta" data-act="retry">틀린 단어만 다시</button><button class="cta sec" data-go="home">홈으로</button><button class="pill" data-act="saveWrong">틀린 단어 저장함에 담기</button>`:`<button class="cta" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 퀴즈 하기</button>`}
    </div></div>`;
+  if(Q.score/t>=.7) sakura(Q.wrong.length?14:26);
 }
 
 /* ---------- 게임 모드: 짝 맞추기 · 60초 타임어택 ---------- */
@@ -1645,7 +1671,7 @@ function renderHome(){
   const greet=who+(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
   const pc=Math.min(100,Math.round(tl.n/g*100));
   $("homeView").innerHTML=`<div class="home">
-   <div class="hhead"><div class="hmk">${MONKEY}</div><div><h2>${greet}</h2><div class="sub">${st?`${st}일 연속 학습 중`:new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div></div>
+   <div class="hhead"><div class="hmk">${MONKEY}</div><div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    <div class="crow">
