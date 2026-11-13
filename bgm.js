@@ -48,65 +48,67 @@ function chipKick(t){ const c=ctx(), o=c.createOscillator(), g=c.createGain(); o
 const chipSnare=(t,v)=>hit(t,.09,v||.5,2500,.6,"bandpass");
 const chipHat=(t,v)=>hit(t,.025,v||.22,9000,1);
 
-/* ---- 신나는 오락실 (8비트) : 새로 작곡. 마이너 키의 질주하는 영웅 테마. Am | F | C | G | Am | F | G | E7 (A마이너 · 안달루시아 풍 끝맺음)
-   펄스파 선율의 옥타브 도약 + 16분 아르페지오 + 쉬지 않는 베이스 + 4박 드럼 ---- */
-const AR_CH=[[57,60,64,69],[53,57,60,65],[60,64,67,72],[55,59,62,67],[57,60,64,69],[53,57,60,65],[55,59,62,67],[52,56,59,62]];
-const AR_BASS=[45,41,48,43,45,41,43,40];
+/* ---- 신나는 오락실 (옛날 오락실) : 1980년대 아케이드 게임처럼 짧게 끊어 치는 "뜬뜬뜬" 소리.
+   스타카토 펄스파 · 규칙적으로 두들기는 베이스 · 노이즈 틱 · 코인/레이저 효과음. 화음은 Em | D | C | B7 의 단순한 반복 ---- */
+const AR_BASS=[52,50,48,47,52,50,48,47];
 const AR_MEL=[
- [0,81,2],[2,76,2],[4,81,2],[6,84,2],[8,83,2],[10,81,2],[12,76,4],
- [16,81,2],[18,77,2],[20,81,2],[22,84,2],[24,86,2],[26,84,2],[28,81,4],
- [32,79,2],[34,76,2],[36,79,2],[38,84,2],[40,83,2],[42,79,2],[44,76,4],
- [48,74,2],[50,79,2],[52,83,2],[54,86,2],[56,83,2],[58,79,2],[60,74,4],
- [64,88,2],[66,84,2],[68,81,2],[70,84,2],[72,88,4],[76,84,4],
- [80,89,2],[82,84,2],[84,81,2],[86,84,2],[88,89,4],[92,84,4],
- [96,86,2],[98,83,2],[100,79,2],[102,83,2],[104,86,4],[108,83,4],
- [112,83,2],[114,80,2],[116,83,2],[118,88,2],[120,86,2],[122,83,2],[124,80,4]];
-const AR_ARP=[0,1,2,3,2,1,2,1];
-const arcade={bpm:176,div:4,len:128,play(i,t){
-  const bar=i>>4,k=i&15,d=60/176/4,ch=AR_CH[bar],r=AR_BASS[bar];
-  // 쉬지 않고 달리는 베이스(삼각파): 8분음표, 4번째마다 옥타브, 마디 끝에서 다음 근음으로 반음 접근
-  if(k%2===0) tone(r+(k%8===6?12:0),t,d*1.7,"triangle",1,out());
-  if(k===15){ const nr=AR_BASS[(bar+1)%8]; tone(nr+(nr>r?-1:1),t,d*1.2,"triangle",.8,out()); }
-  chip(clampOct(ch[AR_ARP[k&7]],55,81),t,d*.85,.125,.04);                  // 16분 아르페지오
-  if(k%8===0) chipKick(t); if(k%8===4) chipSnare(t,.55); if(k===10&&bar%2===1) chipKick(t);
-  if(k%2===0) chipHat(t,k%4===2?.22:.12);
-  if(bar===7&&k>=12) chipSnare(t,.3+.07*(k-12));
-  noteAt(AR_MEL,i,(m,len)=>{ chip(m,t,d*len*.9,.5,.14); chip(m+12,t,d*len*.5,.125,.025); });
-}};
+ [0,76,1],[2,76,1],[4,79,1],[6,76,1],
+ [8,74,1],[10,74,1],[12,78,1],[14,74,1],
+ [16,72,1],[18,72,1],[20,76,1],[22,72,1],
+ [24,71,1],[26,75,1],[28,78,1],[30,81,1],
+ [32,76,1],[34,83,1],[36,79,1],[38,76,1],
+ [40,74,1],[42,81,1],[44,78,1],[46,74,1],
+ [48,72,1],[50,79,1],[52,76,1],[54,72,1],
+ [56,83,1],[57,82,1],[58,81,1],[59,80,1],[60,79,1],[62,76,2]];
 function clampOct(m,lo,hi){ while(m<lo) m+=12; while(m>hi) m-=12; return m; }
+function laser(t,from,to,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(); o.setPeriodicWave(pulse(.5)); o.frequency.setValueAtTime(from,t); o.frequency.exponentialRampToValueAtTime(to,t+dur);
+  g.gain.setValueAtTime(vol,t); g.gain.linearRampToValueAtTime(.0001,t+dur); o.connect(g); g.connect(out()); o.start(t); o.stop(t+dur+.02); }
+const arcade={bpm:156,div:2,len:64,play(i,t){
+  const bar=i>>3,k=i&7,d=60/156/2,r=AR_BASS[bar];
+  // 쿵쿵 두들기는 베이스: 8분음표마다 짧게 (사각파 25%)
+  chip(r-12,t,d*.45,.25,.13);
+  if(k===0||k===4) chipKick(t); if(k===2||k===6) chipSnare(t,.35); chipHat(t,.12);
+  // "뜬뜬뜬" 선율: 짧게 끊어 치는 사각파
+  noteAt(AR_MEL,i,(m,len)=>{ chip(m,t,d*.5*len,.5,.15); });
+  // 효과음: 4마디마다 동전 소리, 마지막 마디 끝에 레이저
+  if(bar===3&&k===7){ chip(83,t,d*.4,.5,.12); chip(88,t+d*.45,d*.9,.5,.12); }
+  if(bar===7&&k===6) laser(t,1800,260,d*1.8,.07);
+}};
 
-/* ---- 풍성한 (판타지) : 새로 작곡. D장조 · Dmaj9 | A/C# | Bm9 | Gmaj7#11 | Dmaj9 | C(♭VII) | G/B | A7sus4→A7
-   현악 패드 + 합창 같은 목소리 패드 + 하프 아르페지오 + 첼레스타(종) 선율 + 팀파니. 빌려온 ♭VII 화음이 '마법' 같은 느낌 ---- */
+/* ---- 풍성한 (판타지 · 악기 중심) : 선율은 아주 조금, 악기를 겹겹이 쌓았어요.
+   Am9 | Fmaj7#11 | Cmaj7#11 | Em9 | Am9 | Dm9 | B♭maj7#11 | Esus4→E7(♭9)  (리디안 · 프리지안 도미넌트의 신비로운 색)
+   현악·합창·호른 패드 / 하프 아르페지오 / 첼로 베이스 / 클라리넷 피치카토 / 첼레스타·종 / 플루트 / 팀파니·트라이앵글 / 마법의 상행 글리산도 ---- */
 function choir(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1500;
   g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.4); g.gain.linearRampToValueAtTime(.0001,t+dur); l.frequency.value=5; lg.gain.value=midi(m)*.004; l.connect(lg);
-  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
+  [-6,0,6].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
   l.start(t); l.stop(t+dur+.05); f.connect(g); g.connect(out()); }
+function brass(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(), f=c.createBiquadFilter(); o.type="sawtooth"; o.frequency.value=midi(m);
+  f.type="lowpass"; f.frequency.setValueAtTime(300,t); f.frequency.linearRampToValueAtTime(1800,t+dur*.6); f.frequency.linearRampToValueAtTime(500,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.5); g.gain.linearRampToValueAtTime(.0001,t+dur); o.connect(f); f.connect(g); g.connect(out()); o.start(t); o.stop(t+dur+.05); }
 const RC=[
- {b:50,up:[66,69,73,76]},{b:49,up:[64,69,73,76]},{b:47,up:[62,66,69,73]},{b:43,up:[62,66,71,73]},
- {b:50,up:[66,69,73,76]},{b:48,up:[64,67,72,76]},{b:47,up:[62,67,71,74]},{b:45,up:[62,64,67,69]}];
-const A7=[61,64,67,69];
-const RICH_MEL=[
- [0,78,6],[6,81,2],[8,85,4],[12,83,4],
- [16,81,6],[22,78,2],[24,76,4],[28,73,4],
- [32,74,4],[36,78,2],[38,81,2],[40,83,6],[46,81,2],
- [48,83,4],[52,85,4],[56,81,4],[60,78,4],
- [64,86,6],[70,85,2],[72,81,4],[76,78,4],
- [80,84,6],[86,79,2],[88,76,4],[92,79,4],
- [96,83,4],[100,86,4],[104,83,4],[108,79,4],
- [112,81,4],[116,85,2],[118,88,2],[120,85,4],[124,81,4]];
+ {b:45,up:[60,64,67,71]},{b:41,up:[57,60,64,71]},{b:48,up:[59,64,66,67]},{b:40,up:[59,62,66,67]},
+ {b:45,up:[60,64,67,71]},{b:50,up:[60,64,65,69]},{b:46,up:[58,62,65,69]},{b:40,up:[59,62,64,69]}];
+const E7=[56,59,62,65];
+const FLU=[[0,76,12],[16,77,8],[24,76,4],[28,72,4],[32,79,12],[44,76,4],[48,74,8],[56,76,8],[64,81,12],[80,81,8],[88,77,8],[96,82,8],[104,79,8],[112,80,8],[120,76,8]];
+const MAGIC=[69,72,76,79,81,84,88,91];
 const HP=[0,1,2,3,2,1,3,2, 0,1,2,3,1,2,3,2];
-const rich={bpm:92,div:4,len:128,play(i,t){
-  const bar=i>>4,k=i&15,d=60/92/4,c=RC[bar],nx=RC[(bar+1)%8], up=(bar===7&&k>=8)?A7:c.up;
-  if(k===0){ c.up.forEach(m=>pad(m-12,t,d*16,.08)); choir(c.up[0],t,d*16,.022); choir(c.up[2],t,d*16,.018); }   // 현악 + 합창 패드
-  if(k===0) tone(c.b,t,d*6,"sine",1,out());
-  if(k===8) tone(c.b+(bar%2?7:12),t,d*4,"sine",.8,out());
-  if(k===14) tone(nx.b+(nx.b>c.b?-1:1),t,d*2,"sine",.55,out());
-  pluck(up[HP[k]]+(k%4===3?12:0),t,.12,1.4);                                // 하프 아르페지오
-  if(k===0&&(bar===0||bar===4)) kick(t,.6,true);                            // 팀파니
-  if(bar===7&&k>=12) kick(t,.25+.12*(k-12),true);
-  if(k%4===2) hat(t,.07);
-  if(k===0) bell(up[3]+24,t,d*10,.08);                                      // 반짝이는 종소리
-  noteAt(RICH_MEL,i,(m,len)=>{ lead(m,t,d*len*.95,"triangle",.21,.5); bell(m+12,t,d*len,.07); });
+const rich={bpm:80,div:4,len:128,play(i,t){
+  const bar=i>>4,k=i&15,d=60/80/4,c=RC[bar],nx=RC[(bar+1)%8], up=(bar===7&&k>=8)?E7:c.up;
+  if(k===0){ c.up.forEach(m=>pad(m-12,t,d*16,.075)); c.up.forEach(m=>pad(m,t+.05,d*16,.04));            // 현악 패드(두 옥타브)
+    choir(c.up[0]+12,t,d*16,.02); choir(c.up[2]+12,t,d*16,.016);                                          // 합창
+    brass(c.b+12,t,d*16,.06); }                                                                           // 호른 스웰
+  if(k===0) tone(c.b,t,d*7,"triangle",.9,out());                                                          // 첼로 베이스
+  if(k===8) tone(c.b+7,t,d*5,"triangle",.65,out());
+  if(k===14) tone(nx.b+(nx.b>c.b?-1:1),t,d*2,"triangle",.5,out());
+  pluck(up[HP[k]]+(k%4===3?12:0),t,.13,1.5);                                                              // 하프 아르페지오
+  if(k%4===2) tone(up[(k>>2)%4]+12,t,d*.8,"triangle",.07,out());                                            // 클라리넷 풍 피치카토
+  if(k===0||k===8) bell(up[(k>>3)*2+1]+24,t,d*8,.07);                                                     // 첼레스타·종
+  if(k===12) bell(up[2]+36,t,d*4,.03);                                                                      // 트라이앵글 풍 아주 높은 종
+  if(k===0&&(bar===0||bar===4)) kick(t,.65,true);                                                          // 팀파니
+  if(bar===7&&k>=12) kick(t,.25+.14*(k-12),true);
+  if(k%4===2) hat(t,.06);
+  if((bar===3&&k>=10&&k<=15)||(bar===7&&k>=6&&k<=13)){ const j=bar===3?k-10:k-6; const m=MAGIC[Math.min(7,j)]; pluck(m,t,.13,1.3); bell(m+12,t,d*3,.05); }   // 마법의 상행 글리산도
+  noteAt(FLU,i,(m,len)=>{ flute(m,t,d*len*.95,.15); });                                                   // 플루트(아주 드문 선율)
 }};
 
 /* ---- 일본풍 (에도 시대 풍) : 기존 곡에서 무서운 느낌(반음 부딪힘·낮은 울림·날카로운 종)을 줄이고 더 따뜻하게 다듬었어요 ---- */
