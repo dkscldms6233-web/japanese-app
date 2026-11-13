@@ -642,7 +642,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
 <script src="jlpt-readq.js"></script>
-<script src="jlpt-reading.js?v=2"></script>
+<script src="jlpt-reading.js?v=3"></script>
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=2"></script>
 <script src="quotes.js"></script>
@@ -1761,7 +1761,7 @@ function jResult(){
 }
 
 /* ---------- JLPT 독해: 시험 구성(단문·중문·장문·통합 이해·정보 검색) ---------- */
-const RDG_PLAN={N5:{short:2,mid:1,long:1,search:1},N4:{short:2,mid:1,long:1,search:1},N3:{short:2,mid:1,long:1,search:1},N2:{short:2,mid:1,integ:1,long:1,search:1},N1:{short:1,mid:1,long:1,integ:1,search:1}};
+const RDG_PLAN={N5:{short:2,mid:1,search:1},N4:{short:2,mid:1,search:1},N3:{short:2,mid:1,long:1,search:1},N2:{short:2,mid:1,integ:1,long:1,search:1},N1:{short:1,mid:1,long:1,integ:1,search:1}};
 const RDG_NAME={short:"단문",mid:"중문",long:"장문",integ:"통합 이해",search:"정보 검색"};
 const RDG_KIND={short:"단문(短文)",mid:"중문(中文)",long:"장문(長文)",integ:"통합 이해(統合理解)",search:"정보 검색(情報検索)"};
 function jrdgBlock(lv){
