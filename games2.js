@@ -20,7 +20,7 @@ ST.textContent=`.wd-hint{text-align:center;margin:6px 0 10px}.wd-hint b{font-siz
 .sh-opt{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:1px}.sh-opt small{opacity:.7;font-size:12px}
 #fopts{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}#fopts .opt{font-size:15px;padding:10px 8px;min-height:54px}
 .fallarea{position:relative;height:240px;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;background:linear-gradient(#f3f6fb,#e9eef7);margin:8px 0}
-[data-theme=dark] .fallarea{background:linear-gradient(#1c2230,#161b27)}
+[data-theme=dark] .fallarea{background:linear-gradient(#2a2018,#1d1611)}
 .fallarea .gr{position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(45deg,#c0392b 0 10px,#e8c4c0 10px 20px);opacity:.55}
 .fw{position:absolute;padding:6px 14px;border-radius:12px;background:var(--card);border:2px solid var(--line);font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;font-size:26px;font-weight:500;letter-spacing:.04em;white-space:nowrap;transform:translateX(-50%);box-shadow:0 2px 6px rgba(0,0,0,.12)}
 .fw.tgt{border-color:var(--accent);background:var(--accent-soft)}.fw.danger{border-color:#c0392b}.fw.pop{animation:fwpop .35s forwards}
