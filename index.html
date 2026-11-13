@@ -616,7 +616,16 @@ body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;wi
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media(max-width:560px){.kj{grid-template-columns:48px 1fr}.dh .big{font-size:38px}.qw{font-size:44px}.card .w{font-size:30px}}
-.jscript{margin:14px 0;padding:12px 14px;border:1px solid var(--line,#ccc);border-radius:10px;text-align:left;font-size:15px;line-height:1.9}.jscript>b{display:block;font-size:12px;opacity:.6;margin-bottom:4px}.jwho{display:inline-block;min-width:1.6em;text-align:center;font-size:12px;border-radius:6px;background:rgba(0,0,0,.08);margin-right:4px}.jcredit{margin:26px 0 4px;text-align:center;font-size:11px;opacity:.38}</style>
+.jscript{margin:14px 0;padding:12px 14px;border:1px solid var(--line,#ccc);border-radius:10px;text-align:left;font-size:15px;line-height:1.9}.jscript>b{display:block;font-size:12px;opacity:.6;margin-bottom:4px}.jwho{display:inline-block;min-width:1.6em;text-align:center;font-size:12px;border-radius:6px;background:rgba(0,0,0,.08);margin-right:4px}.jcredit{margin:26px 0 4px;text-align:center;font-size:11px;opacity:.38}/* 폰 화면 보강: iOS에서 입력칸을 누르면 화면이 확대되는 문제(16px 미만 글자), 손가락으로 누른 뒤 카드가 들뜬 채 남는 문제(:hover), 가로로 밀리는 문제 */
+html,body{overflow-x:clip;max-width:100%}
+img,svg,video{max-width:100%}
+@media(max-width:699px){input,select,textarea,.af input{font-size:16px!important}}
+@media(hover:none){.pk:hover,.card:hover,.gcard:hover,.ncard:hover,.tile:hover,.wcard:hover,.mode:hover,.back:hover,.t2:hover,.gbox .opt:hover:not(:disabled){transform:none;box-shadow:none;border-color:inherit}.card:hover{box-shadow:none}}
+@media(max-width:600px){.card .w.wl{font-size:15px!important;line-height:2!important}}
+.say{border:0;background:transparent;color:var(--accent);cursor:pointer;padding:2px 4px;display:inline-flex;align-items:center;line-height:1}
+.say .ic{width:17px;height:17px}.say.sm .ic{width:15px;height:15px}.say.x{width:34px;height:34px;justify-content:center;border-radius:50%;background:var(--chip)}
+.cbtns{display:inline-flex;align-items:center;gap:2px}
+</style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
 try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";}catch(e){}
@@ -645,6 +654,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-reading.js?v=3"></script>
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=2"></script>
+<script src="kana.js?v=4"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -675,7 +685,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
   <div class="opts">
     <select id="posf" aria-label="품사 필터"><option value="">모든 품사</option></select>
     <label class="tg list-only"><input type="checkbox" id="hide"> 뜻 가리기</label>
-    <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기 (마우스를 올리면 보여요)</label>
+    <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기 (마우스를 올리거나 탭하면 보여요)</label>
   </div>
 </div>
 </header>
@@ -876,7 +886,7 @@ const RAW = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 // 프로필: 이 기기 안에서만 저장돼요. 아래 키들은 프로필별로 따로 보관해요.
-const PER = ["jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best"];
+const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best"];
 let profiles = RAW.get("jp-profiles",null), activeId = RAW.get("jp-active",null);
 if(!Array.isArray(profiles)||!profiles.length){
   profiles=[{id:"p1",name:"기본"}]; activeId="p1";
@@ -1058,8 +1068,8 @@ function renderGrid(){
               : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요.";
   $("grid").innerHTML = shown.length ? shown.map(w=>`
     <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" data-key="${w.key}">
-      <div class="ctop">${lvb(w.lv)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></div>
-      <div class="w">${R(w.f)}</div>
+      <div class="ctop">${lvb(w.lv)}<span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
+      <div class="w${w.text.length>=6?" wl":""}">${R(w.f)}</div>
       <div class="m">${E(w.ko)}</div>
       ${posTag(w.pos)}
     </div>`).join("") : `<div class="empty" style="grid-column:1/-1">${empty}</div>`;
@@ -1118,7 +1128,7 @@ function showWord(){
   const missN = miss[w.key]||0;
   $("dlg").innerHTML = `
   <div class="dh"><div class="big">${R(w.f)}</div>
-    <div class="dtools"><button class="x starb ${stars.has(w.key)?"on":""}" data-act="star" title="저장" aria-label="저장">${ic("star")}</button><button class="x" data-close aria-label="닫기">×</button></div></div>
+    <div class="dtools">${sayBtn("data-act","say","x")}<button class="x starb ${stars.has(w.key)?"on":""}" data-act="star" title="저장" aria-label="저장">${ic("star")}</button><button class="x" data-close aria-label="닫기">×</button></div></div>
   <div class="db">
     <div class="mean">${E(w.ko)} ${lvb(w.lv)} ${posTag(w.pos)}</div>
     <div class="posbox"><b>${p[0]}</b> — ${p[1]}</div>
@@ -1126,7 +1136,7 @@ function showWord(){
     ${w.note?`<h3>헷갈리는 포인트</h3><div class="note">${R(w.note)}</div>`:""}
     ${kb?`<h3>한자 풀이</h3>${kb}`:""}
     ${w.rel&&w.rel.length?`<h3>관련 단어</h3><div class="rel">${w.rel.map(r=>`<div>${R(r.f)} <small>${E(r.ko)}${r.pos&&POSS[r.pos]?" · "+POSS[r.pos]:""}</small></div>`).join("")}</div>`:""}
-    ${w.ex&&w.ex.length?`<h3>예문</h3>${w.ex.map(e=>`<div class="ex"><div class="ja">${R(e.ja)}</div><div class="ko">${E(e.ko)}</div></div>`).join("")}`:""}
+    ${w.ex&&w.ex.length?`<h3>예문</h3>${w.ex.map(e=>`<div class="ex"><div class="ja">${R(e.ja)} ${sayBtn("data-saytxt",plain(e.ja),"sm")}</div><div class="ko">${E(e.ko)}</div></div>`).join("")}`:""}
     <div class="dnav">
       <button class="pill" data-act="prev" ${navI===0?"disabled":""}>‹ 이전</button>
       <span>${navI+1} / ${nav.length} ${isC?`&nbsp;<button class="pill sm del" data-act="del">삭제</button>`:""}</span>
@@ -1256,6 +1266,7 @@ function quizSetup(){
   const tile=(act,attr,cls,icon,title,sub)=>`<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`;
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2><div class="scope">범위 · <b>${scopeLabel()}${posf?" · "+POS[posf][0]:""}</b><br>단어 ${n.toLocaleString()}개</div></div>
+   <button class="gc" data-kana="open" style="width:100%;margin:0 0 14px"><span class="gi">あ</span><span><b>일본어 글자 입문 (히라가나·가타카나)</b><small>글자표와 레슨 12개로 처음부터 · 눌러서 소리 듣기</small></span></button>
    <div class="jlpt"><h3>${ic("target")}JLPT 모의시험</h3>
     <p class="sub" style="margin:0">시험 구성대로 문자·어휘, 문법, 독해, 청해를 연습해요. 이 앱이 직접 만든 연습 문제예요.</p>
     <div class="jlv">${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div>
@@ -1903,7 +1914,13 @@ const artText = a => plain(a.title)+" "+a.body.map(s=>plain(s.ja)).join("");
 const fmtDate = s => { const d=new Date(s); return isNaN(d)?"":d.toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric"}); };
 const chips = hit => [...hit.values()].map(w=>`<button class="pill sm" data-key="${w.key}">${lvb(w.lv)} ${E(w.text)}</button>`).join("");
 function markRead(k){ readSet.add(k); LS.set("jp-read",[...readSet].slice(-800)); }
-function speakJa(t){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.9; speechSynthesis.speak(u); }catch(e){} }
+/* 기기에 있는 일본어 음성 중 가장 자연스러운 것을 골라요(고음질·Siri·Google·Microsoft 계열을 먼저) */
+function bestJa(){ const vs=(window.speechSynthesis?speechSynthesis.getVoices():[]).filter(v=>/^ja/i.test(v.lang)); if(!vs.length) return null;
+  const score=v=>(/premium|enhanced|siri|neural|natural|online/i.test(v.name)?4:0)+(/google|microsoft|kyoko|o-ren|nanami|haruka/i.test(v.name)?2:0)+(v.localService?0:1);
+  return vs.sort((x,y)=>score(y)-score(x))[0]; }
+function speakJa(t,rate){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=rate||.9; const v=bestJa(); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const canSay=()=>"speechSynthesis" in window;
+const sayBtn=(attr,val,cls)=>canSay()?`<button type="button" class="say ${cls||""}" ${attr}="${E(val)}" title="발음 듣기" aria-label="발음 듣기">${ic("sound")}</button>`:"";
 
 /* ---- 목록 ---- */
 function newsBar(){
@@ -2133,6 +2150,7 @@ function renderHome(){
    <div class="hhead"><div class="hmk">${MONKEY}</div><div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
+   <button class="sent" data-kana="open"><span class="lab">일본어 글자 입문</span><span class="ja">ひらがな · カタカナ</span><span class="ko">글자표와 레슨으로 처음부터 배워요 (글자를 누르면 소리가 나요)</span></button>
    <div class="crow">
      <button class="cta sec" data-hq="review">${nw?`오답 복습 ${nw}`:"오답 복습"}</button>
      <button class="cta sec" data-go="quiz">퀴즈 · 게임</button>
@@ -2226,15 +2244,19 @@ $("listView").addEventListener("change",e=>{
   if(e.target.id==="partSel"){ listPart=+e.target.value; renderGrid(); window.scrollTo(0,0); }
 });
 $("grid").addEventListener("click",e=>{
+  const sy=e.target.closest("[data-say]");
+  if(sy){ const w=byKey(sy.dataset.say); if(w) speakJa(w.yomi,.8); return; }
   const s=e.target.closest("[data-star]");
   if(s){ toggleStar(s.dataset.star); renderGrid(); return; }
   const c=e.target.closest(".card"); if(c) openWord(c.dataset.key);
 });
 $("dlg").addEventListener("click",e=>{
+  const st=e.target.closest("[data-saytxt]"); if(st){ speakJa(st.dataset.saytxt,.85); return; }
   if(e.target===$("dlg") || e.target.closest("[data-close]")) return $("dlg").close();
   const b=e.target.closest("[data-act]"); if(!b) return;
   const a=b.dataset.act;
   if(a==="prev") step(-1); else if(a==="next") step(1);
+  else if(a==="say"){ const w=byKey(nav[navI]); if(w) speakJa(w.yomi,.8); }
   else if(a==="star"){ toggleStar(nav[navI]); showWord(); if(view==="list") renderGrid(); }
   else if(a==="del"){
     if(!confirm("이 단어를 삭제할까요?")) return;
@@ -2285,7 +2307,7 @@ $("homeView").addEventListener("click",e=>{
 const needOnb = () => !prefs.onboarded && !Object.keys(log).length && !(prefs.myLevels&&prefs.myLevels.length);
 const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아요",["N5","N4"],"N5~N4"],["중급이에요",["N3","N2"],"N3~N2"],["상급이에요",["N1"],"N1"],["잘 모르겠어요",[],"전체"]];
 const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
-let obStep=0, obLv=null;
+let obStep=0, obLv=null, obKana=false;
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
@@ -2306,11 +2328,11 @@ document.addEventListener("click",e=>{
   if(a==="skip"){ closeOnb(); return; }
   if(a==="next"){ obStep=1; renderOnb(); return; }
   if(a==="prev"){ obStep=Math.max(0,obStep-1); renderOnb(); return; }
-  if(a==="lv"){ obLv=OB_LV[+b.dataset.i][1]; obStep=2; renderOnb(); return; }
+  if(a==="lv"){ obLv=OB_LV[+b.dataset.i][1]; obKana=+b.dataset.i===0; obStep=2; renderOnb(); return; }
   if(a==="goal"){
     prefs.goal=+b.dataset.n; prefs.myLevels=obLv||[]; delete prefs.myLevel;
     lvSel=new Set(prefs.myLevels); level="전체"; todayOff=0; renderLevels();
-    closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?");
+    closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300);
   }
 });
 if(needOnb()) openOnb();
