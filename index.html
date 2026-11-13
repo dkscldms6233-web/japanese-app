@@ -621,7 +621,7 @@ body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;wi
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
 try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";}catch(e){}
 </script>
-<script src="articles.js"></script>
+<script src="articles.js?v=2"></script>
 <script src="words-extra.js"></script>
 <script src="words-bulk1.js"></script>
 <script src="words-bulk2.js"></script>
@@ -637,7 +637,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-detail.js"></script>
 <script src="kanji-extra.js"></script>
 <script src="words-wasei.js?v=4"></script>
-<script src="daily.js"></script>
+<script src="words-levels.js?v=2"></script>
+<script src="daily.js?v=2"></script>
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
 <script src="jlpt-readq.js"></script>
@@ -955,6 +956,9 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[
 WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
   const FIX2={"편함":"편하다","잘함":"잘하다","딱함":"딱하다","분함":"분하다","멍함":"멍하다","기운참":"기운차다","예쁨":"예쁘다","힘듦":"힘들다","좋음":"좋다","나쁨":"나쁘다","싫음":"싫다","없음":"없다","있음":"있다"};
   w.ko=w.ko.split("·").map(s=>{ s=s.trim(); if(FIX2[s]) return FIX2[s]; if(s.length>=3&&s.endsWith("함")) return s.slice(0,-1)+"하다"; if(s.length>=4&&s.endsWith("러움")) return s.slice(0,-2)+"럽다"; if(/な形容詞/.test(w.pos)&&/^[가-힣]{2,}$/.test(s)&&!/다$/.test(s)) return s+(s.endsWith("적")?"이다":"하다"); return s; }).join("·"); });
+/* 급수 재분류(words-levels.js): "표기|읽기|급수" */
+(()=>{ const m=new Map(); String(window.LV_FIX||"").split("\n").forEach(l=>{ const p=l.trim().split("|"); if(p.length===3) m.set(p[0]+"|"+p[1],p[2]); });
+  WORDS.forEach(w=>{ const v=m.get(plain(w.f)+"|"+reading(w.f)); if(v) w.lv=v; }); })();
 const BASE = WORDS; BASE.forEach((w,i)=>w.key="b"+i);
 let custom = LS.get("jp-custom",[]);
 let stars  = new Set(LS.get("jp-star",[]).map(x=>typeof x==="number"?"b"+x:x));
@@ -964,7 +968,10 @@ let miss   = LS.get("jp-miss",{});     // 단어키 → 누적 오답 횟수
 let log    = LS.get("jp-log",{});      // 날짜 → {n:푼 문제, c:맞힌 문제}
 let readSet = new Set(LS.get("jp-read",[]));
 let ALL = [];
-function rebuild(){ ALL = BASE.concat(custom); ALL.forEach(w=>{ w.text=plain(w.f); w.yomi=reading(w.f); }); }
+/* な형용사는 사전형(〜だ)으로 보여 줘요. 문장·퀴즈 판별에는 어간(stem)을 써요 */
+function rebuild(){ ALL = BASE.concat(custom); ALL.forEach(w=>{
+  if(w.pos==="な形容詞"&&w.key[0]==="b"&&w.stem===undefined){ w.stem=w.f; if(!/だ$/.test(w.f)) w.f+="だ"; }
+  const sf=w.stem||w.f; w.text=plain(sf); w.yomi=reading(sf); }); }
 const byKey = k => ALL.find(w=>w.key===k);
 let level="전체", posf="", view="list", Q=null;
 let lvSel=new Set();   // 선택한 급수들 (여러 개 가능). level이 "전체"일 때만 적용돼요
