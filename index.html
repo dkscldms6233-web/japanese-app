@@ -1672,9 +1672,8 @@ function jSpeakDlg(lines){
   next();
 }
 function jListen(lv,n){
-  const sc=shuffle(jBank(window.JLPT_LISTEN||[],lv)); const first=[],rest=[];
-  sc.forEach(d=>{ const qs=shuffle(d.qs); first.push([d,qs[0]]); qs.slice(1).forEach(q=>rest.push([d,q])); });
-  return first.concat(shuffle(rest)).slice(0,n).map(([d,q])=>{
+  const sc=shuffle(jBank(window.JLPT_LISTEN||[],lv)); /* 한 시험에 같은 지문은 한 번만: 지문마다 문항 1개 */
+  return sc.slice(0,n).map(d=>[d,shuffle(d.qs)[0]]).map(([d,q])=>{
     const m=jShuf(q.o,0), news=d.type==="news";
     const script=`<div class="jscript"><b>스크립트</b>${d.lines.map(([w,t])=>`<div>${news?"":`<span class="jwho">${w==="F"?"여":"남"}</span> `}${R(t)}</div>`).join("")}</div>`;
     return {sec:"listen",kind:news?"뉴스 듣기":"대화 듣기",prompt:R(q.q),ph:1,dlg:d.lines,script,opts:m.o.map(R),a:m.a,exp:E(q.e||"")};
