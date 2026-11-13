@@ -637,7 +637,7 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .hsent .lab{display:block;font-size:12px;color:var(--accent);font-weight:700;margin-bottom:2px}
 .hsent .ja{display:block;font-size:20px;line-height:1.9;font-weight:600;letter-spacing:-.01em}
 .hsent .ko{display:block;font-size:13.5px;color:var(--sub);line-height:1.45;margin-top:1px}
-.qscope{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:16px 0 8px}
+.qscope{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 14px;margin:6px 0 10px}.qscope summary{padding:11px 0;cursor:pointer;font-size:14px;font-weight:600}.qscope summary small{font-weight:400;color:var(--sub)}.qscope[open]{padding-bottom:12px}
 .qscope .qs-h{font-weight:700;margin-bottom:8px}.qscope .qs-n{float:right;font-weight:600;font-size:13px;color:var(--accent)}.qscope .qs-s{font-size:12.5px;color:var(--sub);margin:-2px 0 10px;line-height:1.5}
 .qlevels{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .qscope select{max-width:100%}
@@ -1294,10 +1294,11 @@ function quizSetup(){
      ${tile("jstart",'data-s="pair"',"c4","link","유의 표현","뜻이 가까운 말과 차이점")}
     </div>
     ${jrdgBlock(jl)}</div>
-   <div class="qscope"><div class="qs-h">단어 연습 범위 <span class="qs-n">${scopeLabel()}${posf?" · "+POS[posf][0]:""} · 단어 ${n.toLocaleString()}개</span></div><div class="qs-s">아래 단어 연습과 게임에 적용돼요. JLPT 모의시험은 위에서 고른 급수로 풀어요.</div>
-    <div class="qlevels">${LEVELS.map(l=>{ const on=l==="전체"?(level==="전체"&&!lvSel.size):LVNUM[l]?(level==="전체"&&lvSel.has(l)):l===level; const nw2=Object.keys(wrong).length; return `<button class="pill ${on?"on":""}" data-qs="${l}">${l}${l==="오답 노트"&&nw2?" ("+nw2+")":""}</button>`; }).join("")}</div>
-    <select id="qposf" aria-label="품사 필터">${$("posf").innerHTML}</select></div>
-   <div class="qm-sec">${ic("pencil")}단어 연습<small>범위 안의 단어로 풀어요</small></div>
+   <div class="qm-sec">${ic("pencil")}단어 연습<small>${scopeLabel()}${posf?" · "+POS[posf][0]:""} · ${n.toLocaleString()}개</small></div>
+   <details class="qscope"><summary>다른 범위로 풀기 <small>(위에서 고른 급수 대신 전체·저장함·오답 노트 등)</small></summary>
+    <div class="qlevels">${["전체","저장함","오답 노트","내 단어"].map(l=>{ const on=l==="전체"?(level==="전체"&&!lvSel.size):l===level; const nw2=Object.keys(wrong).length; return `<button class="pill ${on?"on":""}" data-qs="${l}">${l}${l==="오답 노트"&&nw2?" ("+nw2+")":""}</button>`; }).join("")}${LVNUM[[...lvSel][0]]&&lvSel.size?"":""}</div>
+    <select id="qposf" aria-label="품사 필터">${$("posf").innerHTML}</select></details>
+   
    <div class="tiles2">
     ${tile("start",'data-mode="card"',"c1","cards","플래시카드","보고 떠올린 뒤 뒤집어서 확인")}
     ${tile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
@@ -1846,7 +1847,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="gopt"){ timePick(+b.dataset.i); return; }
   if(a==="gquit"){ stopG(); quizSetup(); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
-  if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); quizSetup(); return; }
+  if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="jstart"){ jStart(b.dataset.s); return; }
   if(a==="jpick"){ jPick(+b.dataset.i); return; }
   if(a==="jnext"){ jNext(); return; }
