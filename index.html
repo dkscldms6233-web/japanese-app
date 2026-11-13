@@ -638,10 +638,20 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .hsent .ja{display:block;font-size:20px;line-height:1.9;font-weight:600;letter-spacing:-.01em}
 .hsent .ko{display:block;font-size:13.5px;color:var(--sub);line-height:1.45;margin-top:1px}
 .lvrow{display:flex;align-items:center;gap:10px;margin:6px 0 14px}.lvrow>span{font-weight:700;font-size:14px;flex:none}.lvrow .jlv{flex:1;margin:0}
-.bgmrow{text-align:left;display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0;cursor:pointer}
-.bgmrow.on{border-color:var(--accent);background:var(--accent-soft)}.bgmrow input{flex:none;accent-color:var(--accent)}
-.bgmrow .bt{flex:1;min-width:0}.bgmrow .bt b{display:block;font-size:15px}.bgmrow .bt small{display:block;color:var(--sub);font-size:12.5px;line-height:1.4;margin-top:1px}
-.bgmrow .pill{flex:none;white-space:nowrap}
+.bgmcar{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 10% 12px;margin:0 -4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bgmcar::-webkit-scrollbar{display:none}
+.bgmcard{flex:0 0 78%;scroll-snap-align:center;border-radius:22px;padding:22px 16px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;border:2px solid transparent;background:var(--card);box-shadow:0 2px 8px rgba(0,0,0,.12);transition:transform .2s,border-color .2s;transform:scale(.93);opacity:.75}
+.bgmcard.on{transform:scale(1);opacity:1;border-color:var(--accent)}
+.bgmcard b{font-size:19px;letter-spacing:.02em}
+.bgmcard.c0{background:linear-gradient(145deg,var(--card),var(--chip))}
+.bgmcard.c1{background:linear-gradient(145deg,#2b2557,#a43a6b);color:#fff}
+.bgmcard.c2{background:linear-gradient(145deg,#2b3f6e,#6e56a8);color:#fff}
+.bgmcard.c3{background:linear-gradient(145deg,#5a3a2a,#b8884e);color:#fff}
+.bgmcard.c1 .pill,.bgmcard.c2 .pill,.bgmcard.c3 .pill{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.bgmeq{display:flex;gap:4px;align-items:flex-end;height:28px}.bgmeq i{width:6px;height:8px;border-radius:3px;background:currentColor;opacity:.55}
+.bgmcard.playing .bgmeq i{animation:eq .8s ease-in-out infinite;opacity:.95}.bgmcard.playing .bgmeq i:nth-child(2){animation-delay:.15s}.bgmcard.playing .bgmeq i:nth-child(3){animation-delay:.3s}.bgmcard.playing .bgmeq i:nth-child(4){animation-delay:.45s}
+@keyframes eq{0%,100%{height:6px}50%{height:26px}}
+.bgmdots{display:flex;gap:8px;justify-content:center;margin:2px 0 6px}.bgmdots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:all .2s}.bgmdots i.on{width:22px;border-radius:6px;background:var(--accent)}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -673,7 +683,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="kana.js?v=6"></script>
 <script src="games2.js?v=10"></script>
-<script src="bgm.js?v=5"></script>
+<script src="bgm.js?v=6"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1331,13 +1341,15 @@ function gameSetup(){
     <button class="gc" data-act="gstart" data-g="shiri"><span class="gi">${MONKEY}</span><span><b>しりとり 끝말잇기</b><small>컴퓨터와 일본어 끝말잇기 · 「ん」으로 끝나면 져요</small>${bm(["shiri1","shiri2","shiri3"])}</span></button>
     <button class="gc" data-act="gstart" data-g="fall"><span class="gi">${MONKEY}</span><span><b>떨어지는 단어</b><small>떨어지는 단어의 뜻을 바닥에 닿기 전에 골라요 · 점점 빨라져요</small>${bb("fall")}</span></button>
    </div>
-   <div class="bgmbox"><div class="qm-sec" style="margin-top:14px">${ic("sound")}배경음악<small>들어 보고 마음에 드는 걸 골라요</small></div>
-    ${Object.entries(BGM_TRACKS).map(([id,t])=>`<label class="bgmrow ${(prefs.bgm||"basic")===id?"on":""}"><input type="radio" name="bgm" value="${id}" ${(prefs.bgm||"basic")===id?"checked":""}><span class="bt"><b>${t.name}</b><small>${t.desc}</small></span><button type="button" class="pill sm" data-act="bgmprev" data-id="${id}">▶ 미리듣기</button></label>`).join("")}</div>
+   <div class="bgmbox"><div class="qm-sec" style="margin-top:14px">${ic("sound")}배경음악<small>옆으로 넘겨서 골라요</small></div>
+    <div class="bgmcar" id="bgmcar">${Object.entries(BGM_TRACKS).map(([id,t],n)=>`<div class="bgmcard c${n} ${(prefs.bgm||"basic")===id?"on":""}" data-id="${id}"><span class="bgmeq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>${t.name}</b><button type="button" class="pill" data-act="bgmprev" data-id="${id}">▶ 듣기</button></div>`).join("")}</div>
+    <div class="bgmdots" id="bgmdots">${Object.keys(BGM_TRACKS).map(id=>`<i class="${(prefs.bgm||"basic")===id?"on":""}" data-id="${id}"></i>`).join("")}</div></div>
    <details class="qset"><summary>${ic("gear")}게임 설정</summary>
     <label class="tg"><span>게임 소리 (배경음악·효과음)</span><input type="checkbox" id="gsnd" ${soundOn()?"checked":""}></label>
     <label class="tg"><span>게임 글꼴</span><select id="gfsel">${GFONTS.map(([v,nm])=>`<option value="${v}" ${gfont()===v?"selected":""}>${nm}</option>`).join("")}</select></label>
    </details>
   </div>`;
+  bgmCarInit();
 }
 function choices(w,key){
   const others = shuffle(ALL.filter(x=>x.key!==w.key && x[key]!==w[key] && (key!=="yomi"||x.text!==x.yomi)));
@@ -1476,7 +1488,16 @@ function bgmPreview(id){
   const same=SND.previewId===id; bgmStop(); clearTimeout(SND.pvT); updPrev();
   if(same) return; if(!sndInit()) return; SND.previewId=id; bgmStart({id,force:true}); SND.pvT=setTimeout(()=>{ bgmStop(); updPrev(); },60000); updPrev();
 }
-function updPrev(){ document.querySelectorAll("[data-act=bgmprev]").forEach(b=>{ const on=SND.previewId===b.dataset.id; b.textContent=on?"■ 정지":"▶ 미리듣기"; b.classList.toggle("on",on); }); }
+function bgmCarSync(){
+  const car=$("bgmcar"); if(!car) return; const cards=[...car.children], mid=car.scrollLeft+car.clientWidth/2;
+  let best=0,bd=1e9; cards.forEach((c,i)=>{ const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid); if(d<bd){ bd=d; best=i; } });
+  const id=cards[best].dataset.id; cards.forEach((c,i)=>c.classList.toggle("on",i===best)); document.querySelectorAll("#bgmdots i").forEach((d,i)=>d.classList.toggle("on",i===best));
+  if((prefs.bgm||"basic")!==id){ prefs.bgm=id; LS.set("jp-prefs",prefs); if(SND.previewId){ bgmStop(); clearTimeout(SND.pvT); SND.previewId=id; bgmStart({id,force:true}); SND.pvT=setTimeout(()=>{ bgmStop(); updPrev(); },90000); updPrev(); } }
+}
+function bgmCarInit(){ const car=$("bgmcar"); if(!car) return; const i=Math.max(0,Object.keys(BGM_TRACKS).indexOf(prefs.bgm||"basic")), c=car.children[i]; if(c) car.scrollLeft=c.offsetLeft-(car.clientWidth-c.offsetWidth)/2; }
+let bgmScT=null;
+document.addEventListener("scroll",e=>{ if(e.target&&e.target.id==="bgmcar"){ clearTimeout(bgmScT); bgmScT=setTimeout(bgmCarSync,120); } },true);
+function updPrev(){ document.querySelectorAll("[data-act=bgmprev]").forEach(b=>{ const on=SND.previewId===b.dataset.id; b.textContent=on?"■ 정지":"▶ 듣기"; b.classList.toggle("on",on); const cd=b.closest(".bgmcard"); if(cd) cd.classList.toggle("playing",on); }); }
 function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; }
 function sfx(kind){
   if(!soundOn()||!sndInit()) return; const t=SND.ctx.currentTime, o=SND.fx;
@@ -1856,7 +1877,7 @@ function jRdg(lv,type){
 $("quizView").dataset.gf=gfont();
 $("quizView").addEventListener("change",e=>{
   if(e.target.id==="gsnd"){ prefs.sound=e.target.checked; LS.set("jp-prefs",prefs); }
-  if(e.target.name==="bgm"){ prefs.bgm=e.target.value; LS.set("jp-prefs",prefs); document.querySelectorAll(".bgmrow").forEach(r=>r.classList.toggle("on",r.querySelector("input").checked)); }
+
   if(e.target.id==="gfsel"){ prefs.gfont=e.target.value; LS.set("jp-prefs",prefs); $("quizView").dataset.gf=gfont(); }
 });
 $("quizView").addEventListener("click",e=>{
