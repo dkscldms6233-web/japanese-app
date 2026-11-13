@@ -46,7 +46,7 @@ h1 span{color:var(--accent)}
 @media(max-width:699px){
   body{padding-bottom:76px}
   .views{position:fixed;left:0;right:0;bottom:0;z-index:20;border-radius:0;background:var(--card);border-top:1px solid var(--line);
-    display:grid;grid-template-columns:repeat(6,1fr);gap:0;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
+    display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
   .vb{flex-direction:column;gap:0;font-size:12px;padding:6px 0;border-radius:8px}
   .vb i{font-size:20px}
   .vb.on{box-shadow:none;color:var(--accent);background:var(--accent-soft)}
@@ -682,7 +682,6 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
       <button class="vb" data-view="quiz"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></i><span>퀴즈</span></button>
       <button class="vb" data-view="exam"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>모의시험</span></button>
       <button class="vb" data-view="news"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></i><span>뉴스</span></button>
-      <button class="vb" data-view="stats"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></i><span>기록</span></button>
     </nav>
     <div class="tools"><button class="pill sm" id="profBtn" aria-label="프로필 전환"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
     <div class="theme" id="theme" role="group" aria-label="화면 모드">
@@ -1283,7 +1282,6 @@ function quizSetup(){
   const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlv();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2></div>
-   <button class="kentry" data-kana="open" style="margin:0 0 14px"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자 입문</b><small>히라가나·가타카나를 글자표와 행별 레슨으로 처음부터</small></span><span class="ka">›</span></button>
    ${lvRow(jl,"급수")}
    <div class="qm-sec">${ic("pencil")}단어 연습<small>${jl} 단어 ${n.toLocaleString()}개로 풀어요</small></div>
    <div class="tiles2">
@@ -2112,6 +2110,7 @@ function renderStats(){
   const acc=(c,n)=>n?Math.round(c/n*100):null, nw=Object.keys(wrong).length;
   const accT=acc(all.c,all.n), accD=acc(t.c,t.n);
   $("statsView").innerHTML=`<div class="stats">
+   <button class="back" data-go="home">${ic("back")}홈으로</button><h2 style="margin:6px 0 10px">내 학습 기록 <small style="font-weight:400;font-size:14px;color:var(--sub)">· ${E(curProfile().name)}</small></h2>
    <div class="kpis">
      <div class="kpi k1"><div class="ki">${ic("check")}</div><b>${t.n}<small>문제</small></b><span>오늘 푼 문제${accD!=null?` · 정답률 ${accD}%`:""}</span></div>
      <div class="kpi k2"><div class="ki">${ic("flame")}</div><b>${streak}<small>일</small></b><span>연속 학습</span></div>
@@ -2377,7 +2376,7 @@ const switchTo = id => { RAW.set("jp-active",id); location.reload(); };
 function profBtn(){ $("profBtn").innerHTML=ic("user")+" "+E(curProfile().name); }
 function openProf(){
   $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">프로필</h2><button class="x" data-close aria-label="닫기">×</button></div>
-  <div class="db"><p class="sub">이 기기의 브라우저 안에만 저장돼요. 프로필마다 기록 · 내 단어 · 오답 노트 · 저장함 · 내 급수가 따로 관리돼요. 비밀번호가 없어서 보안용 로그인은 아니에요.</p>
+  <div class="db"><button class="pill on" data-pa="stats" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-bottom:12px">${ic("chart")} 내 학습 기록 보기</button><p class="sub">이 기기의 브라우저 안에만 저장돼요. 프로필마다 기록 · 내 단어 · 오답 노트 · 저장함 · 내 급수가 따로 관리돼요. 비밀번호가 없어서 보안용 로그인은 아니에요.</p>
    ${profiles.map(p=>`<div class="prow">
      <button class="pill ${p.id===activeId?"on":""}" data-pa="use" data-id="${p.id}">${ic("user")} ${E(p.name)}${p.id===activeId?" (사용 중)":""}</button>
      <span><button class="pill sm" data-pa="ren" data-id="${p.id}">이름 변경</button>${profiles.length>1?` <button class="pill sm del" data-pa="del" data-id="${p.id}">삭제</button>`:""}</span></div>`).join("")}
@@ -2389,6 +2388,7 @@ $("profBtn").addEventListener("click",openProf);
 $("profDlg").addEventListener("click",e=>{
   if(e.target===$("profDlg") || e.target.closest("[data-close]")) return $("profDlg").close();
   const b=e.target.closest("[data-pa]"); if(!b) return;
+  if(b.dataset.pa==="stats"){ $("profDlg").close(); setView("stats"); return; }
   const id=b.dataset.id, p=profiles.find(x=>x.id===id);
   if(b.dataset.pa==="use"){ if(id!==activeId) switchTo(id); }
   else if(b.dataset.pa==="ren"){ const n=(prompt("새 이름",p.name)||"").trim().slice(0,12); if(n){ p.name=n; saveProfiles(); profBtn(); openProf(); if(view==="home") renderHome(); } }
