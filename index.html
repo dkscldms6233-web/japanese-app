@@ -625,6 +625,13 @@ img,svg,video{max-width:100%}
 .say{border:0;background:transparent;color:var(--accent);cursor:pointer;padding:2px 4px;display:inline-flex;align-items:center;line-height:1}
 .say .ic{width:17px;height:17px}.say.sm .ic{width:15px;height:15px}.say.x{width:34px;height:34px;justify-content:center;border-radius:50%;background:var(--chip)}
 .cbtns{display:inline-flex;align-items:center;gap:2px}
+.kentry{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:18px;padding:14px 16px;margin:10px 0;font:inherit;color:var(--text);cursor:pointer}
+.kentry .kg{flex:none;width:56px;height:56px;border-radius:14px;background:var(--accent);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;font-weight:700;line-height:1}
+.kentry .kg small{font-size:15px;font-weight:500;opacity:.85;margin-top:2px}
+.kentry .kt{flex:1;min-width:0}.kentry .kt b{display:block;font-size:17px;margin-bottom:3px}.kentry .kt small{display:block;font-size:13px;line-height:1.45;color:var(--sub)}
+.kentry .ka{flex:none;font-size:26px;color:var(--accent)}
+body.kanamode .levels,body.kanamode .opts{display:none}
+.kentry .kt small{word-break:keep-all}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -654,7 +661,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-reading.js?v=3"></script>
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=2"></script>
-<script src="kana.js?v=4"></script>
+<script src="kana.js?v=6"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1266,7 +1273,7 @@ function quizSetup(){
   const tile=(act,attr,cls,icon,title,sub)=>`<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`;
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2><div class="scope">범위 · <b>${scopeLabel()}${posf?" · "+POS[posf][0]:""}</b><br>단어 ${n.toLocaleString()}개</div></div>
-   <button class="gc" data-kana="open" style="width:100%;margin:0 0 14px"><span class="gi">あ</span><span><b>일본어 글자 입문 (히라가나·가타카나)</b><small>글자표와 레슨 12개로 처음부터 · 눌러서 소리 듣기</small></span></button>
+   <button class="kentry" data-kana="open" style="margin:0 0 14px"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자 입문</b><small>히라가나·가타카나를 글자표와 행별 레슨으로 처음부터</small></span><span class="ka">›</span></button>
    <div class="jlpt"><h3>${ic("target")}JLPT 모의시험</h3>
     <p class="sub" style="margin:0">시험 구성대로 문자·어휘, 문법, 독해, 청해를 연습해요. 이 앱이 직접 만든 연습 문제예요.</p>
     <div class="jlv">${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div>
@@ -2114,7 +2121,7 @@ $("statsView").addEventListener("click",e=>{
 /* ---------- 이벤트 ---------- */
 function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
-  view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr");
+  view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
   ["home","today","list","quiz","news","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==v; });
   document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===(v==="today"?"home":v==="read"?"news":v)));
   refresh(); window.scrollTo(0,0);
@@ -2150,7 +2157,7 @@ function renderHome(){
    <div class="hhead"><div class="hmk">${MONKEY}</div><div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
-   <button class="sent" data-kana="open"><span class="lab">일본어 글자 입문</span><span class="ja">ひらがな · カタカナ</span><span class="ko">글자표와 레슨으로 처음부터 배워요 (글자를 누르면 소리가 나요)</span></button>
+   <button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>
    <div class="crow">
      <button class="cta sec" data-hq="review">${nw?`오답 복습 ${nw}`:"오답 복습"}</button>
      <button class="cta sec" data-go="quiz">퀴즈 · 게임</button>
