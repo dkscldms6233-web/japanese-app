@@ -632,6 +632,10 @@ img,svg,video{max-width:100%}
 .kentry .ka{flex:none;font-size:26px;color:var(--accent)}
 body.kanamode .levels,body.kanamode .opts{display:none}
 .kentry .kt small{word-break:keep-all}
+.hsent{flex:1;min-width:0;display:block;text-align:left;border:0;background:transparent;padding:0;color:var(--text);font:inherit;cursor:pointer}
+.hsent .lab{display:block;font-size:12px;color:var(--accent);font-weight:700;margin-bottom:2px}
+.hsent .ja{display:block;font-size:20px;line-height:1.9;font-weight:600;letter-spacing:-.01em}
+.hsent .ko{display:block;font-size:13.5px;color:var(--sub);line-height:1.45;margin-top:1px}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -2153,8 +2157,9 @@ function renderHome(){
   const who=(profiles.length>1||curProfile().name!=="기본")?curProfile().name+"님, ":"";
   const greet=who+(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
   const pc=Math.min(100,Math.round(tl.n/g*100));
+  const sent=qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장 · "+qt.by}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"+(my.includes(p.lv)?" · "+p.lv:"")}:null;
   $("homeView").innerHTML=`<div class="home">
-   <div class="hhead"><div class="hmk">${MONKEY}</div><div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
+   <div class="hhead"><div class="hmk">${MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    <button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>
@@ -2162,8 +2167,6 @@ function renderHome(){
      <button class="cta sec" data-hq="review">${nw?`오답 복습 ${nw}`:"오답 복습"}</button>
      <button class="cta sec" data-go="quiz">퀴즈 · 게임</button>
    </div>
-   ${qt?`<button class="sent" data-go="today"><span class="lab">오늘의 문장 · ${E(qt.by)}</span><span class="ja">${R(qt.ja)}</span><span class="ko">${E(qt.ko)}</span><span class="more">자세히 보기 →</span></button>`:""}
-   ${p?`<button class="sent" data-go="today"><span class="lab">오늘의 문장${my.includes(p.lv)?" · "+p.lv:""}</span><span class="ja">${R(p.ex[0].ja)}</span><span class="ko">${E(p.ex[0].ko)}</span><span class="more">자세히 보기 →</span></button>`:""}
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
    </details></div>`;
