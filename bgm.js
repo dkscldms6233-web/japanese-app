@@ -122,10 +122,10 @@ function shaku(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGa
   g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.28); g.gain.setValueAtTime(vol,t+Math.max(.35,dur-.45)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
   o.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.4; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05);
   hit(t,.2,vol*.1,2600,1.2,"bandpass"); }
-const KOTO_PAT=[0,-1,-1,2,-1,3,-1,-1];   // 코토는 드문드문
+const KOTO_PAT=[0,-1,1,-1,2,-1,3,-1];   // 코토는 적당히 흐르게
 const BIWA_BASS=[50,43,50,45];             // 마디별 낮은 음(D·G·D·A)
-const wa={bpm:50,div:2,len:64,play(i,t){
-  const bar=i>>3,k=i&7,d=60/50/2,kt=KOTO[bar%4];
+const wa={bpm:58,div:2,len:64,play(i,t){
+  const bar=i>>3,k=i&7,d=60/58/2,kt=KOTO[bar%4];
   if(KOTO_PAT[k]>=0){ const n=kt[KOTO_PAT[k]]+(KOTO_PAT[k]>=2?12:0); pluck(n,t,k===0?.28:.18,2); }
   if(k===0&&bar%2===0){ const b=BIWA_BASS[(bar>>1)%4]; biwa(b,t,d*7,.34); biwa(b+7,t+.03,d*6,.2); }                       // 비파: 마디 첫 박에 묵직한 두 음
   if(k===5&&bar%4===3){ [62,59,55,50].forEach((m,j)=>biwa(m,t+j*.22,d*4,.24)); }                                          // 비파: 4마디마다 하행 가락
