@@ -644,6 +644,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-readq.js"></script>
 <script src="jlpt-reading.js"></script>
 <script src="jlpt-listen.js?v=2"></script>
+<script src="listen-audio.js?v=1"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1650,9 +1651,19 @@ function jPair(lv,n){
     return {sec:"pair",kind:"유의 표현 찾기",prompt:"밑줄 친 말과 뜻이 가장 가까운 말은?",stem:`<div class="qw s" style="margin:14px 0"><u>${R(q)}</u></div>`,opts:m.o.map(R),a:m.a,exp:`<b>${R(p.a)}</b> ≈ <b>${R(p.b)}</b><br><b>차이점</b> ${E(p.d)}`};
   });
 }
-function jListenOk(){ return !!window.speechSynthesis && (speechSynthesis.getVoices().length===0 || speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang))); }
+function jListenOk(){ if(Object.keys(window.LISTEN_AUDIO||{}).length) return true; return !!window.speechSynthesis && (speechSynthesis.getVoices().length===0 || speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang))); }
 let jTok=0;
-function jStop(){ jTok++; if(window.speechSynthesis) speechSynthesis.cancel(); }
+let jAud=null;
+function jStop(){ jTok++; if(window.speechSynthesis) speechSynthesis.cancel(); if(jAud){ try{ jAud.pause(); }catch(e){} jAud=null; } }
+/* 미리 만든 음성(audio/listen/*.mp3, tools/make-audio.js). 키·속도 규칙은 그 스크립트와 같아야 해요 */
+const jRate=(lv,news)=>news?1:({N5:.85,N4:.9,N3:.95}[lv]||1);
+const jAudioKey=(who,text,rate)=>{ let h=5381; const s=who+"|"+text+"|"+rate; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h.toString(36); };
+function jAudioList(lines,meta){ const A=window.LISTEN_AUDIO||{}; if(!meta) return null; const rate=jRate(meta.lv,meta.news);
+  const ks=lines.map(([w,t])=>jAudioKey(w,plain(t),rate)); return ks.every(k=>A[k])?ks.map(k=>"audio/listen/"+k+".mp3"):null; }
+function jPlayFiles(urls){ const tok=jTok; let i=0;
+  const next=()=>{ if(tok!==jTok||i>=urls.length) return; const a=new Audio(urls[i++]); jAud=a;
+    a.onended=()=>{ if(tok===jTok) setTimeout(next,450); }; a.onerror=()=>{ if(tok===jTok) setTimeout(next,0); }; a.play().catch(()=>{}); };
+  next(); }
 function jSpeak(s){
   if(!window.speechSynthesis) return;
   jStop(); const u=new SpeechSynthesisUtterance(s); u.lang="ja-JP"; u.rate=.9;
@@ -1665,9 +1676,9 @@ function jVoices(){
   const base=ja[0]||null;
   return {F:f||base, M:m||(ja.find(v=>v!==(f||base)))||base, split:!!m||ja.length>1};
 }
-function jSpeakDlg(lines){
-  if(!window.speechSynthesis) return;
-  jStop(); const tok=jTok, vs=jVoices(); let k=0;
+function jSpeakDlg(lines,meta){
+  jStop(); const files=jAudioList(lines,meta); if(files){ jPlayFiles(files); return; }
+  if(!window.speechSynthesis) return; const tok=jTok, vs=jVoices(); let k=0;
   const next=()=>{
     if(tok!==jTok||k>=lines.length) return;
     const [who,t]=lines[k++], u=new SpeechSynthesisUtterance(plain(t));
@@ -1683,7 +1694,7 @@ function jListen(lv,n){
   return sc.slice(0,n).map(d=>[d,shuffle(d.qs)[0]]).map(([d,q])=>{
     const m=jShuf(q.o,0), news=d.type==="news";
     const script=`<div class="jscript"><b>스크립트</b>${d.lines.map(([w,t])=>`<div>${news?"":`<span class="jwho">${w==="F"?"여":"남"}</span> `}${R(t)}</div>`).join("")}</div>`;
-    return {sec:"listen",kind:news?"뉴스 듣기":"대화 듣기",prompt:R(q.q),ph:1,dlg:d.lines,script,opts:m.o.map(R),a:m.a,exp:E(q.e||"")};
+    return {sec:"listen",kind:news?"뉴스 듣기":"대화 듣기",prompt:R(q.q),ph:1,dlg:d.lines,dmeta:{lv:d.lv,news},script,opts:m.o.map(R),a:m.a,exp:E(q.e||"")};
   });
 }
 function jStart(sec){
@@ -1723,7 +1734,7 @@ function renderJ(){
     <div class="qbtns"><button class="cta" data-act="jnext">${Q.i+1>=Q.items.length?"결과 보기":"계속하기"}</button></div></div>`:"";
   const pr=`<div class="sub jprompt ${it.sec==="read"?"jq2":""}" style="margin-top:10px">${it.ph?it.prompt:E(it.prompt)}</div>`;
   $("quizView").innerHTML=`<div class="qbox">${head}${it.sec==="read"?mid+pr:pr+mid}${opts}${rv}</div>`;
-  if(it.dlg&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeakDlg(it.dlg); },250);
+  if(it.dlg&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeakDlg(it.dlg,it.dmeta); },250);
   else if(it.listen&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeak(it.listen); },250);
 }
 function jPick(i){
@@ -1808,7 +1819,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="jstart"){ jStart(b.dataset.s); return; }
   if(a==="jpick"){ jPick(+b.dataset.i); return; }
   if(a==="jnext"){ jNext(); return; }
-  if(a==="jplay"){ const it=Q&&Q.items&&Q.items[Q.i]; if(it&&it.dlg) jSpeakDlg(it.dlg); else if(it&&it.listen) jSpeak(it.listen); return; }
+  if(a==="jplay"){ const it=Q&&Q.items&&Q.items[Q.i]; if(it&&it.dlg) jSpeakDlg(it.dlg,it.dmeta); else if(it&&it.listen) jSpeak(it.listen); return; }
   if(a==="jretry"){ Q={mode:"jlpt",lv:Q.lv,sec:Q.sec,items:Q.wrong.slice(),i:0,score:0,sel:null,done:false,by:{},wrong:[]}; document.body.classList.remove("inr"); renderJ(); return; }
   if(a==="start") startQuiz(b.dataset.mode,null,+$("qn").value);
   else if(a==="flip"){ Q.flip=true; renderQ(); }
