@@ -76,25 +76,25 @@ const arcade={bpm:156,div:2,len:64,play(i,t){
 }};
 
 /* ---- 풍성한 (판타지 · 악기 중심) : 소리가 많아도 부딪히지 않게, 모든 악기가 '지금 화음의 구성음'만 연주해요.
-   Am | Fmaj7 | C | G | Am | Fmaj7 | Dm | E  (화음 아래에서 베이스만 바뀌는 단순하고 맑은 진행, 반음 부딪힘 없음)
+   C | G | Am | F | C | G | F | G (밝은 장조)  (화음 아래에서 베이스만 바뀌는 단순하고 맑은 진행, 반음 부딪힘 없음)
    현악 패드 · 합창 · 하프 아르페지오 · 베이스 · 첼레스타(종) · 플루트 · 팀파니 · 마법의 상행 글리산도(해당 화음의 구성음으로만) ---- */
 function choir(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1400;
   g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.4); g.gain.linearRampToValueAtTime(.0001,t+dur); l.frequency.value=5; lg.gain.value=midi(m)*.004; l.connect(lg);
   [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
   l.start(t); l.stop(t+dur+.05); f.connect(g); g.connect(out()); }
 const RC=[
- {b:45,up:[60,64,69]},   // Am  (A C E)
- {b:41,up:[60,64,69]},   // Fmaj7 = F 베이스 위에 Am 삼화음
  {b:48,up:[60,64,67]},   // C
  {b:43,up:[59,62,67]},   // G
  {b:45,up:[60,64,69]},   // Am
- {b:41,up:[60,64,69]},   // Fmaj7
- {b:50,up:[57,62,65]},   // Dm  (A D F)
- {b:40,up:[56,59,64]}];  // E   (G# B E)
-const FLU=[[0,76,12],[16,81,8],[24,76,4],[28,72,4],[32,79,12],[44,76,4],[48,74,8],[56,71,8],[64,81,12],[80,77,8],[88,81,8],[96,77,8],[104,74,8],[112,80,8],[120,76,8]];
+ {b:41,up:[60,65,69]},   // F
+ {b:48,up:[60,64,67]},   // C
+ {b:43,up:[59,62,67]},   // G
+ {b:41,up:[60,65,69]},   // F
+ {b:43,up:[59,62,67]}];  // G
+const FLU=[[0,79,12],[12,84,4],[16,83,8],[24,79,8],[32,81,8],[40,84,8],[48,81,8],[56,77,8],[64,76,8],[72,79,4],[76,84,4],[80,86,8],[88,83,8],[96,84,8],[104,81,8],[112,83,8],[120,79,8]];
 const HP=[0,1,2,1,2,1,2,1, 0,1,2,1,0,1,2,1];
-const rich={bpm:80,div:4,len:128,play(i,t){
-  const bar=i>>4,k=i&15,d=60/80/4,c=RC[bar],up=c.up;
+const rich={bpm:92,div:4,len:128,play(i,t){
+  const bar=i>>4,k=i&15,d=60/92/4,c=RC[bar],up=c.up;
   if(k===0){ up.forEach(m=>pad(m,t,d*16,.075)); choir(up[0],t,d*16,.02); choir(up[2],t,d*16,.016); }     // 현악 패드 + 합창(구성음만)
   if(k===0) tone(c.b,t,d*7,"triangle",.9,out());                                                          // 베이스: 근음
   if(k===8) tone(c.b+7,t,d*5,"triangle",.65,out());                                                       // 베이스: 5도
