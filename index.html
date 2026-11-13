@@ -616,7 +616,7 @@ body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;wi
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media(max-width:560px){.kj{grid-template-columns:48px 1fr}.dh .big{font-size:38px}.qw{font-size:44px}.card .w{font-size:30px}}
-.jscript{margin:14px 0;padding:12px 14px;border:1px solid var(--line,#ccc);border-radius:10px;text-align:left;font-size:15px;line-height:1.9}.jscript>b{display:block;font-size:12px;opacity:.6;margin-bottom:4px}.jwho{display:inline-block;min-width:1.6em;text-align:center;font-size:12px;border-radius:6px;background:rgba(0,0,0,.08);margin-right:4px}</style>
+.jscript{margin:14px 0;padding:12px 14px;border:1px solid var(--line,#ccc);border-radius:10px;text-align:left;font-size:15px;line-height:1.9}.jscript>b{display:block;font-size:12px;opacity:.6;margin-bottom:4px}.jwho{display:inline-block;min-width:1.6em;text-align:center;font-size:12px;border-radius:6px;background:rgba(0,0,0,.08);margin-right:4px}.jcredit{margin:26px 0 4px;text-align:center;font-size:11px;opacity:.38}</style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
 try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";}catch(e){}
@@ -642,9 +642,9 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
 <script src="jlpt-readq.js"></script>
-<script src="jlpt-reading.js"></script>
+<script src="jlpt-reading.js?v=2"></script>
 <script src="jlpt-listen.js?v=2"></script>
-<script src="listen-audio.js?v=1"></script>
+<script src="listen-audio.js?v=2"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1659,7 +1659,7 @@ function jStop(){ jTok++; if(window.speechSynthesis) speechSynthesis.cancel(); i
 const jRate=(lv,news)=>news?1:({N5:.85,N4:.9,N3:.95}[lv]||1);
 const jAudioKey=(who,text,rate)=>{ let h=5381; const s=who+"|"+text+"|"+rate; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h.toString(36); };
 function jAudioList(lines,meta){ const A=window.LISTEN_AUDIO||{}; if(!meta) return null; const rate=jRate(meta.lv,meta.news);
-  const ks=lines.map(([w,t])=>jAudioKey(w,plain(t),rate)); return ks.every(k=>A[k])?ks.map(k=>"audio/listen/"+k+".mp3"):null; }
+  const ks=lines.map(([w,t])=>jAudioKey(w,plain(t),rate)); return ks.every(k=>A[k])?ks.map(k=>"audio/listen/"+k+".m4a"):null; }
 function jPlayFiles(urls){ const tok=jTok; let i=0;
   const next=()=>{ if(tok!==jTok||i>=urls.length) return; const a=new Audio(urls[i++]); jAud=a;
     a.onended=()=>{ if(tok===jTok) setTimeout(next,450); }; a.onerror=()=>{ if(tok===jTok) setTimeout(next,0); }; a.play().catch(()=>{}); };
@@ -1733,7 +1733,7 @@ function renderJ(){
   const rv=done?`<div class="reveal ${ok?"ok":"ng"}"><div class="rvt">${ok?"정답이에요!":"아쉬워요"}</div><div>${it.exp}</div>
     <div class="qbtns"><button class="cta" data-act="jnext">${Q.i+1>=Q.items.length?"결과 보기":"계속하기"}</button></div></div>`:"";
   const pr=`<div class="sub jprompt ${it.sec==="read"?"jq2":""}" style="margin-top:10px">${it.ph?it.prompt:E(it.prompt)}</div>`;
-  $("quizView").innerHTML=`<div class="qbox">${head}${it.sec==="read"?mid+pr:pr+mid}${opts}${rv}</div>`;
+  $("quizView").innerHTML=`<div class="qbox">${head}${it.sec==="read"?mid+pr:pr+mid}${opts}${rv}${it.dlg&&(window.LISTEN_AUDIO&&Object.keys(window.LISTEN_AUDIO).length)?`<div class="jcredit">VOICEVOX:春日部つむぎ / VOICEVOX:玄野武宏</div>`:""}</div>`;
   if(it.dlg&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeakDlg(it.dlg,it.dmeta); },250);
   else if(it.listen&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeak(it.listen); },250);
 }
@@ -1761,7 +1761,7 @@ function jResult(){
 }
 
 /* ---------- JLPT 독해: 시험 구성(단문·중문·장문·통합 이해·정보 검색) ---------- */
-const RDG_PLAN={N5:{short:2,mid:1,search:1},N4:{short:2,mid:1,search:1},N3:{short:2,mid:1,long:1,search:1},N2:{short:2,mid:1,integ:1,long:1,search:1},N1:{short:1,mid:1,long:1,integ:1,search:1}};
+const RDG_PLAN={N5:{short:2,mid:1,long:1,search:1},N4:{short:2,mid:1,long:1,search:1},N3:{short:2,mid:1,long:1,search:1},N2:{short:2,mid:1,integ:1,long:1,search:1},N1:{short:1,mid:1,long:1,integ:1,search:1}};
 const RDG_NAME={short:"단문",mid:"중문",long:"장문",integ:"통합 이해",search:"정보 검색"};
 const RDG_KIND={short:"단문(短文)",mid:"중문(中文)",long:"장문(長文)",integ:"통합 이해(統合理解)",search:"정보 검색(情報検索)"};
 function jrdgBlock(lv){
