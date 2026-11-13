@@ -75,41 +75,46 @@ const arcade={bpm:156,div:2,len:64,play(i,t){
   if(bar===7&&k===6) laser(t,1800,260,d*1.8,.07);
 }};
 
-/* ---- 풍성한 (웅장하고 설레는 · 동화 모험) : 'Imagination' 곡의 분위기(웅장하고 설레는 느낌)로 새로 작곡한 오리지널 곡. D장조, 점점 커지는 구성.
-   앞 8마디: D | A | Bm | G | D | A | G | A (조용히 시작해 현악이 쌓여요)  뒤 8마디: Em | G | D | A | Bm | G | A | D (호른·합창·심벌이 더해져 웅장하게)
-   모든 악기가 지금 화음의 구성음만 연주하고 반음이 부딪히지 않게 배치했어요 ---- */
-function brass(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(), f=c.createBiquadFilter(); o.type="sawtooth"; o.frequency.value=midi(m);
-  f.type="lowpass"; f.frequency.setValueAtTime(350,t); f.frequency.linearRampToValueAtTime(1700,t+dur*.55); f.frequency.linearRampToValueAtTime(600,t+dur);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.45); g.gain.linearRampToValueAtTime(.0001,t+dur); o.connect(f); f.connect(g); g.connect(out()); o.start(t); o.stop(t+dur+.05); }
-function violin(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), f=c.createBiquadFilter(), g=c.createGain(), l=c.createOscillator(), lg=c.createGain(); o.type="sawtooth"; o.frequency.value=midi(m); f.type="lowpass"; f.frequency.value=2400;
+/* ---- 풍성한 : 'Yumeiro Patissiere OST - Imagination' 음원을 분석해 같은 뼈대로 새로 작곡한 오리지널 곡 (선율은 옮기지 않았어요)
+   분석 결과: 템포 약 110 BPM · 4박 · D장조(D·G·A 위주, D·Dsus 상태가 길게 유지) · 화음에 E7·A7·Em7·G와 빌려온 Gm이 번갈아 나옴
+   · 첫 8초는 반짝이는 고음 · 음량은 약 24초와 64초 부근에서 두 번 커짐 · 에너지는 800~1800Hz의 중음역에 몰려 따뜻함(고음은 적음) · 저음(베이스) 비중 약 28%
+   구성: 반짝이는 도입 4마디 → 주제 8마디 → 마무리 4마디 (16마디). 모든 악기가 현재 화음의 구성음만 연주해요 ---- */
+function violin(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), f=c.createBiquadFilter(), g=c.createGain(), l=c.createOscillator(), lg=c.createGain(); o.type="sawtooth"; o.frequency.value=midi(m); f.type="lowpass"; f.frequency.value=2200;
   l.frequency.value=5.2; lg.gain.value=midi(m)*.004; l.connect(lg); lg.connect(o.frequency);
   g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.14); g.gain.setValueAtTime(vol,t+Math.max(.2,dur-.18)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
   o.connect(f); f.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.4; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05); }
-function choirR(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1500;
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.4); g.gain.linearRampToValueAtTime(.0001,t+dur); l.frequency.value=5; lg.gain.value=midi(m)*.004; l.connect(lg);
-  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
-  l.start(t); l.stop(t+dur+.05); f.connect(g); g.connect(out()); }
-const CD={D:{b:38,up:[62,66,69]},A:{b:45,up:[61,64,69]},Bm:{b:47,up:[62,66,71]},G:{b:43,up:[62,67,71]},Em:{b:40,up:[59,64,67]}};
-const PROG=["D","A","Bm","G","D","A","G","A","Em","G","D","A","Bm","G","A","D"];
+const RC=[
+ {b:38,up:[66,69,73,76]},   // Dmaj9
+ {b:38,up:[62,66,69,73]},   // Dmaj7
+ {b:43,up:[62,67,71,74]},   // G
+ {b:40,up:[62,64,68,71]},   // E7
+ {b:38,up:[62,66,69,74]},   // D
+ {b:43,up:[58,62,67,70]},   // Gm (빌려온 단조 화음)
+ {b:42,up:[62,66,69,74]},   // D/F#
+ {b:45,up:[61,64,67,73]},   // A7
+ {b:40,up:[59,62,67,71]},   // Em7
+ {b:45,up:[61,64,67,73]},   // A7
+ {b:38,up:[62,66,69,73]},   // Dmaj7
+ {b:43,up:[62,67,71,74]},   // G
+ {b:38,up:[62,66,69,74]},   // D
+ {b:43,up:[58,62,67,70]},   // Gm
+ {b:42,up:[62,66,69,74]},   // D/F#
+ {b:45,up:[62,64,67,69]}];  // A7sus4 → A7
+const A7T=[61,64,67,73];
 const RM=[
- [0,74,2],[2,78,2],[4,81,4],  [8,81,2],[10,85,2],[12,88,4],  [16,86,2],[18,83,2],[20,78,4],  [24,79,2],[26,83,2],[28,86,4],
- [32,86,2],[34,81,2],[36,78,4],  [40,85,2],[42,81,2],[44,88,4],  [48,83,2],[50,86,2],[52,79,4],  [56,85,4],[60,81,4],
- [64,83,4],[68,79,4],  [72,86,4],[76,83,4],  [80,86,2],[82,90,2],[84,86,4],  [88,88,4],[92,85,4],
- [96,86,2],[98,83,2],[100,78,4],  [104,79,2],[106,83,2],[108,86,4],  [112,88,4],[116,85,4],  [120,86,8]];
-const HP2=[0,1,2,1,2,1,2,1];
-const rich={bpm:112,div:2,len:128,play(i,t){
-  const bar=i>>3,k=i&7,d=60/112/2,c=CD[PROG[bar]],up=c.up,big=bar>=8, v=bar<4?.65:bar<8?.85:1;
-  if(k===0){ up.forEach(m=>pad(m,t,d*8,.07*v)); if(bar>=4) up.forEach(m=>pad(m-12,t+.04,d*8,.05*v)); tone(c.b,t,d*7,"triangle",.9*v,out()); }   // 현악(점점 두꺼워짐) + 첼로 베이스
-  if(k===4) tone(c.b+7,t,d*3,"triangle",.6*v,out());
-  pluck(up[HP2[k]]+(k%4===3?12:0),t,.12*v,1.4);                                                          // 하프 아르페지오
-  if(k===0&&bar%2===0) bell(up[2]+24,t,d*6,.05*v);
-  if(big&&k===0){ brass(c.b+12,t,d*8,.07); brass(up[2]-12,t,d*8,.05); choirR(up[0],t,d*8,.02); choirR(up[2],t,d*8,.017); }   // 호른 + 합창(후반)
-  if(k===0&&(bar===0||bar===8)) kick(t,.7,true);                                                         // 팀파니
-  if(bar===8&&k===0) hit(t,1.2,.18,5000,.8,"highpass");                                                  // 심벌 크래시
-  if(big&&(k===0||k===4)) kick(t,.4,true);
-  if(bar===7&&k>=4) snare(t,.15+.09*(k-4));                                                              // 후반 진입 전 스네어 롤
-  if(bar===15&&k>=4) kick(t,.25+.12*(k-4),true);
-  noteAt(RM,i,(m,len)=>{ if(big){ violin(m,t,d*len*.97,.15); flute(m+12,t,d*len*.9,.06); bell(m+12,t,d*len,.05); } else { flute(m,t,d*len*.95,.17); violin(m,t,d*len*.97,bar>=4?.07:.0001); } });
+ [32,78,2],[34,81,2],[36,86,2],[38,81,2],  [40,79,2],[42,82,2],[44,86,2],[46,82,2],  [48,78,2],[50,81,2],[52,86,2],[54,81,2],  [56,85,2],[58,88,2],[60,85,2],[62,81,2],
+ [64,83,2],[66,79,2],[68,83,2],[70,79,2],  [72,81,2],[74,85,2],[76,88,2],[78,85,2],  [80,86,4],[84,81,2],[86,78,2],  [88,83,2],[90,86,2],[92,79,2],[94,83,2],
+ [96,81,2],[98,86,2],[100,90,4],  [104,86,2],[106,82,2],[108,79,4],  [112,81,2],[114,78,2],[116,74,4],  [120,81,2],[122,85,2],[124,88,4]];
+const AP=[0,1,2,3,2,1,2,1];
+const rich={bpm:110,div:2,len:128,play(i,t){
+  const bar=i>>3,k=i&7,d=60/110/2,c=RC[bar], up=(bar===15&&k>=4)?A7T:c.up, v=bar<4?.6:bar<8?.85:bar<12?1:.85;
+  if(k===0){ up.forEach(m=>{ pad(m+12,t,d*8,.07*v); pad(m,t,d*8,.035*v); }); tone(c.b,t,d*7,"triangle",.85*v,out()); }                    // 현악 패드 + 베이스(저음 비중)
+  if(k===4) tone(c.b+(bar%2?0:7),t,d*3.5,"triangle",.6*v,out());
+  if(bar<4){ bell(up[AP[k]%4]+12,t,d*3,.13); pluck(up[AP[k]%4]+12,t,.14,1.2); if(k===0) bell(up[3]+24,t,d*6,.1); }   // 도입: 반짝이는 고음 아르페지오
+  else { pluck(up[AP[k]%4]+12,t,.17*v,1.3); if(k%2===1) tone(up[(k>>1)%4]+12,t,d*.45,"triangle",.1*v,out()); }   // 피아노 풍 아르페지오 + 피치카토
+  if(bar>=4&&(k===0||k===4)) kick(t,.22*v,true); if(bar>=8&&(k===2||k===6)) snare(t,.12); if(k%2===0) hat(t,bar<4?.07:.12);
+  if(bar===15&&k>=4) snare(t,.15+.06*(k-4));
+  noteAt(RM,i,(m,len)=>{ if(bar<8){ flute(m,t,d*len*.95,.3); bell(m,t,d*len,.06); } else { violin(m,t,d*len*.97,.26); flute(m+12,t,d*len*.9,.1); bell(m+12,t,d*len,.08); } });
 }};
 
 /* ---- 일본풍 (동양 판타지) : 게임 속 '일본풍 동양 판타지' 음악 느낌. 코토의 흐르는 아르페지오 + 샤쿠하치 선율 + 현악·합창 패드 + 부드러운 북과 종.
