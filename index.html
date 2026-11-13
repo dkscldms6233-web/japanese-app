@@ -46,7 +46,7 @@ h1 span{color:var(--accent)}
 @media(max-width:699px){
   body{padding-bottom:76px}
   .views{position:fixed;left:0;right:0;bottom:0;z-index:20;border-radius:0;background:var(--card);border-top:1px solid var(--line);
-    display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+    display:grid;grid-template-columns:repeat(6,1fr);gap:0;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
   .vb{flex-direction:column;gap:0;font-size:12px;padding:6px 0;border-radius:8px}
   .vb i{font-size:20px}
   .vb.on{box-shadow:none;color:var(--accent);background:var(--accent-soft)}
@@ -62,8 +62,8 @@ input[type=search]{flex:1;min-width:200px;padding:11px 14px;border:1px solid var
 .opts{display:flex;gap:6px 16px;flex-wrap:wrap;align-items:center;margin:6px 0 2px}
 label.tg{font-size:14px;color:var(--sub);display:flex;gap:6px;align-items:center;cursor:pointer}
 select,textarea,.af input{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:15px}
-[data-view=quiz] .list-only{display:none}
-[data-view=quiz] .levels,[data-view=quiz] .opts{display:none}
+[data-view=quiz] .list-only,[data-view=exam] .list-only,[data-view=game] .list-only{display:none}
+[data-view=quiz] .levels,[data-view=quiz] .opts,[data-view=exam] .levels,[data-view=exam] .opts,[data-view=game] .levels,[data-view=game] .opts{display:none}
 [data-view=list][data-stage=pick] :is(.list-only,.levels,.opts){display:none}
 .pick{max-width:820px;margin:10px auto}
 .pick h2{margin:6px 0 2px}
@@ -637,6 +637,7 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .hsent .lab{display:block;font-size:12px;color:var(--accent);font-weight:700;margin-bottom:2px}
 .hsent .ja{display:block;font-size:20px;line-height:1.9;font-weight:600;letter-spacing:-.01em}
 .hsent .ko{display:block;font-size:13.5px;color:var(--sub);line-height:1.45;margin-top:1px}
+.lvrow{display:flex;align-items:center;gap:10px;margin:6px 0 14px}.lvrow>span{font-weight:700;font-size:14px;flex:none}.lvrow .jlv{flex:1;margin:0}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -679,6 +680,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
       <button class="vb on" data-view="home"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></i><span>홈</span></button>
       <button class="vb" data-view="list"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg></i><span>단어장</span></button>
       <button class="vb" data-view="quiz"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></i><span>퀴즈</span></button>
+      <button class="vb" data-view="exam"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>모의시험</span></button>
       <button class="vb" data-view="news"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></i><span>뉴스</span></button>
       <button class="vb" data-view="stats"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></i><span>기록</span></button>
     </nav>
@@ -1271,41 +1273,57 @@ function mkOrd(w){
 }
 const GFONTS=[["round","둥근 글꼴"],["hand","손글씨"],["soft","부드러운 고딕"],["pop","말랑 필기체"]];
 const gfont = () => GFONTS.some(f=>f[0]===prefs.gfont) ? prefs.gfont : "round";
+const QV = v => v==="quiz"||v==="exam"||v==="game";
+function quizTile(act,attr,cls,icon,title,sub){ return `<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`; }
+function lvRow(jl,label){ return `<div class="lvrow"><span>${label}</span><div class="jlv">${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div></div>`; }
 function quizSetup(){
   stopG(); document.body.classList.remove("inq","inr");
   level="전체"; lvSel=new Set([jlv()]); posf=""; $("posf").value="";
-  const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length;
-  const jl=jlv(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
-  const tile=(act,attr,cls,icon,title,sub)=>`<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`;
+  if(view==="exam") return examSetup(); if(view==="game") return gameSetup();
+  const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlv();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2></div>
    <button class="kentry" data-kana="open" style="margin:0 0 14px"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자 입문</b><small>히라가나·가타카나를 글자표와 행별 레슨으로 처음부터</small></span><span class="ka">›</span></button>
-   <div class="jlpt"><h3>${ic("target")}JLPT 모의시험</h3>
-    <p class="sub" style="margin:0">시험 구성대로 문자·어휘, 문법, 독해, 청해를 연습해요. 이 앱이 직접 만든 연습 문제예요.</p>
-    <div class="jlv">${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div>
-    <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 풀기</button>
-    <div class="tiles2">
-     ${tile("jstart",'data-s="vocab"',"c1","vocab","문자·어휘","한자 읽기 · 문맥 · 유의 표현")}
-     ${tile("jstart",'data-s="gram"',"c2","grammar","문법","문장 빈칸 채우기")}
-     ${tile("jstart",'data-s="listen"',"c3","ear","청해","대화·뉴스를 듣고 답하기")}
-     ${tile("jstart",'data-s="pair"',"c4","link","유의 표현","뜻이 가까운 말과 차이점")}
-    </div>
-    ${jrdgBlock(jl)}</div>
+   ${lvRow(jl,"급수")}
    <div class="qm-sec">${ic("pencil")}단어 연습<small>${jl} 단어 ${n.toLocaleString()}개로 풀어요</small></div>
-   
    <div class="tiles2">
-    ${tile("start",'data-mode="card"',"c1","cards","플래시카드","보고 떠올린 뒤 뒤집어서 확인")}
-    ${tile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
-    ${tile("start",'data-mode="reading"',"c3","abc","읽기 고르기","후리가나 없는 한자의 읽기")}
-    ${tile("start",'data-mode="order"',"c4","order","문장 순서",`조각을 맞춰 문장 만들기 · ${no+sentPool().length}문제`)}
+    ${quizTile("start",'data-mode="card"',"c1","cards","플래시카드","보고 떠올린 뒤 뒤집어서 확인")}
+    ${quizTile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
+    ${quizTile("start",'data-mode="reading"',"c3","abc","읽기 고르기","후리가나 없는 한자의 읽기")}
+    ${quizTile("start",'data-mode="order"',"c4","order","문장 순서",`조각을 맞춰 문장 만들기 · ${no+sentPool().length}문제`)}
    </div>
-   <div class="qm-sec">${ic("game")}게임<small>소리와 효과가 나와요</small></div>
+   <details class="qset"><summary>${ic("gear")}문제 수</summary>
+    <label class="tg"><span>한 번에 풀 문제 수</span><select id="qn"><option value="10">10개</option><option value="20">20개</option><option value="0">전체</option></select></label>
+   </details>
+  </div>`;
+}
+function examSetup(){
+  const jl=jlv();
+  $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
+   <div class="qm-h"><h2>JLPT 모의시험</h2></div>
+   <p class="sub" style="margin:0 0 10px">시험 구성대로 문자·어휘, 문법, 독해, 청해를 연습해요. 이 앱이 직접 만든 연습 문제예요.</p>
+   ${lvRow(jl,"급수")}
+   <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 풀기</button>
+   <div class="tiles2" style="margin-top:14px">
+    ${quizTile("jstart",'data-s="vocab"',"c1","vocab","문자·어휘","한자 읽기 · 문맥 · 유의 표현")}
+    ${quizTile("jstart",'data-s="gram"',"c2","grammar","문법","문장 빈칸 채우기")}
+    ${quizTile("jstart",'data-s="listen"',"c3","ear","청해","대화·뉴스를 듣고 답하기")}
+    ${quizTile("jstart",'data-s="pair"',"c4","link","유의 표현","뜻이 가까운 말과 차이점")}
+   </div>
+   <div style="margin-top:14px">${jrdgBlock(jl)}</div>
+  </div>`;
+}
+function gameSetup(){
+  const jl=jlv(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
+  $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
+   <div class="qm-h"><h2>게임</h2></div>
+   <p class="sub" style="margin:0 0 10px">소리와 효과가 나와요. 고른 급수의 단어로 게임을 해요.</p>
+   ${lvRow(jl,"급수")}
    <div class="gcards">
     <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b><small>제한 시간 100초 · 틀리면 3초 감소 · 6쌍을 모두 맞히면 12초 추가</small>${bb("match2")}</span></button>
     <button class="gc" data-act="gstart" data-g="time"><span class="gi">${MONKEY}</span><span><b>60초 타임어택</b><small>60초 안에 최대한 많이 맞혀요 · 3번 틀리면 끝</small>${bb("time")}</span></button>
    </div>
-   <details class="qset"><summary>${ic("gear")}퀴즈 설정</summary>
-    <label class="tg"><span>문제 수</span><select id="qn"><option value="10">10개</option><option value="20">20개</option><option value="0">전체</option></select></label>
+   <details class="qset"><summary>${ic("gear")}게임 설정</summary>
     <label class="tg"><span>게임 소리 (배경음악·효과음)</span><input type="checkbox" id="gsnd" ${soundOn()?"checked":""}></label>
     <label class="tg"><span>게임 글꼴</span><select id="gfsel">${GFONTS.map(([v,nm])=>`<option value="${v}" ${gfont()===v?"selected":""}>${nm}</option>`).join("")}</select></label>
    </details>
@@ -1479,7 +1497,7 @@ function rankOf(score,type){
   return {name:RANKS[i], next:L[i+1]!=null?{name:RANKS[i+1],gap:L[i+1]-score}:null};
 }
 function gTick(){
-  if(!G || view!=="quiz"){ stopG(); return; }
+  if(!G || !QV(view)){ stopG(); return; }
   const left=Math.max(0,G.end-Date.now()), t=$("gt"), bar=$("gbar");
   if(t) t.textContent=Math.ceil(left/1000)+"초";
   setMbar(left);
@@ -1508,7 +1526,7 @@ function gResult({title,big,note,isNew,seen,marks,type,score}){
 function gCountdown(rule,go){
   stopG(); Q=null; G={type:"cd"}; let n=3;
   const tick=()=>{
-    if(!G||G.type!=="cd"||view!=="quiz") return;
+    if(!G||G.type!=="cd"||!QV(view)) return;
     $("quizView").innerHTML=`<div class="qbox gbox cdbox"><div class="cdmk">${MONKEY}</div><div class="sub">준비하세요</div><div class="cdnum">${n>0?n:"시작!"}</div><p class="sub">${rule}</p><div class="qbtns"><button class="pill" data-act="gquit">취소</button></div></div>`;
     sfx(n>0?"tick":"go");
     if(n===0){ gFlash=setTimeout(()=>{ if(G&&G.type==="cd") go(); },600); return; }
@@ -2129,8 +2147,8 @@ $("statsView").addEventListener("click",e=>{
 function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
-  ["home","today","list","quiz","news","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==v; });
-  document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===(v==="today"?"home":v==="read"?"news":v)));
+  const sec=QV(v)?"quiz":v; ["home","today","list","quiz","news","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
+  document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===(v==="today"||v==="game"?"home":v==="read"?"news":v)));
   refresh(); window.scrollTo(0,0);
 }
 $("logo").addEventListener("click",()=>setView("home"));
@@ -2168,7 +2186,11 @@ function renderHome(){
    <button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>
    <div class="crow">
      <button class="cta sec" data-hq="review">${nw?`오답 복습 ${nw}`:"오답 복습"}</button>
-     <button class="cta sec" data-go="quiz">퀴즈 · 게임</button>
+     <button class="cta sec" data-go="quiz">퀴즈</button>
+   </div>
+   <div class="crow">
+     <button class="cta sec" data-go="exam">JLPT 모의시험</button>
+     <button class="cta sec" data-go="game">게임</button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2282,8 +2304,8 @@ $("addDlg").addEventListener("click",e=>{ if(e.target===$("addDlg") || e.target.
 document.addEventListener("keydown",e=>{
   if(["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName)) return;
   if($("dlg").open){ if(e.key==="ArrowLeft") step(-1); else if(e.key==="ArrowRight") step(1); return; }
-  if(G && G.type==="time" && view==="quiz" && !$("addDlg").open){ if(/^[1-4]$/.test(e.key)) timePick(+e.key-1); return; }
-  if($("addDlg").open || view!=="quiz" || !Q || Q.done) return;
+  if(G && G.type==="time" && QV(view) && !$("addDlg").open){ if(/^[1-4]$/.test(e.key)) timePick(+e.key-1); return; }
+  if($("addDlg").open || !QV(view) || !Q || Q.done) return;
   if(Q.mode==="jlpt"){ if(/^[1-4]$/.test(e.key)) jPick(+e.key-1); else if(e.key===" "&&Q.sel!==null){ e.preventDefault(); jNext(); } return; }
   if(Q.mode==="card"){
     if(e.key===" "){ e.preventDefault(); if(!Q.flip){ Q.flip=true; renderQ(); } }
