@@ -75,43 +75,45 @@ const arcade={bpm:156,div:2,len:64,play(i,t){
   if(bar===7&&k===6) laser(t,1800,260,d*1.8,.07);
 }};
 
-/* ---- 풍성한 (판타지 · 악기 중심) : 선율은 아주 조금, 악기를 겹겹이 쌓았어요.
-   Am9 | Fmaj7#11 | Cmaj7#11 | Em9 | Am9 | Dm9 | B♭maj7#11 | Esus4→E7(♭9)  (리디안 · 프리지안 도미넌트의 신비로운 색)
-   현악·합창·호른 패드 / 하프 아르페지오 / 첼로 베이스 / 클라리넷 피치카토 / 첼레스타·종 / 플루트 / 팀파니·트라이앵글 / 마법의 상행 글리산도 ---- */
-function choir(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1500;
+/* ---- 풍성한 (판타지 · 악기 중심) : 소리가 많아도 부딪히지 않게, 모든 악기가 '지금 화음의 구성음'만 연주해요.
+   Am | Fmaj7 | C | G | Am | Fmaj7 | Dm | E  (화음 아래에서 베이스만 바뀌는 단순하고 맑은 진행, 반음 부딪힘 없음)
+   현악 패드 · 합창 · 하프 아르페지오 · 베이스 · 첼레스타(종) · 플루트 · 팀파니 · 마법의 상행 글리산도(해당 화음의 구성음으로만) ---- */
+function choir(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1400;
   g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.4); g.gain.linearRampToValueAtTime(.0001,t+dur); l.frequency.value=5; lg.gain.value=midi(m)*.004; l.connect(lg);
-  [-6,0,6].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
+  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
   l.start(t); l.stop(t+dur+.05); f.connect(g); g.connect(out()); }
-function brass(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(), f=c.createBiquadFilter(); o.type="sawtooth"; o.frequency.value=midi(m);
-  f.type="lowpass"; f.frequency.setValueAtTime(300,t); f.frequency.linearRampToValueAtTime(1800,t+dur*.6); f.frequency.linearRampToValueAtTime(500,t+dur);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.5); g.gain.linearRampToValueAtTime(.0001,t+dur); o.connect(f); f.connect(g); g.connect(out()); o.start(t); o.stop(t+dur+.05); }
 const RC=[
- {b:45,up:[60,64,67,71]},{b:41,up:[57,60,64,71]},{b:48,up:[59,64,66,67]},{b:40,up:[59,62,66,67]},
- {b:45,up:[60,64,67,71]},{b:50,up:[60,64,65,69]},{b:46,up:[58,62,65,69]},{b:40,up:[59,62,64,69]}];
-const E7=[56,59,62,65];
-const FLU=[[0,76,12],[16,77,8],[24,76,4],[28,72,4],[32,79,12],[44,76,4],[48,74,8],[56,76,8],[64,81,12],[80,81,8],[88,77,8],[96,82,8],[104,79,8],[112,80,8],[120,76,8]];
-const MAGIC=[69,72,76,79,81,84,88,91];
-const HP=[0,1,2,3,2,1,3,2, 0,1,2,3,1,2,3,2];
+ {b:45,up:[60,64,69]},   // Am  (A C E)
+ {b:41,up:[60,64,69]},   // Fmaj7 = F 베이스 위에 Am 삼화음
+ {b:48,up:[60,64,67]},   // C
+ {b:43,up:[59,62,67]},   // G
+ {b:45,up:[60,64,69]},   // Am
+ {b:41,up:[60,64,69]},   // Fmaj7
+ {b:50,up:[57,62,65]},   // Dm  (A D F)
+ {b:40,up:[56,59,64]}];  // E   (G# B E)
+const FLU=[[0,76,12],[16,81,8],[24,76,4],[28,72,4],[32,79,12],[44,76,4],[48,74,8],[56,71,8],[64,81,12],[80,77,8],[88,81,8],[96,77,8],[104,74,8],[112,80,8],[120,76,8]];
+const HP=[0,1,2,1,2,1,2,1, 0,1,2,1,0,1,2,1];
 const rich={bpm:80,div:4,len:128,play(i,t){
-  const bar=i>>4,k=i&15,d=60/80/4,c=RC[bar],nx=RC[(bar+1)%8], up=(bar===7&&k>=8)?E7:c.up;
-  if(k===0){ c.up.forEach(m=>pad(m-12,t,d*16,.075)); c.up.forEach(m=>pad(m,t+.05,d*16,.04));            // 현악 패드(두 옥타브)
-    choir(c.up[0]+12,t,d*16,.02); choir(c.up[2]+12,t,d*16,.016);                                          // 합창
-    brass(c.b+12,t,d*16,.06); }                                                                           // 호른 스웰
-  if(k===0) tone(c.b,t,d*7,"triangle",.9,out());                                                          // 첼로 베이스
-  if(k===8) tone(c.b+7,t,d*5,"triangle",.65,out());
-  if(k===14) tone(nx.b+(nx.b>c.b?-1:1),t,d*2,"triangle",.5,out());
+  const bar=i>>4,k=i&15,d=60/80/4,c=RC[bar],up=c.up;
+  if(k===0){ up.forEach(m=>pad(m,t,d*16,.075)); choir(up[0],t,d*16,.02); choir(up[2],t,d*16,.016); }     // 현악 패드 + 합창(구성음만)
+  if(k===0) tone(c.b,t,d*7,"triangle",.9,out());                                                          // 베이스: 근음
+  if(k===8) tone(c.b+7,t,d*5,"triangle",.65,out());                                                       // 베이스: 5도
   pluck(up[HP[k]]+(k%4===3?12:0),t,.13,1.5);                                                              // 하프 아르페지오
-  if(k%4===2) tone(up[(k>>2)%4]+12,t,d*.8,"triangle",.07,out());                                            // 클라리넷 풍 피치카토
-  if(k===0||k===8) bell(up[(k>>3)*2+1]+24,t,d*8,.07);                                                     // 첼레스타·종
-  if(k===12) bell(up[2]+36,t,d*4,.03);                                                                      // 트라이앵글 풍 아주 높은 종
-  if(k===0&&(bar===0||bar===4)) kick(t,.65,true);                                                          // 팀파니
+  if(k===0||k===8) bell(up[k===0?2:1]+24,t,d*8,.065);                                                     // 첼레스타·종(구성음)
+  if(k===0&&(bar===0||bar===4)) kick(t,.6,true);                                                          // 팀파니
   if(bar===7&&k>=12) kick(t,.25+.14*(k-12),true);
-  if(k%4===2) hat(t,.06);
-  if((bar===3&&k>=10&&k<=15)||(bar===7&&k>=6&&k<=13)){ const j=bar===3?k-10:k-6; const m=MAGIC[Math.min(7,j)]; pluck(m,t,.13,1.3); bell(m+12,t,d*3,.05); }   // 마법의 상행 글리산도
-  noteAt(FLU,i,(m,len)=>{ flute(m,t,d*len*.95,.15); });                                                   // 플루트(아주 드문 선율)
+  if(k%4===2) hat(t,.05);
+  if((bar===3&&k>=10&&k<=15)||(bar===7&&k>=6&&k<=13)){ const j=bar===3?k-10:k-6, run=[up[0],up[1],up[2],up[0]+12,up[1]+12,up[2]+12,up[0]+24,up[1]+24]; const m=run[Math.min(7,j)]; pluck(m,t,.12,1.3); bell(m+12,t,d*3,.04); }  // 상행 글리산도(구성음만)
+  noteAt(FLU,i,(m,len)=>{ flute(m,t,d*len*.95,.15); });                                                   // 플루트(드문 선율, 모두 구성음)
 }};
 
-/* ---- 일본풍 (에도 시대 풍) : 기존 곡에서 무서운 느낌(반음 부딪힘·낮은 울림·날카로운 종)을 줄이고 더 따뜻하게 다듬었어요 ---- */
+/* ---- 일본풍 (에도 시대 풍) : 더 느리게(분당 50), 비파 소리 추가, 소리는 코토·샤쿠하치·비파만 남겨 단순하게 ---- */
+function biwa(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.setValueAtTime(2600,t); f.frequency.exponentialRampToValueAtTime(420,t+.5);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.008); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  [["sawtooth",.28],["triangle",.8]].forEach(([ty,v])=>{ const o=c.createOscillator(), gg=c.createGain(); o.type=ty; gg.gain.value=v;
+    o.frequency.setValueAtTime(midi(m),t); o.frequency.exponentialRampToValueAtTime(midi(m+.5),t+.18); o.frequency.exponentialRampToValueAtTime(midi(m),t+.55);   // 뜯은 뒤 줄을 눌러 올렸다 놓는 비파 특유의 꺾임
+    o.connect(gg); gg.connect(f); o.start(t); o.stop(t+dur+.05); });
+  f.connect(g); g.connect(out()); hit(t,.05,vol*.5,1800,2,"bandpass"); }   // 발목(채)이 줄을 치는 소리
 const KOTO=[[50,57,62,69],[43,50,55,62],[50,57,62,67],[45,52,59,64]];
 const WA_MEL=[[0,74,5],[5,76,2],[7,74,1],[8,71,6],[14,69,2],[16,76,4],[20,74,4],[24,74,8],[32,81,4],[36,79,3],[39,76,1],[40,74,6],[46,71,2],[48,69,4],[52,71,2],[54,74,2],[56,74,8]];
 function shaku(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(), l=c.createOscillator(), lg=c.createGain();
@@ -120,14 +122,14 @@ function shaku(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGa
   g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.28); g.gain.setValueAtTime(vol,t+Math.max(.35,dur-.45)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
   o.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.4; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05);
   hit(t,.2,vol*.1,2600,1.2,"bandpass"); }
-const KOTO_PAT=[0,-1,1,-1,2,-1,3,-1];   // 코토를 조금 더 자주 울려 포근하게
-const wa={bpm:62,div:2,len:64,play(i,t){
-  const bar=i>>3,k=i&7,d=60/62/2,kt=KOTO[bar%4];
-  if(KOTO_PAT[k]>=0){ const n=kt[KOTO_PAT[k]]+(KOTO_PAT[k]>=2?12:0); pluck(n,t,k===0?.3:.2,1.7); }
-  if(k===7&&bar%2===1){ [76,74,71,69].forEach((m,j)=>pluck(m,t+j*.07,.13,1.1)); }              // 코토 글리산도(하행)
-  if(k===0){ pad(kt[0]+12,t,d*16,.05); pad(kt[0]+19,t,d*16,.035); }                           // 높고 부드러운 드론(낮은 울림 제거)
-  if(k===4&&bar%2===0) hit(t,.06,.14,1400,6,"bandpass");                                      // 츠즈미 풍 나무 소리(작게)
-  if((bar===3&&k===6)||(bar===7&&k===4)) bell(86,t,d*8,.04);                                   // 풍경 소리(덜 날카롭게)
+const KOTO_PAT=[0,-1,-1,2,-1,3,-1,-1];   // 코토는 드문드문
+const BIWA_BASS=[50,43,50,45];             // 마디별 낮은 음(D·G·D·A)
+const wa={bpm:50,div:2,len:64,play(i,t){
+  const bar=i>>3,k=i&7,d=60/50/2,kt=KOTO[bar%4];
+  if(KOTO_PAT[k]>=0){ const n=kt[KOTO_PAT[k]]+(KOTO_PAT[k]>=2?12:0); pluck(n,t,k===0?.28:.18,2); }
+  if(k===0&&bar%2===0){ const b=BIWA_BASS[(bar>>1)%4]; biwa(b,t,d*7,.34); biwa(b+7,t+.03,d*6,.2); }                       // 비파: 마디 첫 박에 묵직한 두 음
+  if(k===5&&bar%4===3){ [62,59,55,50].forEach((m,j)=>biwa(m,t+j*.22,d*4,.24)); }                                          // 비파: 4마디마다 하행 가락
+  if(k===0){ pad(kt[0]+12,t,d*16,.045); }                                                                                 // 부드러운 드론
   noteAt(WA_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.19));
 }};
 
