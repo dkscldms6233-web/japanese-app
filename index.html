@@ -638,6 +638,10 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .hsent .ja{display:block;font-size:20px;line-height:1.9;font-weight:600;letter-spacing:-.01em}
 .hsent .ko{display:block;font-size:13.5px;color:var(--sub);line-height:1.45;margin-top:1px}
 .lvrow{display:flex;align-items:center;gap:10px;margin:6px 0 14px}.lvrow>span{font-weight:700;font-size:14px;flex:none}.lvrow .jlv{flex:1;margin:0}
+.bgmrow{text-align:left;display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0;cursor:pointer}
+.bgmrow.on{border-color:var(--accent);background:var(--accent-soft)}.bgmrow input{flex:none;accent-color:var(--accent)}
+.bgmrow .bt{flex:1;min-width:0}.bgmrow .bt b{display:block;font-size:15px}.bgmrow .bt small{display:block;color:var(--sub);font-size:12.5px;line-height:1.4;margin-top:1px}
+.bgmrow .pill{flex:none;white-space:nowrap}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -668,6 +672,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=2"></script>
 <script src="kana.js?v=6"></script>
+<script src="games2.js?v=4"></script>
+<script src="bgm.js?v=2"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1320,8 +1326,12 @@ function gameSetup(){
    ${lvRow(jl,"급수")}
    <div class="gcards">
     <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b><small>제한 시간 100초 · 틀리면 3초 감소 · 6쌍을 모두 맞히면 12초 추가</small>${bb("match2")}</span></button>
-    <button class="gc" data-act="gstart" data-g="time"><span class="gi">${MONKEY}</span><span><b>60초 타임어택</b><small>60초 안에 최대한 많이 맞혀요 · 3번 틀리면 끝</small>${bb("time")}</span></button>
+    <button class="gc" data-act="gstart" data-g="wordle"><span class="gi">${MONKEY}</span><span><b>일본어 워들</b><small>뜻 힌트를 보고 히라가나 읽기를 6번 안에 맞혀요 · 매일 새 문제</small>${bb("wordle")}</span></button>
+    <button class="gc" data-act="gstart" data-g="shiri"><span class="gi">${MONKEY}</span><span><b>しりとり 끝말잇기</b><small>컴퓨터와 일본어 끝말잇기 · 「ん」으로 끝나면 져요</small>${bb("shiri")}</span></button>
+    <button class="gc" data-act="gstart" data-g="fall"><span class="gi">${MONKEY}</span><span><b>떨어지는 단어</b><small>떨어지는 단어의 뜻을 바닥에 닿기 전에 골라요 · 점점 빨라져요</small>${bb("fall")}</span></button>
    </div>
+   <div class="bgmbox"><div class="qm-sec" style="margin-top:14px">${ic("sound")}배경음악<small>들어 보고 마음에 드는 걸 골라요</small></div>
+    ${Object.entries(BGM_TRACKS).map(([id,t])=>`<label class="bgmrow ${(prefs.bgm||"basic")===id?"on":""}"><input type="radio" name="bgm" value="${id}" ${(prefs.bgm||"basic")===id?"checked":""}><span class="bt"><b>${t.name}</b><small>${t.desc}</small></span><button type="button" class="pill sm" data-act="bgmprev" data-id="${id}">▶ 미리듣기</button></label>`).join("")}</div>
    <details class="qset"><summary>${ic("gear")}게임 설정</summary>
     <label class="tg"><span>게임 소리 (배경음악·효과음)</span><input type="checkbox" id="gsnd" ${soundOn()?"checked":""}></label>
     <label class="tg"><span>게임 글꼴</span><select id="gfsel">${GFONTS.map(([v,nm])=>`<option value="${v}" ${gfont()===v?"selected":""}>${nm}</option>`).join("")}</select></label>
@@ -1422,7 +1432,7 @@ let G=null, gTimer=null, gFlash=null;
 const getBest = k => (LS.get("jp-best",{}))[k];
 function setBest(k,v){ const b=LS.get("jp-best",{}); b[k]=v; LS.set("jp-best",b); }
 function bestTxt(k){ const v=getBest(k); return v==null?"":`<br><b>내 최고 기록: ${v}점</b>`; }
-function stopG(){ clearInterval(gTimer); clearTimeout(gFlash); gTimer=null; gFlash=null; G=null; bgmStop(); }
+function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer); clearTimeout(gFlash); gTimer=null; gFlash=null; G=null; bgmStop(); }
 
 /* 소리: 외부 파일 없이 브라우저가 직접 만드는 배경음악과 효과음이에요 (저작권 걱정 없음) */
 const SND={ctx:null,timer:null,step:0,next:0};
@@ -1453,14 +1463,20 @@ function bgmStep(i,t){
   if(k%2===1) tone(BGM_ARP[bar][(k>>1)%3],t,d*1.4,"triangle",.35,SND.bgm);
   const m=BGM_MEL[i]; if(m) tone(m,t,d*1.6,"square",.22,SND.bgm);
 }
-function bgmStart(){
-  if(!soundOn()||SND.timer||!sndInit()) return;
+function bgmStart(o){
+  const force=o&&o.force; if((!soundOn()&&!force)||SND.timer||!sndInit()) return;
+  const tr=BGM_TRACKS[(o&&o.id)||prefs.bgm]||BGM_TRACKS.basic;
   SND.step=0; SND.next=SND.ctx.currentTime+.08;
   SND.timer=setInterval(()=>{
-    while(SND.next<SND.ctx.currentTime+.25){ bgmStep(SND.step,SND.next); SND.step=(SND.step+1)%32; SND.next+=60/132/2; }
+    while(SND.next<SND.ctx.currentTime+.25){ tr.play(SND.step,SND.next); SND.step=(SND.step+1)%tr.len; SND.next+=60/tr.bpm/tr.div; }
   },60);
 }
-function bgmStop(){ clearInterval(SND.timer); SND.timer=null; }
+function bgmPreview(id){
+  const same=SND.previewId===id; bgmStop(); clearTimeout(SND.pvT); updPrev();
+  if(same) return; if(!sndInit()) return; SND.previewId=id; bgmStart({id,force:true}); SND.pvT=setTimeout(()=>{ bgmStop(); updPrev(); },40000); updPrev();
+}
+function updPrev(){ document.querySelectorAll("[data-act=bgmprev]").forEach(b=>{ const on=SND.previewId===b.dataset.id; b.textContent=on?"■ 정지":"▶ 미리듣기"; b.classList.toggle("on",on); }); }
+function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; }
 function sfx(kind){
   if(!soundOn()||!sndInit()) return; const t=SND.ctx.currentTime, o=SND.fx;
   if(kind==="ok"){ tone(84,t,.12,"sine",.9,o); tone(91,t+.07,.18,"sine",.9,o); }
@@ -1490,7 +1506,7 @@ function popFx(text,cls){
 }
 const cmbCls = n => "cmb "+(n>=10?"c10":n>=5?"c5":"");
 const RANKS=["일본어 새싹","단어 탐험가","단어 사냥꾼","한자 달인","한자 마스터"];
-const LADDERS={match:[0,100,250,500,800],time:[0,80,200,400,650]};
+const LADDERS={match:[0,100,250,500,800],time:[0,80,200,400,650],wordle:[0,20,60,100,120],shiri:[0,60,150,300,500],fall:[0,60,150,300,500]};
 function rankOf(score,type){
   const L=LADDERS[type]||LADDERS.time; let i=0; L.forEach((v,k)=>{ if(score>=v) i=k; });
   return {name:RANKS[i], next:L[i+1]!=null?{name:RANKS[i+1],gap:L[i+1]-score}:null};
@@ -1839,12 +1855,13 @@ function jRdg(lv,type){
 $("quizView").dataset.gf=gfont();
 $("quizView").addEventListener("change",e=>{
   if(e.target.id==="gsnd"){ prefs.sound=e.target.checked; LS.set("jp-prefs",prefs); }
+  if(e.target.name==="bgm"){ prefs.bgm=e.target.value; LS.set("jp-prefs",prefs); document.querySelectorAll(".bgmrow").forEach(r=>r.classList.toggle("on",r.querySelector("input").checked)); }
   if(e.target.id==="gfsel"){ prefs.gfont=e.target.value; LS.set("jp-prefs",prefs); $("quizView").dataset.gf=gfont(); }
 });
 $("quizView").addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   const a=b.dataset.act;
-  if(a==="gstart"){ b.dataset.g==="match"?startMatch():startTime(); return; }
+  if(a==="gstart"){ ({match:startMatch,wordle:startWordle,shiri:startShiri,fall:startFall})[b.dataset.g](); return; }
   if(a==="gmark"||a==="gstar"){
     const k=b.dataset.key, on=!stars.has(k);
     on?stars.add(k):stars.delete(k); LS.set("jp-star",[...stars]);
@@ -1856,6 +1873,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="gm"){ matchPick(b.dataset.side,b.dataset.key); return; }
   if(a==="gopt"){ timePick(+b.dataset.i); return; }
   if(a==="gquit"){ stopG(); quizSetup(); return; }
+  if(a==="bgmprev"){ e.preventDefault(); bgmPreview(b.dataset.id); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
   if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="jstart"){ jStart(b.dataset.s); return; }
