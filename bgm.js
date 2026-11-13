@@ -107,28 +107,24 @@ const rich={bpm:80,div:4,len:128,play(i,t){
   noteAt(FLU,i,(m,len)=>{ flute(m,t,d*len*.95,.15); });                                                   // 플루트(드문 선율, 모두 구성음)
 }};
 
-/* ---- 일본풍 (에도 시대 풍) : 더 느리게(분당 50), 비파 소리 추가, 소리는 코토·샤쿠하치·비파만 남겨 단순하게 ---- */
-function biwa(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.setValueAtTime(2600,t); f.frequency.exponentialRampToValueAtTime(420,t+.5);
-  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.008); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  [["sawtooth",.28],["triangle",.8]].forEach(([ty,v])=>{ const o=c.createOscillator(), gg=c.createGain(); o.type=ty; gg.gain.value=v;
-    o.frequency.setValueAtTime(midi(m),t); o.frequency.exponentialRampToValueAtTime(midi(m+.5),t+.18); o.frequency.exponentialRampToValueAtTime(midi(m),t+.55);   // 뜯은 뒤 줄을 눌러 올렸다 놓는 비파 특유의 꺾임
-    o.connect(gg); gg.connect(f); o.start(t); o.stop(t+dur+.05); });
-  f.connect(g); g.connect(out()); hit(t,.05,vol*.5,1800,2,"bandpass"); }   // 발목(채)이 줄을 치는 소리
-const KOTO=[[50,57,62,69],[43,50,55,62],[50,57,62,67],[45,52,59,64]];
-const WA_MEL=[[0,74,5],[5,76,2],[7,74,1],[8,71,6],[14,69,2],[16,76,4],[20,74,4],[24,74,8],[32,81,4],[36,79,3],[39,76,1],[40,74,6],[46,71,2],[48,69,4],[52,71,2],[54,74,2],[56,74,8]];
+/* ---- 일본풍 (에도 시대 · 전통 음악 풍) : 느리고 고요한 코토·샤쿠하치·북. 인센(陰旋) 음계 D·E♭·G·A·C, 80% 이상은 쉬는 소리 ---- */
+const KOTO=[[50,57,62,69],[43,50,55,62],[50,57,62,67],[45,52,60,69]];
+const WA_MEL=[[0,74,5],[5,72,2],[7,69,1],[8,67,6],[14,69,2],[16,72,4],[20,74,3],[23,75,1],[24,74,8],[32,81,4],[36,79,3],[39,74,1],[40,72,6],[46,69,2],[48,67,4],[52,69,2],[54,72,2],[56,74,8]];
 function shaku(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(), l=c.createOscillator(), lg=c.createGain();
-  o.type="sine"; o.frequency.setValueAtTime(midi(m-.6),t); o.frequency.exponentialRampToValueAtTime(midi(m),t+.14);
-  l.frequency.value=4.4; lg.gain.value=midi(m)*.0035; l.connect(lg); lg.connect(o.frequency);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.28); g.gain.setValueAtTime(vol,t+Math.max(.35,dur-.45)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  o.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.4; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05);
-  hit(t,.2,vol*.1,2600,1.2,"bandpass"); }
-const KOTO_PAT=[-1,-1,-1,-1,2,-1,-1,-1];   // 코토는 마디에 한 번만
-const BIWA_BASS=[50,43,50,45];             // 마디별 낮은 음(D·G·D·A)
-const wa={bpm:58,div:2,len:64,play(i,t){
-  const bar=i>>3,k=i&7,d=60/58/2,kt=KOTO[bar%4];
-  if(KOTO_PAT[k]>=0){ const n=kt[KOTO_PAT[k]]+(KOTO_PAT[k]>=2?12:0); pluck(n,t,.2,2); }
-  if(k===0&&bar%2===0){ const b=BIWA_BASS[(bar>>1)%4]; biwa(b,t,d*7,.34); }                       // 비파: 마디 첫 박에 낮은 한 음
-  if(k===5&&bar%4===3){ [62,59,55,50].forEach((m,j)=>biwa(m,t+j*.22,d*4,.24)); }                                          // 비파: 4마디마다 하행 가락
+  o.type="sine"; o.frequency.setValueAtTime(midi(m-1.2),t); o.frequency.exponentialRampToValueAtTime(midi(m),t+.18);   // 아래에서 미끄러져 올라오는 숨소리
+  l.frequency.value=4.6; lg.gain.value=midi(m)*.005; l.connect(lg); lg.connect(o.frequency);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.35); g.gain.setValueAtTime(vol,t+Math.max(.4,dur-.5)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.5; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05);
+  hit(t,.3,vol*.2,2600,1.2,"bandpass"); }
+const KOTO_PAT=[0,-1,-1,2,-1,3,-1,1];   // 8분음표 8칸 중 울리는 칸(−1은 쉼)
+const wa={bpm:56,div:2,len:64,play(i,t){
+  const bar=i>>3,k=i&7,d=60/56/2,kt=KOTO[bar%4];
+  if(KOTO_PAT[k]>=0){ const n=kt[KOTO_PAT[k]]+(KOTO_PAT[k]>=2?12:0); pluck(n,t,k===0?.3:.2,1.8); }
+  if(k===7&&bar%2===1){ [74,72,69,67].forEach((m,j)=>pluck(m,t+j*.07,.14,1.2)); }          // 코토 글리산도(하행 쓸어내림)
+  if(k===0){ pad(kt[0],t,d*16,.07); pad(kt[0]+7,t,d*16,.045); }                            // 낮고 고요한 드론
+  if(k===0&&bar%4===0) kick(t,.5,true);                                                      // 먼 북소리
+  if(k===4&&bar%2===0) hit(t,.07,.18,1200,6,"bandpass");                                     // 츠즈미 풍 나무 소리
+  if((bar===2&&k===5)||(bar===6&&k===3)) bell(93,t,d*8,.06);                                  // 풍경 소리
   noteAt(WA_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.19));
 }};
 
