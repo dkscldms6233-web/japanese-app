@@ -569,6 +569,8 @@ window.WORDS_BULK=(window.WORDS_BULK||"")+`
 弱[よわ]める|약하게 하다|1
 ラベル|라벨|n
 ルール|규칙·룰|n
+#N5
+四[よん]|사(4)|n
 `;
 window.LV_FIX=`
 勉強|べんきょう|N5
@@ -2689,3 +2691,10 @@ window.LV_FIX=`
 ハンドル|ハンドル|N2
 カンニング|カンニング|N1
 `;
+/* 풀이 바로잡기 (words-wasei.js의 KO_FIX에 보태요) */
+window.KO_FIX=Object.assign(window.KO_FIX||{},{
+ "大変":{ko:"힘들다·큰일이다"},
+ "締める":{ko:"매다·조르다"},
+ "答える":{ko:"대답하다"},
+ "雪":{ko:"눈(내리는 눈)"}
+});

@@ -665,7 +665,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-detail.js"></script>
 <script src="kanji-extra.js"></script>
 <script src="words-wasei.js?v=4"></script>
-<script src="words-levels.js?v=4"></script>
+<script src="words-levels.js?v=5"></script>
+<script src="words-freq.js?v=1"></script>
 <script src="daily.js?v=2"></script>
 <script src="jlpt-bank.js"></script>
 <script src="jlpt-bank2.js"></script>
@@ -674,8 +675,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=2"></script>
 <script src="kana.js?v=6"></script>
-<script src="games2.js?v=10"></script>
-<script src="bgm.js?v=13"></script>
+<script src="games2.js?v=11"></script>
+<script src="bgm.js?v=15"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -992,6 +993,13 @@ WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
 /* 급수 재분류(words-levels.js): "표기|읽기|급수" */
 (()=>{ const m=new Map(); String(window.LV_FIX||"").split("\n").forEach(l=>{ const p=l.trim().split("|"); if(p.length===3) m.set(p[0]+"|"+p[1],p[2]); });
   WORDS.forEach(w=>{ const v=m.get(plain(w.f)+"|"+reading(w.f)); if(v) w.lv=v; }); })();
+/* 빈도 등급(words-freq.js): 1=핵심(자주 쓰이고 시험에 잘 나옴) · 2=보통 · 3=드묾. 퀴즈·게임에서 핵심은 더 자주, 드묾은 덜 나와요 */
+(()=>{ const m=new Map(); String(window.WORD_CORE||"").split("\n").forEach(l=>{ const q=l.split("|"); if(q.length===2) m.set(q[0]+"|"+q[1],1); });
+  String(window.WORD_RARE||"").split("\n").forEach(l=>{ const q=l.split("|"); if(q.length===2) m.set(q[0]+"|"+q[1],3); });
+  WORDS.forEach(w=>{ w.tier=m.get(plain(w.f)+"|"+reading(w.f))||2; }); })();
+const TIER_W={1:3,2:1.5,3:.5};
+/* 가중치 섞기: 핵심 단어가 앞쪽에 올 확률이 높아요 (Efraimidis–Spirakis) */
+function wshuffle(a,wf){ return a.map(x=>({x,k:Math.pow(Math.random(),1/((wf?wf(x):(x&&x.tier?TIER_W[x.tier]:1.5))||1.5))})).sort((p,q)=>q.k-p.k).map(o=>o.x); }
 const BASE = WORDS; BASE.forEach((w,i)=>w.key="b"+i);
 let custom = LS.get("jp-custom",[]);
 let stars  = new Set(LS.get("jp-star",[]).map(x=>typeof x==="number"?"b"+x:x));
@@ -1359,7 +1367,7 @@ function startQuiz(mode,pool,n){
   if(mode==="reading") pool = pool.filter(w=>w.text!==w.yomi);
   if(mode==="order"){ pool=pool.filter(w=>w.sent||(!["N3","N2","N1"].includes(w.lv)&&canOrder(w))); if(!given) pool=pool.concat(sentPool()); }
   if(!pool.length){ toast("이 범위에는 출제할 단어가 없어요"); return; }
-  let list=shuffle(pool); if(n>0) list=list.slice(0,n);
+  let list=wshuffle(pool); if(n>0) list=list.slice(0,n);
   Q={mode,list,i:0,score:0,wrong:[],flip:false,sel:null,done:false,opts:[],ord:null};
   setOpts(); renderQ();
 }
@@ -1566,7 +1574,7 @@ function gCountdown(rule,go){
 /* 짝 맞추기: 제한 시간 안에 최대한 많은 쌍을 맞혀요 (한 라운드를 끝내면 시간이 늘어나요) */
 function startMatch(){
   const seen=new Set(), uniq=[];
-  for(const w of shuffle(ALL.filter(inScope))){ if(w.ko && !seen.has(w.ko)){ seen.add(w.ko); uniq.push(w); } }
+  for(const w of wshuffle(ALL.filter(inScope))){ if(w.ko && !seen.has(w.ko)){ seen.add(w.ko); uniq.push(w); } }
   if(uniq.length<6){ toast("이 범위에는 단어가 부족해요 (6개 이상 필요)"); return; }
   gCountdown("왼쪽 단어와 같은 뜻을 오른쪽에서 골라요<br>제한 시간 100초 · 틀리면 3초 줄어요",()=>beginMatch(uniq));
 }
@@ -1674,13 +1682,13 @@ function jBank(bank,lv){
   return L;
 }
 function jReading(lv,n){
-  return shuffle(jWords(lv).filter(w=>w.text!==w.yomi)).slice(0,n).map(w=>{ const o=choices(w,"yomi");
+  return wshuffle(jWords(lv).filter(w=>w.text!==w.yomi)).slice(0,n).map(w=>{ const o=choices(w,"yomi");
     return {sec:"vocab",kind:"한자 읽기",prompt:"이 한자의 읽기는?",stem:`<div class="qw">${E(w.text)}</div>`,opts:o.map(E),a:o.indexOf(w.yomi),exp:`${R(w.f)} · ${E(w.ko)}`,w}; });
 }
 const jRe=w=>new RegExp([...w.text].map(c=>c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:\\[[^\\]]*\\])?").join(""));
 function jContext(lv,n){
   const pool=jWords(lv).filter(w=>w.ex&&w.ex[0]&&["名詞","副詞","い形容詞","な形容詞"].includes(w.pos)&&w.text.length>=2&&jRe(w).test(w.ex[0].ja));
-  return shuffle(pool).slice(0,n).map(w=>{
+  return wshuffle(pool).slice(0,n).map(w=>{
     const sj=plain(w.ex[0].ja);
     const same=shuffle(jWords(lv).filter(x=>x.pos===w.pos&&x.text!==w.text&&!sj.includes(x.text))).slice(0,3);
     if(same.length<3) return null;

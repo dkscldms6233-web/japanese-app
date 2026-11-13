@@ -69,7 +69,7 @@ function hashStr(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h*33)^s.charCod
 function wdBegin(mode){
   const pool=wdPool(WDK);
   if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족해요 (다른 급수나 문자를 골라 보세요)`); return; }
-  const pick=mode==="daily"?pool[hashStr(today()+"|"+jlv()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:pool[Math.floor(Math.random()*pool.length)];
+  const pick=mode==="daily"?pool[hashStr(today()+"|"+jlv()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
   G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map()};
   wdRender(); bgmStop();
 }
@@ -212,7 +212,7 @@ function startFall(){
   gCountdown("위에서 단어가 떨어져요! 가장 아래 단어의 뜻을 빨리 골라요<br>바닥에 닿으면 하트가 줄고, 3개를 잃으면 끝나요",()=>fBegin(pool));
 }
 function fBegin(pool){
-  G={type:"fall",pool:shuffle(pool),pi:0,words:[],lives:3,score:0,combo:0,maxc:0,right:0,lv:1,last:performance.now(),spawnAt:0,seen:new Map(),marks:new Set(),opts:null,optFor:null,lostIdx:-1,raf:0};
+  G={type:"fall",pool:wshuffle(pool),pi:0,words:[],lives:3,score:0,combo:0,maxc:0,right:0,lv:1,last:performance.now(),spawnAt:0,seen:new Map(),marks:new Set(),opts:null,optFor:null,lostIdx:-1,raf:0};
   fRenderShell(); fSpawn(); bgmStart(); G.raf=requestAnimationFrame(fLoop);
 }
 function fSpawn(){

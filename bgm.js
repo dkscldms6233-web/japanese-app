@@ -75,57 +75,72 @@ const arcade={bpm:156,div:2,len:64,play(i,t){
   if(bar===7&&k===6) laser(t,1800,260,d*1.8,.07);
 }};
 
-/* ---- 풍성한 (판타지 · 악기 중심) : 소리가 많아도 부딪히지 않게, 모든 악기가 '지금 화음의 구성음'만 연주해요.
-   C | G | Am | F | C | G | F | G (밝은 장조)  (화음 아래에서 베이스만 바뀌는 단순하고 맑은 진행, 반음 부딪힘 없음)
-   현악 패드 · 합창 · 하프 아르페지오 · 베이스 · 첼레스타(종) · 플루트 · 팀파니 · 마법의 상행 글리산도(해당 화음의 구성음으로만) ---- */
-function choir(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1400;
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.4); g.gain.linearRampToValueAtTime(.0001,t+dur); l.frequency.value=5; lg.gain.value=midi(m)*.004; l.connect(lg);
-  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
-  l.start(t); l.stop(t+dur+.05); f.connect(g); g.connect(out()); }
+/* ---- 풍성한 (밝고 달콤한 동화 풍) : '꿈빛 파티시엘' 같은 밝고 통통 튀는 애니메이션 BGM 느낌.
+   C | Am | F | G | C | Am | F | G (밝은 장조의 정석 진행). 글로켄슈필·실로폰 선율, 피치카토 스트링, 통통 튀는 베이스, 탬버린·스네어, 반짝이는 종소리 — 모든 악기가 현재 화음의 구성음만 연주해요 ---- */
 const RC=[
- {b:48,up:[60,64,67]},   // C
- {b:43,up:[59,62,67]},   // G
- {b:45,up:[60,64,69]},   // Am
- {b:41,up:[60,65,69]},   // F
- {b:48,up:[60,64,67]},   // C
- {b:43,up:[59,62,67]},   // G
- {b:41,up:[60,65,69]},   // F
- {b:43,up:[59,62,67]}];  // G
-const FLU=[[0,79,12],[12,84,4],[16,83,8],[24,79,8],[32,81,8],[40,84,8],[48,81,8],[56,77,8],[64,76,8],[72,79,4],[76,84,4],[80,86,8],[88,83,8],[96,84,8],[104,81,8],[112,83,8],[120,79,8]];
-const HP=[0,1,2,1,2,1,2,1, 0,1,2,1,0,1,2,1];
-const rich={bpm:92,div:4,len:128,play(i,t){
-  const bar=i>>4,k=i&15,d=60/92/4,c=RC[bar],up=c.up;
-  if(k===0){ up.forEach(m=>pad(m,t,d*16,.075)); choir(up[0],t,d*16,.02); choir(up[2],t,d*16,.016); }     // 현악 패드 + 합창(구성음만)
-  if(k===0) tone(c.b,t,d*7,"triangle",.9,out());                                                          // 베이스: 근음
-  if(k===8) tone(c.b+7,t,d*5,"triangle",.65,out());                                                       // 베이스: 5도
-  pluck(up[HP[k]]+(k%4===3?12:0),t,.13,1.5);                                                              // 하프 아르페지오
-  if(k===0||k===8) bell(up[k===0?2:1]+24,t,d*8,.065);                                                     // 첼레스타·종(구성음)
-  if(k===0&&(bar===0||bar===4)) kick(t,.6,true);                                                          // 팀파니
-  if(bar===7&&k>=12) kick(t,.25+.14*(k-12),true);
-  if(k%4===2) hat(t,.05);
-  if((bar===3&&k>=10&&k<=15)||(bar===7&&k>=6&&k<=13)){ const j=bar===3?k-10:k-6, run=[up[0],up[1],up[2],up[0]+12,up[1]+12,up[2]+12,up[0]+24,up[1]+24]; const m=run[Math.min(7,j)]; pluck(m,t,.12,1.3); bell(m+12,t,d*3,.04); }  // 상행 글리산도(구성음만)
-  noteAt(FLU,i,(m,len)=>{ flute(m,t,d*len*.95,.15); });                                                   // 플루트(드문 선율, 모두 구성음)
+ {b:48,ch:[60,64,67]},{b:45,ch:[57,60,64]},{b:41,ch:[60,65,69]},{b:43,ch:[59,62,67]},
+ {b:48,ch:[60,64,67]},{b:45,ch:[57,60,64]},{b:41,ch:[60,65,69]},{b:43,ch:[59,62,67]}];
+const RM=[
+ [0,76,1],[1,79,1],[2,84,2],[4,79,1],[5,76,1],[6,79,2],
+ [8,81,1],[9,76,1],[10,81,2],[12,84,1],[13,81,1],[14,76,2],
+ [16,77,1],[17,81,1],[18,84,2],[20,81,1],[21,77,1],[22,81,2],
+ [24,79,1],[25,83,1],[26,86,2],[28,83,1],[29,79,1],[30,74,2],
+ [32,84,1],[33,79,1],[34,76,2],[36,79,1],[37,84,1],[38,88,2],
+ [40,81,1],[41,84,1],[42,88,2],[44,84,1],[45,81,1],[46,76,2],
+ [48,84,1],[49,81,1],[50,77,2],[52,81,1],[53,84,1],[54,81,2],
+ [56,83,1],[57,86,1],[58,83,2],[60,79,1],[61,83,1],[62,86,2]];
+function xylo(m,t,vol){ const c=ctx(), g=c.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.004); g.gain.exponentialRampToValueAtTime(.0001,t+.22);
+  [["sine",1],["triangle",2]].forEach(([ty,mul],j)=>{ const o=c.createOscillator(), gg=c.createGain(); o.type=ty; o.frequency.value=midi(m)*mul; gg.gain.value=j?.25:1; o.connect(gg); gg.connect(g); o.start(t); o.stop(t+.25); }); g.connect(out()); }
+const rich={bpm:128,div:2,len:64,play(i,t){
+  const bar=i>>3,k=i&7,d=60/128/2,c=RC[bar];
+  // 통통 튀는 베이스(스타카토)
+  if(k===0) tone(c.b,t,d*1.3,"triangle",1,out()); if(k===3) tone(c.b+7,t,d*.9,"triangle",.7,out()); if(k===4) tone(c.b+12,t,d*1.2,"triangle",.85,out()); if(k===6) tone(c.b+7,t,d*.9,"triangle",.65,out());
+  // 피치카토 스트링: 뒷박(홀수 칸)에 화음 구성음을 톡톡
+  if(k%2===1) tone(c.ch[(k>>1)%3]+(k>3?12:0),t,d*.45,"triangle",.13,out());
+  // 실로폰 아르페지오(짝수 칸)
+  if(k%2===0) xylo(c.ch[(k>>1)%3]+12,t,.07);
+  // 드럼: 킥 1·3박, 스네어 2·4박(작게), 탬버린 8분음표
+  if(k===0||k===4) kick(t,.55); if(k===2||k===6) snare(t,.22); hit(t,.04,k%2?.1:.07,6500,1);
+  // 반짝이는 종소리와 마지막 마디의 상행 차임
+  if(k===0&&bar%2===0) bell(c.ch[2]+24,t,d*6,.06);
+  if(bar===7&&k>=4){ const run=[74,79,83,86]; const m=run[k-4]||run[3]; bell(m+12,t,d*3,.07); }
+  // 선율: 글로켄슈필(종) + 가볍게 받쳐 주는 삼각파
+  noteAt(RM,i,(m,len)=>{ bell(m,t,d*len*1.4,.12); tone(m,t,d*len*.8,"triangle",.1,out()); });
 }};
 
-/* ---- 일본풍 (에도 시대 · 전통 음악 풍) : 느리고 고요한 코토·샤쿠하치·북. 인센(陰旋) 음계 D·E♭·G·A·C, 80% 이상은 쉬는 소리 ---- */
-const KOTO=[[50,57,62,69],[43,50,55,62],[50,57,62,67],[45,52,60,69]];
-const WA_MEL=[[0,74,5],[5,72,2],[7,69,1],[8,67,6],[14,69,2],[16,72,4],[20,74,3],[23,75,1],[24,74,8],[32,81,4],[36,79,3],[39,74,1],[40,72,6],[46,69,2],[48,67,4],[52,69,2],[54,72,2],[56,74,8]];
+/* ---- 일본풍 (동양 판타지) : 게임 속 '일본풍 동양 판타지' 음악 느낌. 코토의 흐르는 아르페지오 + 샤쿠하치 선율 + 현악·합창 패드 + 부드러운 북과 종.
+   음계는 D 장조 5음 음계(D·E·F#·A·B)만 써서 어떤 음이 겹쳐도 부딪히지 않고 맑아요. 진행: D | Bm | Esus | A | D | Bm | Esus | A→D ---- */
 function shaku(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(), l=c.createOscillator(), lg=c.createGain();
-  o.type="sine"; o.frequency.setValueAtTime(midi(m-1.2),t); o.frequency.exponentialRampToValueAtTime(midi(m),t+.18);   // 아래에서 미끄러져 올라오는 숨소리
-  l.frequency.value=4.6; lg.gain.value=midi(m)*.005; l.connect(lg); lg.connect(o.frequency);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.35); g.gain.setValueAtTime(vol,t+Math.max(.4,dur-.5)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  o.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.5; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05);
-  hit(t,.3,vol*.2,2600,1.2,"bandpass"); }
-const KOTO_PAT=[0,-1,-1,2,-1,3,-1,1];   // 8분음표 8칸 중 울리는 칸(−1은 쉼)
-const wa={bpm:56,div:2,len:64,play(i,t){
-  const bar=i>>3,k=i&7,d=60/56/2,kt=KOTO[bar%4];
-  if(KOTO_PAT[k]>=0){ const n=kt[KOTO_PAT[k]]+(KOTO_PAT[k]>=2?12:0); pluck(n,t,k===0?.3:.2,1.8); }
-  if(k===7&&bar%2===1){ [74,72,69,67].forEach((m,j)=>pluck(m,t+j*.07,.14,1.2)); }          // 코토 글리산도(하행 쓸어내림)
-  if(k===0){ pad(kt[0],t,d*16,.07); pad(kt[0]+7,t,d*16,.045); }                            // 낮고 고요한 드론
-  if(k===0&&bar%4===0) kick(t,.5,true);                                                      // 먼 북소리
-  if(k===4&&bar%2===0) hit(t,.07,.18,1200,6,"bandpass");                                     // 츠즈미 풍 나무 소리
-  if((bar===2&&k===5)||(bar===6&&k===3)) bell(93,t,d*8,.06);                                  // 풍경 소리
-  noteAt(WA_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.19));
+  o.type="sine"; o.frequency.setValueAtTime(midi(m-.6),t); o.frequency.exponentialRampToValueAtTime(midi(m),t+.14);
+  l.frequency.value=4.6; lg.gain.value=midi(m)*.0035; l.connect(lg); lg.connect(o.frequency);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.22); g.gain.setValueAtTime(vol,t+Math.max(.3,dur-.4)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.45; g.connect(s); s.connect(echoBus()); o.start(t); l.start(t); o.stop(t+dur+.05); l.stop(t+dur+.05);
+  hit(t,.18,vol*.1,2600,1.2,"bandpass"); }
+function choirW(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(); f.type="lowpass"; f.frequency.value=1300;
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+dur*.4); g.gain.linearRampToValueAtTime(.0001,t+dur); l.frequency.value=4.8; lg.gain.value=midi(m)*.004; l.connect(lg);
+  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.05); });
+  l.start(t); l.stop(t+dur+.05); f.connect(g); g.connect(out()); }
+const WF=[
+ {b:38,pad:[62,64,69]},    // D(add9)
+ {b:47,pad:[59,62,66]},    // Bm
+ {b:40,pad:[64,69,71]},    // Esus
+ {b:45,pad:[57,59,64]},    // Asus2
+ {b:38,pad:[62,64,69]},
+ {b:47,pad:[59,62,66]},
+ {b:40,pad:[64,69,71]},
+ {b:45,pad:[57,59,64]}];
+const WF_MEL=[[0,81,3],[3,78,1],[4,76,2],[6,74,2],[8,78,3],[11,83,1],[12,81,4],[16,83,3],[19,81,1],[20,76,4],[24,81,6],[30,78,2],
+ [32,86,3],[35,83,1],[36,81,2],[38,78,2],[40,83,3],[43,81,1],[44,78,4],[48,76,3],[51,78,1],[52,81,4],[56,83,4],[60,81,2],[62,74,2]];
+const WFP=[0,1,2,3,2,1,2,4];            // 코토 아르페지오(화음 구성음 위주)
+const wa={bpm:76,div:2,len:64,play(i,t){
+  const bar=i>>3,k=i&7,d=60/76/2,c=WF[bar], notes=[c.pad[0],c.pad[1],c.pad[2],c.pad[0]+12,c.pad[1]+12];
+  pluck(notes[WFP[k]],t,k===0?.26:.17,1.6);                                                    // 코토: 흐르는 아르페지오
+  if(k===0){ c.pad.forEach(m=>pad(m,t,d*8,.06)); choirW(c.pad[0],t,d*8,.017); tone(c.b,t,d*6,"triangle",.8,out()); }   // 현악 · 합창 · 낮은 베이스
+  if(k===0&&(bar===0||bar===4)) kick(t,.5,true);                                              // 부드러운 북
+  if(bar===7&&k>=6) kick(t,.3+.12*(k-6),true);
+  if((bar===1||bar===5)&&k===4) bell(86,t,d*8,.06);                                             // 카구라 방울 풍 종소리
+  if((bar===3||bar===7)&&k===6){ [86,83,81,78,76,74].forEach((m,j)=>pluck(m,t+j*.07,.12,1.1)); }   // 코토 글리산도(하행)
+  noteAt(WF_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.2));                                           // 샤쿠하치 선율
 }};
 
 window.BGM_TRACKS={
