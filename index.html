@@ -321,6 +321,7 @@ h1{letter-spacing:-.02em;cursor:pointer}
 .ncard:hover,.gcard:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(16,24,40,.14)}
 .ncard.read,.gcard.read{opacity:.65}
 .thumb{aspect-ratio:16/9;background:var(--chip)}
+.ill.ph{width:100%;height:100%;object-fit:cover;display:block}
 .nb{padding:12px 14px 14px}
 .nmeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .ntitle{margin:6px 0 2px;padding-left:0;border-left:none;font-size:19px;line-height:1.8;font-weight:700}
@@ -1982,7 +1983,10 @@ const ILLUS={
  shop:`<rect width="320" height="180" fill="#fff4dd"/><rect y="142" width="320" height="38" fill="#d9c7a0"/><rect x="70" y="70" width="180" height="76" fill="#fff" stroke="#c9a56b" stroke-width="3"/><path d="M60 70h200l-12-30H72z" fill="#e4572e"/><path d="M100 40l-4 30M140 40l-2 30M180 40l2 30M220 40l4 30" stroke="#fff" stroke-width="8"/><rect x="146" y="100" width="28" height="46" fill="#8b5e3c"/><rect x="86" y="92" width="44" height="34" fill="#cfe9ff"/><rect x="190" y="92" width="44" height="34" fill="#cfe9ff"/><circle cx="282" cy="120" r="16" fill="#ffd166" stroke="#d9a400" stroke-width="3"/><circle cx="282" cy="120" r="8" fill="none" stroke="#d9a400" stroke-width="2"/>`,
  doc:`<rect width="320" height="180" fill="#eef1f6"/><rect x="96" y="20" width="128" height="140" rx="8" fill="#fff" stroke="#9aa6b8" stroke-width="3"/><path d="M114 52h92M114 72h92M114 92h70M114 112h80" stroke="#c3ccd9" stroke-width="6" stroke-linecap="round"/><circle cx="196" cy="136" r="14" fill="none" stroke="#d9534f" stroke-width="4"/><path d="M190 136h12" stroke="#d9534f" stroke-width="4" stroke-linecap="round"/>`
 };
-const illus = t => `<svg viewBox="0 0 320 180" class="ill" role="img" aria-label="${E(TOPICS[t]||"")} 삽화" preserveAspectRatio="xMidYMid slice">${ILLUS[t]||ILLUS.doc}</svg>`;
+const illusSvg = t => `<svg viewBox="0 0 320 180" class="ill" role="img" aria-label="${E(TOPICS[t]||"")} 삽화" preserveAspectRatio="xMidYMid slice">${ILLUS[t]||ILLUS.doc}</svg>`;
+/* photos/<주제>.jpg 가 있으면 사진, 없으면 삽화(onerror 대체) */
+const illus = t => { const k=ILLUS[t]?t:"doc"; return `<img class="ill ph" src="photos/${k}.jpg" alt="${E(TOPICS[t]||"")} 사진" loading="lazy" onerror="this.outerHTML=ILLUS_FB['${k}']">`; };
+const ILLUS_FB = new Proxy({}, {get:(_,k)=>illusSvg(k)});
 const GOV_TOPIC=[[/食品|食中毒|栄養|食/,"food"],[/医療|病|健康|感染|薬|介護|福祉|ワクチン|検診|障害|認知症/,"health"],
   [/労働|雇用|賃金|就職|年金|求人|働/,"work"],[/学校|教育|学生|研修|試験|大会|競技|人材/,"school"],
   [/気象|災害|台風|地震|豪雨|防災|天気/,"weather"],[/技術|デジタル|システム|情報|オンライン|ＡＩ|AI/,"tech"],
