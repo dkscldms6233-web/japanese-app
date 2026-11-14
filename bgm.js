@@ -152,10 +152,47 @@ const wa={bpm:76,div:2,len:64,play(i,t){
   noteAt(WF_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.2));                                           // 샤쿠하치 선율
 }};
 
+/* ---- 오케스트라 : 사용자가 알려 준 음표 그대로 만든 곡 (D단조, 12/8, 분당 72박)
+   왼손(하프): 레라레 | 도솔도 | 시b파시b | 도솔도 를 계속 반복 (화음 Dm → C → Bb → C)
+   오른손: 레 미 파 솔 라 ─── / 레 도 라 솔 파 / 솔 미 레  (4마디 선율을 3번 반복하면서 악기가 점점 늘어남)
+   악기 구성: 하프 · 첼로/콘트라베이스 · 현악 패드 · 바이올린 · 플루트 · 호른 · 팀파니 · 심벌 · 합창
+   1번째(조용히): 하프+저음 현+패드+플루트 → 2번째(커짐): +바이올린·팀파니 → 3번째(웅장): +호른·플루트 옥타브·심벌·합창 ---- */
+function horn(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=1.5; f.frequency.setValueAtTime(400,t); f.frequency.exponentialRampToValueAtTime(1800,t+Math.min(.4,dur*.5)); f.frequency.exponentialRampToValueAtTime(1000,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.2); g.gain.setValueAtTime(vol,t+Math.max(.25,dur-.25)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.05); });
+  f.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.35; g.connect(s); s.connect(echoBus()); }
+const OC=[
+ {b:38,lh:[50,57,62],pad:[62,65,69]},   // Dm  : 레 라 레
+ {b:36,lh:[48,55,60],pad:[60,64,67]},   // C   : 도 솔 도
+ {b:34,lh:[46,53,58],pad:[58,62,65]},   // Bb  : 시b 파 시b
+ {b:36,lh:[48,55,60],pad:[60,64,67]}];  // C   : 도 솔 도
+const ORH=[[0,74,3],[3,76,3],[6,77,3],[9,79,3], [12,81,12], [24,86,3],[27,84,3],[30,81,2],[32,79,2],[34,77,2], [36,79,3],[39,76,3],[42,74,6]];   // 레미파솔 라─── 레도 라솔 파 솔미레
+const OV=[[.5,.5,.55,.6],[.75,.75,.8,.85],[1,1,1.05,.8]];   // 반복마다 점점 세게
+const orch={bpm:72,div:3,len:144,play(i,t){
+  const p=(i/48)|0, w=i%48, bar=(w/12)|0, k=w%12, d=60/72/3, c=OC[bar], v=OV[p][bar];
+  if(k===0){
+    c.pad.forEach(m=>pad(m,t,d*12,.045*v));                                    // 현악 패드
+    tone(c.b,t,d*11,"triangle",.75*v,out());                                    // 첼로·콘트라베이스
+    if(p>=1) c.pad.forEach(m=>violin(m+12,t,d*11.5,.05*v));                     // 바이올린 화음(2번째부터)
+    if(p>=2) c.pad.forEach(m=>choirW(m,t,d*12,.016*v));                         // 합창(3번째)
+    if(p>=1) kick(t,.35*v,true);                                                // 팀파니
+    if(p===2&&bar===0) hit(t,1.6,.14,5000,.7);                                  // 3번째 시작에 심벌
+  }
+  if(p>=2&&k===6) kick(t,.22*v,true);
+  if(p===2&&bar===3&&k>=9) kick(t,.25+.1*(k-9),true);                           // 마지막 마디 북 연타
+  if(k===0||k===3||k===6) pluck(c.lh[k/3],t,.2*v,1.8);                          // 왼손(하프): 근음 → 5도 → 옥타브, 마지막 박은 쉼
+  noteAt(ORH,w,(m,len)=>{ const dur=d*len*.97;
+    if(p===0) flute(m,t,dur,.3*v);                                              // 1번째: 플루트
+    else if(p===1){ violin(m,t,dur,.2*v); flute(m,t,dur,.12*v); }               // 2번째: 바이올린+플루트
+    else { violin(m,t,dur,.18*v); horn(m-12,t,dur,.1*v); flute(m+12,t,dur,.12*v); horn(m,t,dur,.06*v); }   // 3번째: 호른 가세, 플루트 옥타브
+  });
+}};
+
 window.BGM_TRACKS={
   basic:{name:"기본",bpm:132,div:2,len:32,play:(i,t)=>bgmStep(i,t)},
   arcade:{name:"신나는 오락실",...arcade},
   rich:{name:"풍성한",...rich},
-  wa:{name:"일본풍",...wa}
+  wa:{name:"일본풍",...wa},
+  orch:{name:"오케스트라",...orch}
 };
 })();
