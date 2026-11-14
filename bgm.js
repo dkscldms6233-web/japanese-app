@@ -110,11 +110,11 @@ const rich={bpm:110,div:2,len:128,play(i,t){
   const bar=i>>3,k=i&7,d=60/110/2,c=RC[bar], up=(bar===15&&k>=4)?A7T:c.up, v=bar<4?.6:bar<8?.85:bar<12?1:.85;
   if(k===0){ up.forEach(m=>{ pad(m+12,t,d*8,.07*v); pad(m,t,d*8,.035*v); }); tone(c.b,t,d*7,"triangle",.85*v,out()); }                    // 현악 패드 + 베이스(저음 비중)
   if(k===4) tone(c.b+(bar%2?0:7),t,d*3.5,"triangle",.6*v,out());
-  if(bar<4){ bell(up[AP[k]%4]+12,t,d*3,.13); if(k===0) bell(up[3]+24,t,d*6,.1); }   // 도입: 반짝이는 고음 아르페지오
+  if(bar<4){ }   // 도입: 반짝이는 고음 아르페지오
   else { if(k%2===1) tone(up[(k>>1)%4]+12,t,d*.45,"triangle",.1*v,out()); }   // 피아노 풍 아르페지오 + 피치카토
   if(bar>=4&&(k===0||k===4)) kick(t,.22*v,true); if(bar>=8&&(k===2||k===6)) snare(t,.12); if(k%2===0) hat(t,bar<4?.07:.12);
   if(bar===15&&k>=4) snare(t,.15+.06*(k-4));
-  noteAt(RM,i,(m,len)=>{ if(bar<8){ flute(m,t,d*len*.95,.3); bell(m,t,d*len,.06); } else { violin(m,t,d*len*.97,.26); flute(m+12,t,d*len*.9,.1); bell(m+12,t,d*len,.08); } });
+  noteAt(RM,i,(m,len)=>{ if(bar<8){ flute(m,t,d*len*.95,.3); } else { violin(m,t,d*len*.97,.26); flute(m+12,t,d*len*.9,.1); } });
 }};
 
 /* ---- 일본풍 (동양 판타지) : 게임 속 '일본풍 동양 판타지' 음악 느낌. 코토의 흐르는 아르페지오 + 샤쿠하치 선율 + 현악·합창 패드 + 부드러운 북과 종.
