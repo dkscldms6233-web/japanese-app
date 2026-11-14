@@ -1531,7 +1531,7 @@ function popFx(text,cls){
 }
 const cmbCls = n => "cmb "+(n>=10?"c10":n>=5?"c5":"");
 const RANKS=["일본어 새싹","단어 탐험가","단어 사냥꾼","한자 달인","한자 마스터"];
-const LADDERS={match:[0,100,250,500,800],time:[0,80,200,400,650],wordle:[0,20,60,100,120],shiri:[0,60,150,300,500],fall:[0,60,150,300,500]};
+const LADDERS={match:[0,150,375,750,1200],time:[0,120,300,600,975],wordle:[0,20,60,100,120],shiri:[0,90,225,450,750],fall:[0,90,225,450,750]};
 function rankOf(score,type){
   const L=LADDERS[type]||LADDERS.time; let i=0; L.forEach((v,k)=>{ if(score>=v) i=k; });
   return {name:RANKS[i], next:L[i+1]!=null?{name:RANKS[i+1],gap:L[i+1]-score}:null};
