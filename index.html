@@ -676,7 +676,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="kana.js?v=6"></script>
 <script src="games2.js?v=11"></script>
-<script src="bgm.js?v=32"></script>
+<script src="bgm.js?v=33"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1351,6 +1351,7 @@ function gameSetup(){
     <label class="tg"><span>게임 글꼴</span><select id="gfsel">${GFONTS.map(([v,nm])=>`<option value="${v}" ${gfont()===v?"selected":""}>${nm}</option>`).join("")}</select></label>
    </details>
   </div>`;
+  updPrev();   /* 음악이 이미 흐르는 중이면 버튼이 '정지'로 보이게 */
 }
 function choices(w,key){
   const others = shuffle(ALL.filter(x=>x.key!==w.key && x[key]!==w[key] && (key!=="yomi"||x.text!==x.yomi)));
@@ -1446,7 +1447,7 @@ let G=null, gTimer=null, gFlash=null;
 const getBest = k => (LS.get("jp-best",{}))[k];
 function setBest(k,v){ const b=LS.get("jp-best",{}); b[k]=v; LS.set("jp-best",b); }
 function bestTxt(k){ const v=getBest(k); return v==null?"":`<br><b>내 최고 기록: ${v}점</b>`; }
-function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer); clearTimeout(gFlash); gTimer=null; gFlash=null; G=null; bgmStop(); }
+function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer); clearTimeout(gFlash); gTimer=null; gFlash=null; G=null; }   /* 음악은 여기서 끄지 않아요 — 게임을 다시 시작하거나 결과 화면으로 가도 끊기지 않고 계속 흘러요 */
 
 /* 소리: 외부 파일 없이 브라우저가 직접 만드는 배경음악과 효과음이에요 (저작권 걱정 없음) */
 const SND={ctx:null,timer:null,step:0,next:0};
@@ -1482,23 +1483,24 @@ function bgmStart(o){
   const tr=BGM_TRACKS[(o&&o.id)||prefs.bgm]||BGM_TRACKS.basic;
   SND.step=0; SND.next=SND.ctx.currentTime+.08;
   SND.timer=setInterval(()=>{
-    while(SND.next<SND.ctx.currentTime+.25){ tr.play(SND.step,SND.next); SND.step=(SND.step+1)%tr.len; SND.next+=60/tr.bpm/tr.div; }
-  },60);
+    while(SND.next<SND.ctx.currentTime+1.2){ tr.play(SND.step,SND.next); SND.step=(SND.step+1)%tr.len; SND.next+=60/tr.bpm/tr.div; }
+  },100);
 }
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&SND.ctx&&SND.timer&&SND.ctx.state!=="running") SND.ctx.resume(); });   /* 다른 탭에 갔다 와도 소리가 이어지게 */
 function bgmPreview(id){
-  const same=SND.previewId===id; bgmStop(); clearTimeout(SND.pvT); updPrev();
-  if(same) return; if(!sndInit()) return; SND.previewId=id; bgmStart({id,force:true}); SND.pvT=setTimeout(()=>{ bgmStop(); updPrev(); },60000); updPrev();
+  if(SND.timer){ bgmStop(); return; }   /* 흐르는 중이면 정지 (게임 중에 시작된 음악도 같은 버튼으로 끌 수 있어요) */
+  if(!sndInit()) return; SND.previewId=id; bgmStart({id,force:true}); updPrev();
 }
 function bgmNav(d){
   const ids=Object.keys(BGM_TRACKS); let i=ids.indexOf(prefs.bgm||"basic"); i=(i+d+ids.length)%ids.length; const id=ids[i];
   prefs.bgm=id; LS.set("jp-prefs",prefs);
   const nm=$("bgmnm"); if(nm) nm.textContent=BGM_TRACKS[id].name;
   document.querySelectorAll("#bgmdots i").forEach((x,n)=>x.classList.toggle("on",n===i));
-  if(SND.previewId){ bgmStop(); clearTimeout(SND.pvT); SND.previewId=id; bgmStart({id,force:true}); SND.pvT=setTimeout(()=>{ bgmStop(); updPrev(); },90000); }
+  if(SND.previewId){ bgmStop(); clearTimeout(SND.pvT); SND.previewId=id; bgmStart({id,force:true}); }
   updPrev();
 }
-function updPrev(){ const b=$("bgmplay"); if(b){ const on=!!SND.previewId; b.textContent=on?"■ 정지":"▶ 듣기"; } }
-function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; }
+function updPrev(){ const b=$("bgmplay"); if(b){ const on=!!SND.timer; b.textContent=on?"■ 정지":"▶ 듣기"; } }
+function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; updPrev(); }
 function sfx(kind){
   if(!soundOn()||!sndInit()) return; const t=SND.ctx.currentTime, o=SND.fx;
   if(kind==="ok"){ tone(84,t,.12,"sine",.9,o); tone(91,t+.07,.18,"sine",.9,o); }
@@ -2187,6 +2189,7 @@ $("statsView").addEventListener("click",e=>{
 /* ---------- 이벤트 ---------- */
 function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
+  if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","news","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===(v==="today"?"home":v==="read"?"news":v)));
