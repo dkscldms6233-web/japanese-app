@@ -31,7 +31,7 @@ function flute(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGa
   hit(t,.12,vol*.25,3000,1.2,"bandpass"); }
 
 /* ---- 공통 도우미 ---- */
-const noteAt=(list,i,fn)=>{ for(const n of list) if(n[0]===i) fn(n[1],n[2]); };
+const noteAt=(list,i,fn)=>{ for(const n of list) if(n[0]===i) fn(n[1],n[2],n[3]); };
 function bell(m,t,dur,vol){ const c=ctx(), g=c.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.004); g.gain.exponentialRampToValueAtTime(.0001,t+Math.min(dur,1.6));
   [[1,1],[2.76,.22],[5.4,.07]].forEach(([mul,v])=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sine"; o.frequency.value=midi(m)*mul; gg.gain.value=v; o.connect(gg); gg.connect(g); o.start(t); o.stop(t+1.7); });
   g.connect(out()); const s=c.createGain(); s.gain.value=.4; g.connect(s); s.connect(echoBus()); }
@@ -152,51 +152,65 @@ const wa={bpm:76,div:2,len:64,play(i,t){
   noteAt(WF_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.2));                                           // 샤쿠하치 선율
 }};
 
-/* ---- 클래식 왈츠 : 3/4박자, 분당 120박의 신나는 빈 왈츠. 쿵(저음)-짝(화음)-짝 반주 위에 바이올린이 경쾌하게 오르내리는 선율.
-   앞 8마디 D–A7 으뜜·딸림7 진행 → 8마디 변주(B7·Em 반짝임, 플루트 가세) → G장조로 올라가 화려한 8마디(호른·팀파니·심벌)
-   소리는 큰 홀 같은 리버브(revBus)를 쓰는 악기 함수들(ostr·ohorn·oflute·oharp·timp)을 함께 둠 ---- */
+/* ---- 클래식 왈츠 : 요한 슈트라우스 2세 「아름답고 푸른 도나우」 왈츠 1A 주제(퍼블릭 도메인 곡)의 뼈대를 분석해 D장조로 옮겨 만든 16마디 곡.
+   분석 참고: Mutopia Project 의 푸른 도나우 피아노 MIDI(편곡 Christian Mondrup, CC BY-SA 4.0) 에서 박자(3/4)·화음·선율을 읽었어요.
+   뼈대: 으뜸화음(D) 위에서 [도 도 미 | 솔 솔──] 로 3화음을 타고 오르는 시작 → 3도 화음으로 길게 이어지는 선율(4마디) → 딸림7화음(A7)으로 넘어가 같은 모양을 한 번 더 → D 로 돌아와 끝
+   악기(현장감): 제1바이올린(선율) · 클라리넷(3도 아래 화음) · 첼로 피치카토(쿵) · 비올라/제2바이올린 짧은 현(짝짝) · 호른(길게 받침) · 하프(마디 첫 박 글리산도)
+   각 악기는 좌우 위치(스테레오)가 다르고, 연주 타이밍·세기가 사람처럼 조금씩 흔들리며, 큰 홀 리버브가 걸려요. 북·두꺼운 저음은 쓰지 않아요 ---- */
 let rev=null;
-function revBus(){ if(rev&&rev.c===ctx()) return rev.in; const c=ctx(), len=c.sampleRate*2.6, ir=c.createBuffer(2,len,c.sampleRate);
-  for(let ch=0;ch<2;ch++){ const d=ir.getChannelData(ch); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4); }
-  const cv=c.createConvolver(), inp=c.createGain(), wet=c.createGain(); cv.buffer=ir; wet.gain.value=.9; inp.connect(cv); cv.connect(wet); wet.connect(out()); rev={c,in:inp}; return inp; }
-function send(node,amt){ const s=ctx().createGain(); s.gain.value=amt; node.connect(s); s.connect(revBus()); }
-function ostr(m,t,dur,vol,bright){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(), vd=c.createGain();
-  f.type="lowpass"; f.frequency.value=bright||2000; f.Q.value=.5;
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.35); g.gain.setValueAtTime(vol,t+Math.max(.4,dur-.2)); g.gain.linearRampToValueAtTime(.0001,t+dur+.25);
-  l.frequency.value=5.1; lg.gain.value=midi(m)*.0035; vd.gain.setValueAtTime(0,t); vd.gain.linearRampToValueAtTime(1,t+.9); l.connect(vd); vd.connect(lg);
-  [-9,-3,3,9].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.3); });
-  l.start(t); l.stop(t+dur+.3); f.connect(g); g.connect(out()); send(g,.55); }
-function ohorn(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=1; f.frequency.setValueAtTime(300,t); f.frequency.linearRampToValueAtTime(1500,t+.5); f.frequency.linearRampToValueAtTime(800,t+dur);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.28); g.gain.setValueAtTime(vol,t+Math.max(.3,dur-.3)); g.gain.linearRampToValueAtTime(.0001,t+dur+.2);
-  [-4,4].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.25); }); f.connect(g); g.connect(out()); send(g,.5); }
-function oflute(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), o2=c.createOscillator(), g=c.createGain(), g2=c.createGain(), l=c.createOscillator(), lg=c.createGain();
-  o.type="sine"; o.frequency.value=midi(m); o2.type="triangle"; o2.frequency.value=midi(m)*2; g2.gain.value=.12; l.frequency.value=5; lg.gain.value=midi(m)*.003; l.connect(lg); lg.connect(o.frequency);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.12); g.gain.setValueAtTime(vol,t+Math.max(.15,dur-.2)); g.gain.linearRampToValueAtTime(.0001,t+dur+.15);
-  o.connect(g); o2.connect(g2); g2.connect(g); g.connect(out()); send(g,.6); [o,o2,l].forEach(x=>{ x.start(t); x.stop(t+dur+.2); }); hit(t,.1,vol*.12,3500,1.2,"bandpass"); }
-function oharp(m,t,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=Math.min(5000,midi(m)*7);
-  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.004); g.gain.exponentialRampToValueAtTime(vol*.4,t+.3); g.gain.exponentialRampToValueAtTime(.0001,t+2.2);
-  [[1,1],[2,.35],[3,.12],[4,.05]].forEach(([h,a])=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sine"; o.frequency.value=midi(m)*h; gg.gain.value=a; o.connect(gg); gg.connect(f); o.start(t); o.stop(t+2.3); });
-  f.connect(g); g.connect(out()); send(g,.5); }
-function timp(m,t,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(); o.type="sine"; o.frequency.setValueAtTime(midi(m)*1.35,t); o.frequency.exponentialRampToValueAtTime(midi(m),t+.12);
-  g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0001,t+1.1); o.connect(g); g.connect(out()); send(g,.4); o.start(t); o.stop(t+1.15); hit(t,.06,vol*.25,400,.8,"lowpass"); }
-const WZC={   // 화음: 쿵(저음) + 짝짝(화음 구성음)
- D:{b:38,ch:[57,62,66]}, A7:{b:45,ch:[55,61,64]}, G:{b:43,ch:[59,62,67]}, B7:{b:47,ch:[57,63,66]},
- Em:{b:40,ch:[59,64,67]}, D7:{b:38,ch:[57,60,66]}, C:{b:48,ch:[55,60,64]}};
-// 신나는 빈 왈츠식 진행: 으뜸(D)–딸림7(A7)을 오가고, 버금딸림(G)·부속7화음(B7)으로 반짝임을 주고, 뒤 8마디는 G장조로 올라가 화려하게 돈 뒤 A7으로 다시 D에 돌아와요
-const WZP=["D","A7","D","A7","D","G","A7","D",  "D","B7","Em","A7","D","G","A7","D",  "G","D7","G","D7","G","C","D7","A7"].map(n=>WZC[n]);
-const WZM=[   // 선율: 한 마디 = 6칸(8분음표). 화음 구성음을 타고 올라가는 경쾌한 도약 + 길게 끄는 음으로 숨 쉼
- [0,74,2],[2,78,2],[4,81,2],  [6,85,3],[9,81,3],  [12,78,2],[14,81,2],[16,86,2],  [18,85,4],[22,81,2],  [24,81,2],[26,78,2],[28,74,2],  [30,79,2],[32,83,2],[34,86,2],  [36,85,3],[39,81,3],  [42,86,6],
- [48,90,2],[50,86,2],[52,81,2],  [54,87,3],[57,83,3],  [60,79,2],[62,83,2],[64,88,2],  [66,85,3],[69,81,3],  [72,86,2],[74,81,2],[76,78,2],  [78,79,2],[80,83,2],[82,86,2],  [84,85,2],[86,88,2],[88,85,2],  [90,86,6],
- [96,79,2],[98,83,2],[100,86,2],  [102,90,3],[105,84,3],  [108,91,2],[110,86,2],[112,83,2],  [114,81,3],[117,78,3],  [120,83,2],[122,86,2],[124,91,2],  [126,88,3],[129,84,3],  [132,90,2],[134,86,2],[136,81,2],  [138,85,3],[141,81,3]];
-const waltz={bpm:120,div:2,len:144,play(i,t){
-  const bar=(i/6)|0, k=i%6, d=60/120/2, c=WZP[bar], sec=bar<8?0:bar<16?1:2, ph=(bar%4)/3;
-  const v=[.75,.9,1][sec]*(.9+.1*ph)*(bar===23?.85:1);                          // 4마디마다 살짝 부풀었다 숨쉬는 강약
-  if(k===0){ tone(c.b,t,d*2.6,"triangle",.7*v,out()); if(sec===2) timp(c.b+12,t,.28*v); if(bar===16) hit(t,1.8,.09,5000,.7); if(sec>=1) c.ch.forEach(m=>pad(m,t,d*6,.025*v)); }   // 쿵: 첼로·콘트라베이스
-  if(k===2||k===4) c.ch.forEach(m=>{ pluck(m,t,.11*v,.5); violin(m+12,t,d*1.2,.02*v); });                                        // 짝·짝: 현 피치카토 + 짧은 현악 (경쾌하게 튀는 반주)
-  noteAt(WZM,i,(m,len)=>{ const dur=d*len*.95;
-    if(sec===0){ violin(m,t,dur,.24*v); }
-    else if(sec===1){ violin(m,t,dur,.22*v); flute(m+12,t,dur,.09*v); }
-    else { violin(m,t,dur,.22*v); violin(m-12,t,dur,.07*v); ohorn(m-12,t,dur,.045*v); flute(m+12,t,dur,.09*v); }
+function revBus(){ if(rev&&rev.c===ctx()) return rev.in; const c=ctx(), len=c.sampleRate*2.4, ir=c.createBuffer(2,len,c.sampleRate);
+  for(let ch=0;ch<2;ch++){ const d=ir.getChannelData(ch); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6); }
+  const cv=c.createConvolver(), inp=c.createGain(), wet=c.createGain(); cv.buffer=ir; wet.gain.value=.8; inp.connect(cv); cv.connect(wet); wet.connect(out()); rev={c,in:inp}; return inp; }
+/* 한 악기의 소리를 좌우 위치(pan)에 놓고, 홀 울림(rv)도 보내요 */
+function route(g,pan,rv){ const c=ctx(), p=c.createStereoPanner(); p.pan.value=pan; g.connect(p); p.connect(out()); const s=c.createGain(); s.gain.value=rv; p.connect(s); s.connect(revBus()); }
+const jit=()=>(Math.random()-.5)*.014, vj=()=>.92+Math.random()*.16;   // 사람이 치는 것처럼 타이밍·세기를 조금 흔들어요
+function vln(m,t,dur,vol,pan){ const c=ctx(); t+=jit(); vol*=vj(); const g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(), vd=c.createGain();
+  f.type="lowpass"; f.Q.value=.6; f.frequency.setValueAtTime(900,t); f.frequency.exponentialRampToValueAtTime(3200,t+.14); f.frequency.exponentialRampToValueAtTime(2400,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.06); g.gain.setValueAtTime(vol,t+Math.max(.08,dur-.1)); g.gain.exponentialRampToValueAtTime(.0001,t+dur+.1);
+  l.frequency.value=5.2+Math.random()*.6; lg.gain.value=midi(m)*.0035; vd.gain.setValueAtTime(0,t); vd.gain.linearRampToValueAtTime(1,t+.3); l.connect(vd); vd.connect(lg);
+  [-9,0,9].forEach(det=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; gg.gain.value=.34; lg.connect(o.frequency); o.connect(gg); gg.connect(f); o.start(t); o.stop(t+dur+.15); });
+  l.start(t); l.stop(t+dur+.15); f.connect(g); route(g,pan,.45); hit(t,.04,vol*.18,3000,1,"bandpass"); }
+function stac(m,t,vol,pan){ const c=ctx(); t+=jit(); vol*=vj(); const g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=1700;
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+.2);
+  [-6,6].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+.25); }); f.connect(g); route(g,pan,.35); }
+function clar(m,t,dur,vol,pan){ const c=ctx(); t+=jit(); vol*=vj(); const o=c.createOscillator(), o2=c.createOscillator(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain();
+  o.type="square"; o.frequency.value=midi(m); o2.type="triangle"; o2.frequency.value=midi(m); f.type="lowpass"; f.frequency.value=1500; f.Q.value=.5;
+  l.frequency.value=4.8; lg.gain.value=midi(m)*.002; l.connect(lg); lg.connect(o.frequency);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.07); g.gain.setValueAtTime(vol,t+Math.max(.09,dur-.1)); g.gain.exponentialRampToValueAtTime(.0001,t+dur+.1);
+  o.connect(f); o2.connect(f); f.connect(g); route(g,pan,.4); [o,o2,l].forEach(x=>{ x.start(t); x.stop(t+dur+.15); }); }
+function horn(m,t,dur,vol,pan){ const c=ctx(); t+=jit(); const g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=.8; f.frequency.setValueAtTime(450,t); f.frequency.linearRampToValueAtTime(1100,t+.4); f.frequency.linearRampToValueAtTime(700,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.3); g.gain.setValueAtTime(vol,t+Math.max(.32,dur-.25)); g.gain.linearRampToValueAtTime(.0001,t+dur+.15);
+  [-4,4].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.2); }); f.connect(g); route(g,pan,.5); }
+function pizz(m,t,vol,pan){ const c=ctx(); t+=jit(); vol*=vj(); const o=c.createOscillator(), o2=c.createOscillator(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=1100;
+  o.type="triangle"; o.frequency.value=midi(m); o2.type="sine"; o2.frequency.value=midi(m)*2; const g2=c.createGain(); g2.gain.value=.3;
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.006); g.gain.exponentialRampToValueAtTime(.0001,t+.38);
+  o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); route(g,pan,.3); [o,o2].forEach(x=>{ x.start(t); x.stop(t+.45); }); }
+function harp(m,t,vol,pan){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=Math.min(5000,midi(m)*7);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.004); g.gain.exponentialRampToValueAtTime(vol*.4,t+.3); g.gain.exponentialRampToValueAtTime(.0001,t+1.6);
+  [[1,1],[2,.35],[3,.12]].forEach(([h,a])=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sine"; o.frequency.value=midi(m)*h; gg.gain.value=a; o.connect(gg); gg.connect(f); o.start(t); o.stop(t+1.7); });
+  f.connect(g); route(g,pan,.5); }
+const WZD={b:50,ch:[57,62,66],up:[62,66,69,74,78,81], hn:[66,69]};      // D  (으뜸)
+const WZA={b:45,ch:[55,61,64],up:[61,64,67,73,76,79], hn:[64,67]};      // A7 (딸림7)
+const WZP=[WZD,WZD,WZD,WZD, WZD,WZD,WZA,WZA, WZA,WZA,WZA,WZA, WZA,WZA,WZD,WZD];   // 16마디 화음
+const WZV=[.7,.75,.85,.8, .8,.85,.95,.9, .85,.9,1,.95, .9,.95,1.05,.8];          // 마디별 세기: 4마디 단위로 부풀었다 가라앉음
+/* 선율 [시작 칸, 음, 길이(칸), 파트(0=위 선율, 1=3도 아래 화음)] — 한 마디 6칸 */
+const WZM=[
+ [0,62,2,0],[2,62,2,0],[4,66,2,0],   [6,69,2,0],[8,69,4,0],
+ [12,81,2,0],[12,78,2,1],[14,81,4,0],[14,78,4,1],   [18,78,2,0],[18,74,2,1],[20,78,4,0],[20,74,4,1],
+ [24,62,2,0],[26,62,2,0],[28,66,2,0],   [30,69,2,0],[32,69,4,0],
+ [36,81,2,0],[36,79,2,1],[38,81,4,0],[38,79,4,1],   [42,79,2,0],[42,73,2,1],[44,79,4,0],[44,73,4,1],
+ [48,61,2,0],[50,61,2,0],[52,64,2,0],   [54,71,2,0],[56,71,4,0],
+ [60,83,2,0],[60,79,2,1],[62,83,4,0],[62,79,4,1],   [66,79,2,0],[66,73,2,1],[68,79,4,0],[68,73,4,1],
+ [72,61,2,0],[74,61,2,0],[76,64,2,0],   [78,71,2,0],[80,71,4,0],
+ [84,83,2,0],[84,78,2,1],[86,83,4,0],[86,78,4,1],   [90,78,2,0],[90,74,2,1],[92,78,4,0],[92,74,4,1]];
+const waltz={bpm:126,div:2,len:96,play(i,t){
+  const bar=(i/6)|0, k=i%6, d=60/126/2, c=WZP[bar], v=WZV[bar];
+  if(k===0){ pizz(c.b,t,.34*v,.35); if(bar>=8) c.hn.forEach(m=>horn(m,t,d*5.5,.04*v,.45)); }                       // 쿵: 첼로 피치카토 / 뒤쪽에선 호른이 길게 받침
+  if(k===2||k===4) c.ch.forEach((m,j)=>stac(m+(j?0:12),t,.07*v,-.15+j*.1));                                           // 짝·짝: 비올라·제2바이올린 짧은 현
+  if(k===0&&(bar===8||bar===15)) c.up.forEach((m,j)=>harp(m,t+j*.045,.12*v,.1));                                      // 하프 글리산도(후반 시작·마지막)
+  noteAt(WZM,i,(m,len,part)=>{ const dur=d*len*.96;
+    if(part===0){ vln(m,t,dur,.2*v,-.35); if(len===2&&m<72) pizz(m-12,t,.18*v,.4); else if(len>=4) vln(m,t,dur,.06*v,-.1); }   // 제1바이올린 (짧은 도입 음엔 첼로가 한 옥타브 아래서 거듦)
+    else clar(m,t,dur,.1*v,.3);                                                                                          // 클라리넷: 3도 아래 화음
   });
 }};
 
