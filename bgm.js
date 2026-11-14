@@ -152,39 +152,59 @@ const wa={bpm:76,div:2,len:64,play(i,t){
   noteAt(WF_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.2));                                           // 샤쿠하치 선율
 }};
 
-/* ---- 오케스트라 : 사용자가 알려 준 음표 그대로 만든 곡 (D단조, 12/8, 분당 72박)
-   왼손(하프): 레라레 | 도솔도 | 시b파시b | 도솔도 를 계속 반복 (화음 Dm → C → Bb → C)
-   오른손: 레 미 파 솔 라 ─── / 레 도 라 솔 파 / 솔 미 레  (4마디 선율을 3번 반복하면서 악기가 점점 늘어남)
-   악기 구성: 하프 · 첼로/콘트라베이스 · 현악 패드 · 바이올린 · 플루트 · 호른 · 팀파니 · 심벌 · 합창
-   1번째(조용히): 하프+저음 현+패드+플루트 → 2번째(커짐): +바이올린·팀파니 → 3번째(웅장): +호른·플루트 옥타브·심벌·합창 ---- */
-function horn(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=1.5; f.frequency.setValueAtTime(400,t); f.frequency.exponentialRampToValueAtTime(1800,t+Math.min(.4,dur*.5)); f.frequency.exponentialRampToValueAtTime(1000,t+dur);
-  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.2); g.gain.setValueAtTime(vol,t+Math.max(.25,dur-.25)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  [-5,0,5].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.05); });
-  f.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.35; g.connect(s); s.connect(echoBus()); }
+/* ---- 오케스트라 : 사용자가 알려 준 음표로 만든 곡 (D단조, 12/8, 분당 72박)
+   왼손(하프): 레라레 | 도솔도 | 시b파시b | 도솔도 (화음 Dm → C → Bb → C, 마디마다 바뀌고 한 마디 안에서 3음 아르페지오를 흐르듯 반복)
+   오른손: 레 미 파 솔 라 ─── / 레 도 라 솔 파 / 솔 미 레  (4마디 선율을 4번 반복하면서 악기가 쌓이고 점점 커짐)
+   소리: 큰 홀 같은 울림(리버브)을 걸고, 현악은 여러 대가 겹친 소리 · 호른은 천천히 열리는 소리 · 팀파니는 음정이 있는 북으로 만들었어요 ---- */
+let rev=null;
+function revBus(){ if(rev&&rev.c===ctx()) return rev.in; const c=ctx(), len=c.sampleRate*2.6, ir=c.createBuffer(2,len,c.sampleRate);
+  for(let ch=0;ch<2;ch++){ const d=ir.getChannelData(ch); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4); }
+  const cv=c.createConvolver(), inp=c.createGain(), wet=c.createGain(); cv.buffer=ir; wet.gain.value=.9; inp.connect(cv); cv.connect(wet); wet.connect(out()); rev={c,in:inp}; return inp; }
+function send(node,amt){ const s=ctx().createGain(); s.gain.value=amt; node.connect(s); s.connect(revBus()); }
+function ostr(m,t,dur,vol,bright){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(), l=c.createOscillator(), lg=c.createGain(), vd=c.createGain();
+  f.type="lowpass"; f.frequency.value=bright||2000; f.Q.value=.5;
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.35); g.gain.setValueAtTime(vol,t+Math.max(.4,dur-.2)); g.gain.linearRampToValueAtTime(.0001,t+dur+.25);
+  l.frequency.value=5.1; lg.gain.value=midi(m)*.0035; vd.gain.setValueAtTime(0,t); vd.gain.linearRampToValueAtTime(1,t+.9); l.connect(vd); vd.connect(lg);
+  [-9,-3,3,9].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; lg.connect(o.frequency); o.connect(f); o.start(t); o.stop(t+dur+.3); });
+  l.start(t); l.stop(t+dur+.3); f.connect(g); g.connect(out()); send(g,.55); }
+function ohorn(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=1; f.frequency.setValueAtTime(300,t); f.frequency.linearRampToValueAtTime(1500,t+.5); f.frequency.linearRampToValueAtTime(800,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.28); g.gain.setValueAtTime(vol,t+Math.max(.3,dur-.3)); g.gain.linearRampToValueAtTime(.0001,t+dur+.2);
+  [-4,4].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.25); }); f.connect(g); g.connect(out()); send(g,.5); }
+function oflute(m,t,dur,vol){ const c=ctx(), o=c.createOscillator(), o2=c.createOscillator(), g=c.createGain(), g2=c.createGain(), l=c.createOscillator(), lg=c.createGain();
+  o.type="sine"; o.frequency.value=midi(m); o2.type="triangle"; o2.frequency.value=midi(m)*2; g2.gain.value=.12; l.frequency.value=5; lg.gain.value=midi(m)*.003; l.connect(lg); lg.connect(o.frequency);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.12); g.gain.setValueAtTime(vol,t+Math.max(.15,dur-.2)); g.gain.linearRampToValueAtTime(.0001,t+dur+.15);
+  o.connect(g); o2.connect(g2); g2.connect(g); g.connect(out()); send(g,.6); [o,o2,l].forEach(x=>{ x.start(t); x.stop(t+dur+.2); }); hit(t,.1,vol*.12,3500,1.2,"bandpass"); }
+function oharp(m,t,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=Math.min(5000,midi(m)*7);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.004); g.gain.exponentialRampToValueAtTime(vol*.4,t+.3); g.gain.exponentialRampToValueAtTime(.0001,t+2.2);
+  [[1,1],[2,.35],[3,.12],[4,.05]].forEach(([h,a])=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sine"; o.frequency.value=midi(m)*h; gg.gain.value=a; o.connect(gg); gg.connect(f); o.start(t); o.stop(t+2.3); });
+  f.connect(g); g.connect(out()); send(g,.5); }
+function timp(m,t,vol){ const c=ctx(), o=c.createOscillator(), g=c.createGain(); o.type="sine"; o.frequency.setValueAtTime(midi(m)*1.35,t); o.frequency.exponentialRampToValueAtTime(midi(m),t+.12);
+  g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0001,t+1.1); o.connect(g); g.connect(out()); send(g,.4); o.start(t); o.stop(t+1.15); hit(t,.06,vol*.25,400,.8,"lowpass"); }
 const OC=[
  {b:38,lh:[50,57,62],pad:[62,65,69]},   // Dm  : 레 라 레
  {b:36,lh:[48,55,60],pad:[60,64,67]},   // C   : 도 솔 도
  {b:34,lh:[46,53,58],pad:[58,62,65]},   // Bb  : 시b 파 시b
  {b:36,lh:[48,55,60],pad:[60,64,67]}];  // C   : 도 솔 도
 const ORH=[[0,74,3],[3,76,3],[6,77,3],[9,79,3], [12,81,12], [24,86,3],[27,84,3],[30,81,2],[32,79,2],[34,77,2], [36,79,3],[39,76,3],[42,74,6]];   // 레미파솔 라─── 레도 라솔 파 솔미레
-const OV=[[.5,.5,.55,.6],[.75,.75,.8,.85],[1,1,1.05,.8]];   // 반복마다 점점 세게
-const orch={bpm:72,div:3,len:144,play(i,t){
+const OV=[[.45,.45,.5,.55],[.7,.7,.75,.8],[.9,.9,.95,1],[1.1,1.1,1.15,.7]];   // 반복마다 점점 세게, 마지막 마디는 여운
+const orch={bpm:72,div:3,len:192,play(i,t){
   const p=(i/48)|0, w=i%48, bar=(w/12)|0, k=w%12, d=60/72/3, c=OC[bar], v=OV[p][bar];
   if(k===0){
-    c.pad.forEach(m=>pad(m,t,d*12,.045*v));                                    // 현악 패드
-    tone(c.b,t,d*11,"triangle",.75*v,out());                                    // 첼로·콘트라베이스
-    if(p>=1) c.pad.forEach(m=>violin(m+12,t,d*11.5,.05*v));                     // 바이올린 화음(2번째부터)
-    if(p>=2) c.pad.forEach(m=>choirW(m,t,d*12,.016*v));                         // 합창(3번째)
-    if(p>=1) kick(t,.35*v,true);                                                // 팀파니
-    if(p===2&&bar===0) hit(t,1.6,.14,5000,.7);                                  // 3번째 시작에 심벌
+    tone(c.b,t,d*11,"triangle",.7*v,out());                                            // 첼로·콘트라베이스
+    if(p>=1) c.pad.forEach(m=>ostr(m,t,d*11.5,.05*v,1800));                              // 현악 합주(2번째부터)
+    if(p>=2) c.pad.forEach(m=>ohorn(m-12,t,d*11,.04*v));                                 // 호른 화음(3번째부터)
+    if(p>=3) c.pad.forEach(m=>choirW(m,t,d*12,.016*v));                                  // 합창(4번째)
+    if(p>=2) timp(c.b+12,t,.5*v);                                                        // 팀파니
+    if(p===3&&bar===0) hit(t,1.8,.12,5000,.7);                                           // 마지막 반복의 시작에 심벌
   }
-  if(p>=2&&k===6) kick(t,.22*v,true);
-  if(p===2&&bar===3&&k>=9) kick(t,.25+.1*(k-9),true);                           // 마지막 마디 북 연타
-  if(k===0||k===3||k===6) pluck(c.lh[k/3],t,.2*v,1.8);                          // 왼손(하프): 근음 → 5도 → 옥타브, 마지막 박은 쉼
+  if(p>=3&&(k===6)) timp(c.b+12,t,.3*v);
+  if(p===3&&bar===2&&k>=9) timp(c.b+12,t,.3+.12*(k-9));                                  // 클라이맥스 직전 북 연타
+  if(k%2===0) oharp(c.lh[(k/2)%3],t,((k/2)%3===0?.22:.15)*v);                          // 왼손(하프): 레라레 · 레라레 … 한 마디에 두 번 흐르듯 반복
   noteAt(ORH,w,(m,len)=>{ const dur=d*len*.97;
-    if(p===0) flute(m,t,dur,.3*v);                                              // 1번째: 플루트
-    else if(p===1){ violin(m,t,dur,.2*v); flute(m,t,dur,.12*v); }               // 2번째: 바이올린+플루트
-    else { violin(m,t,dur,.18*v); horn(m-12,t,dur,.1*v); flute(m+12,t,dur,.12*v); horn(m,t,dur,.06*v); }   // 3번째: 호른 가세, 플루트 옥타브
+    if(p===0) oflute(m,t,dur,.3*v);                                                      // 1번째: 플루트
+    else if(p===1){ ostr(m+12,t,dur,.1*v,2600); oflute(m,t,dur,.2*v); }                  // 2번째: 현악+플루트
+    else if(p===2){ ostr(m+12,t,dur,.12*v,2800); ohorn(m,t,dur,.07*v); oflute(m+12,t,dur,.1*v); }   // 3번째: 호른 가세
+    else { ostr(m+12,t,dur,.14*v,3200); ostr(m,t,dur,.1*v,2400); ohorn(m,t,dur,.08*v); oflute(m+12,t,dur,.1*v); }   // 4번째: 전부 + 높은 현악
   });
 }};
 
