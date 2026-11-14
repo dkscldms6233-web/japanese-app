@@ -152,31 +152,57 @@ const wa={bpm:76,div:2,len:64,play(i,t){
   noteAt(WF_MEL,i,(m,len)=>shaku(m,t,d*len*.97,.2));                                           // 샤쿠하치 선율
 }};
 
-/* ---- 민락동 : 사용자가 직접 연주한 왼손 멜로디(민락동 14.m4a)를 분석해 만든 곡.
-   분석 결과: 분당 60박(셋잇단 느낌의 12/8) · 화음 C → Em → F → Dm7 (마디당 약 4초) · 낮은 근음 뒤에 5도·옥타브·3도가 흐르듯 올라가는 왼손 아르페지오
-   구성: 피아노 왼손 아르페지오 + 은은한 패드 + 새로 쓴 피아노 오른손 선율 8마디 ---- */
-const MK=[
- {b:36,r:48,f:55,o:60,t:64,pad:[60,64,67]},   // C
- {b:40,r:52,f:59,o:64,t:67,pad:[59,64,67]},   // Em
- {b:41,r:53,f:60,o:65,t:69,pad:[60,65,69]},   // F
- {b:38,r:50,f:57,o:62,t:65,pad:[60,65,69]},   // Dm7
- {b:36,r:48,f:55,o:60,t:64,pad:[60,64,67]},   // C
- {b:40,r:52,f:59,o:64,t:67,pad:[59,64,67]},   // Em
- {b:41,r:53,f:60,o:65,t:69,pad:[60,65,69]},   // F
- {b:43,r:55,f:62,o:67,t:71,pad:[62,67,71]}];  // G → 처음으로
-const MLH={0:"r",2:"f",3:"o",4:"t",6:"f",8:"o",9:"t",10:"f"};   // 왼손: 근음 → 5도 → 옥타브 → 3도 …
-const MKM=[
- [0,76,5],[5,79,2],[7,76,2],[9,74,3],  [12,71,3],[15,76,3],[18,79,6],  [24,77,4],[28,76,2],[30,72,2],[32,69,4],  [36,74,6],[42,72,3],[45,69,3],
- [48,79,3],[51,84,3],[54,83,2],[56,79,2],[58,76,2],  [60,79,4],[64,83,2],[66,86,6],  [72,84,3],[75,81,3],[78,77,3],[81,81,3],  [84,79,2],[86,83,2],[88,86,4],[92,83,4]];
+/* ---- 민락동 : 사용자가 직접 연주한 왼손 멜로디(민락동 14.m4a)를 분석해 만든 판타지 서사곡.
+   분석: 분당 60박(셋잇단 12/8) · 화음 C→Em→F→Dm7 · 낮은 근음 뒤에 5도·옥타브·3도가 흐르는 왼손 아르페지오
+   구성(16마디, 약 64초): 고요한 도입(쉼표 많음) → 주제 제시(선율 사이 쉼) → 현악이 오르며 고조(북·합창) → 금관·합창·북의 절정 → 긴 여운
+   소리가 점점 커지고(마디별 세기 v), 비워 두는 곳과 꽉 채우는 곳을 일부러 나눴어요 ---- */
 function piano(m,t,vol,dur){ const c=ctx(), f0=midi(m), g=c.createGain(), lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.setValueAtTime(Math.min(9000,f0*9),t); lp.frequency.exponentialRampToValueAtTime(Math.max(500,f0*2.2),t+dur*.6);
   g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.005); g.gain.exponentialRampToValueAtTime(vol*.35,t+.35); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  [[1,1],[2,.42],[3,.2],[4,.1],[5,.05]].forEach(([h,a],j)=>{ [-3,3].forEach(det=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sine"; o.frequency.value=f0*h*(1+(h>1?.0003*h*h:0)); o.detune.value=det; gg.gain.value=a*.5; gg.gain.setValueAtTime(a*.5,t); gg.gain.exponentialRampToValueAtTime(.0001,t+dur/(1+j*.6)); o.connect(gg); gg.connect(lp); o.start(t); o.stop(t+dur+.05); }); });
-  lp.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.25; g.connect(s); s.connect(echoBus()); hit(t,.03,vol*.12,1500,1,"bandpass"); }
-const minrak={bpm:60,div:3,len:96,play(i,t){
-  const bar=(i/12)|0,k=i%12,d=60/60/3,c=MK[bar],v=bar<4?.8:1;
-  if(k===0){ c.pad.forEach(m=>pad(m,t,d*12,.035*v)); piano(c.b,t,.5*v,d*11); }            // 낮은 근음(피아노) + 은은한 패드
-  if(MLH[k]&&k>0) piano(c[MLH[k]],t,.2*v,d*5); else if(k===0) piano(c.r,t,.2*v,d*6);       // 왼손 아르페지오
-  noteAt(MKM,i,(m,len)=>{ piano(m,t,.3*v,Math.max(.8,d*len*1.2)); if(bar>=4&&len>=4) pad(m,t,d*len,.03); });   // 오른손 선율(피아노)
+  [[1,1],[2,.42],[3,.2],[4,.1],[5,.05]].forEach(([h,a],j)=>{ [-3,3].forEach(det=>{ const o=c.createOscillator(), gg=c.createGain(); o.type="sine"; o.frequency.value=f0*h*(1+(h>1?.0003*h*h:0)); o.detune.value=det; gg.gain.setValueAtTime(a*.5,t); gg.gain.exponentialRampToValueAtTime(.0001,t+dur/(1+j*.6)); o.connect(gg); gg.connect(lp); o.start(t); o.stop(t+dur+.05); }); });
+  lp.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.3; g.connect(s); s.connect(echoBus()); hit(t,.03,vol*.12,1500,1,"bandpass"); }
+function brass(m,t,dur,vol){ const c=ctx(), g=c.createGain(), f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=2; f.frequency.setValueAtTime(350,t); f.frequency.exponentialRampToValueAtTime(2400,t+Math.min(.35,dur*.5)); f.frequency.exponentialRampToValueAtTime(900,t+dur);
+  g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.22); g.gain.setValueAtTime(vol,t+Math.max(.25,dur-.3)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  [-6,0,6].forEach(det=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=midi(m); o.detune.value=det; o.connect(f); o.start(t); o.stop(t+dur+.05); });
+  f.connect(g); g.connect(out()); const s=c.createGain(); s.gain.value=.35; g.connect(s); s.connect(echoBus()); }
+const MK=[
+ {b:36,r:48,f:55,o:60,t:64,pad:[60,64,67]},   // 0 C
+ {b:40,r:52,f:59,o:64,t:67,pad:[59,64,67]},   // 1 Em
+ {b:41,r:53,f:60,o:65,t:69,pad:[60,65,69]},   // 2 F
+ {b:38,r:50,f:57,o:62,t:65,pad:[60,65,69]},   // 3 Dm7
+ {b:36,r:48,f:55,o:60,t:64,pad:[60,64,67]},   // 4 C
+ {b:40,r:52,f:59,o:64,t:67,pad:[59,64,67]},   // 5 Em
+ {b:41,r:53,f:60,o:65,t:69,pad:[60,65,69]},   // 6 F
+ {b:43,r:55,f:62,o:67,t:71,pad:[62,67,71]},   // 7 G
+ {b:45,r:57,f:64,o:69,t:72,pad:[60,64,69]},   // 8 Am
+ {b:41,r:53,f:60,o:65,t:69,pad:[60,65,69]},   // 9 F
+ {b:36,r:48,f:55,o:60,t:64,pad:[60,64,67]},   // 10 C
+ {b:43,r:55,f:62,o:67,t:71,pad:[62,67,71]},   // 11 G
+ {b:45,r:57,f:64,o:69,t:72,pad:[60,64,69]},   // 12 Am
+ {b:41,r:53,f:60,o:65,t:69,pad:[60,65,69]},   // 13 F
+ {b:43,r:55,f:62,o:67,t:71,pad:[62,67,71]},   // 14 G
+ {b:36,r:48,f:55,o:60,t:64,pad:[60,64,67]}];  // 15 C (해결)
+const MV=[.4,.45,.5,.55, .7,.7,.75,.8, .85,.9,.95,1, 1.1,1.1,1.15,1];   // 마디별 세기: 점점 커짐
+const MLH={0:"r",2:"f",3:"o",4:"t",6:"f",8:"o",9:"t",10:"f"};            // 왼손 아르페지오(원곡 패턴)
+const MKM=[   // 선율 — 일부러 쉬는 곳(빈 칸)을 많이 둠
+ [48,76,6],  [63,79,3],[66,76,3],  [72,81,6],[78,77,3],  [84,74,3],[87,79,3],[90,83,6],
+ [96,81,4],[100,84,2],[102,88,6],  [108,84,3],[111,81,3],[114,77,6],  [120,79,3],[123,84,3],[126,88,6],  [132,86,6],[141,83,3],
+ [144,88,6],[150,84,3],[153,81,3],  [156,84,3],[159,89,3],[162,84,6],  [168,91,6],[174,86,3],[177,83,3],  [180,84,12]];
+const minrak={bpm:60,div:3,len:192,play(i,t){
+  const bar=(i/12)|0,k=i%12,d=1/3,c=MK[bar],v=MV[bar];
+  if(k===0){ c.pad.forEach(m=>pad(m,t,d*12,.03*v)); tone(c.b,t,d*(bar===15?11:10),"triangle",.55*v,out()); if(bar>=8) c.pad.forEach(m=>choirW(m+12,t,d*12,.014*v)); }   // 현악 패드·낮은 베이스·(고조부터)합창
+  if(bar<4){ if(k===0) piano(c.r,t,.2*v,d*8); if(k===6&&bar>0) piano(c.o,t,.14*v,d*6); }                                   // 도입: 두세 음만, 나머지는 쉼
+  else if(bar<8){ if(k===0||k===3||k===6) piano(c[k===0?"r":k===3?"o":"f"],t,.2*v,d*6); }                                  // 주제부: 성긴 왼손
+  else if(MLH[k]!==undefined) piano(c[MLH[k]],t,.2*v,d*5);                                                                   // 고조부터: 흐르는 왼손 아르페지오 전체
+  if(bar>=8&&bar<15){ if(k===0) kick(t,.5*v,true); if(k===6) kick(t,.28*v,true); }                                          // 큰 북
+  if(bar===11&&k>=9) kick(t,.3+.15*(k-9),true);                                                                              // 절정 직전 북 연타
+  if(bar===12&&k===0) hit(t,1.4,.14,5000,.7);                                                                                // 절정의 심벌
+  if(bar===15&&k===0){ kick(t,.8,true); hit(t,2.2,.12,5000,.7); }
+  noteAt(MKM,i,(m,len)=>{
+    const dur=d*len*.97;
+    if(bar<8) piano(m,t,.3*v,Math.max(1,dur*1.3));
+    else if(bar<12){ violin(m,t,dur,.2*v); piano(m,t,.18*v,1.2); }
+    else { brass(m,t,dur,.1*v); brass(m-12,t,dur,.06*v); violin(m+12,t,dur,.12*v); piano(m,t,.2*v,1.5); }
+  });
 }};
 
 window.BGM_TRACKS={
