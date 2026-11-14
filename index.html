@@ -676,7 +676,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="kana.js?v=6"></script>
 <script src="games2.js?v=11"></script>
-<script src="bgm.js?v=36"></script>
+<script src="bgm.js?v=37"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1451,6 +1451,7 @@ function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer
 
 /* 소리: 외부 파일 없이 브라우저가 직접 만드는 배경음악과 효과음이에요 (저작권 걱정 없음) */
 const SND={ctx:null,timer:null,step:0,next:0};
+if(!BGM_TRACKS[prefs.bgm||"basic"]){ prefs.bgm="basic"; LS.set("jp-prefs",prefs); }   /* 빠진 음악을 고르고 있던 사람은 기본 음악으로 */
 const soundOn = () => prefs.sound!==false;
 function sndInit(){
   if(!SND.ctx){
