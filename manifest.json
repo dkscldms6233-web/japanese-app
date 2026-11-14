@@ -1,0 +1,16 @@
+{
+  "name": "すらすら日本語 - 술술 일본어",
+  "short_name": "술술 일본어",
+  "description": "단어·한자·청해·게임으로 배우는 일본어",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2f4a73",
+  "theme_color": "#2f4a73",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
