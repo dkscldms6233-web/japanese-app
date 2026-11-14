@@ -107,13 +107,13 @@ const RM=[
  [96,81,2],[98,86,2],[100,90,4],  [104,86,2],[106,82,2],[108,79,4],  [112,81,2],[114,78,2],[116,74,4],  [120,81,2],[122,85,2],[124,88,4]];
 const AP=[0,1,2,3,2,1,2,1];
 const rich={bpm:110,div:2,len:128,play(i,t){
-  const bar=i>>3,k=i&7,d=60/110/2,c=RC[bar], up=(bar===15&&k>=4)?A7T:c.up, v=bar<4?.6:bar<8?.85:bar<12?1:.85;
+  const bar=i>>3,k=i&7,d=60/110/2,c=RC[bar], up=(bar===15&&k>=4)?A7T:c.up, v=bar<8?.85:bar<12?1:.85;
   if(k===0){ up.forEach(m=>{ pad(m+12,t,d*8,.07*v); pad(m,t,d*8,.035*v); }); tone(c.b,t,d*7,"triangle",.85*v,out()); }                    // 현악 패드 + 베이스(저음 비중)
   if(k===4) tone(c.b+(bar%2?0:7),t,d*3.5,"triangle",.6*v,out());
-  if(bar<4){ }   // 도입: 반짝이는 고음 아르페지오
-  else { if(k%2===1) tone(up[(k>>1)%4]+12,t,d*.45,"triangle",.1*v,out()); }   // 피아노 풍 아르페지오 + 피치카토
-  if(bar>=4&&(k===0||k===4)) kick(t,.22*v,true); if(bar>=8&&(k===2||k===6)) snare(t,.12); if(k%2===0) hat(t,bar<4?.07:.12);
+  if(k%2===1) tone(up[(k>>1)%4]+12,t,d*.45,"triangle",.1*v,out());   // 피치카토 (처음부터)
+  if(k===0||k===4) kick(t,.22*v,true); if(k===2||k===6) snare(t,.12); if(k%2===0) hat(t,.12);
   if(bar===15&&k>=4) snare(t,.15+.06*(k-4));
+  if(bar<4) noteAt(RM,i+32,(m,len)=>{ flute(m,t,d*len*.95,.3); });   // 도입에도 주제 선율(플루트)
   noteAt(RM,i,(m,len)=>{ if(bar<8){ flute(m,t,d*len*.95,.3); } else { violin(m,t,d*len*.97,.26); flute(m+12,t,d*len*.9,.1); } });
 }};
 
