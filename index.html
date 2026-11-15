@@ -86,7 +86,7 @@ select,textarea,.af input{padding:8px 10px;border:1px solid var(--line);border-r
 .pbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
 .pbar select{max-width:100%;flex:1;min-width:150px}
 .pg{justify-content:center}
-[data-view=news] :is(.list-only,.levels,.opts),[data-view=stats] :is(.list-only,.levels,.opts),
+[data-view=news] :is(.list-only,.levels,.opts),[data-view=anime] :is(.list-only,.levels,.opts),[data-view=stats] :is(.list-only,.levels,.opts),
 [data-view=home] :is(.list-only,.levels,.opts),[data-view=today] :is(.list-only,.levels,.opts),[data-view=read] :is(.list-only,.levels,.opts){display:none}
 
 main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
@@ -2499,7 +2499,7 @@ applyTheme();
 lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
-<script src="anime.js?v=1"></script>
+<script src="anime.js?v=4"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>
