@@ -140,7 +140,7 @@ const PROP={
 };
 function panel(fx,id,work){
   const f=FX[fx]||FX.hot, seed=[...id].reduce((a,c)=>a+c.charCodeAt(0),0), pr=PROP[work]||null, hair=(pr&&pr.h)||HAIR[seed%HAIR.length];
-  let rays=""; for(let i=0;i<28;i++){ const a=i/28*Math.PI*2, a2=a+.09, r=240; rays+=`<polygon points="160,60 ${(160+Math.cos(a)*r).toFixed(1)},${(60+Math.sin(a)*r).toFixed(1)} ${(160+Math.cos(a2)*r).toFixed(1)},${(60+Math.sin(a2)*r).toFixed(1)}" fill="${f[1]}" opacity=".55"/>`; }
+  const pid="dt"+id, bg=`<defs><linearGradient id="g${pid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${f[1]}"/><stop offset="1" stop-color="${f[0]}"/></linearGradient><pattern id="${pid}" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2.4" fill="#fff" opacity=".45"/><circle cx="11" cy="11" r="2.4" fill="#fff" opacity=".45"/></pattern></defs><rect width="320" height="120" fill="url(#g${pid})"/><rect width="320" height="120" fill="url(#${pid})"/><g stroke="#fff" stroke-width="2" opacity=".55" stroke-linecap="round"><path d="M14 24h46M30 34h30M262 94h40M278 104h24"/></g>`;
   const sym={hot:`<path d="M262 74c8 10 14 14 10 26-2 8-8 12-12 12s-10-4-12-12c-4-12 2-16 14-26z" fill="#ff5a1f"/>`,
    tsun:`<g stroke="#e63757" stroke-width="4" stroke-linecap="round" fill="none"><path d="M254 28q8 6 0 14M270 28q-8 6 0 14M254 46q8-6 16 0"/></g>`,
    chu2:`<circle cx="262" cy="34" r="16" fill="#f7f3c6"/><circle cx="268" cy="30" r="14" fill="${f[0]}"/><path d="M40 28l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z" fill="#f7f3c6"/>`,
@@ -149,7 +149,7 @@ function panel(fx,id,work){
    rival:`<path d="M262 16l-14 34h12l-8 30 22-38h-12l10-26z" fill="#ffd60a" stroke="#222" stroke-width="1.5"/>`,
    help:`<path d="M262 96V64" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/><path d="M262 66c-14-2-18-14-16-20 12-2 18 6 16 20zM262 70c14-2 18-14 16-20-12-2-18 6-16 20z" fill="#66bb6a"/>`,
    react:`<text x="250" y="60" font-size="44" font-weight="900" fill="#ff3b30" stroke="#fff" stroke-width="2" paint-order="stroke">!?</text>`}[fx]||"";
-  return `<svg class="an-art" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="만화 컷 풍 일러스트(실제 장면 아님)"><rect width="320" height="120" fill="${f[0]}"/>${rays}${sym}
+  return `<svg class="an-art" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="만화 컷 풍 일러스트(실제 장면 아님)">${bg}${sym}
    <g transform="translate(160 66)"><path d="M-30 54c0-20 14-30 30-30s30 10 30 30z" fill="${hair==="#444"?"#3d5a80":"#4a6fa5"}"/><circle r="26" fill="#ffe0c2"/><path d="M-27 -4c-4-26 12-34 27-34s31 8 27 34c-6-12-14-18-27-18s-21 6-27 18z" fill="${hair}"/>
    <ellipse cx="-9" cy="2" rx="3.4" ry="5" fill="#222"/><ellipse cx="9" cy="2" rx="3.4" ry="5" fill="#222"/><circle cx="-8" cy="0" r="1.2" fill="#fff"/><circle cx="10" cy="0" r="1.2" fill="#fff"/>
    ${fx==="react"||fx==="hot"||fx==="rival"?`<path d="M-7 14q7 7 14 0z" fill="#b23a48"/>`:`<path d="M-6 14q6 4 12 0" stroke="#b23a48" stroke-width="2" fill="none" stroke-linecap="round"/>`}${pr?pr.s:""}</g>
