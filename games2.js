@@ -14,6 +14,7 @@ ST.textContent=`.wd-hint{text-align:center;margin:6px 0 10px}.wd-hint b{font-siz
 .wd-act{display:flex;gap:8px;justify-content:center;margin:8px 0}.wd-act .pill{min-width:92px;justify-content:center}
 .sh-chain{display:flex;flex-direction:column;gap:6px;margin:10px 0}.sh-w{border-radius:14px;padding:6px 14px;max-width:85%}.sh-w small{display:block;opacity:.75;font-size:12px}
 .sh-w.com{background:var(--chip);align-self:flex-start}.sh-w.me{background:var(--accent-soft);align-self:flex-end;text-align:right}
+.sh-nat{display:block;width:100%;max-width:380px;margin:6px auto;padding:12px 14px;font-size:20px;border:2px solid var(--accent);border-radius:12px;background:var(--card);color:var(--text);text-align:center}
 .sh-need{text-align:center;font-size:15px;margin:8px 0}.sh-need b{display:inline-block;font-size:34px;color:var(--accent);margin:0 4px}
 .sh-in{display:flex;gap:6px;justify-content:center;align-items:center;margin:8px 0;min-height:56px;flex-wrap:wrap}.sh-in span{min-width:42px;height:48px;padding:0 6px;border:2px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:var(--card)}.sh-in span.lock{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}.sh-in .caret{min-width:3px;width:3px;padding:0;border:0;background:var(--accent);height:34px;animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
 .sh-msg{text-align:center;min-height:22px;font-size:14px;margin-bottom:4px}
@@ -143,8 +144,22 @@ function shBegin(pool){
   G={type:"shiri",diff:SHDIFF,maxHints:SH_D[SHDIFF].hints,pool,used,chain:[{who:"com",r:start.r,w:start.w}],score:0,rounds:0,lives:3,hints:0,hintShown:null,cur:"",tab:"basic",msg:"",seen:new Map(),over:false,busy:false};
   G.need=lastKana(start.r); G.cur=G.need; shRender(); bgmStart();
 }
+function shNatSync(){
+  const g=G, el=$("shNat"); if(!g||!el) return;
+  const box=document.querySelector(".sh-in");
+  if(box) box.innerHTML=[...g.cur].map((c,i)=>`<span class="${i===0?"lock":""}">${c}</span>`).join("")+'<span class="caret"></span>';
+  const b=document.querySelector('[data-sk="enter"]'); if(b) b.disabled=!(g.cur.length>=2);
+}
+function shNatInput(el){
+  const g=G; if(!g||g.type!=="shiri"||g.over||g.busy) return;
+  let v=el.value.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)).replace(/[^ぁ-ゖー]/g,"").slice(0,9);
+  if(v[0]!==g.need) v=g.need+v.replace(/^./,"");
+  if(v.length<1) v=g.need;
+  g.cur=v; g.msg=""; if(el.value!==v) el.value=v; shNatSync();
+}
 function shRender(){
-  const g=G, chain=g.chain.slice(-2);
+  const g=G, chain=g.chain.slice(-2), nat=!!(typeof prefs!=="undefined"&&prefs.shNative);
+  const oldNat=nat?$("shNat"):null;
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
    <div class="gstat"><span>점수 ${g.score}</span><span>이은 횟수 ${g.rounds}</span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
    <div class="sh-chain">${chain.map(c=>`<div class="sh-w ${c.who}"><b style="font-size:20px">${E(c.w.text)}</b><small>${c.r} · ${E(c.w.ko)}</small></div>`).join("")}</div>
@@ -152,9 +167,10 @@ function shRender(){
    <div class="sh-in">${[...g.cur].map((c,i)=>`<span class="${i===0?"lock":""}">${c}</span>`).join("")}<span class="caret"></span></div>
    <div class="sh-msg">${g.msg||(g.hintShown?`💡 힌트: <b>${E(g.hintShown.ko)}</b> (${g.hintShown.r.slice(0,2)}${"○".repeat(Math.max(0,g.hintShown.r.length-2))})`:"&nbsp;")}</div>
    <div class="wd-act"><button class="pill" data-sk="del">지우기 ⌫</button><button class="pill on" data-sk="enter" ${g.cur.length>=2?"":"disabled"}>확인</button><button class="pill" data-sk="hint">💡 힌트 (${g.maxHints-g.hints})</button></div>
-   ${kbTabs(g.tab,"data-sk",false)}
-   <div class="wd-kb">${kbHTML(g.tab,{},"data-sk",false)}</div>
-   <div class="qbtns"><button class="pill" data-sk="giveup">포기하기</button><button class="pill" data-act="gquit">그만하기</button></div></div>`;
+   ${nat?`<input id="shNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="내 키보드(일본어)로 히라가나 입력">`:`${kbTabs(g.tab,"data-sk",false)}
+   <div class="wd-kb">${kbHTML(g.tab,{},"data-sk",false)}</div>`}
+   <div class="qbtns"><button class="pill ${nat?"on":""}" data-sk="native">⌨️ 내 키보드로 입력 ${nat?"켬":"끔"}</button><button class="pill" data-sk="giveup">포기하기</button><button class="pill" data-act="gquit">그만하기</button></div></div>`;
+  if(nat){ const cur=$("shNat"); if(cur){ if(oldNat&&oldNat.isConnected===false){ cur.replaceWith(oldNat); } const el=$("shNat"); el.value=g.cur; el.focus(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(_){} } }
 }
 function shHint(){
   const g=G; if(!g||g.type!=="shiri"||g.busy) return; if(g.hints>=g.maxHints){ g.msg="힌트를 모두 썼어요"; return shRender(); }
@@ -297,6 +313,7 @@ document.addEventListener("click",e=>{
   const sk=e.target.closest("[data-sk]"); if(sk){ const a=sk.dataset.sk; if(!G||G.type!=="shiri"||G.over) return;
     if(a==="key"){ if(G.cur.length<9){ G.cur+=sk.dataset.c; G.msg=""; shRender(); } }
     else if(a==="del"){ if(G.cur.length>1){ G.cur=G.cur.slice(0,-1); G.msg=""; shRender(); } }
+    else if(a==="native"){ prefs.shNative=!prefs.shNative; LS.set("jp-prefs",prefs); shRender(); }
     else if(a==="enter") shSubmit();
     else if(a==="tab"){ G.tab=sk.dataset.t; shRender(); }
     else if(a==="hint") shHint();
@@ -304,8 +321,11 @@ document.addEventListener("click",e=>{
     return; }
   const fo=e.target.closest("[data-fo]"); if(fo){ fPick(+fo.dataset.fo); return; }
 });
+document.addEventListener("input",e=>{ if(e.target&&e.target.id==="shNat"&&!e.isComposing) shNatInput(e.target); });
+document.addEventListener("compositionend",e=>{ if(e.target&&e.target.id==="shNat") setTimeout(()=>shNatInput(e.target),0); });
 document.addEventListener("keydown",e=>{
   if(!G||!QV(view)) return;
+  if(e.target&&e.target.id==="shNat"){ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); shNatInput(e.target); shSubmit(); } return; }
   if(G.type==="fall"&&/^[1-4]$/.test(e.key)){ fPick(+e.key-1); }
   else if(G.type==="shiri"&&!G.over){ if(e.key==="Backspace"){ if(G.cur.length>1){ G.cur=G.cur.slice(0,-1); G.msg=""; shRender(); } } else if(e.key==="Enter") shSubmit(); else if(/^[ぁ-ゖー]$/.test(e.key)&&G.cur.length<9){ G.cur+=e.key; G.msg=""; shRender(); } }
   else if(G.type==="wordle"&&!G.over&&!G.intro){ if(e.key==="Backspace"){ G.cur=G.cur.slice(0,-1); wdRender(); } else if(e.key==="Enter") wdEnter(); else if((G.kata?/^[ァ-ヶー]$/:/^[ぁ-ゖー]$/).test(e.key)&&G.cur.length<G.len){ G.cur+=e.key; wdRender(); } }
