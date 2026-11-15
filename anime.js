@@ -114,8 +114,32 @@ const FX={
  love:["#ff8fab","#ffe0ea",""],rival:["#2b2d42","#8d99ae",""],help:["#7bc96f","#e8f7e0",""],react:["#ffd23f","#fff3b0",""]
 };
 const HAIR=["#3a2e2a","#c0392b","#2d6cdf","#f2c14e","#7a4fb5","#2e8b57","#e07aa0","#444"];
-function panel(fx,id){
-  const f=FX[fx]||FX.hot, seed=[...id].reduce((a,c)=>a+c.charCodeAt(0),0), hair=HAIR[seed%HAIR.length];
+
+/* 작품을 떠올리게 하는 단순한 상징 소품(캐릭터 얼굴·디자인을 옮기지 않고 소품 아이콘만 얹어요). 좌표는 머리 중심 기준 */
+const PROP={
+ "ONE PIECE":{s:`<ellipse cx="0" cy="-22" rx="40" ry="8" fill="#e9c46a" stroke="#b8923a" stroke-width="1.5"/><path d="M-22 -24c0-22 44-22 44 0z" fill="#f4d58d" stroke="#b8923a" stroke-width="1.5"/><rect x="-22" y="-28" width="44" height="6" fill="#d62828"/>`},
+ "SLAM DUNK":{h:"#eee",s:`<circle cx="52" cy="40" r="17" fill="#ee7b2e" stroke="#222" stroke-width="1.5"/><path d="M35 40h34M52 23v34M41 28q11 12 0 24M63 28q-11 12 0 24" stroke="#222" stroke-width="1.3" fill="none"/><circle cx="-9" cy="2" r="8" fill="none" stroke="#333" stroke-width="1.6"/><circle cx="9" cy="2" r="8" fill="none" stroke="#333" stroke-width="1.6"/>`},
+ "ドラゴンボール":{s:`<circle cx="-52" cy="40" r="17" fill="#ff9f1c" stroke="#c76b00" stroke-width="1.5"/><g fill="#d62828"><circle cx="-52" cy="34" r="3"/><circle cx="-58" cy="42" r="3"/><circle cx="-46" cy="42" r="3"/><circle cx="-52" cy="48" r="3"/></g>`},
+ "NARUTO -ナルト-":{s:`<rect x="-27" y="-18" width="54" height="9" fill="#2c4a7c"/><rect x="-12" y="-19" width="24" height="11" rx="2" fill="#c9d2dc" stroke="#667" stroke-width="1.2"/><path d="M-5 -14l10 0M0 -17v6" stroke="#667" stroke-width="1.2"/>`},
+ "鬼滅の刃":{s:`<g><path d="M-40 54c0-8 6-16 14-18h52c8 2 14 10 14 18z" fill="#1b4332"/>${"x".repeat(0)}<g fill="#0b2018"><rect x="-36" y="40" width="10" height="7"/><rect x="-16" y="40" width="10" height="7"/><rect x="4" y="40" width="10" height="7"/><rect x="24" y="40" width="10" height="7"/><rect x="-26" y="47" width="10" height="7"/><rect x="-6" y="47" width="10" height="7"/><rect x="14" y="47" width="10" height="7"/></g></g><rect x="26" y="4" width="5" height="12" rx="2" fill="#f1faee" stroke="#c33" stroke-width="1"/>`},
+ "新世紀エヴァンゲリオン":{s:`<path d="M-18 -34l-6-18 12 10zM18 -34l6-18-12 10z" fill="#7b2cbf"/><path d="M-26 -30c0-8 52-8 52 0v8h-52z" fill="#7b2cbf" opacity=".85"/>`},
+ "千と千尋の神隠し":{s:`<rect x="-8" y="-40" width="16" height="7" rx="3" fill="#a06cd5" stroke="#6b3fa0" stroke-width="1.2"/><circle cx="-34" cy="26" r="7" fill="#a06cd5"/>`},
+ "君の名は。":{s:`<path d="M-26 -22c20 8 40 8 52 0" stroke="#d62828" stroke-width="5" fill="none"/><path d="M26 -22c8 12 4 28-6 34" stroke="#d62828" stroke-width="4" fill="none"/><path d="M22 12l-8 8M22 12l8 8" stroke="#d62828" stroke-width="3"/>`},
+ "進撃の巨人":{s:`<path d="M-44 56c0-30 14-40 44-40s44 10 44 40z" fill="#4b6b3a" opacity=".9"/><path d="M-18 34l18 -8 18 8" stroke="#2f4a22" stroke-width="3" fill="none"/>`},
+ "呪術廻戦":{h:"#f1f1f1",s:`<rect x="-30" y="-4" width="60" height="13" rx="3" fill="#222"/>`},
+ "SPY×FAMILY":{h:"#e56b9a",s:`<path d="M-22 -34l-8 -16 14 6zM22 -34l8 -16 -14 6z" fill="#222"/><ellipse cx="50" cy="42" rx="12" ry="7" transform="rotate(-25 50 42)" fill="#d9a066" stroke="#8a5a2b" stroke-width="1.2"/>`},
+ "名探偵コナン":{s:`<circle cx="-9" cy="2" r="8" fill="#cfe9ff" fill-opacity=".5" stroke="#222" stroke-width="1.8"/><circle cx="9" cy="2" r="8" fill="#cfe9ff" fill-opacity=".5" stroke="#222" stroke-width="1.8"/><path d="M-1 2h2" stroke="#222" stroke-width="1.8"/><path d="M0 30l-12 -6v12zM0 30l12 -6v12z" fill="#d62828"/><circle cx="0" cy="30" r="3" fill="#a31"/>`},
+ "美少女戦士セーラームーン":{h:"#f7d51d",s:`<circle cx="-30" cy="-34" r="10" fill="#f7d51d"/><circle cx="30" cy="-34" r="10" fill="#f7d51d"/><path d="M0 -26a8 8 0 1 0 0 -14 6 6 0 1 1 0 14z" fill="#ffd60a" stroke="#c9a000" stroke-width="1"/>`},
+ "カードキャプターさくら":{s:`<g transform="translate(50 34)"><path d="M0 -20l5 12 13 1-10 8 4 13-12 -7-12 7 4 -13-10 -8 13 -1z" fill="#ff8fab" stroke="#c2185b" stroke-width="1.3"/><path d="M0 8v26" stroke="#c2185b" stroke-width="3"/></g>`},
+ "涼宮ハルヒの憂鬱":{s:`<path d="M-26 -30c0 -8 12 -10 26 -10s26 2 26 10" fill="none"/><path d="M0 -36l-18 -10 0 20zM0 -36l18 -10 0 20z" fill="#ffd60a" stroke="#c9a000" stroke-width="1.3"/><circle cx="0" cy="-36" r="4" fill="#f4b400"/>`},
+ "STEINS;GATE":{s:`<path d="M-34 54l10 -28 12 16 12 -16 12 16 12 -16 10 28z" fill="#f8f9fa" stroke="#999" stroke-width="1.5"/><rect x="38" y="30" width="28" height="22" rx="3" fill="#bbb" stroke="#555" stroke-width="1.5"/><rect x="42" y="34" width="14" height="14" fill="#333"/>`},
+ "機動戦士ガンダム":{s:`<path d="M0 -20l-10 -20 M0 -20l10 -20" stroke="#ffd60a" stroke-width="5" stroke-linecap="round"/><rect x="-8" y="-24" width="16" height="6" fill="#d62828"/>`},
+ "ジョジョの奇妙な冒険":{h:"#1a1a2e",s:`<path d="M-30 -26c0 -24 60 -24 60 0z" fill="#1a1a2e" stroke="#555" stroke-width="1.5"/><rect x="-32" y="-28" width="64" height="7" rx="2" fill="#2b2b45"/><path d="M-30 30q30 24 60 0" stroke="#d4af37" stroke-width="3" fill="none"/>`},
+ "北斗の拳":{s:`<g fill="#e8e8e8" stroke="#111" stroke-width="1"><circle cx="-34" cy="46" r="3"/><circle cx="-24" cy="40" r="3"/><circle cx="-14" cy="42" r="3"/><circle cx="-4" cy="48" r="3"/><circle cx="8" cy="50" r="3"/><circle cx="20" cy="46" r="3"/><circle cx="32" cy="40" r="3"/></g>`},
+ "僕のヒーローアカデミア":{h:"#f2d544",s:`<path d="M-14 -36l-12 -24 22 12zM14 -36l12 -24 -22 12z" fill="#f2d544" stroke="#c9a000" stroke-width="1.3"/>`}
+};
+function panel(fx,id,work){
+  const f=FX[fx]||FX.hot, seed=[...id].reduce((a,c)=>a+c.charCodeAt(0),0), pr=PROP[work]||null, hair=(pr&&pr.h)||HAIR[seed%HAIR.length];
   let rays=""; for(let i=0;i<28;i++){ const a=i/28*Math.PI*2, a2=a+.09, r=240; rays+=`<polygon points="160,60 ${(160+Math.cos(a)*r).toFixed(1)},${(60+Math.sin(a)*r).toFixed(1)} ${(160+Math.cos(a2)*r).toFixed(1)},${(60+Math.sin(a2)*r).toFixed(1)}" fill="${f[1]}" opacity=".55"/>`; }
   const sym={hot:`<path d="M262 74c8 10 14 14 10 26-2 8-8 12-12 12s-10-4-12-12c-4-12 2-16 14-26z" fill="#ff5a1f"/>`,
    tsun:`<g stroke="#e63757" stroke-width="4" stroke-linecap="round" fill="none"><path d="M254 28q8 6 0 14M270 28q-8 6 0 14M254 46q8-6 16 0"/></g>`,
@@ -128,7 +152,7 @@ function panel(fx,id){
   return `<svg class="an-art" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="만화 컷 풍 일러스트(실제 장면 아님)"><rect width="320" height="120" fill="${f[0]}"/>${rays}${sym}
    <g transform="translate(160 66)"><path d="M-30 54c0-20 14-30 30-30s30 10 30 30z" fill="${hair==="#444"?"#3d5a80":"#4a6fa5"}"/><circle r="26" fill="#ffe0c2"/><path d="M-27 -4c-4-26 12-34 27-34s31 8 27 34c-6-12-14-18-27-18s-21 6-27 18z" fill="${hair}"/>
    <ellipse cx="-9" cy="2" rx="3.4" ry="5" fill="#222"/><ellipse cx="9" cy="2" rx="3.4" ry="5" fill="#222"/><circle cx="-8" cy="0" r="1.2" fill="#fff"/><circle cx="10" cy="0" r="1.2" fill="#fff"/>
-   ${fx==="react"||fx==="hot"||fx==="rival"?`<path d="M-7 14q7 7 14 0z" fill="#b23a48"/>`:`<path d="M-6 14q6 4 12 0" stroke="#b23a48" stroke-width="2" fill="none" stroke-linecap="round"/>`}</g>
+   ${fx==="react"||fx==="hot"||fx==="rival"?`<path d="M-7 14q7 7 14 0z" fill="#b23a48"/>`:`<path d="M-6 14q6 4 12 0" stroke="#b23a48" stroke-width="2" fill="none" stroke-linecap="round"/>`}${pr?pr.s:""}</g>
    <rect x="2" y="2" width="316" height="116" fill="none" stroke="#111" stroke-width="3"/></svg>`;
 }
 
@@ -148,7 +172,7 @@ function sim(heard,l){ const h=norm(heard); if(!h) return 0;
 function card(l){
   const r=aRes[l.id];
   return `<div class="an-card ${done.has(l.id)?"done":""}" data-id="${l.id}">
-   ${panel(l.fx||l.t,l.id)}
+   ${panel(l.fx||l.t,l.id,l.src&&l.src.wiki)}
    <div class="an-type">${tname(l.t)}${l.t==="famous"?"":" · 오리지널 문장"}</div>
    <div class="an-ja">${toRuby(l.ja)}</div><div class="an-ko">${E(l.ko)}</div>
    ${l.src?`<div class="an-src">📺 출처: <b>${E(l.src.w)}</b> · ${E(l.src.c)} · <a href="https://ja.wikipedia.org/w/index.php?search=${encodeURIComponent(l.src.wiki)}&go=Go" target="_blank" rel="noopener noreferrer">작품 정보(위키백과)</a></div>`:""}
@@ -191,7 +215,7 @@ window.renderAnime=function(){
    <div class="an-tabs"><button class="pill ${aMode==="learn"?"on":""}" data-an="mode" data-m="learn">한 줄 공부</button><button class="pill ${aMode==="quiz"?"on":""}" data-an="mode" data-m="quiz">빈칸 퀴즈</button></div>
    <div class="an-tabs sc"><button class="pill sm ${aType==="all"?"on":""}" data-an="type" data-t="all">전체</button>${TYPES.map(t=>`<button class="pill sm ${aType===t[0]?"on":""}" data-an="type" data-t="${t[0]}">${t[1]}</button>`).join("")}</div>
    ${aMode==="learn"?listHtml():quizHtml()}
-   <div class="an-foot">명대사는 학습을 위한 짧은 인용이며 저작권은 각 작품의 권리자에게 있어요. 그림은 이 앱에서 직접 그린 일러스트로 실제 장면이 아니에요. 대사는 방영분과 표현이 조금 다를 수 있어요.</div></div>`;
+   <div class="an-foot">명대사는 학습을 위한 짧은 인용이며 저작권은 각 작품의 권리자에게 있어요. 그림은 이 앱에서 직접 그린 일러스트이며 작품을 떠올리게 하는 상징 소품만 넣었어요(실제 캐릭터·장면이 아니에요). 대사는 방영분과 표현이 조금 다를 수 있어요.</div></div>`;
 };
 function stopRec(){ if(aRec&&window._anRec){ try{ window._anRec.stop(); }catch(e){} } }
 function startRec(l){
