@@ -1460,7 +1460,20 @@ function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer
 const SND={ctx:null,timer:null,step:0,next:0};
 if(!BGM_TRACKS[prefs.bgm||"basic"]){ prefs.bgm="basic"; LS.set("jp-prefs",prefs); }   /* 빠진 음악을 고르고 있던 사람은 기본 음악으로 */
 const soundOn = () => prefs.sound!==false;
+/* 아이폰: 무음(진동) 모드에서도 게임 소리가 나도록 오디오 세션을 '재생'으로 전환 */
+function mediaUnlock(){
+  try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(_){}
+  if(SND.keep) { if(SND.keep.paused) SND.keep.play().catch(()=>{}); return; }
+  try{
+    const n=800, b=new DataView(new ArrayBuffer(44+n*2)), w=(o,t)=>{ for(let i=0;i<t.length;i++) b.setUint8(o+i,t.charCodeAt(i)); };
+    w(0,"RIFF"); b.setUint32(4,36+n*2,true); w(8,"WAVEfmt "); b.setUint32(16,16,true); b.setUint16(20,1,true); b.setUint16(22,1,true);
+    b.setUint32(24,8000,true); b.setUint32(28,16000,true); b.setUint16(32,2,true); b.setUint16(34,16,true); w(36,"data"); b.setUint32(40,n*2,true);
+    const a=document.createElement("audio"); a.src=URL.createObjectURL(new Blob([b],{type:"audio/wav"})); a.loop=true; a.volume=.01; a.setAttribute("playsinline","");
+    SND.keep=a; a.play().catch(()=>{});
+  }catch(_){}
+}
 function sndInit(){
+  mediaUnlock();
   if(!SND.ctx){
     const C=window.AudioContext||window.webkitAudioContext; if(!C) return false;
     const c=SND.ctx=new C();
