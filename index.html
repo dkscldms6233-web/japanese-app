@@ -1259,25 +1259,33 @@ function chunkSentence(s){
   return out;
 }
 
-/* N3~N1 문장 순서: 읽기 기사의 긴 문장을 문절 단위로 잘게 나눠요 */
-function chunkFine(s){
-  const isP=c=>"はがをにでともへ".includes(c), isKata=c=>/[゠-ヿ]/.test(c)&&c!=="・", isHira=c=>/[ぁ-ゖ]/.test(c);
-  let out=[], cur="";
-  for(let i=0;i<s.length;i++){
-    const c=s[i], n=s[i+1], p=s[i-1]; cur+=c; if(!n) break;
+/* 문장 순서용: 조사를 따로 떼어 문절 단위로 쪼개요 (예: 昨日/友達/と/恋愛/について/話/を/しました) */
+function chunkOrd(raw){
+  const s=raw.replace(new RegExp("\\](?=["+KJ+"])","g"),"]\u0001").replace(/\[[^\]]*\]/g,"");  // 후리가나 단어 경계(]) 뒤 한자에서 끊기
+  const SINGLE="はがをにでともへの";
+  const MULTI=["ですから","にとって","について","によって","として","でしょう","には","では","とは","へは","にも","でも","とも","へも","から","まで","より","など","だけ","しか","ので","のに","です","でした"];
+  const isKata=c=>/[゠-ヿ]/.test(c)&&c!=="・", isHira=c=>/[ぁ-ゖ]/.test(c);
+  const out=[]; let cur="", i=0;
+  while(i<s.length){
+    const c=s[i], p=s[i-1];
+    if(c==="\u0001"){ if(cur){ out.push(cur); cur=""; } i++; continue; }
+    if(cur && p && (kjRe.test(p)||isKata(p))){
+      const m=MULTI.find(t=>s.startsWith(t,i));
+      if(m && !(m==="から"&&s[i+2]==="な")){ out.push(cur,m); cur=""; i+=m.length; continue; }
+      if(SINGLE.includes(c) && !(c==="が"&&"るっりられ".includes(s[i+1]||""))){ out.push(cur,c); cur=""; i++; continue; }
+    }
+    cur+=c; const n=s[i+1]; i++;
+    if(!n) break;
     let cut=false;
-    if(c==="、") cut=true;
+    if(c==="、"||c==="。") cut=!(n==="、"||n==="。");
     else if(n==="、"||n==="。") cut=false;
-    else if(isP(c) && cur.length>=2 && !isP(n) && n!=="の" && n!=="か" && !(c==="で"&&(n==="す"||n==="あ"||n==="き")) && (kjRe.test(p)||isKata(p)||isHira(p))) cut=true;
-    else if((s.slice(i-1,i+1)==="から"||s.slice(i-1,i+1)==="まで"||s.slice(i-1,i+1)==="より") && cur.length>=3 && !isP(n)) cut=true;
     else if((kjRe.test(c)&&isKata(n))||(isKata(c)&&kjRe.test(n))) cut=true;
-    else if(isHira(c)&&kjRe.test(n)&&cur.length>=2) cut=true;
+    else if(isHira(c)&&kjRe.test(n)&&(cur.length>=3||(cur.length>=2&&!kjRe.test(cur[0])))) cut=true;
     if(cut){ out.push(cur); cur=""; }
   }
   if(cur) out.push(cur);
-  out=out.filter(x=>x); const m=[];
-  out.forEach(x=>{ if(m.length&&(x.length===1||/^[、。]$/.test(x))) m[m.length-1]+=x; else m.push(x); });
-  while(m.length>12){ let k=0,best=99; for(let i=0;i<m.length-1;i++){ const l=m[i].length+m[i+1].length; if(l<best){best=l;k=i;} } m.splice(k,2,m[k]+m[k+1]); }
+  const m=[];
+  out.filter(x=>x).forEach(x=>{ if(m.length&&(/^[、。]$/.test(x)||(x.length===1&&/[ぁ-ゖー゠-ヿ]/.test(x)&&!SINGLE.includes(x)))) m[m.length-1]+=x; else m.push(x); });
   return m;
 }
 function sentPool(){
@@ -1285,13 +1293,13 @@ function sentPool(){
   const allow=lv=> /^N[1-5]$/.test(level) ? level===lv : (!lvSel.size||lvSel.has(lv));
   const out=[], seen=new Set();
   (window.ARTICLES||[]).filter(a=>["N3","N2","N1"].includes(a.lv)&&allow(a.lv)).forEach(a=>{
-    (a.body||[]).forEach((b,i)=>{ const pl=plain(b.ja); if(pl.length<16||seen.has(pl)) return; const n=chunkFine(pl).length; if(n<5) return; seen.add(pl);
+    (a.body||[]).forEach((b,i)=>{ const pl=plain(b.ja); if(pl.length<16||seen.has(pl)) return; const n=chunkOrd(b.ja).length; if(n<5||n>11||pl.length>40) return; seen.add(pl);
       out.push({sent:1,key:"s"+a.id+"_"+i,lv:a.lv,f:b.ja,text:pl,yomi:pl,ko:b.ko,pos:"名詞",ex:[{ja:b.ja,ko:b.ko}]}); }); });
   return out;
 }
-const canOrder = w => { if(w&&w.sent) return true; if(!w.ex||!w.ex[0]) return false; const n=chunkSentence(plain(w.ex[0].ja)).length; return n>=3&&n<=8; };
+const canOrder = w => { if(w&&w.sent) return true; if(!w.ex||!w.ex[0]) return false; const n=chunkOrd(w.ex[0].ja).length; return n>=3&&n<=9; };
 function mkOrd(w){
-  const orig=(w.sent?chunkFine:chunkSentence)(plain(w.ex[0].ja)); let idx=orig.map((_,i)=>i), t=0;
+  const orig=chunkOrd(w.ex[0].ja); let idx=orig.map((_,i)=>i), t=0;
   do{ idx=shuffle(idx); }while(idx.every((v,i)=>v===i) && t++<10);
   return {chunks:idx.map(i=>orig[i]),orig,used:[],checked:false,ok:null};
 }
