@@ -674,6 +674,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kanji-extra.js"></script>
 <script src="words-wasei.js?v=4"></script>
 <script src="words-levels.js?v=5"></script>
+<script src="words-mynotes.js?v=3"></script>
 <script src="words-freq.js?v=1"></script>
 <script src="daily.js?v=2"></script>
 <script src="jlpt-bank.js"></script>
@@ -996,13 +997,23 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[
 (()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
   Object.entries(window.KO_FIX||{}).forEach(([k,v])=>{ const w=idx.get(k); if(!w) return;
     if(v.ko) w.ko=v.ko; if(v.exko&&w.ex&&w.ex[0]) w.ex[0].ko=v.exko; if(v.note) w.note=v.note; }); })();
+/* 급수 재분류(words-levels.js): "표기|읽기|급수" */
+(()=>{ const m=new Map(); String(window.LV_FIX||"").split("\n").forEach(l=>{ const p=l.trim().split("|"); if(p.length===3) m.set(p[0]+"|"+p[1],p[2]); });
+  WORDS.forEach(w=>{ const v=m.get(plain(w.f)+"|"+reading(w.f)); if(v) w.lv=v; }); })();
+/* 내 N3 노트 단어(words-mynotes.js): 이미 있으면 뜻만 보태고 N3에도 함께 나오게(lv2), 없으면 N3 새 단어로 추가 */
+(()=>{ const PC={n:"名詞",s:"名詞・する",1:"一段動詞",5:"五段動詞",i:"い形容詞",na:"な形容詞",adv:"副詞",k:"不規則動詞"};
+  const idx=new Map(WORDS.map(w=>[plain(w.f)+"|"+reading(w.f),w]));
+  String(window.WORDS_MYNOTES||"").split("\n").forEach(line=>{ line=line.trim(); if(!line) return;
+    const p=line.split("|"); if(p.length<3||!PC[p[2].trim()]) return;
+    const f=p[0].trim(), ko=p[1].trim(), k=plain(f)+"|"+reading(f), w=idx.get(k);
+    if(w){ const have=w.ko; const add=ko.split("·").map(x=>x.trim()).filter(x=>x&&!have.includes(x)&&!have.split("·").some(h=>h.trim()&&x.includes(h.trim())));
+      if(add.length&&!ko.split("·").every(x=>have.includes(x.trim()))) w.ko=have+"·"+add.join("·");
+      if(w.lv!=="N3") w.lv2="N3"; }
+    else { const nw={lv:"N3",f,ko,pos:PC[p[2].trim()]}; WORDS.push(nw); idx.set(k,nw); } }); })();
 /* 형용사 풀이를 사전형으로 통일: 조용함 → 조용하다 */
 WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
   const FIX2={"편함":"편하다","잘함":"잘하다","딱함":"딱하다","분함":"분하다","멍함":"멍하다","기운참":"기운차다","예쁨":"예쁘다","힘듦":"힘들다","좋음":"좋다","나쁨":"나쁘다","싫음":"싫다","없음":"없다","있음":"있다"};
   w.ko=w.ko.split("·").map(s=>{ s=s.trim(); if(FIX2[s]) return FIX2[s]; if(s.length>=3&&s.endsWith("함")) return s.slice(0,-1)+"하다"; if(s.length>=4&&s.endsWith("러움")) return s.slice(0,-2)+"럽다"; if(/な形容詞/.test(w.pos)&&/^[가-힣]{2,}$/.test(s)&&!/다$/.test(s)) return s+(s.endsWith("적")?"이다":"하다"); return s; }).join("·"); });
-/* 급수 재분류(words-levels.js): "표기|읽기|급수" */
-(()=>{ const m=new Map(); String(window.LV_FIX||"").split("\n").forEach(l=>{ const p=l.trim().split("|"); if(p.length===3) m.set(p[0]+"|"+p[1],p[2]); });
-  WORDS.forEach(w=>{ const v=m.get(plain(w.f)+"|"+reading(w.f)); if(v) w.lv=v; }); })();
 /* 빈도 등급(words-freq.js): 1=핵심(자주 쓰이고 시험에 잘 나옴) · 2=보통 · 3=드묾. 퀴즈·게임에서 핵심은 더 자주, 드묾은 덜 나와요 */
 (()=>{ const m=new Map(); String(window.WORD_CORE||"").split("\n").forEach(l=>{ const q=l.split("|"); if(q.length===2) m.set(q[0]+"|"+q[1],1); });
   String(window.WORD_RARE||"").split("\n").forEach(l=>{ const q=l.split("|"); if(q.length===2) m.set(q[0]+"|"+q[1],3); });
@@ -1036,7 +1047,7 @@ function inScope(w){
   if(level==="저장함"){ if(!stars.has(w.key)) return false; }
   else if(level==="오답 노트"){ if(!(w.key in wrong)) return false; }
   else if(level==="내 단어"){ if(w.key[0]!=="c") return false; }
-  else if(lvSel.size && !lvSel.has(w.lv)) return false;
+  else if(lvSel.size && !lvSel.has(w.lv) && !lvSel.has(w.lv2)) return false;
   return !posf || w.pos===posf;
 }
 function filtered(){
@@ -1065,7 +1076,7 @@ let listStage="pick", listPart=0, listSig="", pickMulti=false, pickSel=new Set()
 function setStage(st){ listStage=st; document.body.dataset.stage=st; }
 const LV_DESC={N5:"입문 · 기초",N4:"초급",N3:"중급",N2:"중상급",N1:"상급"};
 function renderPick(){
-  const nw=Object.keys(wrong).length, cnt=l=>ALL.filter(w=>w.lv===l).length, my=myLv();
+  const nw=Object.keys(wrong).length, cnt=l=>ALL.filter(w=>w.lv===l||w.lv2===l).length, my=myLv();
   const card=(id,name,sub,n,c)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em></button>`;
   const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`)).join("");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
@@ -1108,7 +1119,7 @@ function renderGrid(){
               : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요.";
   $("grid").innerHTML = shown.length ? shown.map(w=>`
     <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" data-key="${w.key}">
-      <div class="ctop">${lvb(w.lv)}<span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
+      <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}<span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
       <div class="w${w.text.length>=6?" wl":""}">${R(w.f)}</div>
       <div class="m">${E(w.ko)}</div>
       ${posTag(w.pos)}
@@ -1171,7 +1182,7 @@ function showWord(){
   <div class="dh"><div class="big">${R(w.f)}</div>
     <div class="dtools">${sayBtn("data-act","say","x")}<button class="x starb ${stars.has(w.key)?"on":""}" data-act="star" title="저장" aria-label="저장">${ic("star")}</button><button class="x" data-close aria-label="닫기">×</button></div></div>
   <div class="db">
-    <div class="mean">${E(w.ko)} ${lvb(w.lv)} ${posTag(w.pos)}</div>
+    <div class="mean">${E(w.ko)} ${lvb(w.lv)}${w.lv2?lvb(w.lv2):""} ${posTag(w.pos)}</div>
     <div class="posbox"><b>${p[0]}</b> — ${p[1]}</div>
     ${missN?`<div class="sub">퀴즈에서 ${missN}번 틀렸어요${w.key in wrong?" · 오답 노트에 있어요":""}</div>`:""}
     ${w.note?`<h3>헷갈리는 포인트</h3><div class="note">${R(w.note)}</div>`:""}
