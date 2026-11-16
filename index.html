@@ -2285,7 +2285,7 @@ function renderHome(){
      <button class="cta sec" data-go="game">게임</button>
    </div>
    <div class="crow">
-     <button class="cta sec" data-go="anime">🎌 애니로 배우기</button>
+     <button class="cta sec" data-go="anime">애니로 배우기</button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2511,7 +2511,7 @@ applyTheme();
 lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
-<script src="anime.js?v=10"></script>
+<script src="anime.js?v=11"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>

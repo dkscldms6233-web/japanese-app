@@ -214,7 +214,7 @@ function heroHtml(){
 window.renderAnime=function(){
   const v=$("animeView"); if(!v) return;
   const pop=aPop; aPop=null;
-  v.innerHTML=`<div class="an-wrap"><div class="qm-h"><h2>🎌 애니로 배우기</h2></div>
+  v.innerHTML=`<div class="an-wrap"><div class="qm-h"><h2>애니로 배우기</h2></div>
    ${heroHtml()}
    <div class="an-tabs sc">${[["learn","📖 한 줄 공부"],["who","🎯 작품 맞히기"],["quiz","✏️ 빈칸 퀴즈"],["dex","🗂 도감"]].map(m=>`<button class="pill ${aMode===m[0]?"on":""}" data-an="mode" data-m="${m[0]}">${m[1]}</button>`).join("")}</div>
    ${aMode==="learn"?listHtml():aMode==="who"?whoHtml():aMode==="dex"?dexHtml():quizHtml()}
