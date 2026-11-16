@@ -49,6 +49,21 @@ ST.textContent=`.an-wrap{max-width:720px;margin:0 auto}
 .an-type{font-size:12px;color:var(--sub)}
 .an-art{display:block;width:100%;max-width:340px;height:auto;border-radius:10px;margin:0 auto 8px}
 .an-src{font-size:13px;margin:6px 0;color:var(--text)}.an-src a{color:var(--accent);text-decoration:underline}
+.an-hero{background:linear-gradient(135deg,var(--chip),var(--card));border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:8px 0}
+.an-hs{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:700;margin-bottom:8px}
+.an-hs span{background:var(--card);border-radius:999px;padding:3px 10px}
+.an-ty{animation:anTy 1.1s steps(18) both}
+@keyframes anTy{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.an-hud{display:flex;justify-content:space-between;font-weight:700;margin:6px 2px}
+.an-grade{display:inline-block;float:right;width:46px;height:46px;line-height:46px;text-align:center;border-radius:50%;font-size:26px;font-weight:900;color:#fff;animation:anPop .5s cubic-bezier(.2,1.6,.4,1) both}
+.an-grade.big{float:none;width:90px;height:90px;line-height:90px;font-size:52px;margin-bottom:6px}
+.an-grade.gS{background:linear-gradient(135deg,#ff9f1c,#ff3d6e);box-shadow:0 0 14px #ff9f1c}.an-grade.gA{background:#4c9a62}.an-grade.gB{background:#3b82c4}.an-grade.gC{background:#8a8f98}
+@keyframes anPop{from{transform:scale(0) rotate(-40deg)}to{transform:scale(1) rotate(0)}}
+.an-dex{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.an-tile{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px;text-align:left;color:var(--sub);display:flex;flex-direction:column;gap:4px;font:inherit}
+.an-tile.on{border:1px solid var(--accent);color:var(--text);cursor:pointer}.an-tile b{font-size:12px;color:var(--accent)}.an-tile span{font-size:15px;font-weight:700}.an-tile small{font-size:11px;color:var(--sub)}
+.an-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;border-radius:999px;padding:10px 18px;font-weight:700;z-index:50;animation:anToast 2.2s both;pointer-events:none}
+@keyframes anToast{0%{opacity:0;transform:translate(-50%,20px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
 .an-foot{font-size:12px;color:var(--sub);margin:14px 0}`;
 document.head.appendChild(ST);
 
@@ -104,7 +119,18 @@ function panel(fx,id,work){
 
 const KEY="jp-anime";
 let done=new Set(LS.get(KEY,[])), aType="famous", aMode="learn", aRes={}, aQ=null, aRec=null;
-const saveDone=()=>LS.set(KEY,[...done]);
+const saveDone=()=>{ LS.set(KEY,[...done]); done.forEach(id=>got.add(id)); saveGot(); };
+let got=new Set(LS.get("jp-anime-got",[])); done.forEach(id=>got.add(id));
+const saveGot=()=>LS.set("jp-anime-got",[...got]);
+let aWho=null, aBest=LS.get("jp-anime-best",{who:0,blank:0}), aPop=null;
+const TITLES=[[0,"견습 팬"],[3,"열혈 입문자"],[6,"애니 팬"],[10,"명대사 수집가"],[15,"애니 마스터"],[20,"전설의 오타쿠"]];
+const myTitle=()=>{ const n=[...got].filter(id=>LINES.some(l=>l.id===id)).length; return TITLES.filter(x=>n>=x[0]).pop()[1]; };
+const dayNo=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
+function touchStreak(){ const s=LS.get("jp-anime-streak",{last:0,n:0}), d=dayNo(); if(s.last===d) return s; const n=s.last===d-1?s.n+1:1; const r={last:d,n}; LS.set("jp-anime-streak",r); return r; }
+const streak=()=>{ const s=LS.get("jp-anime-streak",{last:0,n:0}); return s.last>=dayNo()-1?s.n:0; };
+const unlock=id=>{ if(!got.has(id)){ got.add(id); saveGot(); aPop="🔓 새 명대사 도감에 등록!"; } touchStreak(); };
+const grade=p=>p>=95?"S":p>=85?"A":p>=60?"B":"C";
+const todayLine=()=>LINES[dayNo()%LINES.length];
 const tname=t=>(TYPES.find(x=>x[0]===t)||[0,t])[1];
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 
@@ -126,7 +152,7 @@ function card(l){
    <div class="an-act">${canSay()?`<button class="pill sm" data-an="say" data-id="${l.id}">${ic("sound")} 듣기</button><button class="pill sm" data-an="slow" data-id="${l.id}">🐢 천천히</button>`:""}
     <button class="pill sm" data-an="rec" data-id="${l.id}">${aRec===l.id?"🎙 듣는 중…(탭하면 중지)":"🎤 따라 말하기"}</button>
     <button class="pill sm ${done.has(l.id)?"on":""}" data-an="done" data-id="${l.id}">${done.has(l.id)?"✓ 외웠어요":"외웠어요"}</button></div>
-   ${r?`<div class="an-res">${r.err?E(r.err):`내가 말한 것: <b>${E(r.heard)}</b><br>일치도 <b>${r.pct}%</b> ${r.pct>=85?"👏 완벽해요!":r.pct>=60?"👍 좋아요, 한 번 더!":"💪 다시 들어 보고 도전!"}`}</div>`:""}
+   ${r?`<div class="an-res">${r.err?E(r.err):`<div class="an-grade g${grade(r.pct)}">${grade(r.pct)}</div>내가 말한 것: <b>${E(r.heard)}</b><br>일치도 <b>${r.pct}%</b> ${r.pct>=85?"👏 완벽해요!":r.pct>=60?"👍 좋아요, 한 번 더!":"💪 다시 들어 보고 도전!"}`}</div>`:""}
   </div>`;
 }
 function listHtml(){
@@ -154,13 +180,45 @@ function quizHtml(){
    <div class="an-opts">${it.opts.map((o,k)=>`<button class="opt ${q.picked?(o===it.ans?"correct":(q.picked===o?"wrong":"")):""}" data-an="pick" data-o="${E(o)}" ${q.picked?"disabled":""}>${E(o)}</button>`).join("")}</div>
    ${q.picked?`<div class="an-note">${q.picked===it.ans?"⭕ 정답!":"❌ 정답은 「"+E(it.ans)+"」"}<br>${toRuby(it.l.ja)}<br>💡 ${E(it.l.note)}</div><button class="cta" data-an="qnext">${q.i+1>=q.items.length?"결과 보기":"다음"}</button>`:""}</div>`;
 }
+function mkWho(){
+  const works=[...new Set(LINES.map(l=>l.src.w))];
+  const items=shuffle(LINES.slice()).slice(0,10).map(l=>({l,ans:l.src.w,opts:shuffle([l.src.w,...shuffle(works.filter(w=>w!==l.src.w)).slice(0,3)])}));
+  return {items,i:0,score:0,combo:0,max:0,lives:3,picked:null};
+}
+function whoHtml(){
+  if(!aWho) aWho=mkWho(); const q=aWho;
+  const hud=`<div class="an-hud"><span>❤️ ${"♥".repeat(Math.max(q.lives,0))||"—"}</span><span>🔥 콤보 ${q.combo}</span><span>⭐ ${q.score}</span></div>`;
+  if(q.i>=q.items.length||q.lives<=0){
+    const nb=q.score>aBest.who; if(nb){ aBest.who=q.score; LS.set("jp-anime-best",aBest); }
+    const g=q.lives<=0?"C":q.score>=130?"S":q.score>=90?"A":"B";
+    return `<div class="an-card" style="text-align:center"><div class="an-grade g${g} big">${g}</div><h3>${q.lives<=0?"게임 오버…":"클리어!"} ${q.score}점</h3><div class="sub">최고 기록 ${aBest.who}점${nb?" · 🎉 신기록!":""} · 최대 콤보 ${q.max}</div><button class="cta" data-an="wagain" style="max-width:260px;margin:12px auto">한 번 더</button></div>`;
+  }
+  const it=q.items[q.i];
+  return `${hud}<div class="an-card"><div class="sub">${q.i+1} / ${q.items.length} · 이 대사, 어느 작품일까?</div>
+   <div class="an-ja an-ty" style="margin:8px 0" key="${q.i}">${toRuby(it.l.ja)}</div><div class="an-ko">${E(it.l.ko)}</div>
+   <div class="an-opts">${it.opts.map(o=>`<button class="opt ${q.picked?(o===it.ans?"correct":(q.picked===o?"wrong":"")):""}" data-an="wpick" data-o="${E(o)}" ${q.picked?"disabled":""}>${E(o)}</button>`).join("")}</div>
+   ${q.picked?`<div class="an-note">${q.picked===it.ans?"⭕ 정답!"+(q.combo>=3?" 🔥 "+q.combo+"콤보!":""):"❌ 정답은 「"+E(it.ans)+"」"}<br>${E(it.l.src.c)} · 💡 ${E(it.l.note)}</div><button class="cta" data-an="wnext">${q.i+1>=q.items.length||q.lives<=0?"결과 보기":"다음"}</button>`:""}</div>`;
+}
+function dexHtml(){
+  const n=LINES.filter(l=>got.has(l.id)).length;
+  return `<div class="sub" style="margin-bottom:8px">따라 말해서 60% 이상이거나, 퀴즈에서 맞히거나, '외웠어요'를 누르면 카드가 열려요! (${n} / ${LINES.length})</div><div class="an-dex">${LINES.map(l=>got.has(l.id)
+    ?`<button class="an-tile on" data-an="say" data-id="${l.id}"><b>${E(l.src.w)}</b><span>${toRuby(l.ja)}</span><small>${E(l.ko)}</small></button>`
+    :`<div class="an-tile"><b>🔒 ???</b><span>아직 잠겨 있어요</span></div>`).join("")}</div>`;
+}
+function heroHtml(){
+  const l=todayLine(), n=[...got].filter(id=>LINES.some(x=>x.id===id)).length, s=streak();
+  return `<div class="an-hero"><div class="an-hs"><span>🏅 ${myTitle()}</span><span>🔥 ${s}일 연속</span><span>📖 도감 ${n}/${LINES.length}</span></div>
+   <div class="sub">📅 오늘의 명대사</div><div class="an-ja an-ty" key="hero">${toRuby(l.ja)}</div><div class="an-ko">${E(l.ko)} · <small>${E(l.src.w)}</small></div>
+   ${canSay()?`<button class="pill sm" data-an="say" data-id="${l.id}">${ic("sound")} 듣기</button>`:""}</div>`;
+}
 window.renderAnime=function(){
   const v=$("animeView"); if(!v) return;
+  const pop=aPop; aPop=null;
   v.innerHTML=`<div class="an-wrap"><div class="qm-h"><h2>🎌 애니로 배우기</h2></div>
-   <div class="sub">애니에서 자주 들리는 말투를 한 줄씩! 말투 설명과 함께 듣고 따라 해 보세요. · 외운 문장 ${[...done].filter(id=>LINES.some(l=>l.id===id)).length} / ${LINES.length}</div>
-   <div class="an-tabs"><button class="pill ${aMode==="learn"?"on":""}" data-an="mode" data-m="learn">한 줄 공부</button><button class="pill ${aMode==="quiz"?"on":""}" data-an="mode" data-m="quiz">빈칸 퀴즈</button></div>
-
-   ${aMode==="learn"?listHtml():quizHtml()}
+   ${heroHtml()}
+   <div class="an-tabs sc">${[["learn","📖 한 줄 공부"],["who","🎯 작품 맞히기"],["quiz","✏️ 빈칸 퀴즈"],["dex","🗂 도감"]].map(m=>`<button class="pill ${aMode===m[0]?"on":""}" data-an="mode" data-m="${m[0]}">${m[1]}</button>`).join("")}</div>
+   ${aMode==="learn"?listHtml():aMode==="who"?whoHtml():aMode==="dex"?dexHtml():quizHtml()}
+   ${pop?`<div class="an-toast">${pop}</div>`:""}
    <div class="an-foot">명대사는 학습을 위한 짧은 인용이며 저작권은 각 작품의 권리자에게 있어요. 그림은 이 앱에서 직접 그린 일러스트이며 작품을 떠올리게 하는 상징 소품만 넣었어요(실제 캐릭터·장면이 아니에요). 대사는 방영분과 표현이 조금 다를 수 있어요.</div></div>`;
 };
 function stopRec(){ if(aRec&&window._anRec){ try{ window._anRec.stop(); }catch(e){} } }
@@ -170,7 +228,7 @@ function startRec(l){
   try{ speechSynthesis.cancel(); }catch(e){}
   const rec=new SR(); rec.lang="ja-JP"; rec.interimResults=false; rec.maxAlternatives=3; window._anRec=rec; aRec=l.id; renderAnime();
   let got=false;
-  rec.onresult=e=>{ got=true; let best=null; for(const a of e.results[0]){ const p=sim(a.transcript,l); if(!best||p>best.pct) best={heard:a.transcript,pct:p}; } aRes[l.id]=best; };
+  rec.onresult=e=>{ got=true; let best=null; for(const a of e.results[0]){ const p=sim(a.transcript,l); if(!best||p>best.pct) best={heard:a.transcript,pct:p}; } aRes[l.id]=best; if(best&&best.pct>=60) unlock(l.id); };
   rec.onerror=e=>{ got=true; aRes[l.id]={err:e.error==="not-allowed"?"마이크 사용을 허용해 주세요.":e.error==="no-speech"?"목소리가 들리지 않았어요. 다시 해 보세요.":"음성 인식에 실패했어요. 다시 해 보세요."}; };
   rec.onend=()=>{ if(!got) aRes[l.id]={err:"목소리가 들리지 않았어요. 다시 해 보세요."}; aRec=null; renderAnime(); };
   try{ rec.start(); }catch(e){ aRec=null; renderAnime(); }
@@ -180,11 +238,15 @@ document.addEventListener("click",e=>{
   if(a==="say"&&l) speakJa(l.text,.9);
   else if(a==="slow"&&l) speakJa(l.text,.6);
   else if(a==="rec"&&l) startRec(l);
-  else if(a==="done"&&l){ done.has(l.id)?done.delete(l.id):done.add(l.id); saveDone(); renderAnime(); }
-  else if(a==="mode"){ aMode=b.dataset.m; aQ=null; renderAnime(); }
+  else if(a==="done"&&l){ done.has(l.id)?done.delete(l.id):(done.add(l.id),touchStreak()); saveDone(); renderAnime(); }
+  else if(a==="mode"){ aMode=b.dataset.m; aQ=null; aWho=null; renderAnime(); }
   else if(a==="type"){ aType=b.dataset.t; aQ=null; renderAnime(); }
-  else if(a==="pick"){ if(aQ&&!aQ.picked){ aQ.picked=b.dataset.o; if(b.dataset.o===aQ.items[aQ.i].ans) aQ.score++; renderAnime(); } }
+  else if(a==="pick"){ if(aQ&&!aQ.picked){ aQ.picked=b.dataset.o; if(b.dataset.o===aQ.items[aQ.i].ans){ aQ.score++; unlock(aQ.items[aQ.i].l.id); } renderAnime(); } }
   else if(a==="qnext"){ aQ.i++; aQ.picked=null; renderAnime(); window.scrollTo(0,0); }
+  else if(a==="wpick"){ const q=aWho; if(q&&!q.picked){ q.picked=b.dataset.o; const it=q.items[q.i];
+    if(q.picked===it.ans){ q.combo++; q.max=Math.max(q.max,q.combo); q.score+=10+Math.min(q.combo-1,5)*2; unlock(it.l.id); } else { q.combo=0; q.lives--; } renderAnime(); } }
+  else if(a==="wnext"){ aWho.i++; aWho.picked=null; renderAnime(); window.scrollTo(0,0); }
+  else if(a==="wagain"){ aWho=null; renderAnime(); }
   else if(a==="qagain"){ aQ=null; renderAnime(); }
 });
 })();
