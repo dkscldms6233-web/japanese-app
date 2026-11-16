@@ -9,7 +9,7 @@ const root=path.join(__dirname,"..");
 const src=fs.readFileSync(path.join(root,"kana.js"),"utf8");
 const grab=n=>{ const m=src.match(new RegExp("const "+n+"=(\\[[\\s\\S]*?\\]);\\n")); return eval(m[1]); };
 const toH=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
-const keyOf=t=>{ let h=5381; const s="kana|"+t; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h.toString(36); };
+const keyOf=t=>{ let h=5381,g=7; const s="kana|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 const texts=new Set();
 ["H","D","Y"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0]))));
 ["WH","WK"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0]))));
