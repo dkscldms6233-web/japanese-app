@@ -101,7 +101,7 @@ const done=()=>LS.get("jp-kana",{done:{}});
 const save=d=>LS.set("jp-kana",d);
 const canVoice=()=>Object.keys(window.KANA_AUDIO||{}).length>0 || "speechSynthesis" in window && speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang));
 /* 미리 만든 자연스러운 음성(audio/kana, 청해와 같은 VOICEVOX 목소리)이 있으면 그걸 틀고, 없으면 기기 음성으로 읽어요 */
-const kanaKey=t=>{ let h=5381,g=7; const s="kana2|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+const kanaKey=t=>{ let h=5381,g=7; const s="kana3|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 let kAud=null;
 const say=(t,r)=>{ try{
   const k=kanaKey(toH(t)), A=window.KANA_AUDIO||{};
@@ -177,7 +177,7 @@ function renderHome(){
   <h3>② 행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${LESSONS.length} 완료</small></h3>
   ${nx?`<button class="kcta" data-kana="lesson" data-i="${nx.i}"><span class="kg">${(lessonChars(nx,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${doneN?"이어서 하기":"여기서 시작하기"}: ${lessonLabel(nx,k)}</b><small>${nx.i+1}번째 레슨</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래 전체 시험에 도전해 보세요.</div>`}
   ${groups}
-  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">✍️ ${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:春日部つむぎ</div>`:""}</div>`;
+  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">✍️ ${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:玄野武宏</div>`:""}</div>`;
 }
 function renderConfuse(){
   inq(false);
