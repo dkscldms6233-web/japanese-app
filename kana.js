@@ -101,7 +101,7 @@ const done=()=>LS.get("jp-kana",{done:{}});
 const save=d=>LS.set("jp-kana",d);
 const canVoice=()=>Object.keys(window.KANA_AUDIO||{}).length>0 || "speechSynthesis" in window && speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang));
 /* 미리 만든 자연스러운 음성(audio/kana, 청해와 같은 VOICEVOX 목소리)이 있으면 그걸 틀고, 없으면 기기 음성으로 읽어요 */
-const kanaKey=t=>{ let h=5381,g=7; const s="kana3|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+const kanaKey=t=>{ let h=5381,g=7; const s="kana4|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 let kAud=null;
 const say=(t,r)=>{ try{
   const k=kanaKey(toH(t)), A=window.KANA_AUDIO||{};
