@@ -1,6 +1,6 @@
 /* 히라가나·가타카나 입문 코스 (일본어를 전혀 모르는 사람을 위한 시작 코스)
  * 화면 순서: 글자표(눌러서 소리 듣기) → 행별 레슨(あ행~ぱ행, 요음, 촉음·장음) → 전체 시험
- * - 진행 상황은 LS("jp-kana")에 프로필별로 저장해요. 소리는 기기 내장 일본어 음성이에요.
+ * - 진행 상황은 LS("jp-kana")에 프로필별로 저장해요. 소리는 미리 만든 VOICEVOX 음성(audio/kana, tools/make-kana-audio.js)이고, 없으면 기기 내장 음성이에요.
  */
 (function(){
 const H=[["あ","a","아"],["い","i","이"],["う","u","우"],["え","e","에"],["お","o","오"],
@@ -99,8 +99,14 @@ const lessonLabel=(L,k)=>k?toK(L.label):L.label;
 const key=(L,k)=>(k?"k":"h")+L.i;
 const done=()=>LS.get("jp-kana",{done:{}});
 const save=d=>LS.set("jp-kana",d);
-const canVoice=()=>"speechSynthesis" in window && speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang));
-const say=(t,r)=>{ try{ speakJa(t,r||.8); }catch(e){} };
+const canVoice=()=>Object.keys(window.KANA_AUDIO||{}).length>0 || "speechSynthesis" in window && speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang));
+/* 미리 만든 자연스러운 음성(audio/kana, 청해와 같은 VOICEVOX 목소리)이 있으면 그걸 틀고, 없으면 기기 음성으로 읽어요 */
+const kanaKey=t=>{ let h=5381; const s="kana|"+t; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h.toString(36); };
+let kAud=null;
+const say=(t,r)=>{ try{
+  const k=kanaKey(toH(t)), A=window.KANA_AUDIO||{};
+  if(A[k]){ try{ speechSynthesis.cancel(); }catch(e){} if(kAud){ try{ kAud.pause(); }catch(e){} } kAud=new Audio("audio/kana/"+k+".m4a"); kAud.play().catch(()=>speakJa(t,r||.8)); return; }
+  speakJa(t,r||.8); }catch(e){} };
 const inq=on=>document.body.classList.toggle("inq",!!on);
 const root=()=>$("quizView");
 const ST=document.createElement("style");
@@ -171,7 +177,7 @@ function renderHome(){
   <h3>② 행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${LESSONS.length} 완료</small></h3>
   ${nx?`<button class="kcta" data-kana="lesson" data-i="${nx.i}"><span class="kg">${(lessonChars(nx,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${doneN?"이어서 하기":"여기서 시작하기"}: ${lessonLabel(nx,k)}</b><small>${nx.i+1}번째 레슨</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래 전체 시험에 도전해 보세요.</div>`}
   ${groups}
-  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">✍️ ${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div></div>`;
+  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">✍️ ${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:春日部つむぎ</div>`:""}</div>`;
 }
 function renderConfuse(){
   inq(false);

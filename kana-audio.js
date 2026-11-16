@@ -1,0 +1,1 @@
+window.KANA_AUDIO={};
