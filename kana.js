@@ -130,6 +130,20 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kbig{font-size:84px;text-align:center;margin:10px 0;line-height:1.2}.kword{font-size:44px;text-align:center;margin:10px 0}
 .ksim{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.ksim .kc{width:72px}
 .kbtns{display:grid;gap:8px;margin-top:16px}
+
+.kwtop{display:flex;align-items:center;justify-content:space-between;margin:6px 0}.kwtop .cnt{font-size:14px;color:var(--sub);font-weight:700}
+.kwhead{text-align:center;margin:6px 0 10px}.kwhead b{font-size:30px}.kwhead small{display:block;color:var(--sub);font-size:14px;margin-top:2px}
+.kwbox{position:relative;margin:8px auto;border:2px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.kwbox svg,.kwbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.kwbox canvas{touch-action:none;cursor:crosshair}
+.kwgrid line{stroke:var(--line);stroke-width:.6;stroke-dasharray:3 3}
+.kwg path{fill:none;stroke:var(--line);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.kwa path{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.kwn text{font-size:8px;font-weight:700;fill:var(--accent);text-anchor:middle;dominant-baseline:central}.kwn circle{fill:var(--card);stroke:var(--accent);stroke-width:.8}
+.kwbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.kwbar button{border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 2px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;line-height:1.3}
+.kwbar button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.kwnav{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media(max-width:380px){.klesson .kp{font-size:16px}.kc b{font-size:23px}}`;
 document.head.appendChild(ST);
 let K={tab:"h"};
@@ -157,7 +171,7 @@ function renderHome(){
   <h3>② 행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${LESSONS.length} 완료</small></h3>
   ${nx?`<button class="kcta" data-kana="lesson" data-i="${nx.i}"><span class="kg">${(lessonChars(nx,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${doneN?"이어서 하기":"여기서 시작하기"}: ${lessonLabel(nx,k)}</b><small>${nx.i+1}번째 레슨</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래 전체 시험에 도전해 보세요.</div>`}
   ${groups}
-  <h3>③ 마무리</h3><div class="kbtns"><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div></div>`;
+  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">✍️ ${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div></div>`;
 }
 function renderConfuse(){
   inq(false);
@@ -173,7 +187,7 @@ function renderLesson(L,k){
   <div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>
   ${ch.length?`<div class="kgrid" style="grid-template-columns:repeat(${ch.length%3===0&&ch.length>5?3:5},minmax(0,1fr))">${ch.map(cellBtn).join("")}</div>`:""}
   <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b><small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서 새로 읽을 수 있는 단어는 아직 없어요. 다음 행에서 단어를 읽게 돼요.</div>`}
-  <div class="kbtns"><button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
+  <div class="kbtns">${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">✍️ 글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">✍️ 단어 따라 쓰기</button>`:""}<button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="cta sec" data-kana="lesson" data-i="${prv?prv.i:L.i}" ${prv?"":"disabled"}>‹ 이전 레슨</button><button class="cta sec" data-kana="lesson" data-i="${nxt?nxt.i:L.i}" ${nxt?"":"disabled"}>다음 레슨 ›</button></div></div></div>`;
 }
 /* 문제 만들기 */
@@ -219,6 +233,52 @@ function renderResult(){
   <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">${ok&&nxt?`<button class="cta" data-kana="lesson" data-i="${nxt.i}">다음 레슨: ${lessonLabel(nxt,K.k)}</button><button class="cta sec" data-kana="again">다시 풀기</button>`:`<button class="cta" data-kana="again">다시 풀기</button>`}<button class="cta sec" data-kana="home">글자표·레슨 목록으로</button></div></div>`;
   if(ok&&typeof sakura==="function") sakura(14);
 }
+
+/* ---------- 따라 쓰기 ---------- */
+const SK=()=>window.KSTROKE||{};
+let W=null, wTok=0;
+function wItems(a){ return a.filter(x=>[...x.t].every(c=>SK()[c])); }
+function startWrite(items,title,back){ W={items:wItems(items),i:0,guide:true,title,back,strokes:[]}; renderWrite(); window.scrollTo(0,0); }
+function renderWrite(){
+  inq(false); const it=W.items[W.i], n=[...it.t].length, cs=[...it.t], ST_=SK();
+  const grid=cs.map((c,j)=>`<g transform="translate(${j*109},0)"><line x1="54.5" y1="4" x2="54.5" y2="105"/><line x1="4" y1="54.5" x2="105" y2="54.5"/></g>`).join("");
+  const gp=cs.map((c,j)=>`<g transform="translate(${j*109},0)">${ST_[c].map(d=>`<path d="${d}"/>`).join("")}</g>`).join("");
+  const ap=cs.map((c,j)=>`<g transform="translate(${j*109},0)">${ST_[c].map(d=>`<path d="${d}" pathLength="1"/>`).join("")}</g>`).join("");
+  const nums=cs.map((c,j)=>ST_[c].map((d,m)=>{ const q=d.match(/^M\s*(-?[\d.]+)[ ,]+(-?[\d.]+)/i); if(!q) return ""; return `<g transform="translate(${j*109+Math.max(7,Math.min(102,+q[1]-6))},${Math.max(7,Math.min(102,+q[2]-6))})"><circle r="5"/><text>${m+1}</text></g>`; }).join("")).join("");
+  root().innerHTML=`<div class="kana"><button class="back" data-kana="wback">${ic("back")}돌아가기</button><h2>${W.title}</h2>
+  <div class="kwtop"><span class="cnt">${W.i+1} / ${W.items.length}</span><span class="sub" style="margin:0">손가락(마우스)으로 따라 써 보세요</span></div>
+  <div class="kwhead"><b>${it.t}</b><small>${it.sub||""}</small></div>
+  <div class="kwbox" id="kwbox" style="aspect-ratio:${n} / 1;max-width:${Math.min(360,n*260)}px">
+   <svg viewBox="0 0 ${109*n} 109" aria-hidden="true"><g class="kwgrid">${grid}</g><g class="kwg" id="kwg" style="${W.guide?"":"display:none"}">${gp}</g><g class="kwn" id="kwn" style="${W.guide?"":"display:none"}">${nums}</g><g class="kwa" id="kwa">${ap}</g></svg>
+   <canvas id="kwc"></canvas></div>
+  <div class="kwbar"><button data-kana="wanim">▶ 획순<br>보기</button><button data-kana="wundo">↶ 한 획<br>지우기</button><button data-kana="wclear">🗑 전부<br>지우기</button><button data-kana="wguide" class="${W.guide?"on":""}">👁 밑그림<br>${W.guide?"켜짐":"꺼짐"}</button></div>
+  <div class="kbtns" style="margin-top:6px"><button class="cta sec" data-kana="wsay">🔊 소리 듣기</button><div class="kwnav"><button class="cta sec" data-kana="wprev" ${W.i?"":"disabled"}>‹ 이전</button><button class="cta" data-kana="wnext">${W.i+1<W.items.length?"다음 ›":"완료 ✓"}</button></div></div>
+  <div class="sub" style="margin-top:14px;font-size:12px">획 순서 데이터: KanjiVG (CC BY-SA 3.0). 밑그림을 끄면 보지 않고 쓰는 연습이 돼요. 쓰다가 막히면 '획순 보기'를 눌러 보세요.</div></div>`;
+  setupCanvas();
+}
+function setupCanvas(){
+  const box=$("kwbox"), cv=$("kwc"); if(!box||!cv) return; const dpr=window.devicePixelRatio||1; W.strokes=[];
+  const fit=()=>{ const r=box.getBoundingClientRect(); cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); draw(); };
+  const ctx=cv.getContext("2d");
+  const col=()=>getComputedStyle(document.body).getPropertyValue("--text").trim()||"#222";
+  function draw(){ ctx.clearRect(0,0,cv.width,cv.height); ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle=col(); ctx.lineWidth=Math.max(5,cv.height*0.055)*1; ctx.fillStyle=ctx.strokeStyle;
+    W.strokes.forEach(st=>{ if(st.length===1){ ctx.beginPath(); ctx.arc(st[0][0]*dpr,st[0][1]*dpr,ctx.lineWidth/2,0,6.3); ctx.fill(); return; } ctx.beginPath(); st.forEach((p,i)=>i?ctx.lineTo(p[0]*dpr,p[1]*dpr):ctx.moveTo(p[0]*dpr,p[1]*dpr)); ctx.stroke(); }); }
+  W.redraw=draw; fit();
+  const pt=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; };
+  let cur=null;
+  cv.addEventListener("pointerdown",e=>{ e.preventDefault(); try{cv.setPointerCapture(e.pointerId);}catch(x){} cur=[pt(e)]; W.strokes.push(cur); draw(); });
+  cv.addEventListener("pointermove",e=>{ if(!cur) return; e.preventDefault(); const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e]; (evs.length?evs:[e]).forEach(x=>cur.push(pt(x))); draw(); });
+  const end=e=>{ cur=null; }; cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+  cv.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+}
+async function wAnimate(){
+  const tok=++wTok, g=$("kwa"); if(!g) return; const ps=[...g.querySelectorAll("path")];
+  ps.forEach(p=>{ p.style.transition="none"; p.style.strokeDashoffset="1"; p.style.opacity="0"; }); void g.getBoundingClientRect();
+  for(const p of ps){ if(tok!==wTok) return; p.style.opacity="1"; void p.getBoundingClientRect(); p.style.transition="stroke-dashoffset .7s ease"; p.style.strokeDashoffset="0"; await new Promise(r=>setTimeout(r,820)); }
+  await new Promise(r=>setTimeout(r,900)); if(tok===wTok) ps.forEach(p=>{ p.style.transition="none"; p.style.strokeDashoffset="1"; p.style.opacity="0"; });
+}
+function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요 👏"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
+function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLesson(LESSONS[b.i],b.k); } else renderHome(); window.scrollTo(0,0); }
 function open(){ K={tab:K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-kana]"); if(!b) return; const a=b.dataset.kana;
@@ -231,6 +291,17 @@ document.addEventListener("click",e=>{
   else if(a==="say") say(b.dataset.t);
   else if(a==="confuse"){ renderConfuse(); window.scrollTo(0,0); }
   else if(a==="lesson"){ K={...K}; renderLesson(L,K.tab==="k"); window.scrollTo(0,0); }
+  else if(a==="write"){ const k=K.tab==="k"; startWrite(lessonChars(L,k).map(([c,r,ko])=>({t:c,sub:ko+" · "+r})),"글자 따라 쓰기 · "+lessonLabel(L,k),{i:L.i,k}); }
+  else if(a==="writew"){ const k=K.tab==="k"; startWrite(lessonWords(L,k).filter(x=>x.w.length<=5).map(x=>({t:x.w,sub:x.m})),"단어 따라 쓰기 · "+lessonLabel(L,k),{i:L.i,k}); }
+  else if(a==="writeall"){ const k=K.tab==="k"; startWrite(H.map(([c,r,ko])=>({t:k?toK(c):c,sub:ko+" · "+r})),(k?"가타카나":"히라가나")+" 따라 쓰기",{}); }
+  else if(a==="wback") wBack();
+  else if(a==="wnext") wNav(1);
+  else if(a==="wprev") wNav(-1);
+  else if(a==="wsay"&&W) say(W.items[W.i].t);
+  else if(a==="wanim") wAnimate();
+  else if(a==="wundo"&&W){ W.strokes.pop(); W.redraw&&W.redraw(); }
+  else if(a==="wclear"&&W){ W.strokes=[]; W.redraw&&W.redraw(); }
+  else if(a==="wguide"&&W){ W.guide=!W.guide; const keep=W.strokes; renderWrite(); W.strokes=keep; W.redraw&&W.redraw(); }
   else if(a==="start"){ startLesson(L,K.tab==="k"); window.scrollTo(0,0); }
   else if(a==="final"){ startFinal(K.tab==="k"); window.scrollTo(0,0); }
   else if(a==="ans"){ if(!K.qs||K.sel!==null) return; K.sel=+b.dataset.i; const q=K.qs[K.i]; if(q.opts[K.sel]===q.ans) K.score++; renderQ(); }
