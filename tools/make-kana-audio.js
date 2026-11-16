@@ -9,7 +9,7 @@ const root=path.join(__dirname,"..");
 const src=fs.readFileSync(path.join(root,"kana.js"),"utf8");
 const grab=n=>{ const m=src.match(new RegExp("const "+n+"=(\\[[\\s\\S]*?\\]);\\n")); return eval(m[1]); };
 const toH=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
-const keyOf=t=>{ let h=5381,g=7; const s="kana|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+const keyOf=t=>{ let h=5381,g=7; const s="kana2|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 const texts=new Set();
 ["H","D","Y"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0]))));
 ["WH","WK"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0]))));
@@ -21,7 +21,9 @@ if(process.argv.includes("--dry")) process.exit(0);
   const tmp=fs.mkdtempSync(path.join(require("os").tmpdir(),"vk-"));
   for(const t of todo){
     const q=await (await fetch(`${BASE}/audio_query?speaker=8&text=${encodeURIComponent(t)}`,{method:"POST"})).json();
-    q.speedScale=.9; q.prePhonemeLength=.1; q.postPhonemeLength=.2; q.outputSamplingRate=24000; q.outputStereo=false;
+    const short=[...t].length<=2; /* 글자 하나·요음은 너무 짧게 들려서 모음을 길게 늘려요 */
+    q.speedScale=short?1:.8; q.prePhonemeLength=.25; q.postPhonemeLength=.5;
+    if(short) (q.accent_phrases||[]).forEach(ap=>ap.moras.forEach(m=>{ m.vowel_length*=2.6; if(m.consonant_length) m.consonant_length*=1.3; })); q.outputSamplingRate=24000; q.outputStereo=false;
     const r=await fetch(`${BASE}/synthesis?speaker=8`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(q)});
     if(!r.ok){ console.error("실패:",t,r.status); process.exit(1); }
     const wav=path.join(tmp,"a.wav"); fs.writeFileSync(wav,Buffer.from(await r.arrayBuffer()));
