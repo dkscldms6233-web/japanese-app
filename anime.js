@@ -175,7 +175,7 @@ function card(l){
    ${panel(l.fx||l.t,l.id,l.src&&l.src.wiki)}
    <div class="an-type">${tname(l.t)}${l.t==="famous"?"":" · 오리지널 문장"}</div>
    <div class="an-ja">${toRuby(l.ja)}</div><div class="an-ko">${E(l.ko)}</div>
-   ${l.src?`<div class="an-src">📺 출처: <b>${E(l.src.w)}</b> · ${E(l.src.c)} · <a href="https://ja.wikipedia.org/w/index.php?search=${encodeURIComponent(l.src.wiki)}&go=Go" target="_blank" rel="noopener noreferrer">작품 정보(위키백과)</a></div><div class="an-act"><a class="pill sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l.src.w+" "+l.src.c.replace(/\(.*\)/,"")+" 名言 名シーン")}" target="_blank" rel="noopener noreferrer">▶ 원본 성우 목소리 (유튜브)</a></div>`:""}
+   ${l.src?`<div class="an-src">📺 출처: <b>${E(l.src.w)}</b> · ${E(l.src.c)} · <a href="https://ja.wikipedia.org/w/index.php?search=${encodeURIComponent(l.src.wiki)}&go=Go" target="_blank" rel="noopener noreferrer">작품 정보(위키백과)</a></div><div class="an-act"><a class="pill sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l.src.w+" "+l.ja.replace(/\[[^\]]*\]/g,"").replace(/[。!?!?…、]/g,""))}" target="_blank" rel="noopener noreferrer">▶ 원본 성우 목소리 (유튜브)</a></div>`:""}
    <div class="an-note">💡 ${E(l.note)}</div>
    <div class="an-act">${canSay()?`<button class="pill sm" data-an="say" data-id="${l.id}">${ic("sound")} 듣기</button><button class="pill sm" data-an="slow" data-id="${l.id}">🐢 천천히</button>`:""}
     <button class="pill sm" data-an="rec" data-id="${l.id}">${aRec===l.id?"🎙 듣는 중…(탭하면 중지)":"🎤 따라 말하기"}</button>
