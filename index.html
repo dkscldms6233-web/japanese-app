@@ -417,6 +417,7 @@ h1{letter-spacing:-.02em;cursor:pointer}
 #onb .obstep i.on{background:var(--accent)}
 #onb .obopts{display:grid;gap:10px;margin:18px 0 6px;text-align:left}
 #onb .obopts .mode b{font-size:17px}
+#onb .obin{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}
 #onb .obskip{background:none;border:0;color:var(--sub);font-size:14px;margin-top:14px;cursor:pointer;text-decoration:underline}
 
 
@@ -2438,13 +2439,25 @@ $("homeView").addEventListener("click",e=>{
 const needOnb = () => !prefs.onboarded && !Object.keys(log).length && !(prefs.myLevels&&prefs.myLevels.length);
 const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아요",["N5","N4"],"N5~N4"],["중급이에요",["N3","N2"],"N3~N2"],["상급이에요",["N1"],"N1"],["잘 모르겠어요",[],"전체"]];
 const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
-let obStep=0, obLv=null, obKana=false;
+let obStep=0, obLv=null, obKana=false, obAuth="main", obMsg="";
+const pwHash=async s=>{ try{ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("jp|"+s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""); }catch(e){ let h=5381; for(const c of "jp|"+s) h=((h*33)^c.charCodeAt(0))>>>0; return "x"+h.toString(36); } };
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
   const dots=`<div class="obstep">${[0,1,2].map(i=>`<i class="${i<=obStep?"on":""}"></i>`).join("")}</div>`;
   const feat=(i,tt,s)=>`<div><span class="fi">${ic(i)}</span><span><b>${tt}</b><span>${s}</span></span></div>`;
   const top=small=>`<div class="ob-top" style="${small?"min-height:150px":""}"><div class="obmk">${MONKEY}</div>${small?"":`<div class="lg2">すらすら<span>日本語</span></div><span class="lg2s">술술 일본어</span>`}</div>`;
+  if(obStep==="auth"){
+    const bk=`<button class="obskip" data-ob="aback">처음으로</button>`, msg=obMsg?`<p class="sub" style="color:#c0392b">${E(obMsg)}</p>`:"";
+    const accts=profiles.filter(p=>p.pw);
+    let body;
+    if(obAuth==="login") body=`<h2>로그인</h2><p class="sub">닉네임과 비밀번호를 정하면 이 기기에 계정이 만들어져요. 이미 있는 닉네임이면 비밀번호로 로그인돼요.</p>${msg}
+      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="off"><input id="obP" class="obin" type="password" placeholder="비밀번호 (4자 이상)" autocomplete="current-password"></div><button class="cta" data-ob="dologin">로그인</button>${bk}`;
+    else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2>${accts.length?`<p class="sub">이 기기에 저장된 계정을 골라 주세요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div>`:`<p class="sub">이 기기에 저장된 계정이 없어요. 로그인에서 새로 만들거나 게스트로 시작해 보세요.</p>`}${bk}`;
+    else if(obAuth.startsWith("pw:")){ const p=profiles.find(x=>x.id===obAuth.slice(3)); body=`<h2>${E(p?p.name:"")}</h2><p class="sub">비밀번호를 입력해 주세요.</p>${msg}<div class="obopts"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dopw" data-id="${p?p.id:""}">로그인</button><button class="obskip" data-ob="has">다른 계정 고르기</button>`; }
+    else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button><button class="cta sec" data-ob="has">이미 계정이 있어요</button></div>`;
+    o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
+  }
   if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작해요.</p>
     <div class="feat">${feat("vocab","단어장",`N5~N1 단어 ${ALL.length.toLocaleString()}개와 예문`)}${feat("pencil","퀴즈와 게임","플래시카드 · 짝 맞추기 · 타임어택")}${feat("target","JLPT 모의시험","문자·어휘, 문법, 독해, 청해")}${feat("news","일본 뉴스 읽기","매일 새 기사가 올라와요")}</div>
     <button class="cta" data-ob="next">시작하기</button><button class="obskip" data-ob="skip">이미 써 본 적 있어요</button></div>`;
@@ -2452,10 +2465,22 @@ function renderOnb(){
   else o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>하루 목표를 정해요</h2><p class="sub">부담 없이 시작하고, 익숙해지면 늘려 보세요.</p><div class="obopts">${OB_GOAL.map(x=>`<button class="mode" data-ob="goal" data-n="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
   o.scrollTop=0;
 }
-function openOnb(){ obStep=0; renderOnb(); }
+function openOnb(){ obStep=RAW.get("jp-auth-done",0)?0:"auth"; obAuth="main"; obMsg=""; renderOnb(); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-ob]"); if(!b) return;
   const a=b.dataset.ob;
+  if(a==="guest"){ RAW.set("jp-auth-done","guest"); obStep=0; renderOnb(); return; }
+  if(a==="login"||a==="has"){ obAuth=a; obMsg=""; renderOnb(); return; }
+  if(a==="aback"){ obAuth="main"; obMsg=""; renderOnb(); return; }
+  if(a==="pickacct"){ obAuth="pw:"+b.dataset.id; obMsg=""; renderOnb(); return; }
+  if(a==="dologin"){ (async()=>{ const n=($("obN").value||"").trim(), pw=$("obP").value||"";
+    if(!n){ obMsg="닉네임을 입력해 주세요."; return renderOnb(); } if(pw.length<4){ obMsg="비밀번호는 4자 이상으로 해 주세요."; return renderOnb(); }
+    const h=await pwHash(pw), ex=profiles.find(p=>p.name===n);
+    RAW.set("jp-auth-done","login");
+    if(ex){ if(!ex.pw){ obMsg="이미 사용 중인 닉네임이에요."; RAW.del("jp-auth-done"); return renderOnb(); } if(ex.pw!==h){ obMsg="비밀번호가 맞지 않아요."; RAW.del("jp-auth-done"); return renderOnb(); } switchTo(ex.id); return; }
+    const p={id:"p"+Date.now(),name:n,pw:h}; profiles.push(p); saveProfiles(); switchTo(p.id); })(); return; }
+  if(a==="dopw"){ (async()=>{ const p=profiles.find(x=>x.id===b.dataset.id); if(!p) return; const h=await pwHash($("obP").value||"");
+    if(p.pw!==h){ obMsg="비밀번호가 맞지 않아요."; return renderOnb(); } RAW.set("jp-auth-done","login"); switchTo(p.id); })(); return; }
   if(a==="skip"){ closeOnb(); return; }
   if(a==="next"){ obStep=1; renderOnb(); return; }
   if(a==="prev"){ obStep=Math.max(0,obStep-1); renderOnb(); return; }
