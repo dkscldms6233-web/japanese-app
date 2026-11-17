@@ -659,6 +659,9 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";}catch(e){}
 </script>
 <script src="articles.js?v=2"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="words-extra.js"></script>
 <script src="words-bulk1.js"></script>
 <script src="words-bulk2.js"></script>
@@ -919,7 +922,7 @@ const R = s => toRuby(E(s));
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const RAW = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
-  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); if(k.endsWith("@"+activeId)&&PER.includes(k.slice(0,k.indexOf("@")))) cloudSchedule(); }catch(e){} },
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 // 프로필: 이 기기 안에서만 저장돼요. 아래 키들은 프로필별로 따로 보관해요.
@@ -933,6 +936,25 @@ if(!Array.isArray(profiles)||!profiles.length){
 }
 if(!profiles.some(p=>p.id===activeId)) activeId=profiles[0].id;
 const curProfile = () => profiles.find(p=>p.id===activeId);
+/* ---- 클라우드 계정(Firebase): 이메일 로그인 + 기록 동기화. 웹용 설정값은 공개돼도 안전하고, 데이터는 Firestore 규칙으로 본인만 읽고 써요 ---- */
+const FB_CFG={apiKey:"AIzaSyC4-ORKs33FovDyD7LtB5SPGt3LsWkDkA4",authDomain:"surasura-nihongo.firebaseapp.com",projectId:"surasura-nihongo",storageBucket:"surasura-nihongo.firebasestorage.app",messagingSenderId:"1021849361008",appId:"1:1021849361008:web:97c06deb47e9b0000672b5"};
+const cloud={ok:false};
+try{ if(window.firebase){ firebase.initializeApp(FB_CFG); cloud.auth=firebase.auth(); cloud.db=firebase.firestore(); cloud.ok=true; } }catch(e){}
+let cloudT=0;
+function cloudSchedule(){ clearTimeout(cloudT); cloudT=setTimeout(cloudPush,2500); }
+function cloudPush(){
+  const p=curProfile(); if(!cloud.ok||!p||!p.cloud||!cloud.auth.currentUser||cloud.auth.currentUser.uid!==p.cloud) return;
+  const data={}; PER.forEach(k=>{ const v=localStorage.getItem(k+"@"+p.id); if(v!==null) data[k]=v; });
+  const at=Date.now();
+  cloud.db.collection("users").doc(p.cloud).set({data,name:p.name,updatedAt:at}).then(()=>{ try{ localStorage.setItem("jp-sync-at@"+p.id,String(at)); }catch(e){} }).catch(()=>{});
+}
+async function cloudPull(uid,pid,force){
+  const s=await cloud.db.collection("users").doc(uid).get(); if(!s.exists) return null; const d=s.data();
+  const local=+(localStorage.getItem("jp-sync-at@"+pid)||0);
+  if(force||(d.updatedAt||0)>local){ Object.entries(d.data||{}).forEach(([k,v])=>{ try{ localStorage.setItem(k+"@"+pid,v); }catch(e){} }); try{ localStorage.setItem("jp-sync-at@"+pid,String(d.updatedAt||0)); }catch(e){} d.applied=true; }
+  return d;
+}
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"){ clearTimeout(cloudT); cloudPush(); } });
 const LS = {
   get(k,d){ return RAW.get(PER.includes(k)?k+"@"+activeId:k,d); },
   set(k,v){ RAW.set(PER.includes(k)?k+"@"+activeId:k,v); }
@@ -2440,7 +2462,6 @@ const needOnb = () => !prefs.onboarded && !Object.keys(log).length && !(prefs.my
 const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아요",["N5","N4"],"N5~N4"],["중급이에요",["N3","N2"],"N3~N2"],["상급이에요",["N1"],"N1"],["잘 모르겠어요",[],"전체"]];
 const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
 let obStep=0, obLv=null, obKana=false, obAuth="main", obMsg="";
-const pwHash=async s=>{ try{ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("jp|"+s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""); }catch(e){ let h=5381; for(const c of "jp|"+s) h=((h*33)^c.charCodeAt(0))>>>0; return "x"+h.toString(36); } };
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
@@ -2449,14 +2470,14 @@ function renderOnb(){
   const top=small=>`<div class="ob-top" style="${small?"min-height:150px":""}"><div class="obmk">${MONKEY}</div>${small?"":`<div class="lg2">すらすら<span>日本語</span></div><span class="lg2s">술술 일본어</span>`}</div>`;
   if(obStep==="auth"){
     const bk=`<button class="obskip" data-ob="aback">처음으로</button>`, msg=obMsg?`<p class="sub" style="color:#c0392b">${E(obMsg)}</p>`:"";
-    const accts=profiles.filter(p=>p.pw);
+    const accts=profiles.filter(p=>p.cloud);
+    const off=cloud.ok?"":`<p class="sub" style="color:#c0392b">서버에 연결할 수 없어요. 인터넷을 확인해 주세요.</p>`;
     let body;
-    if(obAuth==="login") body=`<h2>로그인</h2>${msg}
-      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임" maxlength="12" autocomplete="off"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dologin">로그인</button><button class="obskip" data-ob="signup">회원가입</button>${bk}`;
-    else if(obAuth==="signup") body=`<h2>회원가입</h2><p class="sub">닉네임과 비밀번호로 이 기기에 계정을 만들어요.</p>${msg}
-      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="off"><input id="obP" class="obin" type="password" placeholder="비밀번호 (4자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>`;
-    else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2>${accts.length?`<p class="sub">이 기기에 저장된 계정을 골라 주세요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div>`:`<p class="sub">이 기기에 저장된 계정이 없어요. 회원가입을 하거나 게스트로 시작해 보세요.</p>`}${bk}`;
-    else if(obAuth.startsWith("pw:")){ const p=profiles.find(x=>x.id===obAuth.slice(3)); body=`<h2>${E(p?p.name:"")}</h2><p class="sub">비밀번호를 입력해 주세요.</p>${msg}<div class="obopts"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dopw" data-id="${p?p.id:""}">로그인</button><button class="obskip" data-ob="has">다른 계정 고르기</button>`; }
+    if(obAuth==="login"||(obAuth==="has"&&!accts.length)) body=`<h2>로그인</h2>${off}${msg}
+      <div class="obopts"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dologin">로그인</button><button class="obskip" data-ob="signup">회원가입</button><button class="obskip" data-ob="reset">비밀번호를 잊었어요</button>${bk}`;
+    else if(obAuth==="signup") body=`<h2>회원가입</h2><p class="sub">이메일 계정을 만들면 다른 기기에서도 같은 기록으로 이어서 공부할 수 있어요.</p>${off}${msg}
+      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="nickname"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username"><input id="obP" class="obin" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>${bk}`;
+    else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2><p class="sub">이 기기에서 쓴 계정을 고르거나 다른 계정으로 로그인해요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div><button class="obskip" data-ob="login">다른 계정으로 로그인</button>${bk}`;
     else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button><button class="cta sec" data-ob="has">이미 계정이 있어요</button></div>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
   }
@@ -2467,6 +2488,7 @@ function renderOnb(){
   else o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>하루 목표를 정해요</h2><p class="sub">부담 없이 시작하고, 익숙해지면 늘려 보세요.</p><div class="obopts">${OB_GOAL.map(x=>`<button class="mode" data-ob="goal" data-n="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
   o.scrollTop=0;
 }
+const authErr=e=>{ const c=(e&&e.code)||""; return /email-already/.test(c)?"이미 가입된 이메일이에요. 로그인해 주세요.":/invalid-email/.test(c)?"이메일 형식이 올바르지 않아요.":/weak-password/.test(c)?"비밀번호는 6자 이상으로 해 주세요.":/user-not-found|wrong-password|invalid-credential|invalid-login/.test(c)?"이메일 또는 비밀번호가 맞지 않아요.":/network/.test(c)?"네트워크를 확인해 주세요.":/too-many/.test(c)?"시도가 너무 많아요. 잠시 후 다시 해 주세요.":"처리하지 못했어요. ("+c+")"; };
 function openOnb(){ obStep=RAW.get("jp-auth-done",0)?0:"auth"; obAuth="main"; obMsg=""; renderOnb(); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-ob]"); if(!b) return;
@@ -2474,21 +2496,28 @@ document.addEventListener("click",e=>{
   if(a==="guest"){ RAW.set("jp-auth-done","guest"); obStep=0; renderOnb(); return; }
   if(a==="login"||a==="has"||a==="signup"){ obAuth=a; obMsg=""; renderOnb(); return; }
   if(a==="aback"){ obAuth="main"; obMsg=""; renderOnb(); return; }
-  if(a==="pickacct"){ obAuth="pw:"+b.dataset.id; obMsg=""; renderOnb(); return; }
-  if(a==="dologin"){ (async()=>{ const n=($("obN").value||"").trim(), pw=$("obP").value||"";
-    if(!n||!pw){ obMsg="닉네임과 비밀번호를 입력해 주세요."; return renderOnb(); }
-    const ex=profiles.find(p=>p.name===n&&p.pw);
-    if(!ex){ obMsg="이 기기에 없는 계정이에요. 회원가입을 해 주세요."; return renderOnb(); }
-    if(ex.pw!==await pwHash(pw)){ obMsg="비밀번호가 맞지 않아요."; return renderOnb(); }
-    RAW.set("jp-auth-done","login"); switchTo(ex.id); })(); return; }
-  if(a==="dosignup"){ (async()=>{ const n=($("obN").value||"").trim(), pw=$("obP").value||"", pw2=$("obP2").value||"";
-    if(!n){ obMsg="닉네임을 입력해 주세요."; return renderOnb(); }
-    if(pw.length<4){ obMsg="비밀번호는 4자 이상으로 해 주세요."; return renderOnb(); }
-    if(pw!==pw2){ obMsg="비밀번호 확인이 달라요."; return renderOnb(); }
-    if(profiles.some(p=>p.name===n)){ obMsg="이미 사용 중인 닉네임이에요."; return renderOnb(); }
-    const p={id:"p"+Date.now(),name:n,pw:await pwHash(pw)}; profiles.push(p); saveProfiles(); RAW.set("jp-auth-done","login"); switchTo(p.id); })(); return; }
-  if(a==="dopw"){ (async()=>{ const p=profiles.find(x=>x.id===b.dataset.id); if(!p) return; const h=await pwHash($("obP").value||"");
-    if(p.pw!==h){ obMsg="비밀번호가 맞지 않아요."; return renderOnb(); } RAW.set("jp-auth-done","login"); switchTo(p.id); })(); return; }
+  if(a==="pickacct"){ const p=profiles.find(x=>x.id===b.dataset.id); if(p&&cloud.ok&&cloud.auth.currentUser&&cloud.auth.currentUser.uid===p.cloud){ RAW.set("jp-auth-done","login"); switchTo(p.id); } else { obAuth="login"; obMsg="비밀번호를 다시 입력해 주세요."; renderOnb(); } return; }
+  if(a==="reset"){ (async()=>{ const em=($("obE").value||"").trim(); if(!em){ obMsg="이메일을 먼저 입력해 주세요."; return renderOnb(); }
+    try{ await cloud.auth.sendPasswordResetEmail(em); obMsg="비밀번호 재설정 메일을 보냈어요. 메일함을 확인해 주세요."; }catch(e){ obMsg=authErr(e); } renderOnb(); })(); return; }
+  if(a==="dologin"){ (async()=>{ if(!cloud.ok){ obMsg="서버에 연결할 수 없어요."; return renderOnb(); }
+    const em=($("obE").value||"").trim(), pw=$("obP").value||"";
+    if(!em||!pw){ obMsg="이메일과 비밀번호를 입력해 주세요."; return renderOnb(); }
+    try{ const cr=await cloud.auth.signInWithEmailAndPassword(em,pw), u=cr.user, pid="u"+u.uid;
+      let pr=profiles.find(x=>x.id===pid); const doc=await cloud.db.collection("users").doc(u.uid).get(); const nm=(doc.exists&&doc.data().name)||u.displayName||em.split("@")[0];
+      if(!pr){ pr={id:pid,name:nm.slice(0,12),cloud:u.uid}; profiles.push(pr); saveProfiles(); }
+      await cloudPull(u.uid,pid,false); RAW.set("jp-auth-done","login"); switchTo(pid);
+    }catch(e){ obMsg=authErr(e); renderOnb(); } })(); return; }
+  if(a==="dosignup"){ (async()=>{ if(!cloud.ok){ obMsg="서버에 연결할 수 없어요."; return renderOnb(); }
+    const n=($("obN").value||"").trim(), em=($("obE").value||"").trim(), pw=$("obP").value||"", pw2=$("obP2").value||"";
+    if(!n){ obMsg="닉네임을 입력해 주세요."; return renderOnb(); } if(!em){ obMsg="이메일을 입력해 주세요."; return renderOnb(); }
+    if(pw.length<6){ obMsg="비밀번호는 6자 이상으로 해 주세요."; return renderOnb(); } if(pw!==pw2){ obMsg="비밀번호 확인이 달라요."; return renderOnb(); }
+    try{ const cr=await cloud.auth.createUserWithEmailAndPassword(em,pw), u=cr.user, pid="u"+u.uid;
+      try{ await u.updateProfile({displayName:n}); }catch(e){}
+      const pr={id:pid,name:n,cloud:u.uid}; profiles.push(pr); saveProfiles();
+      const old=profiles.find(x=>!x.cloud&&PER.some(k=>localStorage.getItem(k+"@"+x.id)!==null&&k!=="jp-prefs"));
+      if(old&&confirm("이 기기에 쓰던 학습 기록('"+old.name+"')을 새 계정으로 옮길까요?")) PER.forEach(k=>{ const v=localStorage.getItem(k+"@"+old.id); if(v!==null) localStorage.setItem(k+"@"+pid,v); });
+      activeId=pid; cloudPush(); await new Promise(r=>setTimeout(r,1200)); RAW.set("jp-auth-done","login"); switchTo(pid);
+    }catch(e){ obMsg=authErr(e); renderOnb(); } })(); return; }
   if(a==="skip"){ closeOnb(); return; }
   if(a==="next"){ obStep=1; renderOnb(); return; }
   if(a==="prev"){ obStep=Math.max(0,obStep-1); renderOnb(); return; }
@@ -2506,7 +2535,7 @@ const switchTo = id => { RAW.set("jp-active",id); location.reload(); };
 function profBtn(){ $("profBtn").innerHTML=ic("user")+" "+E(curProfile().name); }
 function openProf(){
   $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">프로필</h2><button class="x" data-close aria-label="닫기">×</button></div>
-  <div class="db"><button class="pill on" data-pa="stats" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-bottom:12px">${ic("chart")} 내 학습 기록 보기</button><p class="sub">이 기기의 브라우저 안에만 저장돼요. 프로필마다 기록 · 내 단어 · 오답 노트 · 저장함 · 내 급수가 따로 관리돼요. 비밀번호가 없어서 보안용 로그인은 아니에요.</p>
+  <div class="db">${curProfile().cloud&&cloud.ok&&cloud.auth.currentUser?`<p class="sub">계정: ${E(cloud.auth.currentUser.email||"")} · 다른 기기에서도 같은 계정으로 로그인하면 기록이 이어져요.</p><button class="pill" data-pa="logout" style="margin-bottom:10px">로그아웃</button>`:""}<button class="pill on" data-pa="stats" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-bottom:12px">${ic("chart")} 내 학습 기록 보기</button><p class="sub">이 기기의 브라우저 안에만 저장돼요. 프로필마다 기록 · 내 단어 · 오답 노트 · 저장함 · 내 급수가 따로 관리돼요. 비밀번호가 없어서 보안용 로그인은 아니에요.</p>
    ${profiles.map(p=>`<div class="prow">
      <button class="pill ${p.id===activeId?"on":""}" data-pa="use" data-id="${p.id}">${ic("user")} ${E(p.name)}${p.id===activeId?" (사용 중)":""}</button>
      <span><button class="pill sm" data-pa="ren" data-id="${p.id}">이름 변경</button>${profiles.length>1?` <button class="pill sm del" data-pa="del" data-id="${p.id}">삭제</button>`:""}</span></div>`).join("")}
@@ -2519,6 +2548,7 @@ $("profDlg").addEventListener("click",e=>{
   if(e.target===$("profDlg") || e.target.closest("[data-close]")) return $("profDlg").close();
   const b=e.target.closest("[data-pa]"); if(!b) return;
   if(b.dataset.pa==="stats"){ $("profDlg").close(); setView("stats"); return; }
+  if(b.dataset.pa==="logout"){ (async()=>{ try{ clearTimeout(cloudT); cloudPush(); await new Promise(r=>setTimeout(r,600)); await cloud.auth.signOut(); }catch(e){} RAW.set("jp-auth-done",0); switchTo(profiles.find(x=>!x.cloud).id); })(); return; }
   const id=b.dataset.id, p=profiles.find(x=>x.id===id);
   if(b.dataset.pa==="use"){ if(id!==activeId) switchTo(id); }
   else if(b.dataset.pa==="ren"){ const n=(prompt("새 이름",p.name)||"").trim().slice(0,12); if(n){ p.name=n; saveProfiles(); profBtn(); openProf(); if(view==="home") renderHome(); } }
@@ -2533,6 +2563,11 @@ $("profDlg").addEventListener("submit",e=>{
   const p={id:"p"+Date.now(),name:n}; profiles.push(p); saveProfiles(); switchTo(p.id);
 });
 profBtn();
+if(curProfile().cloud&&cloud.ok){ cloud.auth.onAuthStateChanged(async u=>{
+  const p=curProfile(); if(!p||!p.cloud) return;
+  if(!u||u.uid!==p.cloud){ RAW.set("jp-auth-done",0); if(typeof openOnb==="function"){ obStep="auth"; obAuth="login"; obMsg="로그인이 만료됐어요. 다시 로그인해 주세요."; renderOnb(); } return; }
+  try{ const d=await cloudPull(u.uid,p.id,false); if(d&&d.applied&&!sessionStorage.getItem("jp-pulled")){ sessionStorage.setItem("jp-pulled","1"); location.reload(); } else if(!d) cloudPush(); }catch(e){}
+}); }
 // 화면 모드: 화이트 / 다크 / 자동
 function applyTheme(){
   const m=RAW.get("jp-theme","auto"), dark=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
