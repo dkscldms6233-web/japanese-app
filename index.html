@@ -2451,9 +2451,11 @@ function renderOnb(){
     const bk=`<button class="obskip" data-ob="aback">처음으로</button>`, msg=obMsg?`<p class="sub" style="color:#c0392b">${E(obMsg)}</p>`:"";
     const accts=profiles.filter(p=>p.pw);
     let body;
-    if(obAuth==="login") body=`<h2>로그인</h2><p class="sub">닉네임과 비밀번호를 정하면 이 기기에 계정이 만들어져요. 이미 있는 닉네임이면 비밀번호로 로그인돼요.</p>${msg}
-      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="off"><input id="obP" class="obin" type="password" placeholder="비밀번호 (4자 이상)" autocomplete="current-password"></div><button class="cta" data-ob="dologin">로그인</button>${bk}`;
-    else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2>${accts.length?`<p class="sub">이 기기에 저장된 계정을 골라 주세요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div>`:`<p class="sub">이 기기에 저장된 계정이 없어요. 로그인에서 새로 만들거나 게스트로 시작해 보세요.</p>`}${bk}`;
+    if(obAuth==="login") body=`<h2>로그인</h2>${msg}
+      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임" maxlength="12" autocomplete="off"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dologin">로그인</button><button class="obskip" data-ob="signup">회원가입</button>${bk}`;
+    else if(obAuth==="signup") body=`<h2>회원가입</h2><p class="sub">닉네임과 비밀번호로 이 기기에 계정을 만들어요.</p>${msg}
+      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="off"><input id="obP" class="obin" type="password" placeholder="비밀번호 (4자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>`;
+    else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2>${accts.length?`<p class="sub">이 기기에 저장된 계정을 골라 주세요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div>`:`<p class="sub">이 기기에 저장된 계정이 없어요. 회원가입을 하거나 게스트로 시작해 보세요.</p>`}${bk}`;
     else if(obAuth.startsWith("pw:")){ const p=profiles.find(x=>x.id===obAuth.slice(3)); body=`<h2>${E(p?p.name:"")}</h2><p class="sub">비밀번호를 입력해 주세요.</p>${msg}<div class="obopts"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dopw" data-id="${p?p.id:""}">로그인</button><button class="obskip" data-ob="has">다른 계정 고르기</button>`; }
     else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button><button class="cta sec" data-ob="has">이미 계정이 있어요</button></div>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
@@ -2470,15 +2472,21 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-ob]"); if(!b) return;
   const a=b.dataset.ob;
   if(a==="guest"){ RAW.set("jp-auth-done","guest"); obStep=0; renderOnb(); return; }
-  if(a==="login"||a==="has"){ obAuth=a; obMsg=""; renderOnb(); return; }
+  if(a==="login"||a==="has"||a==="signup"){ obAuth=a; obMsg=""; renderOnb(); return; }
   if(a==="aback"){ obAuth="main"; obMsg=""; renderOnb(); return; }
   if(a==="pickacct"){ obAuth="pw:"+b.dataset.id; obMsg=""; renderOnb(); return; }
   if(a==="dologin"){ (async()=>{ const n=($("obN").value||"").trim(), pw=$("obP").value||"";
-    if(!n){ obMsg="닉네임을 입력해 주세요."; return renderOnb(); } if(pw.length<4){ obMsg="비밀번호는 4자 이상으로 해 주세요."; return renderOnb(); }
-    const h=await pwHash(pw), ex=profiles.find(p=>p.name===n);
-    RAW.set("jp-auth-done","login");
-    if(ex){ if(!ex.pw){ obMsg="이미 사용 중인 닉네임이에요."; RAW.del("jp-auth-done"); return renderOnb(); } if(ex.pw!==h){ obMsg="비밀번호가 맞지 않아요."; RAW.del("jp-auth-done"); return renderOnb(); } switchTo(ex.id); return; }
-    const p={id:"p"+Date.now(),name:n,pw:h}; profiles.push(p); saveProfiles(); switchTo(p.id); })(); return; }
+    if(!n||!pw){ obMsg="닉네임과 비밀번호를 입력해 주세요."; return renderOnb(); }
+    const ex=profiles.find(p=>p.name===n&&p.pw);
+    if(!ex){ obMsg="이 기기에 없는 계정이에요. 회원가입을 해 주세요."; return renderOnb(); }
+    if(ex.pw!==await pwHash(pw)){ obMsg="비밀번호가 맞지 않아요."; return renderOnb(); }
+    RAW.set("jp-auth-done","login"); switchTo(ex.id); })(); return; }
+  if(a==="dosignup"){ (async()=>{ const n=($("obN").value||"").trim(), pw=$("obP").value||"", pw2=$("obP2").value||"";
+    if(!n){ obMsg="닉네임을 입력해 주세요."; return renderOnb(); }
+    if(pw.length<4){ obMsg="비밀번호는 4자 이상으로 해 주세요."; return renderOnb(); }
+    if(pw!==pw2){ obMsg="비밀번호 확인이 달라요."; return renderOnb(); }
+    if(profiles.some(p=>p.name===n)){ obMsg="이미 사용 중인 닉네임이에요."; return renderOnb(); }
+    const p={id:"p"+Date.now(),name:n,pw:await pwHash(pw)}; profiles.push(p); saveProfiles(); RAW.set("jp-auth-done","login"); switchTo(p.id); })(); return; }
   if(a==="dopw"){ (async()=>{ const p=profiles.find(x=>x.id===b.dataset.id); if(!p) return; const h=await pwHash($("obP").value||"");
     if(p.pw!==h){ obMsg="비밀번호가 맞지 않아요."; return renderOnb(); } RAW.set("jp-auth-done","login"); switchTo(p.id); })(); return; }
   if(a==="skip"){ closeOnb(); return; }
