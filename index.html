@@ -2478,7 +2478,7 @@ function renderOnb(){
     else if(obAuth==="signup") body=`<h2>회원가입</h2><p class="sub">이메일 계정을 만들면 다른 기기에서도 같은 기록으로 이어서 공부할 수 있어요.</p>${off}${msg}
       <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="nickname"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username"><input id="obP" class="obin" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>${bk}`;
     else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2><p class="sub">이 기기에서 쓴 계정을 고르거나 다른 계정으로 로그인해요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div><button class="obskip" data-ob="login">다른 계정으로 로그인</button>${bk}`;
-    else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button></div><button class="obskip" data-ob="has">이미 계정이 있어요</button>`;
+    else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button></div><button class="obskip" data-ob="signup">회원가입</button>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
   }
   if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작해요.</p>
