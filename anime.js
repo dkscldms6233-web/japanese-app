@@ -53,10 +53,10 @@ ST.textContent=`.an-wrap{max-width:720px;margin:0 auto}
 .an-hs{font-size:13px;color:var(--sub);margin-bottom:8px}
 .an-ty{animation:anTy 1.1s steps(18) both}
 @keyframes anTy{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-.an-hud{display:flex;justify-content:space-between;font-size:14px;color:var(--sub);margin:6px 2px}
+.an-hud{display:flex;justify-content:space-between;font-weight:700;font-size:16px;margin:6px 2px}
 .an-grade{display:inline-block;float:right;width:46px;height:46px;line-height:46px;text-align:center;border-radius:50%;font-size:26px;font-weight:900;color:#fff;animation:anPop .5s cubic-bezier(.2,1.6,.4,1) both}
 .an-grade.big{float:none;width:90px;height:90px;line-height:90px;font-size:52px;margin-bottom:6px}
-.an-grade.gS{background:#c9822b}.an-grade.gA{background:#4c9a62}.an-grade.gB{background:#3b82c4}.an-grade.gC{background:#8a8f98}
+.an-grade.gS{background:linear-gradient(135deg,#ff9f1c,#ff3d6e);box-shadow:0 0 14px #ff9f1c}.an-grade.gA{background:#4c9a62}.an-grade.gB{background:#3b82c4}.an-grade.gC{background:#8a8f98}
 @keyframes anPop{from{transform:scale(0) rotate(-40deg)}to{transform:scale(1) rotate(0)}}
 .an-dex{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .an-tile{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px;text-align:left;color:var(--sub);display:flex;flex-direction:column;gap:4px;font:inherit}
@@ -177,7 +177,7 @@ function quizHtml(){
   return `<div class="an-card"><div class="sub">${q.i+1} / ${q.items.length} · ${tname(it.l.t)}</div>
    <div class="an-ja" style="margin:8px 0">${sh}</div><div class="an-ko">${E(it.l.ko)}</div>
    <div class="an-opts">${it.opts.map((o,k)=>`<button class="opt ${q.picked?(o===it.ans?"correct":(q.picked===o?"wrong":"")):""}" data-an="pick" data-o="${E(o)}" ${q.picked?"disabled":""}>${E(o)}</button>`).join("")}</div>
-   ${q.picked?`<div class="an-note">${q.picked===it.ans?"정답!":"오답. 정답은 「"+E(it.ans)+"」"}<br>${toRuby(it.l.ja)}<br>${E(it.l.note)}</div><button class="cta" data-an="qnext">${q.i+1>=q.items.length?"결과 보기":"다음"}</button>`:""}</div>`;
+   ${q.picked?`<div class="an-note">${q.picked===it.ans?"⭕ 정답!":"❌ 정답은 「"+E(it.ans)+"」"}<br>${toRuby(it.l.ja)}<br>${E(it.l.note)}</div><button class="cta" data-an="qnext">${q.i+1>=q.items.length?"결과 보기":"다음"}</button>`:""}</div>`;
 }
 function mkWho(){
   const works=[...new Set(LINES.map(l=>l.src.w))];
@@ -186,17 +186,17 @@ function mkWho(){
 }
 function whoHtml(){
   if(!aWho) aWho=mkWho(); const q=aWho;
-  const hud=`<div class="an-hud"><span>목숨 ${Math.max(q.lives,0)}</span><span>콤보 ${q.combo}</span><span>${q.score}점</span></div>`;
+  const hud=`<div class="an-hud"><span>${"❤️".repeat(Math.max(q.lives,0))||"💀"}</span><span>🔥 콤보 ${q.combo}</span><span>⭐ ${q.score}</span></div>`;
   if(q.i>=q.items.length||q.lives<=0){
     const nb=q.score>aBest.who; if(nb){ aBest.who=q.score; LS.set("jp-anime-best",aBest); }
     const g=q.lives<=0?"C":q.score>=130?"S":q.score>=90?"A":"B";
-    return `<div class="an-card" style="text-align:center"><div class="an-grade g${g} big">${g}</div><h3>${q.lives<=0?"게임 오버…":"클리어!"} ${q.score}점</h3><div class="sub">최고 기록 ${aBest.who}점${nb?" · 신기록!":""} · 최대 콤보 ${q.max}</div><button class="cta" data-an="wagain" style="max-width:260px;margin:12px auto">한 번 더</button></div>`;
+    return `<div class="an-card" style="text-align:center"><div class="an-grade g${g} big">${g}</div><h3>${q.lives<=0?"게임 오버…":"🎉 클리어!"} ${q.score}점</h3><div class="sub">최고 기록 ${aBest.who}점${nb?" · 신기록!":""} · 최대 콤보 ${q.max}</div><button class="cta" data-an="wagain" style="max-width:260px;margin:12px auto">한 번 더</button></div>`;
   }
   const it=q.items[q.i];
   return `${hud}<div class="an-card"><div class="sub">${q.i+1} / ${q.items.length} · 이 대사, 어느 작품일까?</div>
    <div class="an-ja an-ty" style="margin:8px 0" key="${q.i}">${toRuby(it.l.ja)}</div><div class="an-ko">${E(it.l.ko)}</div>
    <div class="an-opts">${it.opts.map(o=>`<button class="opt ${q.picked?(o===it.ans?"correct":(q.picked===o?"wrong":"")):""}" data-an="wpick" data-o="${E(o)}" ${q.picked?"disabled":""}>${E(o)}</button>`).join("")}</div>
-   ${q.picked?`<div class="an-note">${q.picked===it.ans?"정답!"+(q.combo>=3?" "+q.combo+"콤보!":""):"오답. 정답은 「"+E(it.ans)+"」"}<br>${E(it.l.src.c)} · ${E(it.l.note)}</div><button class="cta" data-an="wnext">${q.i+1>=q.items.length||q.lives<=0?"결과 보기":"다음"}</button>`:""}</div>`;
+   ${q.picked?`<div class="an-note">${q.picked===it.ans?"⭕ 정답!"+(q.combo>=3?" 🔥 "+q.combo+"콤보!":""):"❌ 정답은 「"+E(it.ans)+"」"}<br>${E(it.l.src.c)} · ${E(it.l.note)}</div><button class="cta" data-an="wnext">${q.i+1>=q.items.length||q.lives<=0?"결과 보기":"다음"}</button>`:""}</div>`;
 }
 function dexHtml(){
   const n=LINES.filter(l=>got.has(l.id)).length;
