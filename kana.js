@@ -177,7 +177,7 @@ function renderHome(){
   <h3>② 행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${LESSONS.length} 완료</small></h3>
   ${nx?`<button class="kcta" data-kana="lesson" data-i="${nx.i}"><span class="kg">${(lessonChars(nx,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${doneN?"이어서 하기":"여기서 시작하기"}: ${lessonLabel(nx,k)}</b><small>${nx.i+1}번째 레슨</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래 전체 시험에 도전해 보세요.</div>`}
   ${groups}
-  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">✍️ ${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:玄野武宏</div>`:""}</div>`;
+  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:玄野武宏</div>`:""}</div>`;
 }
 function renderConfuse(){
   inq(false);
@@ -193,7 +193,7 @@ function renderLesson(L,k){
   <div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>
   ${ch.length?`<div class="kgrid" style="grid-template-columns:repeat(${ch.length%3===0&&ch.length>5?3:5},minmax(0,1fr))">${ch.map(cellBtn).join("")}</div>`:""}
   <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b><small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서 새로 읽을 수 있는 단어는 아직 없어요. 다음 행에서 단어를 읽게 돼요.</div>`}
-  <div class="kbtns">${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">✍️ 글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">✍️ 단어 따라 쓰기</button>`:""}<button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
+  <div class="kbtns">${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">단어 따라 쓰기</button>`:""}<button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="cta sec" data-kana="lesson" data-i="${prv?prv.i:L.i}" ${prv?"":"disabled"}>‹ 이전 레슨</button><button class="cta sec" data-kana="lesson" data-i="${nxt?nxt.i:L.i}" ${nxt?"":"disabled"}>다음 레슨 ›</button></div></div></div>`;
 }
 /* 문제 만들기 */
@@ -257,8 +257,8 @@ function renderWrite(){
   <div class="kwbox" id="kwbox" style="aspect-ratio:${n} / 1;max-width:${Math.min(360,n*260)}px">
    <svg viewBox="0 0 ${109*n} 109" aria-hidden="true"><g class="kwgrid">${grid}</g><g class="kwg" id="kwg" style="${W.guide?"":"display:none"}">${gp}</g><g class="kwn" id="kwn" style="${W.guide?"":"display:none"}">${nums}</g><g class="kwa" id="kwa">${ap}</g></svg>
    <canvas id="kwc"></canvas></div>
-  <div class="kwbar"><button data-kana="wanim">▶ 획순<br>보기</button><button data-kana="wundo">↶ 한 획<br>지우기</button><button data-kana="wclear">🗑 전부<br>지우기</button><button data-kana="wguide" class="${W.guide?"on":""}">👁 밑그림<br>${W.guide?"켜짐":"꺼짐"}</button></div>
-  <div class="kbtns" style="margin-top:6px"><button class="cta sec" data-kana="wsay">🔊 소리 듣기</button><div class="kwnav"><button class="cta sec" data-kana="wprev" ${W.i?"":"disabled"}>‹ 이전</button><button class="cta" data-kana="wnext">${W.i+1<W.items.length?"다음 ›":"완료 ✓"}</button></div></div>
+  <div class="kwbar"><button data-kana="wanim">▶ 획순<br>보기</button><button data-kana="wundo">↶ 한 획<br>지우기</button><button data-kana="wclear">전부<br>지우기</button><button data-kana="wguide" class="${W.guide?"on":""}">밑그림<br>${W.guide?"켜짐":"꺼짐"}</button></div>
+  <div class="kbtns" style="margin-top:6px"><button class="cta sec" data-kana="wsay">소리 듣기</button><div class="kwnav"><button class="cta sec" data-kana="wprev" ${W.i?"":"disabled"}>‹ 이전</button><button class="cta" data-kana="wnext">${W.i+1<W.items.length?"다음 ›":"완료 "}</button></div></div>
   <div class="sub" style="margin-top:14px;font-size:12px">획 순서 데이터: KanjiVG (CC BY-SA 3.0). 밑그림을 끄면 보지 않고 쓰는 연습이 돼요. 쓰다가 막히면 '획순 보기'를 눌러 보세요.</div></div>`;
   setupCanvas();
 }
@@ -283,7 +283,7 @@ async function wAnimate(){
   for(const p of ps){ if(tok!==wTok) return; p.style.opacity="1"; void p.getBoundingClientRect(); p.style.transition="stroke-dashoffset .7s ease"; p.style.strokeDashoffset="0"; await new Promise(r=>setTimeout(r,820)); }
   await new Promise(r=>setTimeout(r,900)); if(tok===wTok) ps.forEach(p=>{ p.style.transition="none"; p.style.strokeDashoffset="1"; p.style.opacity="0"; });
 }
-function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요 👏"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
+function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
 function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLesson(LESSONS[b.i],b.k); } else renderHome(); window.scrollTo(0,0); }
 function open(){ K={tab:K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
 document.addEventListener("click",e=>{

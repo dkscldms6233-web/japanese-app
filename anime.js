@@ -8,7 +8,7 @@
  */
 (function(){
 const TYPES=[
- ["famous","📺 명대사(출처)"]
+ ["famous","명대사(출처)"]
 ];
 const LINES=[
  /* 명대사 (출처 표기) */
@@ -49,20 +49,19 @@ ST.textContent=`.an-wrap{max-width:720px;margin:0 auto}
 .an-type{font-size:12px;color:var(--sub)}
 .an-art{display:block;width:100%;max-width:340px;height:auto;border-radius:10px;margin:0 auto 8px}
 .an-src{font-size:13px;margin:6px 0;color:var(--text)}.an-src a{color:var(--accent);text-decoration:underline}
-.an-hero{background:linear-gradient(135deg,var(--chip),var(--card));border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:8px 0}
-.an-hs{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:700;margin-bottom:8px}
-.an-hs span{background:var(--card);border-radius:999px;padding:3px 10px}
+.an-hero{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0}
+.an-hs{font-size:13px;color:var(--sub);margin-bottom:8px}
 .an-ty{animation:anTy 1.1s steps(18) both}
 @keyframes anTy{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-.an-hud{display:flex;justify-content:space-between;font-weight:700;margin:6px 2px}
+.an-hud{display:flex;justify-content:space-between;font-size:14px;color:var(--sub);margin:6px 2px}
 .an-grade{display:inline-block;float:right;width:46px;height:46px;line-height:46px;text-align:center;border-radius:50%;font-size:26px;font-weight:900;color:#fff;animation:anPop .5s cubic-bezier(.2,1.6,.4,1) both}
 .an-grade.big{float:none;width:90px;height:90px;line-height:90px;font-size:52px;margin-bottom:6px}
-.an-grade.gS{background:linear-gradient(135deg,#ff9f1c,#ff3d6e);box-shadow:0 0 14px #ff9f1c}.an-grade.gA{background:#4c9a62}.an-grade.gB{background:#3b82c4}.an-grade.gC{background:#8a8f98}
+.an-grade.gS{background:#c9822b}.an-grade.gA{background:#4c9a62}.an-grade.gB{background:#3b82c4}.an-grade.gC{background:#8a8f98}
 @keyframes anPop{from{transform:scale(0) rotate(-40deg)}to{transform:scale(1) rotate(0)}}
 .an-dex{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .an-tile{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px;text-align:left;color:var(--sub);display:flex;flex-direction:column;gap:4px;font:inherit}
 .an-tile.on{border:1px solid var(--accent);color:var(--text);cursor:pointer}.an-tile b{font-size:12px;color:var(--accent)}.an-tile span{font-size:15px;font-weight:700}.an-tile small{font-size:11px;color:var(--sub)}
-.an-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;border-radius:999px;padding:10px 18px;font-weight:700;z-index:50;animation:anToast 2.2s both;pointer-events:none}
+.an-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;border-radius:8px;padding:10px 16px;z-index:50;animation:anToast 2.2s both;pointer-events:none}
 @keyframes anToast{0%{opacity:0;transform:translate(-50%,20px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
 .an-foot{font-size:12px;color:var(--sub);margin:14px 0}`;
 document.head.appendChild(ST);
@@ -128,7 +127,7 @@ const myTitle=()=>{ const n=[...got].filter(id=>LINES.some(l=>l.id===id)).length
 const dayNo=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
 function touchStreak(){ const s=LS.get("jp-anime-streak",{last:0,n:0}), d=dayNo(); if(s.last===d) return s; const n=s.last===d-1?s.n+1:1; const r={last:d,n}; LS.set("jp-anime-streak",r); return r; }
 const streak=()=>{ const s=LS.get("jp-anime-streak",{last:0,n:0}); return s.last>=dayNo()-1?s.n:0; };
-const unlock=id=>{ if(!got.has(id)){ got.add(id); saveGot(); aPop="🔓 새 명대사 도감에 등록!"; } touchStreak(); };
+const unlock=id=>{ if(!got.has(id)){ got.add(id); saveGot(); aPop="새 명대사 도감에 등록!"; } touchStreak(); };
 const grade=p=>p>=95?"S":p>=85?"A":p>=60?"B":"C";
 const todayLine=()=>LINES[dayNo()%LINES.length];
 const tname=t=>(TYPES.find(x=>x[0]===t)||[0,t])[1];
@@ -147,17 +146,17 @@ function card(l){
    ${panel(l.fx||l.t,l.id,l.src&&l.src.wiki)}
    <div class="an-type">${tname(l.t)}${l.t==="famous"?"":" · 오리지널 문장"}</div>
    <div class="an-ja">${toRuby(l.ja)}</div><div class="an-ko">${E(l.ko)}</div>
-   ${l.src?`<div class="an-src">📺 출처: <b>${E(l.src.w)}</b> · ${E(l.src.c)} · <a href="https://ja.wikipedia.org/w/index.php?search=${encodeURIComponent(l.src.wiki)}&go=Go" target="_blank" rel="noopener noreferrer">작품 정보(위키백과)</a></div><div class="an-act"><a class="pill sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l.src.w+" "+l.ja.replace(/\[[^\]]*\]/g,"").replace(/[。!?!?…、]/g,""))}" target="_blank" rel="noopener noreferrer">▶ 원본 성우 목소리 (유튜브)</a></div>`:""}
-   <div class="an-note">💡 ${E(l.note)}</div>
-   <div class="an-act">${canSay()?`<button class="pill sm" data-an="say" data-id="${l.id}">${ic("sound")} 듣기</button><button class="pill sm" data-an="slow" data-id="${l.id}">🐢 천천히</button>`:""}
-    <button class="pill sm" data-an="rec" data-id="${l.id}">${aRec===l.id?"🎙 듣는 중…(탭하면 중지)":"🎤 따라 말하기"}</button>
-    <button class="pill sm ${done.has(l.id)?"on":""}" data-an="done" data-id="${l.id}">${done.has(l.id)?"✓ 외웠어요":"외웠어요"}</button></div>
-   ${r?`<div class="an-res">${r.err?E(r.err):`<div class="an-grade g${grade(r.pct)}">${grade(r.pct)}</div>내가 말한 것: <b>${E(r.heard)}</b><br>일치도 <b>${r.pct}%</b> ${r.pct>=85?"👏 완벽해요!":r.pct>=60?"👍 좋아요, 한 번 더!":"💪 다시 들어 보고 도전!"}`}</div>`:""}
+   ${l.src?`<div class="an-src">출처: <b>${E(l.src.w)}</b> · ${E(l.src.c)} · <a href="https://ja.wikipedia.org/w/index.php?search=${encodeURIComponent(l.src.wiki)}&go=Go" target="_blank" rel="noopener noreferrer">작품 정보(위키백과)</a></div><div class="an-act"><a class="pill sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l.src.w+" "+l.ja.replace(/\[[^\]]*\]/g,"").replace(/[。!?!?…、]/g,""))}" target="_blank" rel="noopener noreferrer">▶ 원본 성우 목소리 (유튜브)</a></div>`:""}
+   <div class="an-note">${E(l.note)}</div>
+   <div class="an-act">${canSay()?`<button class="pill sm" data-an="say" data-id="${l.id}">${ic("sound")} 듣기</button><button class="pill sm" data-an="slow" data-id="${l.id}">천천히</button>`:""}
+    <button class="pill sm" data-an="rec" data-id="${l.id}">${aRec===l.id?"듣는 중…(탭하면 중지)":"따라 말하기"}</button>
+    <button class="pill sm ${done.has(l.id)?"on":""}" data-an="done" data-id="${l.id}">${done.has(l.id)?"외웠어요":"외웠어요"}</button></div>
+   ${r?`<div class="an-res">${r.err?E(r.err):`<div class="an-grade g${grade(r.pct)}">${grade(r.pct)}</div>내가 말한 것: <b>${E(r.heard)}</b><br>일치도 <b>${r.pct}%</b> ${r.pct>=85?"완벽해요!":r.pct>=60?"좋아요, 한 번 더!":"다시 들어 보고 도전!"}`}</div>`:""}
   </div>`;
 }
 function listHtml(){
   const arr=LINES.filter(l=>aType==="all"||l.t===aType);
-  return `<div class="sub" style="margin-bottom:6px">듣고(🔊) → 따라 말하고(🎤) → 외웠으면 체크! ${SR?"":"<br>이 브라우저는 말하기 점수를 지원하지 않아요(크롬 권장). 듣고 소리 내어 따라 해 보세요."}</div>`
+  return `<div class="sub" style="margin-bottom:6px">듣고 → 따라 말하고 → 외웠으면 체크! ${SR?"":"<br>이 브라우저는 말하기 점수를 지원하지 않아요(크롬 권장). 듣고 소리 내어 따라 해 보세요."}</div>`
     + arr.map(card).join("");
 }
 function mkQuiz(){
@@ -178,7 +177,7 @@ function quizHtml(){
   return `<div class="an-card"><div class="sub">${q.i+1} / ${q.items.length} · ${tname(it.l.t)}</div>
    <div class="an-ja" style="margin:8px 0">${sh}</div><div class="an-ko">${E(it.l.ko)}</div>
    <div class="an-opts">${it.opts.map((o,k)=>`<button class="opt ${q.picked?(o===it.ans?"correct":(q.picked===o?"wrong":"")):""}" data-an="pick" data-o="${E(o)}" ${q.picked?"disabled":""}>${E(o)}</button>`).join("")}</div>
-   ${q.picked?`<div class="an-note">${q.picked===it.ans?"⭕ 정답!":"❌ 정답은 「"+E(it.ans)+"」"}<br>${toRuby(it.l.ja)}<br>💡 ${E(it.l.note)}</div><button class="cta" data-an="qnext">${q.i+1>=q.items.length?"결과 보기":"다음"}</button>`:""}</div>`;
+   ${q.picked?`<div class="an-note">${q.picked===it.ans?"정답!":"오답. 정답은 「"+E(it.ans)+"」"}<br>${toRuby(it.l.ja)}<br>${E(it.l.note)}</div><button class="cta" data-an="qnext">${q.i+1>=q.items.length?"결과 보기":"다음"}</button>`:""}</div>`;
 }
 function mkWho(){
   const works=[...new Set(LINES.map(l=>l.src.w))];
@@ -187,28 +186,28 @@ function mkWho(){
 }
 function whoHtml(){
   if(!aWho) aWho=mkWho(); const q=aWho;
-  const hud=`<div class="an-hud"><span>❤️ ${"♥".repeat(Math.max(q.lives,0))||"—"}</span><span>🔥 콤보 ${q.combo}</span><span>⭐ ${q.score}</span></div>`;
+  const hud=`<div class="an-hud"><span>목숨 ${Math.max(q.lives,0)}</span><span>콤보 ${q.combo}</span><span>${q.score}점</span></div>`;
   if(q.i>=q.items.length||q.lives<=0){
     const nb=q.score>aBest.who; if(nb){ aBest.who=q.score; LS.set("jp-anime-best",aBest); }
     const g=q.lives<=0?"C":q.score>=130?"S":q.score>=90?"A":"B";
-    return `<div class="an-card" style="text-align:center"><div class="an-grade g${g} big">${g}</div><h3>${q.lives<=0?"게임 오버…":"클리어!"} ${q.score}점</h3><div class="sub">최고 기록 ${aBest.who}점${nb?" · 🎉 신기록!":""} · 최대 콤보 ${q.max}</div><button class="cta" data-an="wagain" style="max-width:260px;margin:12px auto">한 번 더</button></div>`;
+    return `<div class="an-card" style="text-align:center"><div class="an-grade g${g} big">${g}</div><h3>${q.lives<=0?"게임 오버…":"클리어!"} ${q.score}점</h3><div class="sub">최고 기록 ${aBest.who}점${nb?" · 신기록!":""} · 최대 콤보 ${q.max}</div><button class="cta" data-an="wagain" style="max-width:260px;margin:12px auto">한 번 더</button></div>`;
   }
   const it=q.items[q.i];
   return `${hud}<div class="an-card"><div class="sub">${q.i+1} / ${q.items.length} · 이 대사, 어느 작품일까?</div>
    <div class="an-ja an-ty" style="margin:8px 0" key="${q.i}">${toRuby(it.l.ja)}</div><div class="an-ko">${E(it.l.ko)}</div>
    <div class="an-opts">${it.opts.map(o=>`<button class="opt ${q.picked?(o===it.ans?"correct":(q.picked===o?"wrong":"")):""}" data-an="wpick" data-o="${E(o)}" ${q.picked?"disabled":""}>${E(o)}</button>`).join("")}</div>
-   ${q.picked?`<div class="an-note">${q.picked===it.ans?"⭕ 정답!"+(q.combo>=3?" 🔥 "+q.combo+"콤보!":""):"❌ 정답은 「"+E(it.ans)+"」"}<br>${E(it.l.src.c)} · 💡 ${E(it.l.note)}</div><button class="cta" data-an="wnext">${q.i+1>=q.items.length||q.lives<=0?"결과 보기":"다음"}</button>`:""}</div>`;
+   ${q.picked?`<div class="an-note">${q.picked===it.ans?"정답!"+(q.combo>=3?" "+q.combo+"콤보!":""):"오답. 정답은 「"+E(it.ans)+"」"}<br>${E(it.l.src.c)} · ${E(it.l.note)}</div><button class="cta" data-an="wnext">${q.i+1>=q.items.length||q.lives<=0?"결과 보기":"다음"}</button>`:""}</div>`;
 }
 function dexHtml(){
   const n=LINES.filter(l=>got.has(l.id)).length;
   return `<div class="sub" style="margin-bottom:8px">따라 말해서 60% 이상이거나, 퀴즈에서 맞히거나, '외웠어요'를 누르면 카드가 열려요! (${n} / ${LINES.length})</div><div class="an-dex">${LINES.map(l=>got.has(l.id)
     ?`<button class="an-tile on" data-an="say" data-id="${l.id}"><b>${E(l.src.w)}</b><span>${toRuby(l.ja)}</span><small>${E(l.ko)}</small></button>`
-    :`<div class="an-tile"><b>🔒 ???</b><span>아직 잠겨 있어요</span></div>`).join("")}</div>`;
+    :`<div class="an-tile"><b>???</b><span>아직 잠겨 있어요</span></div>`).join("")}</div>`;
 }
 function heroHtml(){
   const l=todayLine(), n=[...got].filter(id=>LINES.some(x=>x.id===id)).length, s=streak();
-  return `<div class="an-hero"><div class="an-hs"><span>🏅 ${myTitle()}</span><span>🔥 ${s}일 연속</span><span>📖 도감 ${n}/${LINES.length}</span></div>
-   <div class="sub">📅 오늘의 명대사</div><div class="an-ja an-ty" key="hero">${toRuby(l.ja)}</div><div class="an-ko">${E(l.ko)} · <small>${E(l.src.w)}</small></div>
+  return `<div class="an-hero"><div class="an-hs">${myTitle()} · ${s}일 연속 · 도감 ${n}/${LINES.length}</div>
+   <div class="sub">오늘의 명대사</div><div class="an-ja an-ty" key="hero">${toRuby(l.ja)}</div><div class="an-ko">${E(l.ko)} · <small>${E(l.src.w)}</small></div>
    ${canSay()?`<button class="pill sm" data-an="say" data-id="${l.id}">${ic("sound")} 듣기</button>`:""}</div>`;
 }
 window.renderAnime=function(){
@@ -216,7 +215,7 @@ window.renderAnime=function(){
   const pop=aPop; aPop=null;
   v.innerHTML=`<div class="an-wrap"><div class="qm-h"><h2>애니로 배우기</h2></div>
    ${heroHtml()}
-   <div class="an-tabs sc">${[["learn","📖 한 줄 공부"],["who","🎯 작품 맞히기"],["quiz","✏️ 빈칸 퀴즈"],["dex","🗂 도감"]].map(m=>`<button class="pill ${aMode===m[0]?"on":""}" data-an="mode" data-m="${m[0]}">${m[1]}</button>`).join("")}</div>
+   <div class="an-tabs sc">${[["learn","한 줄 공부"],["who","작품 맞히기"],["quiz","빈칸 퀴즈"],["dex","도감"]].map(m=>`<button class="pill ${aMode===m[0]?"on":""}" data-an="mode" data-m="${m[0]}">${m[1]}</button>`).join("")}</div>
    ${aMode==="learn"?listHtml():aMode==="who"?whoHtml():aMode==="dex"?dexHtml():quizHtml()}
    ${pop?`<div class="an-toast">${pop}</div>`:""}
    <div class="an-foot">명대사는 학습을 위한 짧은 인용이며 저작권은 각 작품의 권리자에게 있어요. 그림은 이 앱에서 직접 그린 일러스트이며 작품을 떠올리게 하는 상징 소품만 넣었어요(실제 캐릭터·장면이 아니에요). 대사는 방영분과 표현이 조금 다를 수 있어요.</div></div>`;
