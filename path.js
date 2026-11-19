@@ -51,10 +51,9 @@ function current(){ const st=state(); for(const u of build()) for(const n of u.n
 let openUnits=new Set();
 function statusHtml(){
   const x=xpState(), l=lvOf(x.t), lo=lvFloor(l), hi=lvFloor(l+1), pc=Math.round((x.t-lo)/(hi-lo)*100), st=A().streakDays();
-  return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${st?st+"일 연속":"오늘 첫 학습을 시작해 보세요"}</span></div>
-   <div class="prog"><div style="width:${pc}%"></div></div><div class="sub"><span>${x.t} XP</span><span>다음 레벨까지 ${hi-x.t} XP</span></div></div>`;
+  return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${st?st+"일 연속 · ":""}${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
 }
-function reviewHtml(){ const n=dueKeys().length; return `<button class="cta sec" data-pr="1">${n?`복습할 단어 ${n}개`:"복습할 단어가 아직 없어요"}</button>`; }
+function reviewHtml(){ const n=dueKeys().length; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
 function pathHtml(){
   const st=state(), cur=current(), units=build(); if(cur) openUnits.add(cur.u.id);
   const offs=[0,26,44,26,0,-26,-44,-26];
@@ -62,7 +61,7 @@ function pathHtml(){
     const done=u.nodes.filter(n=>isDone(n,st)).length, open=openUnits.has(u.id), all=done===u.nodes.length;
     return `<div class="pu ${open?"open":""} ${all?"all":""}"><button class="puh" data-pu="${u.id}"><span class="pun">${E(u.tag)}</span><b>${E(u.title)}</b><small>${done} / ${u.nodes.length}</small></button>
      ${open?`<div class="pnodes">${u.nodes.map((n,i)=>{ const dn=isDone(n,st), isCur=cur&&cur.n.id===n.id;
-        return `<div class="pn" style="margin-left:calc(50% - 34px + ${offs[i%offs.length]}px)"><button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small>${isCur?`<span class="pnow">지금 할 레슨</span>`:""}</div>`; }).join("")}
+        return `<div class="pn" style="margin-left:calc(50% - 32px + ${offs[i%offs.length]}px)"><button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small>${isCur?`<span class="pnow">지금 할 레슨</span>`:""}</div>`; }).join("")}
        ${all?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}</div>`;
 }
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -118,23 +117,23 @@ document.addEventListener("click",e=>{ const g=e.target.closest("[data-pgo]"); i
 
 /* ---------- 스타일 ---------- */
 const ST=document.createElement("style");
-ST.textContent=`.pstat{border:0;box-shadow:var(--sh);border-radius:22px;padding:12px 14px;margin:10px 0;background:var(--card)}
-.pstat .prow1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.pstat .prow1 b{font-size:17px}.pstat .prow1 span{font-size:13px;color:var(--sub)}
+ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!important;margin:14px 0 14px}
+.pstat .prow1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.pstat .prow1 b{font-size:15px}.pstat .prow1 span{font-size:13px;color:var(--sub)}
 .pstat .sub{display:flex;justify-content:space-between;margin-top:6px;font-size:12px}
-.path{margin:18px 0 8px}.path h3{margin:0 0 8px;font-size:17px}
-.pu{border:0;box-shadow:var(--sh);border-radius:22px;margin-bottom:10px;background:var(--card);overflow:hidden}
+.path{margin:18px 0 8px}.path h3{margin:22px 0 6px;font-size:15px;color:var(--sub);font-weight:600}
+.pu{border:0!important;box-shadow:none!important;background:none!important;border-radius:0!important;margin-bottom:0;border-top:1px solid var(--line)!important}
 .pu.all{opacity:.75}
-.puh{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:13px 14px;background:none;border:0;font:inherit;color:var(--text);cursor:pointer}
+.puh{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:14px 2px;background:none;border:0;font:inherit;color:var(--text);cursor:pointer}
 .puh .pun{font-size:11px;font-weight:800;color:var(--accent-text);background:var(--accent-soft);border-radius:999px;padding:2px 9px;flex:none}
 .puh b{flex:1;font-size:15px}.puh small{color:var(--sub);flex:none}
-.pnodes{position:relative;padding:6px 0 14px;border-top:2px solid var(--chip)}
+.pnodes{position:relative;padding:2px 0 18px}
 .pnodes::before{content:"";position:absolute;left:50%;top:14px;bottom:56px;width:0;border-left:3px dotted var(--line);transform:translateX(-1px)}
-.pn{position:relative;width:68px;text-align:center;margin-top:14px}
+.pn{position:relative;width:64px;text-align:center;margin-top:14px}
 .pn small{display:block;font-size:11px;color:var(--sub);margin-top:4px;line-height:1.3;white-space:nowrap;position:relative;left:50%;transform:translateX(-50%)}
-.pnb{width:68px;height:68px;border-radius:50%;border:0;background:var(--chip);color:var(--sub);font:inherit;font-size:20px;font-weight:800;cursor:pointer;position:relative;z-index:1;box-shadow:var(--sh);transition:transform .12s}
+.pnb{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--sub);font:inherit;font-size:19px;font-weight:700;cursor:pointer;position:relative;z-index:1;box-shadow:none;transition:transform .12s}
 .pnb:active{transform:scale(.94)}
-.pnb.done{background:var(--ok);color:#fff;box-shadow:0 5px 14px rgba(82,199,162,.4)}
-.pnb.cur{background:var(--accent);color:var(--onacc);box-shadow:0 6px 18px rgba(244,132,95,.45),0 0 0 7px var(--accent-soft)}
+.pnb.done{background:var(--ok);border-color:var(--ok);color:#fff;box-shadow:none}
+.pnb.cur{background:var(--accent);border-color:var(--accent);color:var(--onacc);box-shadow:0 0 0 6px var(--accent-soft)}
 .pnow{display:block;font-size:11px;font-weight:800;color:var(--accent-text);background:var(--accent-soft);border-radius:999px;padding:3px 11px;margin-top:9px;position:relative;left:50%;transform:translateX(-50%);white-space:nowrap}
 .pskip{display:block;margin:18px auto 0;background:none;border:0;color:var(--sub);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer}
 .pwl{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:42vh;overflow:auto}

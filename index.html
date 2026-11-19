@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>すらすら日本語 - 술술 일본어</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#fffaf5">
+<meta name="theme-color" content="#fbfaf7">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -654,73 +654,76 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .bgmdots{display:flex;gap:5px}.bgmdots i{width:6px;height:6px;border-radius:50%;background:var(--line)}.bgmdots i.on{width:16px;border-radius:4px;background:var(--accent)}
 .bgmbar .pill{flex:none;white-space:nowrap}
 
-/* ================= 테마: 참새와 어울리는 산뜻하고 귀여운 느낌 (복숭아·하늘·민트 파스텔, 부드러운 그림자) ================= */
+/* ================= 테마: 담백한 미니멀 (박스·그림자를 줄이고 여백·글자 위계·가는 선으로 구분. 포인트 색은 하나) ================= */
 :root{
-  --bg:#fffaf5; --card:#ffffff; --text:#3f3a37; --sub:#8c847c; --line:#f0e4d8;
-  --accent:#f4845f; --accent-dk:#df6a45; --accent-text:#d9613c; --accent-soft:#ffeadf; --chip:#f8efe6; --onacc:#ffffff;
-  --blue:#69c0e8; --blue-dk:#3a97c4; --blue-soft:#e4f4fb;
-  --ok:#52c7a2; --ok-dk:#36a883; --ok-soft:#dff6ec; --bad:#f2677b; --bad-soft:#ffe5e9;
-  --seal:#e5534b; --sakura:#ff9cbc; --kin:#ffc94d; --gold:#ffc94d; --g1:#ffeadf; --g2:#fff6ee;
-  --on:#3a97c4; --kun:#36a883;
-  --n5:#52c7a2; --n4:#69c0e8; --n3:#ffc94d; --n2:#f4845f; --n1:#f2677b;
-  --sh:0 2px 14px rgba(120,80,50,.09); --sh2:0 6px 18px rgba(244,132,95,.32);
+  --bg:#fbfaf7; --card:#ffffff; --text:#25221e; --sub:#7b756d; --line:#e8e3dc;
+  --accent:#e4694c; --accent-dk:#cf5538; --accent-text:#c9522f; --accent-soft:#fcece6; --chip:#f3efe9; --onacc:#ffffff;
+  --blue:#4a8fc2; --blue-dk:#3b7aab; --blue-soft:#eaf3fa;
+  --ok:#3fa98a; --ok-dk:#2f8e72; --ok-soft:#e4f4ee; --bad:#d9546a; --bad-soft:#fbe9ec;
+  --seal:#d9483f; --sakura:#e58aa6; --kin:#d9a43a; --gold:#d9a43a; --g1:#fcece6; --g2:#f7f4ef;
+  --on:#3b7aab; --kun:#2f8e72;
+  --n5:#3fa98a; --n4:#4a8fc2; --n3:#d9a43a; --n2:#e4694c; --n1:#d9546a;
+  --sh:none; --sh2:none;
 }
 :root[data-theme=dark]{
-  --bg:#1f1a18; --card:#2b2421; --text:#f7efe8; --sub:#b5a89d; --line:#40352f;
-  --accent:#ff9575; --accent-dk:#e97a58; --accent-text:#ffab90; --accent-soft:#3d2822; --chip:#342b27; --onacc:#2a1510;
-  --blue:#7fd0f0; --blue-dk:#7fd0f0; --blue-soft:#1f3540;
-  --ok:#6fdcb8; --ok-dk:#4cc19b; --ok-soft:#1d3a30; --bad:#ff8195; --bad-soft:#42232a;
-  --seal:#ff7d73; --sakura:#ffaccb; --kin:#ffd878; --gold:#ffd878; --g1:#3d2822; --g2:#27201d;
-  --on:#7fd0f0; --kun:#6fdcb8;
-  --n5:#6fdcb8; --n4:#7fd0f0; --n3:#ffd878; --n2:#ff9575; --n1:#ff8195;
-  --sh:0 2px 14px rgba(0,0,0,.35); --sh2:0 6px 18px rgba(255,149,117,.22);
+  --bg:#1c1917; --card:#252120; --text:#f4efe9; --sub:#a59d94; --line:#38322e;
+  --accent:#ff8a6b; --accent-dk:#ee7455; --accent-text:#ff9d82; --accent-soft:#3a2823; --chip:#2e2927; --onacc:#2a1510;
+  --blue:#7db8e0; --blue-dk:#7db8e0; --blue-soft:#1f3140;
+  --ok:#64cfae; --ok-dk:#4fb596; --ok-soft:#1d3a30; --bad:#ff8196; --bad-soft:#42232a;
+  --seal:#ff7d73; --sakura:#f0a3bb; --kin:#e6bd5c; --gold:#e6bd5c; --g1:#3a2823; --g2:#272220;
+  --on:#7db8e0; --kun:#64cfae;
+  --n5:#64cfae; --n4:#7db8e0; --n3:#e6bd5c; --n2:#ff8a6b; --n1:#ff8196;
 }
-body,button,input,select,textarea{font-family:"M PLUS Rounded 1c",-apple-system,"Hiragino Sans","Apple SD Gothic Neo","Noto Sans KR",sans-serif}
-h2,h3,.cta,.pill,.mode b,.pk b,.vb{font-weight:800}
-header{border-bottom:0;box-shadow:0 2px 12px rgba(120,80,50,.07)}
+h2,h3,.cta,.pill,.mode b,.pk b,.vb{font-weight:700}
+header{border-bottom:1px solid var(--line);box-shadow:none}
 #logo small,.puh .pun{color:var(--accent-text)}
-/* 버튼: 두꺼운 테두리 대신 부드러운 그림자 */
-.cta{border:0;border-radius:22px;letter-spacing:.01em;box-shadow:var(--sh2);transition:transform .12s,box-shadow .12s}
-.cta:active{transform:scale(.97);box-shadow:0 2px 8px rgba(244,132,95,.3);border-bottom-width:0}
-.cta.sec{background:var(--card);color:var(--accent-text);border:0;box-shadow:var(--sh)}
-.cta.sec:hover{background:var(--accent-soft)}
-.cta.sec:active{border-bottom-width:0}
-.pill{border:0;background:var(--chip);color:var(--text);font-weight:700;padding:8px 15px}
-.pill.on{background:var(--accent);color:var(--onacc);border:0;box-shadow:0 3px 10px rgba(244,132,95,.28)}
-.pill.sm{padding:3px 11px}
-/* 카드류: 둥글고 말랑하게 */
-.mode,.pk,.card,.pstat,.pu,.an-card,.an-hero,.panel,.tbox{border:0;border-radius:22px;box-shadow:var(--sh);background:var(--card)}
-.card{border-left:6px solid var(--lc,var(--nx))}
-.mode:hover,.pk:hover{background:var(--accent-soft)}
-.pk.sel{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
-.opt{border:2px solid var(--line);border-radius:20px;font-weight:700;box-shadow:none;background:var(--card)}
-.opt:hover:not(:disabled){border-color:var(--blue);background:var(--blue-soft)}
-.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:#1d7a5c}
-.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:#c23a50}
+/* 박스 줄이기: 카드는 가는 선만 */
+.mode,.pk,.card,.pstat,.pu,.an-card,.an-hero,.panel,.tbox{border:1px solid var(--line);border-radius:14px;box-shadow:none;background:var(--card)}
+.card{border-left:4px solid var(--lc,var(--nx))}
+.mode:hover,.pk:hover{background:var(--chip);transform:none}
+.pk.sel{background:var(--accent-soft);box-shadow:0 0 0 1.5px var(--accent) inset}
+/* 버튼 */
+.cta{border:0;border-radius:14px;box-shadow:none;font-weight:700;letter-spacing:0;padding:15px 12px}
+.cta:active{transform:scale(.98);border-bottom-width:0}
+.cta.sec{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none;font-weight:600}
+.cta.sec:hover{background:var(--chip)}
+.cta.sec:active{border-bottom-width:1px}
+.pill{border:1px solid var(--line);background:transparent;color:var(--text);font-weight:600}
+.pill.on{background:var(--accent);border-color:var(--accent);color:var(--onacc);box-shadow:none}
+.opt{border:1px solid var(--line);border-radius:14px;font-weight:600;background:var(--card);box-shadow:none}
+.opt:hover:not(:disabled){border-color:var(--text);background:var(--card)}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:#1f6e57}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:#b43a50}
 :root[data-theme=dark] .opt.correct{color:#8fe9cb}:root[data-theme=dark] .opt.wrong{color:#ff9fb0}
-/* 진행 막대 */
-.prog{height:12px;border-radius:999px;background:var(--chip)}
-.prog div{border-radius:999px;background:linear-gradient(90deg,#ffb48f,var(--accent))}
-/* 하단 탭: 떠 있는 둥근 바 */
-.views{background:var(--chip)}
+.prog{height:6px;border-radius:3px;background:var(--chip)}
+.prog div{border-radius:3px;background:var(--accent)}
+.prog div::after{display:none}
+/* 하단 탭: 화면에 붙은 평평한 바 */
 .vb.on{color:var(--accent-text)}
 @media(max-width:699px){
-  body{padding-bottom:92px}
-  .views{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border:0;border-radius:26px;background:var(--card);box-shadow:0 6px 24px rgba(120,80,50,.18);padding:6px 4px}
-  .views{grid-template-columns:repeat(7,1fr)}
-  .vb{border-radius:18px;font-size:11px}
+  body{padding-bottom:70px}
+  .views{left:0;right:0;bottom:0;border:0;border-top:1px solid var(--line);border-radius:0;background:var(--bg);box-shadow:none;padding:4px 2px calc(4px + env(safe-area-inset-bottom));grid-template-columns:repeat(7,1fr)}
+  .vb{border-radius:0;font-size:11px;font-weight:600}
   .vb i{font-size:19px}
-  .vb.on{background:var(--accent-soft);color:var(--accent-text);outline:0}
+  .vb.on{background:none;color:var(--accent-text);outline:0}
 }
 /* 퀴즈 결과 패널 */
-.inq .reveal{border-top:0;box-shadow:0 -8px 24px rgba(120,80,50,.12)}
-.inq .reveal.ok{background:var(--ok-soft);color:#1d7a5c}
-.inq .reveal.ng{background:var(--bad-soft);color:#c23a50}
+.inq .reveal{border-top:1px solid var(--line);box-shadow:none}
+.inq .reveal.ok{background:var(--ok-soft);color:#1f6e57}
+.inq .reveal.ng{background:var(--bad-soft);color:#b43a50}
 .inq .reveal .cta{background:var(--accent)}
-.inq .reveal.ok .cta{background:var(--ok);box-shadow:0 6px 18px rgba(82,199,162,.35)}
-.inq .reveal.ng .cta{background:var(--bad);box-shadow:0 6px 18px rgba(242,103,123,.35)}
-:root[data-theme=dark] .inq .reveal.ok{background:var(--ok-soft);color:#8fe9cb}
-:root[data-theme=dark] .inq .reveal.ng{background:var(--bad-soft);color:#ff9fb0}
+.inq .reveal.ok .cta{background:var(--ok);box-shadow:none}
+.inq .reveal.ng .cta{background:var(--bad);box-shadow:none}
+:root[data-theme=dark] .inq .reveal.ok{color:#8fe9cb}:root[data-theme=dark] .inq .reveal.ng{color:#ff9fb0}
+/* 홈의 목록형 메뉴 */
+.lrows{margin:6px 0 14px;border-top:1px solid var(--line)}
+.lrow{display:flex;align-items:center;justify-content:space-between;width:100%;padding:15px 2px;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;font-size:16px;font-weight:600;color:var(--text);text-align:left;cursor:pointer}
+.lrow i{font-style:normal;color:var(--sub);font-size:20px}
+.lrow:hover{background:var(--chip)}
+.t2,.gcard,.ncard,.tile,.wcard,.klesson,.kcta,.prow{border:1px solid var(--line)!important;border-radius:14px!important;box-shadow:none!important}
+.t2:active,.gcard:active,.ncard:active,.tile:active{transform:scale(.99)}
+.t2:hover,.gcard:hover,.ncard:hover,.tile:hover{border-color:var(--text)!important;background:var(--card)}
+.t2 .ti,.t2.c1 .ti,.t2.c2 .ti,.t2.c3 .ti,.t2.c4 .ti{background:var(--accent-soft)!important;color:var(--accent-text)!important;border-radius:10px}
 .hanko{border-color:var(--seal)}
 </style>
 <script>
@@ -2373,18 +2376,14 @@ function renderHome(){
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    ${window.PATH?PATH.reviewHtml():""}
    ${window.PATH?PATH.pathHtml():`<button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>`}
-   <h3 style="margin:20px 0 8px;font-size:17px">더 해 보기</h3>
-   <div class="crow">
-     <button class="cta sec" data-go="quiz">퀴즈</button>
-     <button class="cta sec" data-hq="review">${nw?`오답 노트 ${nw}`:"오답 노트"}</button>
-   </div>
-   <div class="crow">
-     <button class="cta sec" data-go="exam">JLPT 모의시험</button>
-     <button class="cta sec" data-go="game">게임</button>
-   </div>
-   <div class="crow">
-     <button class="cta sec" data-go="anime">애니로 배우기</button>
-     <button class="cta sec" data-kana="open">글자 입문</button>
+   <h3 style="margin:26px 0 4px;font-size:15px;color:var(--sub);font-weight:600">더 해 보기</h3>
+   <div class="lrows">
+     <button class="lrow" data-go="quiz"><span>퀴즈</span><i>›</i></button>
+     <button class="lrow" data-hq="review"><span>${nw?`오답 노트 · ${nw}개`:"오답 노트"}</span><i>›</i></button>
+     <button class="lrow" data-go="exam"><span>JLPT 모의시험</span><i>›</i></button>
+     <button class="lrow" data-go="game"><span>게임</span><i>›</i></button>
+     <button class="lrow" data-go="anime"><span>애니로 배우기</span><i>›</i></button>
+     <button class="lrow" data-kana="open"><span>글자 입문</span><i>›</i></button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2651,7 +2650,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=5"></script>
+<script src="path.js?v=7"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>
