@@ -31,6 +31,27 @@ service cloud.firestore {
       allow read: if request.auth != null && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
     }
 
+    // 친구 추가 기록(한 방향). 서로 추가돼 있어야 맞친구
+    match /follows/{id} {
+      allow get: if request.auth != null && (id.matches(request.auth.uid + '_.*') || id.matches('.*_' + request.auth.uid));
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid
+        && id == request.auth.uid + '_' + request.resource.data.to;
+      allow delete: if request.auth != null && id.matches(request.auth.uid + '_.*');
+    }
+
+    // 1:1 대화: 맞친구끼리만 읽고 쓰기
+    function inPair(pair) { return request.auth.uid in pair.split('_'); }
+    function isMutual(pair) {
+      return exists(/databases/$(database)/documents/follows/$(pair.split('_')[0] + '_' + pair.split('_')[1]))
+          && exists(/databases/$(database)/documents/follows/$(pair.split('_')[1] + '_' + pair.split('_')[0]));
+    }
+    match /chats/{pair}/msgs/{mid} {
+      allow read: if request.auth != null && inPair(pair) && isMutual(pair);
+      allow create: if request.auth != null && inPair(pair) && isMutual(pair)
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 200;
+    }
+
     // 신고: 쓰기만 가능(읽기는 콘솔에서만)
     match /reports/{id} {
       allow create: if request.auth != null && request.resource.data.by == request.auth.uid;

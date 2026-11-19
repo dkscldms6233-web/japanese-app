@@ -1,7 +1,8 @@
 /* 커뮤니티 1단계 — 글 없이 즐기는 함께 공부하기
  * - 주간 리그: 이번 주 경험치 순위(참여를 켠 사람만 이름·경험치·연속 출석일·참새 모습이 보여요)
  * - 함께 공부 중: 오늘 공부한 사람 수 / 지금 공부 중인 사람 수(리그 참가자 기준)
- * - 친구: 친구 코드로 추가하고 이번 주 경험치를 서로 봐요
+ * - 친구: 친구 코드로 추가하고(서로 추가하면 맞친구) 이번 주 경험치를 봐요
+ * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막혀요
  * - 응원: 정해진 응원 문구만 보낼 수 있어요(자유 글 없음). 한 사람에게 하루 한 번
  * - 신고: 이상한 닉네임은 신고할 수 있어요
  * 저장 위치(Firestore): leagues/{주 시작일}/members/{uid}, codes/{코드}, cheers/{id}, reports/{id}
@@ -55,8 +56,9 @@ async function load(){
   const list=snap.docs.map(d=>({uid:d.id,...d.data()}));
   const fr=friends(); const have=new Set(list.map(x=>x.uid)); const extra=[];
   await Promise.all(fr.filter(f=>!have.has(f.uid)).map(async f=>{ try{ const d=await members(w).doc(f.uid).get(); extra.push(d.exists?{uid:f.uid,...d.data()}:{uid:f.uid,name:f.name,xp:0,none:true}); }catch(e){ extra.push({uid:f.uid,name:f.name,xp:0,none:true}); } }));
+  const me=uid(), mutual={}; await Promise.all(fr.map(async f=>{ try{ const d=await db().collection("follows").doc(f.uid+"_"+me).get(); mutual[f.uid]=d.exists; }catch(e){ mutual[f.uid]=false; } }));
   let cheers=[]; try{ const cs=await db().collection("cheers").where("to","==",uid()).limit(50).get(); cheers=cs.docs.map(d=>d.data()).sort((a,b)=>b.at-a.at); }catch(e){}
-  return {list,extra,cheers};
+  return {list,extra,cheers,mutual};
 }
 async function weeklyReward(){
   const pw=prevWeek(), s=lg(); if(s.claimed&&s.claimed[pw]) return;
@@ -69,11 +71,11 @@ async function weeklyReward(){
 const bird=(eq,cls)=>window.PATH?PATH.birdSvg(eq||{},cls||"cmb"):"";
 const rangeText=()=>{ const a=new Date(weekKey()+"T12:00:00"), b=new Date(a); b.setDate(b.getDate()+6); const f=d=>(d.getMonth()+1)+"."+d.getDate(); return f(a)+" ~ "+f(b); };
 let busy=false;
-function row(x,rank,me,isFr){
+function row(x,rank,me,isFr,mutual){
   const mine=x.uid===(signedIn()?uid():"");
   return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><span class="cmbw">${bird(x.eq)}</span>
    <span class="cmn"><b>${E(x.name||"")}</b>${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
-   ${mine?"":`<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
+   ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
 }
 async function render(){
   const v=$("communityView"); if(!v||busy) return;
@@ -92,15 +94,15 @@ async function render(){
   const fr=friends(), frSet=new Set(fr.map(f=>f.uid)), me=signedIn()?uid():"";
   const today=A().today(), now=Date.now(), nToday=d.list.filter(x=>x.day===today).length, nNow=d.list.filter(x=>now-(x.at||0)<10*60*1000).length;
   const myIdx=d.list.findIndex(x=>x.uid===me), myXp=weekXp();
-  const friendRows=fr.map(f=>{ const x=d.list.find(y=>y.uid===f.uid)||d.extra.find(y=>y.uid===f.uid)||{uid:f.uid,name:f.name,xp:0,none:true}; return row(x,"",false,true); }).join("");
+  const friendRows=fr.map(f=>{ const x=d.list.find(y=>y.uid===f.uid)||d.extra.find(y=>y.uid===f.uid)||{uid:f.uid,name:f.name,xp:0,none:true}; return row(x,"",false,true,d.mutual[f.uid]); }).join("");
   const seen=+(localStorage.getItem("jp-cheer-seen")||0), unread=d.cheers.filter(c=>c.at>seen).length;
   v.innerHTML=head+`<div class="cmhd"><div><b>이번 주 리그</b><small>${rangeText()}</small></div><div class="cmme">${myIdx>=0?(myIdx+1)+"위":"50위 밖"} · ${myXp} XP</div></div>
+   <div class="cmqa"><button class="pill on" data-cm="addfriend">친구 추가</button><span class="sub">내 친구 코드 <b>${E(lg().code)}</b></span></div>
    <div class="sub cmact">오늘 ${nToday}명이 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중`:""}</div>
-   <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid))).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
-   <h3 class="cmh3">친구</h3>
-   <div class="cmcode"><span>내 친구 코드 <b>${E(lg().code)}</b></span><button class="pill sm" data-cm="copy">복사</button></div>
-   <form class="cmadd" id="cmAdd"><input name="c" maxlength="6" placeholder="친구 코드 6자리" autocomplete="off" autocapitalize="characters"><button class="pill on" type="submit">추가</button></form>
-   <div class="cml">${fr.length?friendRows:`<p class="sub">친구 코드를 입력해서 친구를 추가해 보세요.</p>`}</div>
+   <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
+   <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><button class="pill on" data-cm="addfriend">친구 추가</button></div>
+   <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 위의 「친구 추가」를 눌러 친구 코드를 입력해 보세요.</p>`}</div>
+   <p class="sub" style="margin-top:6px">서로 친구로 추가하면 「대화」 버튼이 생겨요.</p>
    <h3 class="cmh3">받은 응원${unread?` <em class="cmnew">새 ${unread}</em>`:""}</h3>
    <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 「${E(c.sticker)}」를 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
    <button class="cmleave" data-cm="leave">리그에서 나가기</button></div>`;
@@ -127,20 +129,57 @@ async function addFriend(code){
   if(code===lg().code){ A().toast("내 코드예요"); return; }
   try{ const d=await db().collection("codes").doc(code).get(); if(!d.exists){ A().toast("없는 코드예요"); return; }
     const f=friends(); if(f.some(x=>x.uid===d.data().uid)){ A().toast("이미 친구예요"); return; }
+    try{ await db().collection("follows").doc(uid()+"_"+d.data().uid).set({from:uid(),to:d.data().uid,at:Date.now()}); }catch(e){}
     f.push({uid:d.data().uid,name:d.data().name}); saveFr(f); A().toast("「"+d.data().name+"」 님을 친구로 추가했어요"); render(); }catch(e){ A().toast("추가하지 못했어요"); }
+}
+
+function addDlg(){
+  let d=$("addFrDlg"); if(!d){ d=document.createElement("dialog"); d.id="addFrDlg"; document.body.appendChild(d);
+    d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-fclose]")){ d.close(); return; }
+      if(ev.target.closest("[data-fcopy]")){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } });
+    d.addEventListener("submit",async ev=>{ ev.preventDefault(); const code=new FormData(ev.target).get("c"); await addFriend(code); d.close(); }); }
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">친구 추가</h2><button class="x" data-fclose aria-label="닫기">×</button></div><div class="db">
+   <p class="sub">친구의 6자리 코드를 입력하세요. 친구도 내 코드를 입력하면 서로 대화할 수 있어요.</p>
+   <form class="cmadd"><input name="c" maxlength="6" placeholder="친구 코드 6자리" autocomplete="off" autocapitalize="characters" autofocus><button class="pill on" type="submit">추가</button></form>
+   <div class="cmcode"><span>내 친구 코드 <b>${E(lg().code)}</b></span><button class="pill sm" data-fcopy="1">복사</button></div></div>`;
+  if(!d.open) d.showModal();
+}
+/* ---------- 1:1 대화 (맞친구끼리만) ---------- */
+let chatUnsub=null;
+const pairId=o=>[uid(),o].sort().join("_");
+function chatDlg(other,name){
+  let d=$("chatDlg"); if(!d){ d=document.createElement("dialog"); d.id="chatDlg"; document.body.appendChild(d);
+    d.addEventListener("close",()=>{ if(chatUnsub){ chatUnsub(); chatUnsub=null; } });
+    d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-chclose]")){ d.close(); return; }
+      if(ev.target.closest("[data-chdel]")){ if(!confirm("이 친구를 삭제할까요? 대화도 더는 할 수 없어요.")) return; const o=d.dataset.o;
+        try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(e){} saveFr(friends().filter(f=>f.uid!==o)); d.close(); render(); }
+      if(ev.target.closest("[data-chrep]")){ report(d.dataset.o); } });
+    d.addEventListener("submit",async ev=>{ ev.preventDefault(); const inp=ev.target.querySelector("input"), t=inp.value.trim().slice(0,200); if(!t) return; inp.value="";
+      try{ await db().collection("chats").doc(pairId(d.dataset.o)).collection("msgs").add({from:uid(),text:t,at:Date.now()}); }catch(e){ A().toast("보내지 못했어요"); } }); }
+  d.dataset.o=other;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)}</h2><button class="x" data-chclose aria-label="닫기">×</button></div><div class="chmsgs" id="chMsgs"><p class="sub" style="text-align:center">불러오는 중…</p></div>
+   <form class="chform"><input maxlength="200" placeholder="메시지 (200자까지)" autocomplete="off"><button class="pill on" type="submit">보내기</button></form>
+   <div class="chtools"><button data-chrep="1">신고</button><button data-chdel="1">친구 삭제</button></div>`;
+  if(!d.open) d.showModal();
+  if(chatUnsub) chatUnsub();
+  chatUnsub=db().collection("chats").doc(pairId(other)).collection("msgs").orderBy("at").limitToLast(100).onSnapshot(s=>{
+    const box=$("chMsgs"); if(!box) return; const me=uid();
+    box.innerHTML=s.docs.length?s.docs.map(x=>{ const m=x.data(), mine=m.from===me; return `<div class="chm ${mine?"mine":""}"><span>${E(m.text)}</span></div>`; }).join(""):`<p class="sub" style="text-align:center">첫 메시지를 보내 보세요</p>`;
+    box.scrollTop=box.scrollHeight; },()=>{ const box=$("chMsgs"); if(box) box.innerHTML=`<p class="sub" style="text-align:center">대화할 수 없어요. 서로 친구로 추가해야 해요.</p>`; });
 }
 
 document.addEventListener("click",async e=>{
   const v=$("communityView"); if(!v||!v.contains(e.target)) return;
-  const cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]");
+  const cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]");
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
+    else if(a==="addfriend") addDlg();
     else if(a==="join") join(); else if(a==="leave") leave(); else if(a==="reload") render();
     else if(a==="copy"){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } }
+  else if(ct) chatDlg(ct.dataset.chat,ct.dataset.n);
   else if(ch) cheerDlg(ch.dataset.cheer,ch.dataset.n);
   else if(rp) report(rp.dataset.rep);
 });
-document.addEventListener("submit",e=>{ if(e.target.id==="cmAdd"){ e.preventDefault(); addFriend(new FormData(e.target).get("c")); } });
 
 /* ---------- 스타일 ---------- */
 const ST=document.createElement("style");
@@ -160,6 +199,12 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cmcode{display:flex;justify-content:space-between;align-items:center;padding:10px 2px}.cmcode b{letter-spacing:.12em;font-size:17px;margin-left:6px}
 .cmadd{display:flex;gap:8px;margin-bottom:8px}.cmadd input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit;text-transform:uppercase}
 .cmc{padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}.cmc small{display:block;color:var(--sub);font-size:11px}
+.cmwait{font-size:11px;color:var(--sub);white-space:nowrap}.cmb2.chat{background:var(--accent);border-color:var(--accent);color:var(--onacc)}
+.cmfh{display:flex;justify-content:space-between;align-items:center;margin-top:22px}.cmqa{display:flex;align-items:center;gap:10px;margin:6px 0 4px}.cmqa b{letter-spacing:.1em;color:var(--text)}
+.chmsgs{height:46vh;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:6px}.chm{display:flex}.chm span{max-width:78%;padding:8px 12px;border-radius:16px;background:var(--chip);word-break:break-word;font-size:15px}.chm.mine{justify-content:flex-end}.chm.mine span{background:var(--accent);color:var(--onacc)}
+.chform{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}.chform input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit}
+.chtools{display:flex;justify-content:space-between;padding:0 14px 12px}.chtools button{background:none;border:0;color:var(--sub);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}
+#chatDlg,#addFrDlg{border:0;border-radius:18px;padding:0;max-width:400px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#chatDlg::backdrop,#addFrDlg::backdrop{background:rgba(0,0,0,.45)}
 .cmleave{display:block;margin:20px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 #cheerDlg{border:0;border-radius:18px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#cheerDlg::backdrop{background:rgba(0,0,0,.45)}
 .stk{display:flex;flex-wrap:wrap;gap:8px}`;
