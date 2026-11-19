@@ -116,7 +116,7 @@ function shopRender(){
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
   ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 돼요)</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?x.special:(!x.special&&x.slot===shopSlot)).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special?levelProgress(it.level):null;
     return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?`${it.level} 전체 클리어 · ${lp.real} / ${lp.all} 레슨`:it.price+" 씨앗")}</small></div>
-     ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"벗기":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"}>구입 <small>購入</small></button>`)}</div>`; }).join("")}</div></div>`;
+     ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"벗기":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"} style="line-height:1.15">購入<small style="display:block;font-size:10px;font-weight:400">(구입)</small></button>`)}</div>`; }).join("")}</div></div>`;
 }
 function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
   if(!d){ d=document.createElement("dialog"); d.id="shopDlg"; document.body.appendChild(d);
@@ -171,7 +171,7 @@ function pathHtml(full){
        ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}</div>`;
 }
 /* 홈의 '이어서 하기' 한 줄 */
-function continueHtml(){ const c=current(); if(!c) return ""; return `<button class="lrow" data-pn="${c.n.id}" style="border-top:1px solid var(--line);margin-top:12px"><span>이어서 하기 · <b>${E(c.n.L||"")} ${E(c.n.label)}</b></span><i>›</i></button>`; }
+function continueHtml(){ const c=current(); if(!c) return ""; return `<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:8px;font-size:11px;color:var(--sub)">단계별로 공부하기</div><button class="lrow" data-pn="${c.n.id}"><span>이어서 하기 · <b>${E(c.n.L||"")} ${E(c.n.label)}</b></span><i>›</i></button>`; }
 /* 따로 분리한 화면: 전체 학습 경로 · 기초 */
 let page=null;
 const back=`<button class="back" data-ppage="home">‹ 홈으로</button>`;
