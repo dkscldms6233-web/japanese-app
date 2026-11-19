@@ -112,7 +112,7 @@ function shopRender(){
   d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(birdTitle())}</h2><button class="x" data-sclose aria-label="닫기">×</button></div>
   <div class="db"><div class="shopbird">${birdSvg(eq,"big")}</div>
   <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px;font-size:.85em">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:"아이템을 누르면 미리 입혀 볼 수 있어요"}</p>
-  <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개<br>단어 퀴즈를 처음 통과하면 5개 · 7일 연속 출석 선물 70개<br>주간 리그 지난주 1~3위는 50 · 30 · 20개</p>
+  <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개<br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있어요.</p>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
   ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 돼요)</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?x.special:(!x.special&&x.slot===shopSlot)).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special?levelProgress(it.level):null;
     return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?`${it.level} 전체 클리어 · ${lp.real} / ${lp.all} 레슨`:it.price+" 씨앗")}</small></div>
