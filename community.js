@@ -3,7 +3,7 @@
  * - 함께 공부 중: 오늘 공부한 사람 수 / 지금 공부 중인 사람 수(리그 참가자 기준)
  * - 친구: 친구 코드로 추가하고(서로 추가하면 맞친구) 이번 주 경험치를 봐요
  * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막혀요
- * - 응원: 정해진 응원 문구만 보낼 수 있어요(자유 글 없음). 한 사람에게 하루 한 번
+ * - 응원: 정해진 이모티콘 10개만 보낼 수 있어요(자유 글 없음). 한 사람에게 하루 한 번
  * - 신고: 이상한 닉네임은 신고할 수 있어요
  * 저장 위치(Firestore): leagues/{주 시작일}/members/{uid}, codes/{코드}, cheers/{id}, reports/{id}
  * 로그인(계정)한 사람만 쓸 수 있어요. 게스트는 로그인 안내가 보여요.
@@ -12,7 +12,7 @@
 const A=()=>window.APP;
 const $=id=>document.getElementById(id);
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const STICKERS=["화이팅!","대단해요","같이 해요","오늘도 힘내요","고마워요"];
+const STICKERS=[["👍","최고예요"],["🔥","불타오르네"],["💪","힘내요"],["🎉","축하해요"],["👏","박수!"],["🌸","예뻐요"],["😊","반가워요"],["⭐","대단해요"],["🐥","같이 해요"],["💖","고마워요"]];
 const REWARD=[50,30,20];
 const lg=()=>A().LS.get("jp-league",{joined:false,code:"",claimed:{}});
 const saveLg=v=>A().LS.set("jp-league",v);
@@ -90,7 +90,7 @@ async function startWatch(){
     const seen=+(localStorage.getItem("jp-cheer-seen")||0); let n=0, last=null;
     s.docs.forEach(d=>{ const x=d.data(); if(x.at>seen){ n++; if(!last||x.at>last.at) last=x; } });
     const was=UN.cheers; UN.cheers=n; badge();
-    if(wInit.cheers&&n>was&&last&&!(window.APP.view&&APP.view()==="community")) notify((last.fromName||"친구")+" 님이 응원을 보냈어요","「"+last.sticker+"」");
+    if(wInit.cheers&&n>was&&last&&!(window.APP.view&&APP.view()==="community")) notify((last.fromName||"친구")+" 님이 응원을 보냈어요",last.sticker);
     wInit.cheers=true; },()=>{}));
   mutual.forEach(f=>{
     watchers.push(db().collection("chats").doc(pairId(f.uid)).collection("msgs").orderBy("at").limitToLast(1).onSnapshot(s=>{
@@ -141,7 +141,7 @@ async function render(){
    <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 위의 「친구 추가」를 눌러 친구 코드를 입력해 보세요.</p>`}</div>
    <p class="sub" style="margin-top:6px">서로 친구로 추가하면 「대화」 버튼이 생겨요.</p>
    <h3 class="cmh3">받은 응원${unread?` <em class="cmnew">새 ${unread}</em>`:""}</h3>
-   <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 「${E(c.sticker)}」를 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
+   <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 <span class="stkv">${E(c.sticker)}</span> 응원을 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
    ${window.Notification&&Notification.permission==="default"?`<button class="cmnotif" data-cm="notify">응원·메시지 알림 켜기 (앱을 열어 둔 동안)</button>`:""}
    <button class="cmleave" data-cm="leave">리그에서 나가기</button></div>`;
   try{ localStorage.setItem("jp-cheer-seen",String(Date.now())); }catch(e){} UN.cheers=0; badge();
@@ -155,7 +155,7 @@ function cheerDlg(to,name){
       try{ await db().collection("cheers").doc(uid()+"_"+to+"_"+day).set({from:uid(),fromName:A().curProfile().name,to,sticker:s.dataset.sticker,day,at:Date.now()}); A().toast(nm+" 님에게 응원을 보냈어요"); }
       catch(e){ A().toast("오늘은 이미 응원했어요"); } d.close(); }); }
   d.dataset.to=to; d.dataset.n=name;
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(s=>`<button class="pill" data-sticker="${s}">${s}</button>`).join("")}</div><p class="sub" style="margin-top:10px">한 사람에게 하루에 한 번 보낼 수 있어요.</p></div>`;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(([e,l])=>`<button class="stkb" data-sticker="${e}"><span>${e}</span><small>${l}</small></button>`).join("")}</div><p class="sub" style="margin-top:10px">한 사람에게 하루에 한 번 보낼 수 있어요.</p></div>`;
   if(!d.open) d.showModal();
 }
 async function report(target){
@@ -251,7 +251,7 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cmnotif{display:block;margin:10px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .cmleave{display:block;margin:20px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 #cheerDlg{border:0;border-radius:18px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#cheerDlg::backdrop{background:rgba(0,0,0,.45)}
-.stk{display:flex;flex-wrap:wrap;gap:8px}`;
+.stk{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stkb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--text);cursor:pointer;font:inherit}.stkb span{font-size:28px;line-height:1.2}.stkb small{font-size:10px;color:var(--sub)}.stkb:active{transform:scale(.94);background:var(--accent-soft)}.stkv{font-size:22px;vertical-align:middle}`;
 document.head.appendChild(ST);
 
 try{ const au=A().cloud&&A().cloud.ok&&A().cloud.auth; if(au) au.onAuthStateChanged(()=>{ wKey=""; startWatch(); }); }catch(e){}

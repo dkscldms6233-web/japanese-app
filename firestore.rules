@@ -23,11 +23,11 @@ service cloud.firestore {
       allow update, delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
 
-    // 응원: 정해진 문구만, 한 사람에게 하루 한 번(문서 ID로 막아요)
+    // 응원: 정해진 이모티콘만(예전 문구도 허용), 한 사람에게 하루 한 번(문서 ID로 막아요)
     match /cheers/{id} {
       allow create: if request.auth != null && request.resource.data.from == request.auth.uid
         && id == request.auth.uid + '_' + request.resource.data.to + '_' + request.resource.data.day
-        && request.resource.data.sticker in ['화이팅!', '대단해요', '같이 해요', '오늘도 힘내요', '고마워요'];
+        && request.resource.data.sticker in ['👍', '🔥', '💪', '🎉', '👏', '🌸', '😊', '⭐', '🐥', '💖', '화이팅!', '대단해요', '같이 해요', '오늘도 힘내요', '고마워요'];
       allow read: if request.auth != null && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
     }
 
