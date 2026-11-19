@@ -42,12 +42,12 @@ async function join(){
   const s=lg(); let code=s.code;
   if(!code){ for(let i=0;i<6&&!code;i++){ const c=genCode(); try{ await db().collection("codes").doc(c).set({uid:uid(),name:A().curProfile().name}); code=c; }catch(e){} } }
   if(!code){ A().toast("잠시 후 다시 해 주세요"); return; }
-  s.joined=true; s.code=code; saveLg(s); await publish(); render();
+  s.joined=true; s.code=code; saveLg(s); await publish(); wKey=""; startWatch(); render();
 }
 async function leave(){
   if(!confirm("리그에서 나갈까요? 내 이름과 경험치가 목록에서 사라져요.")) return;
   try{ await members(weekKey()).doc(uid()).delete(); }catch(e){}
-  const s=lg(); s.joined=false; saveLg(s); render();
+  const s=lg(); s.joined=false; saveLg(s); stopWatch(); UN.cheers=0; UN.chats={}; badge(); render();
 }
 
 /* ---------- 불러오기 ---------- */
@@ -67,6 +67,43 @@ async function weeklyReward(){
     if(i>=0&&snap.docs[i].data().xp>0){ window.PATH&&PATH.addSeeds(REWARD[i]); A().toast("지난주 리그 "+(i+1)+"위! 씨앗 "+REWARD[i]+"개를 받았어요"); } }catch(e){}
 }
 
+const pairId=o=>[uid(),o].sort().join("_");
+/* ---------- 알림: 응원·대화가 오면 탭 배지 · 토스트 · (허용 시) 브라우저 알림 ---------- */
+const UN={cheers:0,chats:{}}; let watchers=[], wInit={}, wKey="";
+const chatRead=()=>{ try{ return JSON.parse(localStorage.getItem("jp-chat-read")||"{}"); }catch(e){ return {}; } };
+const markRead=o=>{ const m=chatRead(); m[pairId(o)]=Date.now(); try{ localStorage.setItem("jp-chat-read",JSON.stringify(m)); }catch(e){} UN.chats[o]=false; badge(); document.querySelectorAll('[data-chat="'+o+'"]').forEach(b=>b.classList.remove("dotb")); };
+function badge(){
+  const n=UN.cheers+Object.values(UN.chats).filter(Boolean).length, b=document.querySelector('.vb[data-view="community"]'); if(!b) return;
+  let d=b.querySelector(".vbdot"); if(!n){ if(d) d.remove(); } else { if(!d){ d=document.createElement("b"); d.className="vbdot"; b.appendChild(d); } d.textContent=n>9?"9+":String(n); }
+}
+function notify(title,body){
+  A().toast(title+(body?": "+body:""));
+  try{ if(window.Notification&&Notification.permission==="granted"&&document.hidden) new Notification(title,{body:body||"",icon:"icon-192.png"}); }catch(e){}
+}
+function stopWatch(){ watchers.forEach(u=>{ try{ u(); }catch(e){} }); watchers=[]; wInit={}; }
+async function startWatch(){
+  if(!signedIn()||!lg().joined){ stopWatch(); UN.cheers=0; UN.chats={}; badge(); return; }
+  const me=uid(), fr=friends(), mutual=[];
+  await Promise.all(fr.map(async f=>{ try{ const d=await db().collection("follows").doc(f.uid+"_"+me).get(); if(d.exists) mutual.push(f); }catch(e){} }));
+  const key=me+":"+mutual.map(f=>f.uid).sort().join(","); if(key===wKey&&watchers.length) return; wKey=key; stopWatch();
+  watchers.push(db().collection("cheers").where("to","==",me).limit(50).onSnapshot(s=>{
+    const seen=+(localStorage.getItem("jp-cheer-seen")||0); let n=0, last=null;
+    s.docs.forEach(d=>{ const x=d.data(); if(x.at>seen){ n++; if(!last||x.at>last.at) last=x; } });
+    const was=UN.cheers; UN.cheers=n; badge();
+    if(wInit.cheers&&n>was&&last&&!(window.APP.view&&APP.view()==="community")) notify((last.fromName||"친구")+" 님이 응원을 보냈어요","「"+last.sticker+"」");
+    wInit.cheers=true; },()=>{}));
+  mutual.forEach(f=>{
+    watchers.push(db().collection("chats").doc(pairId(f.uid)).collection("msgs").orderBy("at").limitToLast(1).onSnapshot(s=>{
+      const m=s.docs[0]&&s.docs[0].data(); if(!m){ wInit[f.uid]=true; return; }
+      const dlg=$("chatDlg"), open=dlg&&dlg.open&&dlg.dataset.o===f.uid;
+      if(m.from===me||open){ if(open&&m.from!==me) markRead(f.uid); UN.chats[f.uid]=false; badge(); wInit[f.uid]=true; return; }
+      const unread=m.at>(chatRead()[pairId(f.uid)]||0), was=UN.chats[f.uid]; UN.chats[f.uid]=unread; badge();
+      if(wInit[f.uid]&&unread&&!was) notify(f.name+" 님의 메시지",m.text.length>30?m.text.slice(0,30)+"…":m.text);
+      wInit[f.uid]=true; },()=>{}));
+  });
+}
+async function askNotify(){ try{ const p=await Notification.requestPermission(); A().toast(p==="granted"?"알림을 켰어요. 앱을 열어 둔 동안 알려 줘요":"알림이 꺼져 있어요"); }catch(e){ A().toast("이 브라우저는 알림을 지원하지 않아요"); } render(); }
+
 /* ---------- 화면 ---------- */
 const bird=(eq,cls)=>window.PATH?PATH.birdSvg(eq||{},cls||"cmb"):"";
 const rangeText=()=>{ const a=new Date(weekKey()+"T12:00:00"), b=new Date(a); b.setDate(b.getDate()+6); const f=d=>(d.getMonth()+1)+"."+d.getDate(); return f(a)+" ~ "+f(b); };
@@ -75,7 +112,7 @@ function row(x,rank,me,isFr,mutual){
   const mine=x.uid===(signedIn()?uid():"");
   return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><span class="cmbw">${bird(x.eq)}</span>
    <span class="cmn"><b>${E(x.name||"")}</b>${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
-   ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
+   ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
 }
 async function render(){
   const v=$("communityView"); if(!v||busy) return;
@@ -90,7 +127,7 @@ async function render(){
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="join" style="max-width:240px">참여하기</button></div><p class="sub" style="margin-top:10px">언제든 나갈 수 있어요.</p></div>`; return; }
   busy=true; v.innerHTML=head+`<p class="sub">불러오는 중…</p></div>`;
   let d; try{ await publish(); d=await load(); }catch(e){ busy=false; v.innerHTML=head+`<p class="sub">불러오지 못했어요. 잠시 후 다시 해 주세요.</p><button class="cta sec" data-cm="reload" style="max-width:200px">다시 시도</button></div>`; return; }
-  busy=false; weeklyReward();
+  busy=false; weeklyReward(); wKey=""; startWatch();
   const fr=friends(), frSet=new Set(fr.map(f=>f.uid)), me=signedIn()?uid():"";
   const today=A().today(), now=Date.now(), nToday=d.list.filter(x=>x.day===today).length, nNow=d.list.filter(x=>now-(x.at||0)<10*60*1000).length;
   const myIdx=d.list.findIndex(x=>x.uid===me), myXp=weekXp();
@@ -105,8 +142,9 @@ async function render(){
    <p class="sub" style="margin-top:6px">서로 친구로 추가하면 「대화」 버튼이 생겨요.</p>
    <h3 class="cmh3">받은 응원${unread?` <em class="cmnew">새 ${unread}</em>`:""}</h3>
    <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 「${E(c.sticker)}」를 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
+   ${window.Notification&&Notification.permission==="default"?`<button class="cmnotif" data-cm="notify">응원·메시지 알림 켜기 (앱을 열어 둔 동안)</button>`:""}
    <button class="cmleave" data-cm="leave">리그에서 나가기</button></div>`;
-  try{ localStorage.setItem("jp-cheer-seen",String(Date.now())); }catch(e){}
+  try{ localStorage.setItem("jp-cheer-seen",String(Date.now())); }catch(e){} UN.cheers=0; badge();
 }
 
 /* ---------- 응원 · 신고 · 친구 추가 ---------- */
@@ -130,7 +168,7 @@ async function addFriend(code){
   try{ const d=await db().collection("codes").doc(code).get(); if(!d.exists){ A().toast("없는 코드예요"); return; }
     const f=friends(); if(f.some(x=>x.uid===d.data().uid)){ A().toast("이미 친구예요"); return; }
     try{ await db().collection("follows").doc(uid()+"_"+d.data().uid).set({from:uid(),to:d.data().uid,at:Date.now()}); }catch(e){}
-    f.push({uid:d.data().uid,name:d.data().name}); saveFr(f); A().toast("「"+d.data().name+"」 님을 친구로 추가했어요"); render(); }catch(e){ A().toast("추가하지 못했어요"); }
+    f.push({uid:d.data().uid,name:d.data().name}); saveFr(f); A().toast("「"+d.data().name+"」 님을 친구로 추가했어요"); wKey=""; startWatch(); render(); }catch(e){ A().toast("추가하지 못했어요"); }
 }
 
 function addDlg(){
@@ -146,20 +184,22 @@ function addDlg(){
 }
 /* ---------- 1:1 대화 (맞친구끼리만) ---------- */
 let chatUnsub=null;
-const pairId=o=>[uid(),o].sort().join("_");
 function chatDlg(other,name){
   let d=$("chatDlg"); if(!d){ d=document.createElement("dialog"); d.id="chatDlg"; document.body.appendChild(d);
     d.addEventListener("close",()=>{ if(chatUnsub){ chatUnsub(); chatUnsub=null; } });
     d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-chclose]")){ d.close(); return; }
-      if(ev.target.closest("[data-chdel]")){ if(!confirm("이 친구를 삭제할까요? 대화도 더는 할 수 없어요.")) return; const o=d.dataset.o;
-        try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(e){} saveFr(friends().filter(f=>f.uid!==o)); d.close(); render(); }
-      if(ev.target.closest("[data-chrep]")){ report(d.dataset.o); } });
+      if(ev.target.closest("[data-chmenu]")){ const m=d.querySelector(".chmenu"); if(m) m.hidden=!m.hidden; return; }
+      if(ev.target.closest("[data-chdel]")){ if(!confirm("정말 이 친구를 삭제할까요?\n삭제하면 서로 대화할 수 없고, 다시 서로 추가해야 해요.")) return; const o=d.dataset.o;
+        try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(e){} saveFr(friends().filter(f=>f.uid!==o)); d.close(); wKey=""; startWatch(); render(); return; }
+      if(ev.target.closest("[data-chrep]")){ const m=d.querySelector(".chmenu"); if(m) m.hidden=true; report(d.dataset.o); return; }
+      const m=d.querySelector(".chmenu"); if(m&&!m.hidden&&!ev.target.closest(".chmenu")) m.hidden=true; });
     d.addEventListener("submit",async ev=>{ ev.preventDefault(); const inp=ev.target.querySelector("input"), t=inp.value.trim().slice(0,200); if(!t) return; inp.value="";
       try{ await db().collection("chats").doc(pairId(d.dataset.o)).collection("msgs").add({from:uid(),text:t,at:Date.now()}); }catch(e){ A().toast("보내지 못했어요"); } }); }
-  d.dataset.o=other;
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)}</h2><button class="x" data-chclose aria-label="닫기">×</button></div><div class="chmsgs" id="chMsgs"><p class="sub" style="text-align:center">불러오는 중…</p></div>
-   <form class="chform"><input maxlength="200" placeholder="메시지 (200자까지)" autocomplete="off"><button class="pill on" type="submit">보내기</button></form>
-   <div class="chtools"><button data-chrep="1">신고</button><button data-chdel="1">친구 삭제</button></div>`;
+  d.dataset.o=other; markRead(other);
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)}</h2><span class="chhr"><button class="x" data-chmenu="1" aria-label="더보기">⋯</button><button class="x" data-chclose aria-label="닫기">×</button></span></div>
+   <div class="chmenu" hidden><button data-chrep="1">신고하기</button><button data-chdel="1" class="danger">친구 삭제</button></div>
+   <div class="chmsgs" id="chMsgs"><p class="sub" style="text-align:center">불러오는 중…</p></div>
+   <form class="chform"><input maxlength="200" placeholder="메시지 (200자까지)" autocomplete="off"><button class="pill on" type="submit">보내기</button></form>`;
   if(!d.open) d.showModal();
   if(chatUnsub) chatUnsub();
   chatUnsub=db().collection("chats").doc(pairId(other)).collection("msgs").orderBy("at").limitToLast(100).onSnapshot(s=>{
@@ -173,7 +213,7 @@ document.addEventListener("click",async e=>{
   const cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]");
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
-    else if(a==="addfriend") addDlg();
+    else if(a==="addfriend") addDlg(); else if(a==="notify") askNotify();
     else if(a==="join") join(); else if(a==="leave") leave(); else if(a==="reload") render();
     else if(a==="copy"){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } }
   else if(ct) chatDlg(ct.dataset.chat,ct.dataset.n);
@@ -203,12 +243,17 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cmfh{display:flex;justify-content:space-between;align-items:center;margin-top:22px}.cmqa{display:flex;align-items:center;gap:10px;margin:6px 0 4px}.cmqa b{letter-spacing:.1em;color:var(--text)}
 .chmsgs{height:46vh;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:6px}.chm{display:flex}.chm span{max-width:78%;padding:8px 12px;border-radius:16px;background:var(--chip);word-break:break-word;font-size:15px}.chm.mine{justify-content:flex-end}.chm.mine span{background:var(--accent);color:var(--onacc)}
 .chform{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}.chform input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit}
-.chtools{display:flex;justify-content:space-between;padding:0 14px 12px}.chtools button{background:none;border:0;color:var(--sub);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}
 #chatDlg,#addFrDlg{border:0;border-radius:18px;padding:0;max-width:400px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#chatDlg::backdrop,#addFrDlg::backdrop{background:rgba(0,0,0,.45)}
+.chhr{display:flex;gap:6px;align-items:center}.dh{position:relative}
+.chmenu{position:absolute;right:46px;top:46px;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;flex-direction:column;min-width:130px;overflow:hidden}.chmenu[hidden]{display:none}.chmenu button{background:none;border:0;font:inherit;font-size:14px;text-align:left;padding:12px 14px;cursor:pointer;color:var(--text)}.chmenu button+button{border-top:1px solid var(--line)}.chmenu .danger{color:var(--bad)}
+.vb{position:relative}.vbdot{position:absolute;top:2px;right:calc(50% - 22px);min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:var(--onacc);font-size:10px;font-weight:800;line-height:17px;text-align:center;padding:0 4px}
+.cmb2.dotb{position:relative}.cmb2.dotb::after{content:"";position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:var(--bad);border:2px solid var(--bg)}
+.cmnotif{display:block;margin:10px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .cmleave{display:block;margin:20px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 #cheerDlg{border:0;border-radius:18px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#cheerDlg::backdrop{background:rgba(0,0,0,.45)}
 .stk{display:flex;flex-wrap:wrap;gap:8px}`;
 document.head.appendChild(ST);
 
+try{ const au=A().cloud&&A().cloud.ok&&A().cloud.auth; if(au) au.onAuthStateChanged(()=>{ wKey=""; startWatch(); }); }catch(e){}
 window.COMMUNITY={render,touch};
 })();
