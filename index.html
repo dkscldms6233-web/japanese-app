@@ -2461,7 +2461,7 @@ $("homeView").addEventListener("click",e=>{
 const needOnb = () => !prefs.onboarded && !Object.keys(log).length && !(prefs.myLevels&&prefs.myLevels.length);
 const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아요",["N5","N4"],"N5~N4"],["중급이에요",["N3","N2"],"N3~N2"],["상급이에요",["N1"],"N1"],["잘 모르겠어요",[],"전체"]];
 const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
-let obStep=0, obLv=null, obKana=false, obAuth="main", obMsg="";
+let obStep=0, obLv=null, obKana=false, obAuth="main", obMsg="", obFrom=false;
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
@@ -2469,7 +2469,7 @@ function renderOnb(){
   const feat=(i,tt,s)=>`<div><span class="fi">${ic(i)}</span><span><b>${tt}</b><span>${s}</span></span></div>`;
   const top=small=>`<div class="ob-top" style="${small?"min-height:150px":""}"><div class="obmk">${MONKEY}</div>${small?"":`<div class="lg2">すらすら<span>日本語</span></div><span class="lg2s">술술 일본어</span>`}</div>`;
   if(obStep==="auth"){
-    const bk=`<button class="obskip" data-ob="aback">처음으로</button>`, msg=obMsg?`<p class="sub" style="color:#c0392b">${E(obMsg)}</p>`:"";
+    const bk=`<button class="obskip" data-ob="aback">${obFrom?"닫기":"처음으로"}</button>`, msg=obMsg?`<p class="sub" style="color:#c0392b">${E(obMsg)}</p>`:"";
     const accts=profiles.filter(p=>p.cloud);
     const off=cloud.ok?"":`<p class="sub" style="color:#c0392b">서버에 연결할 수 없어요. 인터넷을 확인해 주세요.</p>`;
     let body;
@@ -2495,7 +2495,7 @@ document.addEventListener("click",e=>{
   const a=b.dataset.ob;
   if(a==="guest"){ RAW.set("jp-auth-done","guest"); obStep=0; renderOnb(); return; }
   if(a==="login"||a==="has"||a==="signup"){ obAuth=a; obMsg=""; renderOnb(); return; }
-  if(a==="aback"){ obAuth="main"; obMsg=""; renderOnb(); return; }
+  if(a==="aback"){ if(obFrom){ obFrom=false; const o=$("onb"); if(o) o.remove(); return; } obAuth="main"; obMsg=""; renderOnb(); return; }
   if(a==="pickacct"){ const p=profiles.find(x=>x.id===b.dataset.id); if(p&&cloud.ok&&cloud.auth.currentUser&&cloud.auth.currentUser.uid===p.cloud){ RAW.set("jp-auth-done","login"); switchTo(p.id); } else { obAuth="login"; obMsg="비밀번호를 다시 입력해 주세요."; renderOnb(); } return; }
   if(a==="reset"){ (async()=>{ const em=($("obE").value||"").trim(); if(!em){ obMsg="이메일을 먼저 입력해 주세요."; return renderOnb(); }
     try{ await cloud.auth.sendPasswordResetEmail(em); obMsg="비밀번호 재설정 메일을 보냈어요. 메일함을 확인해 주세요."; }catch(e){ obMsg=authErr(e); } renderOnb(); })(); return; }
@@ -2532,15 +2532,19 @@ if(needOnb()) openOnb();
 // 프로필 (이 기기 안에서만 저장 · 비밀번호 없음)
 const saveProfiles = () => RAW.set("jp-profiles",profiles);
 const switchTo = id => { RAW.set("jp-active",id); location.reload(); };
-function profBtn(){ $("profBtn").innerHTML=ic("user")+" "+E(curProfile().name); }
+function profName(p){ return p.cloud?p.name:(p.name==="기본"?"게스트":p.name); }
+function profBtn(){ $("profBtn").innerHTML=ic("user")+" "+E(profName(curProfile())); }
 function openProf(){
-  $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">프로필</h2><button class="x" data-close aria-label="닫기">×</button></div>
-  <div class="db">${curProfile().cloud&&cloud.ok&&cloud.auth.currentUser?`<p class="sub">계정: ${E(cloud.auth.currentUser.email||"")} · 다른 기기에서도 같은 계정으로 로그인하면 기록이 이어져요.</p><button class="pill" data-pa="logout" style="margin-bottom:10px">로그아웃</button>`:""}<button class="pill on" data-pa="stats" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-bottom:12px">${ic("chart")} 내 학습 기록 보기</button><p class="sub">이 기기의 브라우저 안에만 저장돼요. 프로필마다 기록 · 내 단어 · 오답 노트 · 저장함 · 내 급수가 따로 관리돼요. 비밀번호가 없어서 보안용 로그인은 아니에요.</p>
-   ${profiles.map(p=>`<div class="prow">
-     <button class="pill ${p.id===activeId?"on":""}" data-pa="use" data-id="${p.id}">${ic("user")} ${E(p.name)}${p.id===activeId?" (사용 중)":""}</button>
-     <span><button class="pill sm" data-pa="ren" data-id="${p.id}">이름 변경</button>${profiles.length>1?` <button class="pill sm del" data-pa="del" data-id="${p.id}">삭제</button>`:""}</span></div>`).join("")}
-   <form class="af" id="profAdd"><label>새 프로필 <small>닉네임 (12자까지)</small><input name="n" maxlength="12" required autocomplete="off"></label>
-   <div class="qbtns"><button type="submit" class="pill on">＋ 추가하고 전환</button></div></form></div>`;
+  const p=curProfile(), cu=cloud.ok&&cloud.auth.currentUser, others=profiles.filter(x=>!x.cloud&&x.id!==activeId);
+  const acct=p.cloud
+    ? `<div class="prow" style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:18px">${E(p.name)}</b><span class="sub">${E((cu&&cu.email)||"")}</span><span class="sub">다른 기기에서도 같은 계정으로 로그인하면 기록이 이어져요.</span></div>`
+    : `<div class="prow" style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:18px">게스트</b><span class="sub">기록이 이 기기에만 저장돼요. 로그인하면 다른 기기에서도 이어서 쓸 수 있어요.</span></div>`;
+  $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">내 계정</h2><button class="x" data-close aria-label="닫기">×</button></div>
+  <div class="db">${acct}
+   <button class="pill on" data-pa="stats" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin:12px 0 8px">${ic("chart")} 내 학습 기록 보기</button>
+   ${p.cloud?`<button class="pill" data-pa="logout" style="width:100%;justify-content:center;padding:12px">로그아웃</button>`
+     :`<div class="qbtns" style="margin:0"><button class="pill" data-pa="login">로그인</button><button class="pill" data-pa="signup">회원가입</button></div>`}
+   ${!p.cloud&&others.length?`<p class="sub" style="margin-top:14px">이 기기의 다른 프로필</p>${others.map(x=>`<div class="prow"><button class="pill" data-pa="use" data-id="${x.id}">${ic("user")} ${E(profName(x))}</button></div>`).join("")}`:""}</div>`;
   if(!$("profDlg").open) $("profDlg").showModal();
 }
 $("profBtn").addEventListener("click",openProf);
@@ -2549,18 +2553,8 @@ $("profDlg").addEventListener("click",e=>{
   const b=e.target.closest("[data-pa]"); if(!b) return;
   if(b.dataset.pa==="stats"){ $("profDlg").close(); setView("stats"); return; }
   if(b.dataset.pa==="logout"){ (async()=>{ try{ clearTimeout(cloudT); cloudPush(); await new Promise(r=>setTimeout(r,600)); await cloud.auth.signOut(); }catch(e){} RAW.set("jp-auth-done",0); switchTo(profiles.find(x=>!x.cloud).id); })(); return; }
-  const id=b.dataset.id, p=profiles.find(x=>x.id===id);
-  if(b.dataset.pa==="use"){ if(id!==activeId) switchTo(id); }
-  else if(b.dataset.pa==="ren"){ const n=(prompt("새 이름",p.name)||"").trim().slice(0,12); if(n){ p.name=n; saveProfiles(); profBtn(); openProf(); if(view==="home") renderHome(); } }
-  else if(b.dataset.pa==="del"){
-    if(!confirm("「"+p.name+"」 프로필과 그 기록을 모두 삭제할까요? 되돌릴 수 없어요.")) return;
-    PER.forEach(k=>RAW.del(k+"@"+id)); profiles=profiles.filter(x=>x.id!==id); saveProfiles();
-    if(id===activeId) switchTo(profiles[0].id); else openProf();
-  }
-});
-$("profDlg").addEventListener("submit",e=>{
-  e.preventDefault(); const n=(new FormData(e.target).get("n")||"").trim().slice(0,12); if(!n) return;
-  const p={id:"p"+Date.now(),name:n}; profiles.push(p); saveProfiles(); switchTo(p.id);
+  if(b.dataset.pa==="login"||b.dataset.pa==="signup"){ $("profDlg").close(); obFrom=true; obStep="auth"; obAuth=b.dataset.pa; obMsg=""; renderOnb(); return; }
+  const id=b.dataset.id; if(b.dataset.pa==="use"&&id!==activeId) switchTo(id);
 });
 profBtn();
 if(curProfile().cloud&&cloud.ok){ cloud.auth.onAuthStateChanged(async u=>{
