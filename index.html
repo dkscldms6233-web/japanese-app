@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>すらすら日本語 - 술술 일본어</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2f4a73">
+<meta name="theme-color" content="#58cc02">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -653,6 +653,55 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .bgmname{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}.bgmname b{font-size:15px;white-space:nowrap}
 .bgmdots{display:flex;gap:5px}.bgmdots i{width:6px;height:6px;border-radius:50%;background:var(--line)}.bgmdots i.on{width:16px;border-radius:4px;background:var(--accent)}
 .bgmbar .pill{flex:none;white-space:nowrap}
+
+/* ================= 테마: 밝고 둥근 게임 느낌 (일본풍 포인트인 참새·매화·인장·글꼴은 유지) ================= */
+:root{
+  --bg:#ffffff; --card:#ffffff; --text:#3c3c3c; --sub:#777777; --line:#e5e5e5;
+  --accent:#58cc02; --accent-dk:#46a302; --accent-text:#3f9a00; --accent-soft:#e5f8d0; --chip:#f1f1f1; --onacc:#ffffff;
+  --blue:#1cb0f6; --blue-dk:#1899d6; --blue-soft:#ddf4ff;
+  --seal:#e5534b; --sakura:#ff86d0; --kin:#ffc800; --gold:#ffc800; --g1:#e5f8d0; --g2:#fafafa;
+  --on:#1899d6; --kun:#46a302;
+  --n5:#58cc02; --n4:#1cb0f6; --n3:#ffc800; --n2:#ff9600; --n1:#ff4b4b;
+}
+:root[data-theme=dark]{
+  --bg:#131f24; --card:#1f2c33; --text:#f1f7fb; --sub:#9db0ba; --line:#37464f;
+  --accent:#58cc02; --accent-dk:#3f9a00; --accent-text:#7fe030; --accent-soft:#1f3a12; --chip:#263741; --onacc:#ffffff;
+  --blue:#49c0f8; --blue-dk:#49c0f8; --blue-soft:#17323f;
+  --seal:#ff7d73; --sakura:#ff9bd9; --kin:#ffd34d; --gold:#ffd34d; --g1:#1f3a12; --g2:#1a262d;
+  --on:#49c0f8; --kun:#7fe030;
+  --n5:#58cc02; --n4:#49c0f8; --n3:#ffd34d; --n2:#ffab33; --n1:#ff6b6b;
+}
+body,button,input,select,textarea{font-family:"M PLUS Rounded 1c",-apple-system,"Hiragino Sans","Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+h2,h3,.cta,.pill,.mode b,.pk b,.vb{font-weight:800}
+header{border-bottom:2px solid var(--line)}
+#logo small,.puh .pun{color:var(--accent-text)}
+.cta{border-radius:16px;letter-spacing:.01em}
+.cta.sec{color:var(--blue-dk);border:2px solid var(--line);border-bottom:4px solid var(--line)}
+.cta.sec:hover{background:var(--blue-soft)}
+.pill{border:2px solid var(--line);border-bottom-width:3px;font-weight:700}
+.pill.on{border-color:var(--accent);border-bottom:3px solid var(--accent-dk)}
+.mode,.opt,.pk,.card{border-width:2px;border-radius:16px}
+.opt{border-bottom-width:4px;font-weight:700}
+.opt:hover:not(:disabled),.mode:hover,.pk:hover{border-color:var(--blue);background:var(--blue-soft)}
+.pk.sel{border-color:var(--blue);box-shadow:none;background:var(--blue-soft)}
+.prog{height:16px;border-radius:8px;background:var(--chip)}
+.prog div{border-radius:8px;position:relative;background:var(--accent)}
+.prog div::after{content:"";position:absolute;left:8px;right:8px;top:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.35)}
+.views{background:var(--chip)}
+.vb.on{color:var(--blue-dk)}
+@media(max-width:699px){.views{border-top:2px solid var(--line)}.vb.on{background:var(--blue-soft);color:var(--blue-dk);outline:2px solid var(--blue);outline-offset:-2px}}
+.pstat .prow1 b{color:var(--accent-text)}
+.opt.correct{background:#d7ffb8;border-color:#58cc02;color:#3b7d00}
+.opt.wrong{background:#ffdfe0;border-color:#ff4b4b;color:#c92f2f}
+.inq .reveal{border-top:0}
+.inq .reveal.ok{background:#d7ffb8;color:#3b7d00}
+.inq .reveal.ng{background:#ffdfe0;color:#c92f2f}
+.inq .reveal.ng .cta{background:#ff4b4b;border-bottom-color:#ea2b2b}
+:root[data-theme=dark] .opt.correct{background:#1f3a12;border-color:#58cc02;color:#a3ee66}
+:root[data-theme=dark] .opt.wrong{background:#3f1c1f;border-color:#ff6b6b;color:#ffabab}
+:root[data-theme=dark] .inq .reveal.ok{background:#1f3a12;color:#a3ee66}
+:root[data-theme=dark] .inq .reveal.ng{background:#3f1c1f;color:#ffabab}
+.hanko{border-color:var(--seal)}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -2582,7 +2631,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=13"></script>
-<script src="path.js?v=2"></script>
+<script src="path.js?v=3"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>
