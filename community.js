@@ -106,11 +106,13 @@ async function askNotify(){ try{ const p=await Notification.requestPermission();
 
 /* ---------- 화면 ---------- */
 const bird=(eq,cls)=>window.PATH?PATH.birdSvg(eq||{},cls||"cmb"):"";
+const ROWS={};
 const rangeText=()=>{ const a=new Date(weekKey()+"T12:00:00"), b=new Date(a); b.setDate(b.getDate()+6); const f=d=>(d.getMonth()+1)+"."+d.getDate(); return f(a)+" ~ "+f(b); };
 let busy=false;
 function row(x,rank,me,isFr,mutual){
+  ROWS[x.uid]=Object.assign({mutual:!!mutual,isFr:!!isFr},x);
   const mine=x.uid===(signedIn()?uid():"");
-  return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><span class="cmbw">${bird(x.eq)}</span>
+  return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><button class="cmbw" data-bird="${x.uid}" aria-label="${E(x.name||"")}님의 참새 보기">${bird(x.eq)}</button>
    <span class="cmn"><b>${E(x.name||"")}</b>${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
    ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
 }
@@ -147,6 +149,17 @@ async function render(){
   try{ localStorage.setItem("jp-cheer-seen",String(Date.now())); }catch(e){} UN.cheers=0; badge();
 }
 
+
+function birdDlg(u){
+  const x=ROWS[u]; if(!x) return; let d=$("birdDlg");
+  if(!d){ d=document.createElement("dialog"); d.id="birdDlg"; document.body.appendChild(d);
+    d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-bclose]")){ d.close(); return; }
+      const ch=ev.target.closest("[data-bcheer]"), ct=ev.target.closest("[data-bchat]");
+      if(ch){ d.close(); cheerDlg(ch.dataset.bcheer,ch.dataset.n); } else if(ct){ d.close(); chatDlg(ct.dataset.bchat,ct.dataset.n); } }); }
+  const me=signedIn()&&u===uid();
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv">${bird(x.eq,"big")}<div class="bn">${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button>`:""}</div>`}</div>`;
+  if(!d.open) d.showModal();
+}
 /* ---------- 응원 · 신고 · 친구 추가 ---------- */
 function cheerDlg(to,name){
   let d=$("cheerDlg"); if(!d){ d=document.createElement("dialog"); d.id="cheerDlg"; document.body.appendChild(d);
@@ -210,7 +223,8 @@ function chatDlg(other,name){
 
 document.addEventListener("click",async e=>{
   const v=$("communityView"); if(!v||!v.contains(e.target)) return;
-  const cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]");
+  const bd=e.target.closest("[data-bird]"), cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]");
+  if(bd){ birdDlg(bd.dataset.bird); return; }
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
     else if(a==="addfriend") addDlg(); else if(a==="notify") askNotify();
@@ -230,7 +244,7 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cml{border-top:1px solid var(--line)}.cml>.sub{padding:12px 2px}
 .cmr{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line)}.cmr.me{background:var(--accent-soft);border-radius:10px;padding-left:8px;padding-right:8px}
 .cmk{width:22px;text-align:center;font-weight:800;color:var(--sub);font-size:14px;flex:none}
-.cmbw{width:38px;height:38px;flex:none}.cmbw svg{width:100%;height:100%;display:block}
+.cmbw{width:48px;height:48px;flex:none;border:0;background:none;padding:0;cursor:pointer}.birdv{text-align:center;padding:6px 16px 18px}.birdv .big{width:230px;height:auto}.birdv .bn{font-size:12px;color:var(--sub)}.cmbw svg{width:100%;height:100%;display:block}
 .cmn{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}.cmn b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cmn small{color:var(--sub);font-size:11px}.cmn em{font-style:normal;font-size:10px;font-weight:800;color:var(--blue-dk);background:var(--blue-soft);border-radius:999px;padding:1px 6px;margin-left:4px}
 .cmx{font-weight:800;font-size:15px;text-align:right}.cmx small{font-size:10px;color:var(--sub);margin-left:2px}
 .cmb2{border:1px solid var(--line);background:none;border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:4px 10px;color:var(--accent-text);cursor:pointer}
@@ -250,6 +264,7 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cmb2.dotb{position:relative}.cmb2.dotb::after{content:"";position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:var(--bad);border:2px solid var(--bg)}
 .cmnotif{display:block;margin:10px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .cmleave{display:block;margin:20px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+#birdDlg{border:0;border-radius:18px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#birdDlg::backdrop{background:rgba(0,0,0,.45)}
 #cheerDlg{border:0;border-radius:18px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#cheerDlg::backdrop{background:rgba(0,0,0,.45)}
 .stk{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stkb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--text);cursor:pointer;font:inherit}.stkb span{font-size:28px;line-height:1.2}.stkb small{font-size:10px;color:var(--sub)}.stkb:active{transform:scale(.94);background:var(--accent-soft)}.stkv{font-size:22px;vertical-align:middle}`;
 document.head.appendChild(ST);
