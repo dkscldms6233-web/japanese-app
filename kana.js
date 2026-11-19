@@ -285,7 +285,7 @@ async function wAnimate(){
 }
 function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
 function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLesson(LESSONS[b.i],b.k); } else renderHome(); window.scrollTo(0,0); }
-function open(){ K={tab:K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
+function open(tab){ K={tab:(typeof tab==="string"&&tab)||K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-kana]"); if(!b) return; const a=b.dataset.kana;
   if(a!=="open"&&!root().contains(b)) return;

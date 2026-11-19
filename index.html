@@ -393,7 +393,7 @@ h1{letter-spacing:-.02em;cursor:pointer}
 
 /* ---- 새 홈 · 시작 안내 ---- */
 .hhead{display:flex;align-items:center;gap:12px;margin:4px 0 12px}
-.hmk{width:72px;height:72px;flex:none}
+.hmk{width:84px;height:auto;flex:none}
 .hmk svg{width:100%;height:100%;display:block}
 .hhead h2{margin:0;font-size:22px;letter-spacing:-.02em;line-height:1.3}
 .hgoal{margin:2px 0 14px}
@@ -774,7 +774,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
-<script src="kana.js?v=15"></script>
+<script src="kana.js?v=16"></script>
 <script src="games2.js?v=13"></script>
 <script src="bgm.js?v=37"></script>
 <script src="quotes.js"></script>
@@ -2377,6 +2377,7 @@ function quotePick(off){
 }
 function goalN(){ return [10,20,30].includes(prefs.goal)?prefs.goal:10; }
 function renderHome(){
+  if(window.PATH&&PATH.page()){ $("homeView").innerHTML=PATH.pageHtml(); return; }
   const my=myLv(), qt=quotePick(0), p=qt?null:todayPick(0), tl=log[today()]||{n:0,c:0}, nw=Object.keys(wrong).length, st=streakDays(), h=new Date().getHours(), g=goalN();
   const who=(profiles.length>1||curProfile().name!=="기본")?curProfile().name+"님, ":"";
   const greet=who+(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
@@ -2388,17 +2389,11 @@ function renderHome(){
    ${window.PATH?PATH.statusHtml():""}
    ${window.PATH?PATH.journeyHtml():""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
-   ${window.PATH?PATH.reviewHtml():""}
-   ${window.PATH?PATH.pathHtml():`<button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>`}
-   <h3 style="margin:26px 0 4px;font-size:15px;color:var(--sub);font-weight:600">더 해 보기</h3>
-   <div class="lrows">
-     <button class="lrow" data-shop="1"><span>참새 꾸미기 · 상점</span><i>›</i></button>
-     <button class="lrow" data-go="quiz"><span>퀴즈</span><i>›</i></button>
+   ${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}
+   <div class="lrows" style="margin-top:12px">
+     <button class="lrow" data-ppage="path"><span>전체 학습 경로</span><i>›</i></button>
+     <button class="lrow" data-ppage="basic"><span>기초 (히라가나 · 가타카나)</span><i>›</i></button>
      <button class="lrow" data-hq="review"><span>${nw?`오답 노트 · ${nw}개`:"오답 노트"}</span><i>›</i></button>
-     <button class="lrow" data-go="exam"><span>JLPT 모의시험</span><i>›</i></button>
-     <button class="lrow" data-go="game"><span>게임</span><i>›</i></button>
-     <button class="lrow" data-go="anime"><span>애니로 배우기</span><i>›</i></button>
-     <button class="lrow" data-kana="open"><span>글자 입문</span><i>›</i></button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2665,7 +2660,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=10"></script>
+<script src="path.js?v=14"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>

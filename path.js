@@ -48,7 +48,10 @@ function birdSvg(equip,cls){
   const eq=equip||charState().equip||{}, order=["neck","face","head"];
   return `<svg class="${cls||""}" viewBox="0 -44 375 376" aria-hidden="true"><image href="mascot.png" x="0" y="0" width="375" height="332"/>${order.map(sl=>{ const it=ITEMS.find(x=>x.id===eq[sl]); return it?`<g>${it.svg}</g>`:""; }).join("")}</svg>`;
 }
-function birdHtml(){ return `<button class="hbird" data-shop="1" aria-label="내 참새 꾸미기">${birdSvg(null)}</button>`; }
+function birdHtml(){
+  const s=charState(), cheapest=Math.min(...ITEMS.filter(x=>!s.owned.includes(x.id)).map(x=>x.price),Infinity), can=cheapest<=(s.seeds||0);
+  return `<div class="hbw"><button class="hbird" data-shop="1" aria-label="내 참새 꾸미기">${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">꾸미기 · 씨앗 ${s.seeds||0}</button></div>`;
+}
 let shopSlot="head";
 function shopRender(){
   const d=document.getElementById("shopDlg"), s=charState();
@@ -88,7 +91,7 @@ function build(){
 const state=()=>get("jp-path",{done:{},open:null});
 function isDone(n,st){ if(n.kind==="kana"){ const d=get("jp-kana",{done:{}}).done||{}; return !!d[n.id]||!!(st.done&&st.done[n.id]); } return !!(st.done&&st.done[n.id]); }
 const showKana=()=>{ const p=A().prefs(); if(p.showKana!==undefined) return !!p.showKana; const d=get("jp-kana",{done:{}}).done||{}; return Object.keys(d).length>0; };
-const vis=()=>build().filter(u=>showKana()||!u.id.startsWith("ku"));
+const vis=()=>build().filter(u=>!u.id.startsWith("ku"));
 function current(){ const st=state(); for(const u of vis()) for(const n of u.nodes) if(!isDone(n,st)) return {u,n}; return null; }
 let showAllUnits=false;
 
@@ -98,18 +101,32 @@ function statusHtml(){
   const x=xpState(), l=lvOf(x.t), lo=lvFloor(l), hi=lvFloor(l+1), pc=Math.round((x.t-lo)/(hi-lo)*100), st=A().streakDays();
   return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${st?st+"일 연속 · ":""}${x.t} XP · 씨앗 ${charState().seeds||0}</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
 }
-function reviewHtml(){ const n=dueKeys().length; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
-function pathHtml(){
+function reviewHtml(){ const n=dueKeys().length; if(!n) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
+function pathHtml(full){
   const st=state(), cur=current(), all=vis(); if(cur) openUnits.add(cur.u.id);
-  const ci=cur?all.findIndex(u=>u.id===cur.u.id):all.length, shown=showAllUnits?all:all.slice(Math.max(0,ci),ci+3), hidden=all.length-shown.length;
   const offs=[0,26,44,26,0,-26,-44,-26];
-  return `<div class="path"><h3>학습 경로</h3>${shown.map(u=>{
+  return `<div class="path">${all.map(u=>{
     const done=u.nodes.filter(n=>isDone(n,st)).length, open=openUnits.has(u.id), alld=done===u.nodes.length;
     return `<div class="pu ${open?"open":""} ${alld?"all":""}"><button class="puh" data-pu="${u.id}"><span class="pun">${E(u.tag)}</span><b>${E(u.title)}</b><small>${done} / ${u.nodes.length}</small></button>
      ${open?`<div class="pnodes">${u.nodes.map((n,i)=>{ const dn=isDone(n,st), isCur=cur&&cur.n.id===n.id;
         return `<div class="pn" style="margin-left:calc(50% - 32px + ${offs[i%offs.length]}px)"><button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small>${isCur?`<span class="pnow">지금 할 레슨</span>`:""}</div>`; }).join("")}
-       ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}
-   <div class="ptools">${hidden>0||showAllUnits?`<button data-ptog="units">${showAllUnits?"지금 유닛만 보기":`다른 유닛 ${hidden}개 보기`}</button>`:""}<button data-ptog="kana">${showKana()?"글자 입문 숨기기":"히라가나·가타카나부터 배우기"}</button></div></div>`;
+       ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}</div>`;
+}
+/* 홈의 '이어서 하기' 한 줄 */
+function continueHtml(){ const c=current(); if(!c) return ""; return `<button class="lrow" data-pn="${c.n.id}" style="border-top:1px solid var(--line);margin-top:12px"><span>이어서 하기 · <b>${E(c.n.L||"")} ${E(c.n.label)}</b></span><i>›</i></button>`; }
+/* 따로 분리한 화면: 전체 학습 경로 · 기초 */
+let page=null;
+const back=`<button class="back" data-ppage="home">‹ 홈으로</button>`;
+function basicHtml(){
+  const d=get("jp-kana",{done:{}}).done||{}, cnt=k=>{ let n=0; for(let i=0;i<19;i++) if(d[k+i]) n++; return n; };
+  return `<div class="home">${back}<h2 style="margin:6px 0 4px">기초</h2><div class="sub" style="margin-bottom:10px">일본어 글자와 기초 단어를 처음부터 배워요</div>
+   <div class="lrows"><button class="lrow" data-bkana="h"><span>히라가나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">글자표 · 행별 레슨 · 따라 쓰기</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("h")} / 19 ›</span></button>
+   <button class="lrow" data-bkana="k"><span>가타카나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">외래어에 쓰는 글자</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("k")} / 19 ›</span></button>
+   <button class="lrow" data-ppage="path"><span>N5 기초 단어<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">쉬운 단어부터 20개씩</small></span><i>›</i></button></div></div>`;
+}
+function pageHtml(){
+  if(page==="basic") return basicHtml();
+  return `<div class="home">${back}<h2 style="margin:6px 0 4px">학습 경로</h2><div class="sub">레슨을 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료돼요</div>${pathHtml(true)}</div>`;
 }
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -186,7 +203,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  statusHtml,reviewHtml,pathHtml,journeyHtml,birdHtml,openShop,
+  statusHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
@@ -208,8 +225,10 @@ document.addEventListener("click",e=>{
   else if(sk){ const u=build().find(x=>x.id===sk.dataset.pskip); if(u&&confirm("「"+u.title+"」 유닛을 이미 알고 있는 것으로 표시할까요? 경험치는 오르지 않아요.")){ u.nodes.forEach(n=>markDone(n.id,true)); A().renderHome(); } }
   else if(pr) window.PATH.review();
   else if(e.target.closest("[data-shop]")) openShop();
-  else if(e.target.closest("[data-ptog]")){ const k=e.target.closest("[data-ptog]").dataset.ptog; if(k==="units"){ showAllUnits=!showAllUnits; } else { A().setPref("showKana",!showKana()); } A().renderHome(); }
+  else if(e.target.closest("[data-ppage]")){ const v=e.target.closest("[data-ppage]").dataset.ppage; page=v==="home"?null:v; A().renderHome(); window.scrollTo(0,0); }
+  else if(e.target.closest("[data-bkana]")){ window.KANA&&window.KANA.open(e.target.closest("[data-bkana]").dataset.bkana); }
 });
+document.addEventListener("click",e=>{ if(page&&e.target.closest('#logo,.vb[data-view="home"],[data-go="home"]')) page=null; },true);
 document.addEventListener("click",e=>{ const g=e.target.closest("[data-pgo]"); if(g) go(g.dataset.pgo); const gf=e.target.closest("#homeView [data-gift]"); if(gf) giftAct(gf.dataset.gift); });
 
 /* ---------- 스타일 ---------- */
@@ -255,6 +274,7 @@ ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!im
 .gl{display:grid;grid-template-columns:1fr 1fr;gap:14px}.gi{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.gi small{color:var(--sub);font-size:11px}
 .jl2{fill:none;stroke:var(--fo-path);stroke-width:16;stroke-linecap:round;stroke-linejoin:round;opacity:.95}
 .jrb{width:40px;height:40px}.jrb svg{width:100%;height:100%;display:block}
+.hbw{display:flex;flex-direction:column;align-items:center;gap:4px;width:84px}.hbw .hbird{width:72px;height:72px}.hbtag{border:0;border-radius:999px;background:var(--chip);color:var(--sub);font:inherit;font-size:11px;font-weight:700;padding:3px 9px;cursor:pointer;white-space:nowrap}.hbtag.hot{background:var(--accent);color:var(--onacc)}
 .hbird{width:100%;height:100%;border:0;background:none;padding:0;cursor:pointer;display:block}.hbird svg{width:100%;height:100%;display:block}
 .shopbird{display:flex;justify-content:center}.shopbird svg.big{width:210px;height:auto}
 .shtabs{display:flex;gap:8px;justify-content:center;margin-bottom:6px}
