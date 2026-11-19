@@ -14,7 +14,7 @@ const TITLES=["견습생","수련생","열혈 학습자","중급 도전자","숙
 
 /* ---------- 경험치 ---------- */
 const xpState=()=>get("jp-xp",{t:0,d:{}});
-function addXp(n){ if(!n) return; const s=xpState(); s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s); }
+function addXp(n){ if(!n) return; const s=xpState(); s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s);  try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
 const lvOf=t=>Math.floor(Math.sqrt((t||0)/50))+1;
 const lvFloor=l=>50*(l-1)*(l-1);
 const titleOf=l=>TITLES[Math.min(l-1,TITLES.length-1)];
@@ -203,7 +203,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  statusHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
+  equip:()=>charState().equip||{},addSeeds,birdSvg,statusHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
