@@ -121,7 +121,7 @@ async function render(){
   const head=`<div class="cm"><h2>커뮤니티</h2>`;
   if(!cloud()||!cloud().ok){ v.innerHTML=head+`<p class="sub">서버에 연결할 수 없어요. 인터넷을 확인해 주세요.</p></div>`; return; }
   if(!signedIn()){
-    v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>글은 쓰지 않고, 이름과 이번 주 경험치만 보여요.</p>
+    v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>경험치는 일주일마다 초기화됩니다.</p>
      <div class="lrows"><div class="cmrow3"><b>주간 리그</b><span>이번 주 경험치 순위와 지난주 상위 3명에게 씨앗 선물</span></div><div class="cmrow3"><b>친구</b><span>친구 코드로 추가하고 서로 응원하기</span></div><div class="cmrow3"><b>함께 공부 중</b><span>오늘 몇 명이 공부했는지 한눈에</span></div></div>
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="login" style="max-width:240px">로그인</button><button class="cta sec" data-cm="signup" style="max-width:240px">회원가입</button></div></div>`; return; }
   if(!lg().joined){

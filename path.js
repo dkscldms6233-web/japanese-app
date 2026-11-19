@@ -28,7 +28,7 @@ const dueKeys=()=>{ const s=get("jp-srs",{}), n=Date.now(); return Object.keys(s
 function duePool(){ const set1=new Set(dueKeys()); return A().ALL.filter(w=>set1.has(w.key)); }
 
 /* ---------- 내 참새 · 씨앗 · 상점 ---------- */
-const SLOTS=[["head","머리"],["face","얼굴"],["neck","목"],["special","특별"]];
+const SLOTS=[["head","머리"],["face","얼굴"],["neck","목"],["special","특별아이템"]];
 const WC='filter="url(#fWc)"', INK="#5e4b42";
 /* 벚꽃 한 송이(꽃잎 5장·꽃술·옅은 번짐) */
 const sakura=(x,y,s,rot)=>{ const pet=`<path d="M0 0C-13-5-16-23-7-30L0-24L7-30C16-23 13-5 0 0Z" fill="#fde8ef" stroke="${INK}" stroke-width="1.2" stroke-linejoin="round"/><path d="M0 -2C-6-6-8-15-4-20C0-16 4-16 6-20C9-14 6-6 0 -2Z" fill="#f4a8bf" opacity=".55"/><path d="M0 -3V-19" stroke="#e58aa6" stroke-width=".8" opacity=".8"/>`;
@@ -111,12 +111,12 @@ function shopRender(){
   const eq=Object.assign({},s.equip,shopPrev), pvItems=pv.map(k=>ITEMS.find(x=>x.id===shopPrev[k])).filter(Boolean);
   d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(birdTitle())}</h2><button class="x" data-sclose aria-label="닫기">×</button></div>
   <div class="db"><div class="shopbird">${birdSvg(eq,"big")}</div>
-  <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:"아이템을 누르면 미리 입혀 볼 수 있어요"}</p>
-  <p class="sub" style="text-align:center;margin:0 0 10px">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개 · 7일 선물과 레슨을 끝내면 씨앗을 받아요</p>
+  <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px;font-size:.85em">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:"아이템을 누르면 미리 입혀 볼 수 있어요"}</p>
+  <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개 · 7일 선물과 레슨을 끝내면 씨앗을 받아요</p>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
-  ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 모든 레슨을 직접 끝내면 받는 특별 아이템이에요(건너뛰기는 안 돼요)</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?x.special:(!x.special&&x.slot===shopSlot)).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special?levelProgress(it.level):null;
+  ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 모든 레슨을 직접 끝내면 받는 특별아이템이에요(건너뛰기는 안 돼요)</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?x.special:(!x.special&&x.slot===shopSlot)).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special?levelProgress(it.level):null;
     return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?`${it.level} 전체 클리어 · ${lp.real} / ${lp.all} 레슨`:it.price+" 씨앗")}</small></div>
-     ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"벗기":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"}>사기</button>`)}</div>`; }).join("")}</div></div>`;
+     ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"벗기":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"}>구입 <small>購入</small></button>`)}</div>`; }).join("")}</div></div>`;
 }
 function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
   if(!d){ d=document.createElement("dialog"); d.id="shopDlg"; document.body.appendChild(d);
