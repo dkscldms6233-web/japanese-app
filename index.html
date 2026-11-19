@@ -2600,6 +2600,7 @@ document.addEventListener("click",e=>{
     if(pw.length<6){ obMsg="비밀번호는 6자 이상으로 해 주세요."; return renderOnb(); } if(pw!==pw2){ obMsg="비밀번호 확인이 달라요."; return renderOnb(); }
     try{ const cr=await cloud.auth.createUserWithEmailAndPassword(em,pw), u=cr.user, pid="u"+u.uid;
       try{ await u.updateProfile({displayName:n}); }catch(e){}
+      try{ await u.sendEmailVerification(); }catch(e){}
       const pr={id:pid,name:n,cloud:u.uid}; profiles.push(pr); saveProfiles();
       const old=profiles.find(x=>!x.cloud&&PER.some(k=>localStorage.getItem(k+"@"+x.id)!==null&&k!=="jp-prefs"));
       if(old&&confirm("이 기기에 쓰던 학습 기록('"+old.name+"')을 새 계정으로 옮길까요?")) PER.forEach(k=>{ const v=localStorage.getItem(k+"@"+old.id); if(v!==null) localStorage.setItem(k+"@"+pid,v); });
@@ -2664,7 +2665,7 @@ renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
 <script src="path.js?v=50"></script>
-<script src="community.js?v=7"></script>
+<script src="community.js?v=8"></script>
 <script src="dev.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>

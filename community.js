@@ -21,6 +21,7 @@ const saveFr=v=>A().LS.set("jp-friends",v);
 const cloud=()=>A().cloud;
 const signedIn=()=>{ const c=cloud(); const p=A().curProfile(); return !!(c&&c.ok&&p&&p.cloud&&c.auth.currentUser&&c.auth.currentUser.uid===p.cloud); };
 const uid=()=>cloud().auth.currentUser.uid;
+const verified=()=>{ try{ return !!cloud().auth.currentUser.emailVerified; }catch(e){ return false; } };
 const db=()=>cloud().db;
 
 function weekKey(d){ const x=new Date(d||Date.now()); const dow=(x.getDay()+6)%7; x.setDate(x.getDate()-dow); return x.toLocaleDateString("sv-SE"); }
@@ -32,7 +33,7 @@ const members=w=>db().collection("leagues").doc(w).collection("members");
 let pubT=0;
 function touch(){ if(!lg().joined) return; clearTimeout(pubT); pubT=setTimeout(publish,4000); }
 async function publish(){
-  if(!signedIn()||!lg().joined) return;
+  if(!signedIn()||!verified()||!lg().joined) return;
   const p=A().curProfile();
   try{ await members(weekKey()).doc(uid()).set({name:p.name,xp:weekXp(),streak:A().streakDays(),day:A().today(),eq:(window.PATH&&PATH.equip())||{},at:Date.now()}); }catch(e){}
 }
@@ -124,6 +125,9 @@ async function render(){
     v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>경험치는 일주일마다 초기화됩니다.</p>
      <div class="lrows"><div class="cmrow3"><b>주간 리그</b><span>이번 주 경험치 순위와 지난주 상위 3명에게 씨앗 선물</span></div><div class="cmrow3"><b>친구</b><span>친구 코드로 추가하고 서로 응원하기</span></div><div class="cmrow3"><b>함께 공부 중</b><span>오늘 몇 명이 공부했는지 한눈에</span></div></div>
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="login" style="max-width:240px">로그인</button><button class="cta sec" data-cm="signup" style="max-width:240px">회원가입</button></div></div>`; return; }
+  if(!verified()){
+    v.innerHTML=head+`<p class="sub">이메일 인증이 필요해요.<br><b>${E(cloud().auth.currentUser.email||"")}</b> 로 보낸 인증 메일의 링크를 누른 뒤, 아래 버튼을 눌러 주세요.<br>메일이 안 보이면 스팸함도 확인해 주세요.</p>
+     <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="verified" style="max-width:240px">인증했어요</button><button class="cta sec" data-cm="resend" style="max-width:240px">인증 메일 다시 받기</button></div></div>`; return; }
   if(!lg().joined){
     v.innerHTML=head+`<p class="sub">주간 리그에 참여할까요?</p><div class="lrows"><div class="cmrow3"><b>다른 사용자에게 보이는 것</b><span>닉네임(${E(A().curProfile().name)}), 이번 주 경험치, 연속 출석일, 내 참새 모습</span></div><div class="cmrow3"><b>보이지 않는 것</b><span>이메일, 틀린 단어, 학습 기록</span></div></div>
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="join" style="max-width:240px">참여하기</button></div><p class="sub" style="margin-top:10px">언제든 나갈 수 있어요.</p></div>`; return; }
@@ -228,6 +232,8 @@ document.addEventListener("click",async e=>{
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
     else if(a==="addfriend") addDlg(); else if(a==="notify") askNotify();
+    else if(a==="verified"){ try{ await cloud().auth.currentUser.reload(); await cloud().auth.currentUser.getIdToken(true); }catch(err){} if(verified()) A().toast("인증됐어요!"); else A().toast("아직 인증되지 않았어요"); render(); }
+    else if(a==="resend"){ try{ await cloud().auth.currentUser.sendEmailVerification(); A().toast("인증 메일을 다시 보냈어요"); }catch(err){ A().toast("잠시 후 다시 해 주세요"); } }
     else if(a==="join") join(); else if(a==="leave") leave(); else if(a==="reload") render();
     else if(a==="copy"){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } }
   else if(ct) chatDlg(ct.dataset.chat,ct.dataset.n);
