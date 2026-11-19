@@ -2396,7 +2396,6 @@ function renderHome(){
      <button class="lrow" data-ppage="path"><span>전체 학습 경로</span><i>›</i></button>
      <button class="lrow" data-ppage="basic"><span>기초 (히라가나 · 가타카나)</span><i>›</i></button>
      <button class="lrow" data-hq="review"><span>${nw?`오답 노트 · ${nw}개`:"오답 노트"}</span><i>›</i></button>
-     <button class="lrow" data-go="anime"><span>애니로 배우기</span><i>›</i></button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2663,7 +2662,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=34"></script>
+<script src="path.js?v=38"></script>
 <script src="community.js?v=6"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
