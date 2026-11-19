@@ -232,7 +232,7 @@ function renderQ(){
 }
 function renderResult(){
   inq(false); const n=K.qs.length, pct=Math.round(K.score/n*100), ok=pct>=70;
-  if(ok&&K.lessonKey){ const d=done(); d.done[K.lessonKey]=true; save(d); }
+  if(ok&&K.lessonKey){ const d=done(); d.done[K.lessonKey]=true; save(d); try{ if(window.PATH) PATH.kanaDone(K.lessonKey); }catch(e){} }
   const nxt=K.lessonI!=null?LESSONS[K.lessonI+1]:null;
   root().innerHTML=`<div class="kana" style="text-align:center"><h2>${K.title} 결과</h2><div class="score" style="font-size:44px;margin:16px 0">${K.score} / ${n}</div>
   <div class="sub">${ok?(K.lessonKey?"합격! 이 레슨을 완료로 표시했어요.":"잘했어요!"):"70% 이상이면 완료로 표시돼요. 글자표를 한 번 더 보고 다시 도전해 보세요."}</div>
@@ -315,5 +315,6 @@ document.addEventListener("click",e=>{
   else if(a==="replay") say(K.qs[K.i].say);
   else if(a==="again"){ if(K.lessonI!=null) startLesson(LESSONS[K.lessonI],K.k); else startFinal(K.k); window.scrollTo(0,0); }
 });
-window.KANA={open};
+function openLesson(i,k){ K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderLesson(LESSONS[i],k); window.scrollTo(0,0); }
+window.KANA={open,openLesson};
 })();

@@ -689,7 +689,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
-<script src="kana.js?v=14"></script>
+<script src="kana.js?v=15"></script>
 <script src="games2.js?v=13"></script>
 <script src="bgm.js?v=37"></script>
 <script src="quotes.js"></script>
@@ -926,7 +926,7 @@ const RAW = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 // 프로필: 이 기기 안에서만 저장돼요. 아래 키들은 프로필별로 따로 보관해요.
-const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best"];
+const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs"];
 let profiles = RAW.get("jp-profiles",null), activeId = RAW.get("jp-active",null);
 if(!Array.isArray(profiles)||!profiles.length){
   profiles=[{id:"p1",name:"기본"}]; activeId="p1";
@@ -1081,6 +1081,7 @@ function filtered(){
 }
 function toggleStar(key){ stars.has(key)?stars.delete(key):stars.add(key); LS.set("jp-star",[...stars]); }
 function record(w,ok){
+  if(window.PATH&&!w.sent) PATH.rec(w,ok);
   const d=today(), e=log[d]||(log[d]={n:0,c:0}); e.n++; if(ok) e.c++;
   if(w.sent){ LS.set("jp-log",log); return; }
   if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트 졸업!"); } } }
@@ -1485,6 +1486,7 @@ function sakura(n){
   document.body.appendChild(o); setTimeout(()=>o.remove(),7500);
 }
 function renderResult(){
+  try{ if(window.PATH) PATH.quizEnd(Q.score,Q.list.map(w=>w.key)); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.list.length;
   $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.wrong.length?"수고했어요!":"완벽해요!"}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
@@ -2298,11 +2300,14 @@ function renderHome(){
   $("homeView").innerHTML=`<div class="home">
    <div class="hhead"><div class="hmk">${MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
+   ${window.PATH?PATH.statusHtml():""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
-   <button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>
+   ${window.PATH?PATH.reviewHtml():""}
+   ${window.PATH?PATH.pathHtml():`<button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>`}
+   <h3 style="margin:20px 0 8px;font-size:17px">더 해 보기</h3>
    <div class="crow">
-     <button class="cta sec" data-hq="review">${nw?`오답 복습 ${nw}`:"오답 복습"}</button>
      <button class="cta sec" data-go="quiz">퀴즈</button>
+     <button class="cta sec" data-hq="review">${nw?`오답 노트 ${nw}`:"오답 노트"}</button>
    </div>
    <div class="crow">
      <button class="cta sec" data-go="exam">JLPT 모의시험</button>
@@ -2310,6 +2315,7 @@ function renderHome(){
    </div>
    <div class="crow">
      <button class="cta sec" data-go="anime">애니로 배우기</button>
+     <button class="cta sec" data-kana="open">글자 입문</button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2528,6 +2534,7 @@ document.addEventListener("click",e=>{
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300);
   }
 });
+window.APP={get ALL(){return ALL;},LS,today,myLv,streakDays,toast,R,startQuiz,setView,renderHome:()=>renderHome()};
 if(needOnb()) openOnb();
 // 프로필 (이 기기 안에서만 저장 · 비밀번호 없음)
 const saveProfiles = () => RAW.set("jp-profiles",profiles);
@@ -2575,6 +2582,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=13"></script>
+<script src="path.js?v=2"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>
