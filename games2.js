@@ -129,14 +129,15 @@ function startShiri(){
   if(pool.length<30){ toast("이 급수에는 끝말잇기에 쓸 단어가 부족해요"); return; }
   G={type:"shiri-intro"};
   $("quizView").innerHTML=`<div class="qbox gbox"><h2>しりとり 끝말잇기</h2>
-   <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>해요.<br>「ん」으로 끝나면 져요. 사전에 있는 단어는 어느 급수든 쓸 수 있어요.</div>
+   <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>해요.<br>사전에 있는 단어는 어느 급수든 쓸 수 있어요.</div>
+   <div class="sub" style="text-align:center;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"><b>왜 「ん」으로 끝나면 질까요?</b><br>「ん」으로 시작하는 일본어 단어는 거의 없어서, 「ん」으로 끝내면 상대가 이을 수가 없어요. 한국 끝말잇기에서 이을 수 없는 '한방단어'로 끝내면 지는 것과 같은 규칙이에요.</div>
    <h3 style="text-align:center;margin:16px 0 6px">상대 난이도</h3>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:0 auto">${[1,2,3].map(d=>`<button class="cta ${d===SHDIFF?"":"sec"}" data-sd="${d}" style="text-align:left"><b>${SH_D[d].name}</b><br><small style="opacity:.85">${SH_D[d].desc}</small></button>`).join("")}</div>
    <div class="qbtns" style="margin-top:14px"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
 function startShiriGo(d){
   SHDIFF=d; const pool=shScope();
-  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 져요`,()=>shBegin(pool));
+  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 져요<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없어요)</small>`,()=>shBegin(pool));
 }
 function shBegin(pool){
   const used=new Set(), cnt=(ch)=>pool.filter(x=>x.r[0]===ch).length, starts=shuffle(pool.filter(x=>lastKana(x.r)!=="ん"&&cnt(lastKana(x.r))>=4)), start=starts[0]||pool.find(x=>lastKana(x.r)!=="ん");
@@ -187,7 +188,7 @@ function shSubmit(){
   if(!ws){ g.msg=`「${r}」는 사전에 없어요`; return shMiss(); }
   const w=ws.find(x=>g.pool.some(p=>p.w===x))||ws[0];
   g.used.add(r); g.chain.push({who:"me",r,w});
-  if(lastKana(r)==="ん"){ if(!w.extra){ g.seen.set(w.key,{w,st:"ng"}); record(w,false); } sfx("ng"); return shEnd("lose",`「${r}」는 ん으로 끝나요. 아쉽게 졌어요!`); }
+  if(lastKana(r)==="ん"){ if(!w.extra){ g.seen.set(w.key,{w,st:"ng"}); record(w,false); } sfx("ng"); return shEnd("lose",`「${r}」는 ん으로 끝나요. 「ん」으로 시작하는 단어는 없어서 이을 수 없으니 졌어요!`); }
   const hinted=g.hintShown&&g.hintShown.r===r; const pts=Math.round((hinted?5:10+Math.min(g.rounds,10)*2)*SH_D[g.diff].mult);
   if(!w.extra){ g.seen.set(w.key,{w,st:"ok"}); record(w,true); } g.rounds++; g.score+=pts; sfx("ok"); popFx("+"+pts,"pts");
   // 컴퓨터 차례 (난이도에 따라 고르는 방식이 달라요)
