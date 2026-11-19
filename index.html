@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>すらすら日本語 - 술술 일본어</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#58cc02">
+<meta name="theme-color" content="#fffaf5">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -654,53 +654,73 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 .bgmdots{display:flex;gap:5px}.bgmdots i{width:6px;height:6px;border-radius:50%;background:var(--line)}.bgmdots i.on{width:16px;border-radius:4px;background:var(--accent)}
 .bgmbar .pill{flex:none;white-space:nowrap}
 
-/* ================= 테마: 밝고 둥근 게임 느낌 (일본풍 포인트인 참새·매화·인장·글꼴은 유지) ================= */
+/* ================= 테마: 참새와 어울리는 산뜻하고 귀여운 느낌 (복숭아·하늘·민트 파스텔, 부드러운 그림자) ================= */
 :root{
-  --bg:#ffffff; --card:#ffffff; --text:#3c3c3c; --sub:#777777; --line:#e5e5e5;
-  --accent:#58cc02; --accent-dk:#46a302; --accent-text:#3f9a00; --accent-soft:#e5f8d0; --chip:#f1f1f1; --onacc:#ffffff;
-  --blue:#1cb0f6; --blue-dk:#1899d6; --blue-soft:#ddf4ff;
-  --seal:#e5534b; --sakura:#ff86d0; --kin:#ffc800; --gold:#ffc800; --g1:#e5f8d0; --g2:#fafafa;
-  --on:#1899d6; --kun:#46a302;
-  --n5:#58cc02; --n4:#1cb0f6; --n3:#ffc800; --n2:#ff9600; --n1:#ff4b4b;
+  --bg:#fffaf5; --card:#ffffff; --text:#3f3a37; --sub:#8c847c; --line:#f0e4d8;
+  --accent:#f4845f; --accent-dk:#df6a45; --accent-text:#d9613c; --accent-soft:#ffeadf; --chip:#f8efe6; --onacc:#ffffff;
+  --blue:#69c0e8; --blue-dk:#3a97c4; --blue-soft:#e4f4fb;
+  --ok:#52c7a2; --ok-dk:#36a883; --ok-soft:#dff6ec; --bad:#f2677b; --bad-soft:#ffe5e9;
+  --seal:#e5534b; --sakura:#ff9cbc; --kin:#ffc94d; --gold:#ffc94d; --g1:#ffeadf; --g2:#fff6ee;
+  --on:#3a97c4; --kun:#36a883;
+  --n5:#52c7a2; --n4:#69c0e8; --n3:#ffc94d; --n2:#f4845f; --n1:#f2677b;
+  --sh:0 2px 14px rgba(120,80,50,.09); --sh2:0 6px 18px rgba(244,132,95,.32);
 }
 :root[data-theme=dark]{
-  --bg:#131f24; --card:#1f2c33; --text:#f1f7fb; --sub:#9db0ba; --line:#37464f;
-  --accent:#58cc02; --accent-dk:#3f9a00; --accent-text:#7fe030; --accent-soft:#1f3a12; --chip:#263741; --onacc:#ffffff;
-  --blue:#49c0f8; --blue-dk:#49c0f8; --blue-soft:#17323f;
-  --seal:#ff7d73; --sakura:#ff9bd9; --kin:#ffd34d; --gold:#ffd34d; --g1:#1f3a12; --g2:#1a262d;
-  --on:#49c0f8; --kun:#7fe030;
-  --n5:#58cc02; --n4:#49c0f8; --n3:#ffd34d; --n2:#ffab33; --n1:#ff6b6b;
+  --bg:#1f1a18; --card:#2b2421; --text:#f7efe8; --sub:#b5a89d; --line:#40352f;
+  --accent:#ff9575; --accent-dk:#e97a58; --accent-text:#ffab90; --accent-soft:#3d2822; --chip:#342b27; --onacc:#2a1510;
+  --blue:#7fd0f0; --blue-dk:#7fd0f0; --blue-soft:#1f3540;
+  --ok:#6fdcb8; --ok-dk:#4cc19b; --ok-soft:#1d3a30; --bad:#ff8195; --bad-soft:#42232a;
+  --seal:#ff7d73; --sakura:#ffaccb; --kin:#ffd878; --gold:#ffd878; --g1:#3d2822; --g2:#27201d;
+  --on:#7fd0f0; --kun:#6fdcb8;
+  --n5:#6fdcb8; --n4:#7fd0f0; --n3:#ffd878; --n2:#ff9575; --n1:#ff8195;
+  --sh:0 2px 14px rgba(0,0,0,.35); --sh2:0 6px 18px rgba(255,149,117,.22);
 }
 body,button,input,select,textarea{font-family:"M PLUS Rounded 1c",-apple-system,"Hiragino Sans","Apple SD Gothic Neo","Noto Sans KR",sans-serif}
 h2,h3,.cta,.pill,.mode b,.pk b,.vb{font-weight:800}
-header{border-bottom:2px solid var(--line)}
+header{border-bottom:0;box-shadow:0 2px 12px rgba(120,80,50,.07)}
 #logo small,.puh .pun{color:var(--accent-text)}
-.cta{border-radius:16px;letter-spacing:.01em}
-.cta.sec{color:var(--blue-dk);border:2px solid var(--line);border-bottom:4px solid var(--line)}
-.cta.sec:hover{background:var(--blue-soft)}
-.pill{border:2px solid var(--line);border-bottom-width:3px;font-weight:700}
-.pill.on{border-color:var(--accent);border-bottom:3px solid var(--accent-dk)}
-.mode,.opt,.pk,.card{border-width:2px;border-radius:16px}
-.opt{border-bottom-width:4px;font-weight:700}
-.opt:hover:not(:disabled),.mode:hover,.pk:hover{border-color:var(--blue);background:var(--blue-soft)}
-.pk.sel{border-color:var(--blue);box-shadow:none;background:var(--blue-soft)}
-.prog{height:16px;border-radius:8px;background:var(--chip)}
-.prog div{border-radius:8px;position:relative;background:var(--accent)}
-.prog div::after{content:"";position:absolute;left:8px;right:8px;top:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.35)}
+/* 버튼: 두꺼운 테두리 대신 부드러운 그림자 */
+.cta{border:0;border-radius:22px;letter-spacing:.01em;box-shadow:var(--sh2);transition:transform .12s,box-shadow .12s}
+.cta:active{transform:scale(.97);box-shadow:0 2px 8px rgba(244,132,95,.3);border-bottom-width:0}
+.cta.sec{background:var(--card);color:var(--accent-text);border:0;box-shadow:var(--sh)}
+.cta.sec:hover{background:var(--accent-soft)}
+.cta.sec:active{border-bottom-width:0}
+.pill{border:0;background:var(--chip);color:var(--text);font-weight:700;padding:8px 15px}
+.pill.on{background:var(--accent);color:var(--onacc);border:0;box-shadow:0 3px 10px rgba(244,132,95,.28)}
+.pill.sm{padding:3px 11px}
+/* 카드류: 둥글고 말랑하게 */
+.mode,.pk,.card,.pstat,.pu,.an-card,.an-hero,.panel,.tbox{border:0;border-radius:22px;box-shadow:var(--sh);background:var(--card)}
+.card{border-left:6px solid var(--lc,var(--nx))}
+.mode:hover,.pk:hover{background:var(--accent-soft)}
+.pk.sel{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
+.opt{border:2px solid var(--line);border-radius:20px;font-weight:700;box-shadow:none;background:var(--card)}
+.opt:hover:not(:disabled){border-color:var(--blue);background:var(--blue-soft)}
+.opt.correct{background:var(--ok-soft);border-color:var(--ok);color:#1d7a5c}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:#c23a50}
+:root[data-theme=dark] .opt.correct{color:#8fe9cb}:root[data-theme=dark] .opt.wrong{color:#ff9fb0}
+/* 진행 막대 */
+.prog{height:12px;border-radius:999px;background:var(--chip)}
+.prog div{border-radius:999px;background:linear-gradient(90deg,#ffb48f,var(--accent))}
+/* 하단 탭: 떠 있는 둥근 바 */
 .views{background:var(--chip)}
-.vb.on{color:var(--blue-dk)}
-@media(max-width:699px){.views{border-top:2px solid var(--line)}.vb.on{background:var(--blue-soft);color:var(--blue-dk);outline:2px solid var(--blue);outline-offset:-2px}}
-.pstat .prow1 b{color:var(--accent-text)}
-.opt.correct{background:#d7ffb8;border-color:#58cc02;color:#3b7d00}
-.opt.wrong{background:#ffdfe0;border-color:#ff4b4b;color:#c92f2f}
-.inq .reveal{border-top:0}
-.inq .reveal.ok{background:#d7ffb8;color:#3b7d00}
-.inq .reveal.ng{background:#ffdfe0;color:#c92f2f}
-.inq .reveal.ng .cta{background:#ff4b4b;border-bottom-color:#ea2b2b}
-:root[data-theme=dark] .opt.correct{background:#1f3a12;border-color:#58cc02;color:#a3ee66}
-:root[data-theme=dark] .opt.wrong{background:#3f1c1f;border-color:#ff6b6b;color:#ffabab}
-:root[data-theme=dark] .inq .reveal.ok{background:#1f3a12;color:#a3ee66}
-:root[data-theme=dark] .inq .reveal.ng{background:#3f1c1f;color:#ffabab}
+.vb.on{color:var(--accent-text)}
+@media(max-width:699px){
+  body{padding-bottom:92px}
+  .views{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border:0;border-radius:26px;background:var(--card);box-shadow:0 6px 24px rgba(120,80,50,.18);padding:6px 4px}
+  .views{grid-template-columns:repeat(7,1fr)}
+  .vb{border-radius:18px;font-size:11px}
+  .vb i{font-size:19px}
+  .vb.on{background:var(--accent-soft);color:var(--accent-text);outline:0}
+}
+/* 퀴즈 결과 패널 */
+.inq .reveal{border-top:0;box-shadow:0 -8px 24px rgba(120,80,50,.12)}
+.inq .reveal.ok{background:var(--ok-soft);color:#1d7a5c}
+.inq .reveal.ng{background:var(--bad-soft);color:#c23a50}
+.inq .reveal .cta{background:var(--accent)}
+.inq .reveal.ok .cta{background:var(--ok);box-shadow:0 6px 18px rgba(82,199,162,.35)}
+.inq .reveal.ng .cta{background:var(--bad);box-shadow:0 6px 18px rgba(242,103,123,.35)}
+:root[data-theme=dark] .inq .reveal.ok{background:var(--ok-soft);color:#8fe9cb}
+:root[data-theme=dark] .inq .reveal.ng{background:var(--bad-soft);color:#ff9fb0}
 .hanko{border-color:var(--seal)}
 </style>
 <script>
@@ -2630,8 +2650,8 @@ applyTheme();
 lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
-<script src="anime.js?v=13"></script>
-<script src="path.js?v=3"></script>
+<script src="anime.js?v=14"></script>
+<script src="path.js?v=5"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>

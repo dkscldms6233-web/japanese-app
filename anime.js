@@ -38,8 +38,8 @@ LINES.forEach((l,i)=>{ l.id="an"+i; l.text=plain(l.ja); });
 const ST=document.createElement("style");
 ST.textContent=`.an-wrap{max-width:720px;margin:0 auto}
 .an-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.an-tabs.sc{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.an-tabs .pill{white-space:nowrap}
-.an-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
-.an-card.done{border-color:#4c9a62}
+.an-card{background:var(--card);border:0;box-shadow:var(--sh);border-radius:22px;padding:14px 16px;margin-bottom:12px}
+.an-card.done{box-shadow:0 0 0 2px var(--ok),var(--sh)}
 .an-ja{font-size:22px;line-height:2.1;font-weight:700}.an-ko{color:var(--sub);margin:2px 0 6px}
 .an-note{font-size:13px;color:var(--sub);background:var(--chip);border-radius:10px;padding:8px 10px;margin:8px 0}
 .an-act{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
@@ -49,7 +49,7 @@ ST.textContent=`.an-wrap{max-width:720px;margin:0 auto}
 .an-type{font-size:12px;color:var(--sub)}
 .an-art{display:block;width:100%;max-width:340px;height:auto;border-radius:10px;margin:0 auto 8px}
 .an-src{font-size:13px;margin:6px 0;color:var(--text)}.an-src a{color:var(--accent);text-decoration:underline}
-.an-hero{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0}
+.an-hero{border:0;box-shadow:var(--sh);border-radius:22px;padding:12px 14px;margin:8px 0}
 .an-hs{font-size:13px;color:var(--sub);margin-bottom:8px}
 .an-ty{animation:anTy 1.1s steps(18) both}
 @keyframes anTy{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
