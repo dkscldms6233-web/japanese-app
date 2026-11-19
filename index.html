@@ -724,6 +724,17 @@ header{border-bottom:1px solid var(--line);box-shadow:none}
 .t2:active,.gcard:active,.ncard:active,.tile:active{transform:scale(.99)}
 .t2:hover,.gcard:hover,.ncard:hover,.tile:hover{border-color:var(--text)!important;background:var(--card)}
 .t2 .ti,.t2.c1 .ti,.t2.c2 .ti,.t2.c3 .ti,.t2.c4 .ti{background:var(--accent-soft)!important;color:var(--accent-text)!important;border-radius:10px}
+.pkgrid{grid-template-columns:1fr!important;gap:0!important;border-top:1px solid var(--line)}
+.pk{display:flex!important;align-items:center;gap:14px;padding:14px 4px 14px 14px!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:none!important;box-shadow:none!important}
+.pk::before{left:0!important;top:50%!important;width:4px!important;height:30px!important;border-radius:2px!important;transform:translateY(-50%)}
+.pk b{font-size:22px!important;min-width:64px}
+.pk small{flex:1;margin:0!important}
+.pk em{margin:0!important;font-size:12px!important;color:var(--sub)!important;text-align:right}
+.pk:hover{background:var(--chip)!important}
+.gcards{gap:0!important;border-top:1px solid var(--line)}
+.gc{border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:none!important;box-shadow:none!important;padding:14px 2px!important;margin:0!important}
+.gc .gi{display:none!important}
+.gc:hover{background:var(--chip)!important}
 .hanko{border-color:var(--seal)}
 </style>
 <script>
@@ -998,7 +1009,7 @@ const RAW = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 // 프로필: 이 기기 안에서만 저장돼요. 아래 키들은 프로필별로 따로 보관해요.
-const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs"];
+const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs","jp-gift"];
 let profiles = RAW.get("jp-profiles",null), activeId = RAW.get("jp-active",null);
 if(!Array.isArray(profiles)||!profiles.length){
   profiles=[{id:"p1",name:"기본"}]; activeId="p1";
@@ -2373,6 +2384,7 @@ function renderHome(){
    <div class="hhead"><div class="hmk">${MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    ${window.PATH?PATH.statusHtml():""}
+   ${window.PATH?PATH.journeyHtml():""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    ${window.PATH?PATH.reviewHtml():""}
    ${window.PATH?PATH.pathHtml():`<button class="kentry" data-kana="open"><span class="kg">あ<small>ア</small></span><span class="kt"><b>일본어 글자부터 시작하기</b><small>히라가나 · 가타카나를 글자표와 행별 레슨으로 처음부터 배워요</small></span><span class="ka">›</span></button>`}
@@ -2602,7 +2614,7 @@ document.addEventListener("click",e=>{
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300);
   }
 });
-window.APP={get ALL(){return ALL;},LS,today,myLv,streakDays,toast,R,startQuiz,setView,renderHome:()=>renderHome()};
+window.APP={get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome()};
 if(needOnb()) openOnb();
 // 프로필 (이 기기 안에서만 저장 · 비밀번호 없음)
 const saveProfiles = () => RAW.set("jp-profiles",profiles);
@@ -2650,7 +2662,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=7"></script>
+<script src="path.js?v=8"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>

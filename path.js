@@ -89,9 +89,52 @@ function go(mode){
 }
 function markDone(id,skip){ const st=state(); st.done=st.done||{}; if(!st.done[id]) st.done[id]=skip?2:1; set("jp-path",st); }
 
+/* ---------- 7일 연속 여정 · 선물 ---------- */
+const GIFT_TITLES=["새싹 참새","날갯짓 참새","하늘 참새","한 달 참새"];
+const NUM=["零","一","二","三","四","五","六","七","八","九","十"];
+const kan=n=>n<=10?NUM[n]:n<20?"十"+(n%10?NUM[n%10]:""):NUM[Math.floor(n/10)]+"十"+(n%10?NUM[n%10]:"");
+const giftTitle=j=>j<=GIFT_TITLES.length?GIFT_TITLES[j-1]:"전설의 참새";
+const ds=i=>new Date(Date.now()-i*864e5).toLocaleDateString("sv-SE");
+const giftState=()=>get("jp-gift",{claimed:{},items:[]});
+function journey(){
+  const s=A().streakDays(), pos=s>0?((s-1)%7)+1:0, last=A().studiedToday()?0:1, run=s>0?ds(last+s-1):"";
+  const gs=giftState(); let pending=0;
+  for(let j=1;j<=Math.floor(s/7);j++){ if(!gs.claimed[run+":"+j]){ pending=j; break; } }
+  return {s,pos,run,pending,items:gs.items||[]};
+}
+const JX=i=>24+i*45.3, JY=i=>[58,36,58,36,58,36,46][i];
+function journeyHtml(){
+  const J=journey(), prev=+(localStorage.getItem("jp-jpos")||0);
+  const stops=[0,1,2,3,4,5,6].map(i=>{ const x=JX(i), y=JY(i), done=i<J.pos, cur=i===J.pos-1;
+    if(i===6) return `<g class="jg ${J.pos>=7?"on":""}"><rect x="${x-13}" y="${y-8}" width="26" height="20" rx="3"/><rect x="${x-13}" y="${y-13}" width="26" height="7" rx="2"/><path d="M${x} ${y-13}v25M${x-4} ${y-17}q4 -2 4 4q0 -6 4 -4"/></g>`;
+    return `<g class="js ${done?"done":""} ${cur?"cur":""}"><circle cx="${x}" cy="${y}" r="11"/><text x="${x}" y="${y+4}" text-anchor="middle">${i+1}</text></g>`; }).join("");
+  const line=[0,1,2,3,4,5,6].map(i=>`${i?"L":"M"}${JX(i)} ${JY(i)}`).join(" ");
+  const pxy=p=>p<=0?[6,58]:[JX(p-1),JY(p-1)];
+  const [fx,fy]=pxy(prev), [tx,ty]=pxy(J.pos);
+  const msg=J.pending?"일곱 걸음을 다 걸었어요! 선물 상자가 기다려요":J.pos===0?"오늘 공부하면 참새가 길을 나서요":J.pos<7?`${7-J.pos}일 더 걸으면 선물 상자가 열려요`:"도착했어요! 내일부터 새 여정이 시작돼요";
+  setTimeout(()=>{ const b=document.querySelector(".jrb"); if(b){ b.style.left=(tx/3.2)+"%"; b.style.top=((ty-38)/84*100)+"%"; } try{ localStorage.setItem("jp-jpos",String(J.pos)); }catch(e){} },80);
+  return `<div class="jr"><div class="jrh"><b>7일 연속 여정</b><span>${J.pos} / 7일</span></div>
+   <div class="jrroad"><svg viewBox="0 0 320 84" aria-hidden="true"><path class="jl" d="${line}"/>${stops}</svg><img class="jrb" src="mascot.png" alt="" style="left:${fx/3.2}%;top:${(fy-38)/84*100}%"></div>
+   <div class="jrf"><span>${msg}</span>${J.pending?`<button class="cta" data-gift="open" style="width:auto;padding:10px 18px;font-size:15px">선물 받기</button>`:""}</div>
+   ${J.items.length?`<button class="jrc" data-gift="box">내 선물함 · ${J.items.length}개 ›</button>`:""}</div>`;
+}
+function giftDlg(){ let d=document.getElementById("giftDlg"); if(!d){ d=document.createElement("dialog"); d.id="giftDlg"; document.body.appendChild(d); d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-gclose]")){ d.close(); A().renderHome(); } else { const g=ev.target.closest("[data-gift]"); if(g) giftAct(g.dataset.gift); } }); } return d; }
+const stamp=n=>{ const t=kan(n)+"日"; return `<div class="stamp"><b style="font-size:${t.length>3?22:28}px">${t}</b><small>連続</small></div>`; };
+function giftAct(a){
+  const d=giftDlg();
+  if(a==="open"){ const J=journey(); if(!J.pending) return;
+    d.innerHTML=`<div class="db" style="text-align:center;padding:28px 20px"><p class="sub">${J.pending*7}일 연속 달성!</p><svg class="gbox" viewBox="0 0 120 110" aria-hidden="true"><rect x="20" y="46" width="80" height="54" rx="6"/><rect x="14" y="32" width="92" height="20" rx="5"/><path d="M60 32v68M60 32q-16 -22 -26 -10q-6 12 26 10zM60 32q16 -22 26 -10q6 12 -26 10z"/></svg><div><button class="cta" data-gift="reveal" data-j="${J.pending}" style="max-width:220px;margin:14px auto 0">상자 열기</button></div></div>`;
+    if(!d.open) d.showModal(); return; }
+  if(a==="reveal"){ const J=journey(), j=J.pending; if(!j) return; const gs=giftState(); gs.claimed[J.run+":"+j]=1; gs.items.push({j,n:j*7,title:giftTitle(j),at:Date.now()}); set("jp-gift",gs); addXp(100);
+    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했어요</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 선물함에 보관돼요</p><button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋아요</button></div>`; return; }
+  if(a==="box"){ const its=giftState().items;
+    d.innerHTML=`<div class="dh"><h2 style="margin:0">내 선물함</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db"><div class="gl">${its.slice().reverse().map(x=>`<div class="gi">${stamp(x.n)}<b>${E(x.title)}</b><small>${new Date(x.at).toLocaleDateString("ko-KR")}</small></div>`).join("")}</div></div>`;
+    if(!d.open) d.showModal(); }
+}
+
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  statusHtml,reviewHtml,pathHtml,
+  statusHtml,reviewHtml,pathHtml,journeyHtml,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
@@ -113,7 +156,7 @@ document.addEventListener("click",e=>{
   else if(sk){ const u=build().find(x=>x.id===sk.dataset.pskip); if(u&&confirm("「"+u.title+"」 유닛을 이미 알고 있는 것으로 표시할까요? 경험치는 오르지 않아요.")){ u.nodes.forEach(n=>markDone(n.id,true)); A().renderHome(); } }
   else if(pr) window.PATH.review();
 });
-document.addEventListener("click",e=>{ const g=e.target.closest("[data-pgo]"); if(g) go(g.dataset.pgo); });
+document.addEventListener("click",e=>{ const g=e.target.closest("[data-pgo]"); if(g) go(g.dataset.pgo); const gf=e.target.closest("#homeView [data-gift]"); if(gf) giftAct(gf.dataset.gift); });
 
 /* ---------- 스타일 ---------- */
 const ST=document.createElement("style");
@@ -138,6 +181,24 @@ ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!im
 .pskip{display:block;margin:18px auto 0;background:none;border:0;color:var(--sub);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer}
 .pwl{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:42vh;overflow:auto}
 .pwi{border:1px solid var(--line);border-radius:10px;padding:6px 9px;display:flex;flex-direction:column;font-size:13px}.pwi b{font-size:15px}.pwi span{color:var(--sub)}
+.jr{margin:22px 0 6px}.jrh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}.jrh b{font-size:15px}.jrh span{font-size:13px;color:var(--sub)}
+.jrroad{position:relative}.jrroad svg{display:block;width:100%;height:auto;overflow:visible}
+.jl{fill:none;stroke:var(--line);stroke-width:3;stroke-dasharray:2 7;stroke-linecap:round}
+.js circle{fill:var(--card);stroke:var(--line);stroke-width:2}.js text{font-size:11px;font-weight:700;fill:var(--sub)}
+.js.done circle{fill:var(--ok);stroke:var(--ok)}.js.done text{fill:#fff}
+.js.cur circle{fill:var(--accent);stroke:var(--accent)}.js.cur text{fill:var(--onacc)}
+.jg rect,.jg path{fill:var(--card);stroke:var(--sub);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.jg.on rect,.jg.on path{stroke:var(--accent);fill:var(--accent-soft)}
+.jrb{position:absolute;width:36px;height:auto;transform:translate(-50%,0);transition:left 1.1s cubic-bezier(.4,.1,.2,1),top 1.1s cubic-bezier(.4,.1,.2,1);pointer-events:none;animation:jhop 1.6s ease-in-out infinite}
+@keyframes jhop{0%,100%{margin-top:0}50%{margin-top:-4px}}
+.jrf{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--sub);margin-top:2px}
+.jrc{background:none;border:0;padding:8px 0 0;font:inherit;font-size:13px;color:var(--accent-text);font-weight:600;cursor:pointer}
+#giftDlg{border:0;border-radius:18px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#giftDlg::backdrop{background:rgba(0,0,0,.45)}
+.gbox{width:130px;height:auto;animation:gshake 1.2s ease-in-out infinite}.gbox rect,.gbox path{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+@keyframes gshake{0%,100%{transform:rotate(0)}20%{transform:rotate(-4deg)}40%{transform:rotate(4deg)}60%{transform:rotate(-3deg)}80%{transform:rotate(2deg)}}
+.stamp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:76px;height:76px;padding:0 8px;border:3px solid var(--seal);border-radius:10px;color:var(--seal);transform:rotate(-4deg);animation:gstamp .5s cubic-bezier(.2,1.5,.4,1)}
+.stamp b{font-weight:900;line-height:1}.stamp small{font-size:10px;font-weight:700;letter-spacing:.2em;margin-top:3px}
+@keyframes gstamp{from{transform:rotate(-4deg) scale(2);opacity:0}to{transform:rotate(-4deg) scale(1);opacity:1}}
+.gl{display:grid;grid-template-columns:1fr 1fr;gap:14px}.gi{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.gi small{color:var(--sub);font-size:11px}
 #pathDlg{border:0;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#pathDlg::backdrop{background:rgba(0,0,0,.45)}`;
 document.head.appendChild(ST);
 if(A()&&A().renderHome) A().renderHome();
