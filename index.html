@@ -2387,6 +2387,7 @@ function renderHome(){
   const sent=qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장 · "+qt.by}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"+(my.includes(p.lv)?" · "+p.lv:"")}:null;
   $("homeView").innerHTML=`<div class="home">
    <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
+   ${window.DEV?DEV.bannerHtml():""}
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    ${window.PATH?PATH.statusHtml():""}
    ${window.PATH?PATH.journeyHtml():""}
@@ -2662,8 +2663,9 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=49"></script>
+<script src="path.js?v=50"></script>
 <script src="community.js?v=7"></script>
+<script src="dev.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>

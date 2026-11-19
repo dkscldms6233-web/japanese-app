@@ -299,7 +299,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  equip:()=>charState().equip||{},addSeeds,birdSvg,statusHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
+  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
