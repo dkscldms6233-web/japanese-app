@@ -2393,7 +2393,7 @@ function renderHome(){
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    ${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}
    <div class="lrows" style="margin-top:12px">
-     <button class="lrow" data-ppage="path"><span>전체 학습 경로</span><i>›</i></button>
+     <button class="lrow" data-ppage="path"><span>단계별로 공부하기</span><i>›</i></button>
      <button class="lrow" data-ppage="basic"><span>기초 (히라가나 · 가타카나)</span><i>›</i></button>
      <button class="lrow" data-hq="review"><span>${nw?`오답 노트 · ${nw}개`:"오답 노트"}</span><i>›</i></button>
    </div>
@@ -2662,7 +2662,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=43"></script>
+<script src="path.js?v=44"></script>
 <script src="community.js?v=7"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>

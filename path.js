@@ -184,7 +184,7 @@ function basicHtml(){
 }
 function pageHtml(){
   if(page==="basic") return basicHtml();
-  return `<div class="home">${back}<h2 style="margin:6px 0 4px">학습 경로</h2><div class="sub">레슨을 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료돼요</div>${pathHtml(true)}</div>`;
+  return `<div class="home">${back}<h2 style="margin:6px 0 4px">단계별로 공부하기</h2><div class="sub">레슨을 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료돼요</div>${pathHtml(true)}</div>`;
 }
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
