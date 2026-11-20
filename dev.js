@@ -4,13 +4,14 @@
 (function(){
 const A=()=>window.APP, $=id=>document.getElementById(id);
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let isDev=false, notice="", me=null;
+let isDev=false, notice="", noticeAt=0, me=null;
 const cl=()=>A()&&A().cloud, db=()=>cl().db;
 const weekKey=d=>{ const x=new Date(d||Date.now()); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x.toLocaleDateString("sv-SE"); };
 
 /* 공지: 누구나 읽고(게스트 포함), 개발자만 써요 */
-async function loadNotice(){ try{ if(!cl()||!cl().ok) return; const s=await db().collection("config").doc("announce").get(); notice=(s.exists&&s.data().text)||""; if(A().view&&A().view()==="home") A().renderHome(); }catch(e){} }
-function bannerHtml(){ return notice?`<div class="devnote">📢 ${E(notice)}</div>`:""; }
+async function loadNotice(){ try{ if(!cl()||!cl().ok) return; const s=await db().collection("config").doc("announce").get(); notice=(s.exists&&s.data().text)||""; noticeAt=(s.exists&&s.data().at)||0; if(A().view&&A().view()==="home") A().renderHome(); }catch(e){} }
+function bannerHtml(){ if(!notice) return ""; const d=noticeAt?new Date(noticeAt):null, ds=d?`${d.getMonth()+1}월 ${d.getDate()}일`:"";
+  return `<div class="devnote" role="note"><div class="nh"><span class="nbadge">공지</span>${ds?`<small>${ds}</small>`:""}</div><div class="nt">${E(notice)}</div></div>`; }
 
 function btn(){ let b=$("devBtn"); if(!isDev){ if(b) b.remove(); return; } if(b) return;
   b=document.createElement("button"); b.id="devBtn"; b.textContent="🛠"; b.setAttribute("aria-label","개발자 모드"); b.onclick=open; document.body.appendChild(b); }
@@ -56,7 +57,7 @@ const ST=document.createElement("style"); ST.textContent=`#devBtn{position:fixed
 #devDlg{border:0;border-radius:18px;padding:0;max-width:420px;width:calc(100% - 28px);max-height:88vh;background:var(--card);color:var(--text)}#devDlg::backdrop{background:rgba(0,0,0,.45)}
 .devdb h3{font-size:14px;margin:14px 0 6px}.devrow{display:flex;flex-wrap:wrap;gap:6px}.devdb textarea{width:100%;box-sizing:border-box;font:inherit;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--bg);color:var(--text);margin-bottom:6px}
 .devli{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}.devli small{color:var(--sub)}.devli .pill.sm{padding:4px 9px;font-size:12px}
-.devnote{margin:10px 0;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:13px}`;
+.devnote{margin:10px 0 14px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);border:1px solid var(--accent);border-left-width:5px;font-size:14px;line-height:1.5}.devnote .nh{display:flex;align-items:center;gap:8px;margin-bottom:4px}.devnote .nbadge{background:var(--accent);color:var(--onacc);font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;letter-spacing:.04em}.devnote small{color:var(--sub);font-size:12px}.devnote .nt{color:var(--text);font-weight:600;word-break:keep-all}`;
 document.head.appendChild(ST);
 
 window.DEV={bannerHtml,open};
