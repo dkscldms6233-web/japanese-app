@@ -87,7 +87,7 @@ function wdRender(){
     const cells=[...Array(g.len)].map((_,i)=>{ if(guess) return `<div class="wd-c ${guess.res[i]}">${guess.s[i]}</div>`; if(isCur) return `<div class="wd-c cur">${g.cur[i]||""}</div>`; return `<div class="wd-c"></div>`; }).join("");
     rows.push(`<div class="wd-row" style="grid-template-columns:repeat(${g.len},${g.len>5?40:46}px)">${cells}</div>`); }
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
-   <div class="gstat"><span>${g.mode==="daily"?"오늘의 문제":"연습"} · ${jlv()} · ${g.kata?"가타카나":"히라가나"}</span><span>${g.guesses.length} / 6번</span><button class="pill sm" data-act="gquit">그만하기</button></div>
+   <div class="gstat"><span>${g.guesses.length} / 6번</span><button class="pill sm" data-act="gquit">그만하기</button></div>
    <div class="wd-hint"><b>${E(w.ko)}</b>${show}<small>${g.len}글자 · ${(POS[w.pos]||[w.pos])[0]}${w.text!==w.yomi?(g.hint?(g.showKanji?"":" · 한자 힌트 사용함"):` · <a href="#" data-wd="hint" style="color:var(--accent)">한자 힌트 3초 보기(-10점)</a>`):""}</small></div>
    <div class="wd-grid">${rows.join("")}</div>
    <div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button></div>
@@ -162,7 +162,7 @@ function shRender(){
   const g=G, chain=g.chain.slice(-2), nat=!!(typeof prefs!=="undefined"&&prefs.shNative);
   const oldNat=nat?$("shNat"):null;
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
-   <div class="gstat"><span>점수 ${g.score}</span><span>이은 횟수 ${g.rounds}</span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
+   <div class="gstat"><span>점수 ${g.score}</span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
    <div class="sh-chain">${chain.map(c=>`<div class="sh-w ${c.who}"><b style="font-size:20px">${E(c.w.text)}</b><small>${c.r} · ${E(c.w.ko)}</small></div>`).join("")}</div>
    <div class="sh-need"><b>${g.need}</b> 로 시작하는 단어를 입력하세요</div>
    <div class="sh-in">${[...g.cur].map((c,i)=>`<span class="${i===0?"lock":""}">${c}</span>`).join("")}<span class="caret"></span></div>
@@ -241,7 +241,7 @@ function fSpawn(){
 function fRenderShell(){
   const g=G;
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
-   <div class="gstat"><span id="fsc">점수 ${g.score}</span><span id="fcb">연속 ${g.combo}</span><span>레벨 <b id="flv">${g.lv}</b></span>
+   <div class="gstat"><span id="fsc">점수 ${g.score}</span>
     <span class="hp" id="fhp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,i===g.lostIdx)).join("")}</span></div>
    <div class="fallarea" id="fallarea"><div class="gr"></div></div>
    <div class="sub" id="fq" style="text-align:center"></div><div class="opts4" id="fopts"></div>

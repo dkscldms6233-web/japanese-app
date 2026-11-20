@@ -3,24 +3,25 @@
 const G="body:has(#quizView .gbox)";
 const ST=document.createElement("style");
 ST.textContent=`
-${G}{background:linear-gradient(180deg,#4d7cff 0%,#7a5cff 55%,#b25cff 100%) fixed!important;background-image:none;overflow-x:hidden}
+${G}{background:radial-gradient(120% 70% at 50% 0%,#7f8cff 0%,rgba(127,140,255,0) 60%),linear-gradient(180deg,#5b61e8 0%,#4a44c9 100%) fixed!important;background-image:none;overflow-x:hidden}
 ${G}::before{display:none!important}
 ${G} header{display:none!important}
 ${G} main{padding:14px 12px 28px!important;max-width:560px;margin:0 auto}
-${G} #quizView .gbox{background:none!important;border:0!important;box-shadow:none!important;overflow:visible;padding:8px 0 14px;color:#fff;font-size:17px}
-${G} #quizView .gbox .sub,${G} #quizView .gbox p{color:rgba(255,255,255,.88)!important;font-size:13px;margin:4px 0;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+${G} #quizView .gbox{background:none!important;border:0!important;box-shadow:none!important;overflow:visible;padding:8px 0 14px;color:#fff;font-size:17px;font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Hiragino Sans','Yu Gothic','Malgun Gothic',system-ui,sans-serif;font-weight:700;letter-spacing:0}
+${G} #quizView .gbox *{font-family:inherit;font-weight:700;letter-spacing:0}
+${G} #quizView .gbox .sub,${G} #quizView .gbox p{color:#fff!important;font-size:14px;margin:4px 0;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 ${G} #quizView .gbox h2,${G} #quizView .gbox .qw{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.2)}
 /* 상태 칩 */
 ${G} #quizView .gbox .gstat{gap:6px;margin:6px 0 6px;font-size:15px}
-${G} #quizView .gbox .gstat span{background:rgba(20,10,60,.38);border:2px solid rgba(255,255,255,.28);color:#ffe27a;border-radius:14px;padding:5px 12px;font-size:16px;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+${G} #quizView .gbox .gstat span{background:rgba(20,10,60,.38);border:2px solid rgba(255,255,255,.28);color:#fff;border-radius:14px;padding:6px 16px;font-size:18px;font-weight:800;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 /* 시간 막대 */
 ${G} #quizView .gbox .prog{height:22px;border-radius:14px;background:rgba(20,10,60,.4);border:3px solid rgba(255,255,255,.85);box-shadow:inset 0 3px 0 rgba(0,0,0,.18);overflow:hidden;margin:8px 0}
 ${G} #quizView .gbox .prog div,${G} #gbar{border-radius:10px;background:linear-gradient(180deg,#8dff8a,#22c55e)!important;box-shadow:inset 0 5px 0 rgba(255,255,255,.45)}
 ${G} #gbar.mid{background:linear-gradient(180deg,#ffd45e,#ff9d0a)!important}
 ${G} #gbar.low{background:linear-gradient(180deg,#ff8aa8,#ee2d63)!important}
 /* 도톰한 타일/버튼 */
-${G} #quizView .gbox .opt{background:#fff;color:#2b2150;border:0;border-radius:20px;box-shadow:0 6px 0 #c8c3f0,0 10px 14px rgba(20,10,60,.25);padding:8px 8px;font-size:19px;min-height:46px;line-height:1.25;transition:transform .08s,box-shadow .08s}
-${G} #quizView .gbox .opt small{color:#7c75a8;font-size:12px}
+${G} #quizView .gbox .opt{font-weight:800;background:#fff;color:#1d1a3d;border:0;border-radius:20px;box-shadow:0 6px 0 #c8c3f0,0 10px 14px rgba(20,10,60,.25);padding:8px 8px;font-size:20px;min-height:46px;line-height:1.3;transition:transform .08s,box-shadow .08s}
+${G} #quizView .gbox .opt small{color:#5d5890;font-size:13px;font-weight:700}
 ${G} #quizView .gbox .opt:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 0 #c8c3f0,0 12px 16px rgba(20,10,60,.28)}
 ${G} #quizView .gbox .opt:active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 #c8c3f0,0 2px 4px rgba(20,10,60,.25)}
 ${G} #quizView .gbox .opt.sel{background:#fff5b8;box-shadow:0 6px 0 #f2b82a,0 0 0 4px #ffd43b inset,0 0 22px rgba(255,212,59,.75);transform:translateY(-2px)}
