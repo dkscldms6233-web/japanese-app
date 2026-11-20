@@ -10,14 +10,17 @@ const A=()=>window.APP;
 const get=(k,d)=>A().LS.get(k,d), set=(k,v)=>A().LS.set(k,v);
 const LESSON_N=20, UNIT_N=5, PASS=.7;
 const IV=[10/1440,1,3,7,14,30,60];            // 복습 간격(일)
-const TITLES=["견습생","수련생","열혈 학습자","중급 도전자","숙련자","달인","명인"];
+const TITLES=[[1,"견습생"],[4,"수련생"],[8,"열혈 학습자"],[12,"중급 도전자"],[16,"숙련자"],[20,"고수"],[24,"달인"],[28,"명인"],[30,"일본어 마스터"]]; // [시작 레벨, 칭호]
+const MAXLV=30;
 
 /* ---------- 경험치 ---------- */
 const xpState=()=>get("jp-xp",{t:0,d:{}});
 function addXp(n){ if(!n) return; const s=xpState(); s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s);  try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
-const lvOf=t=>Math.floor(Math.sqrt((t||0)/50))+1;
-const lvFloor=l=>50*(l-1)*(l-1);
-const titleOf=l=>TITLES[Math.min(l-1,TITLES.length-1)];
+/* 레벨이 오를수록 필요한 경험치가 점점 커져요. 30레벨까지 약 9,200 XP(= 한 급수를 거의 다 공부했을 때) */
+const lvFloor=l=>Math.round(50*Math.pow(l-1,1.55));
+const lvOf=t=>{ let l=1; while(l<MAXLV&&(t||0)>=lvFloor(l+1)) l++; return l; };
+const titleOf=l=>{ let n=TITLES[0][1]; for(const [s,t] of TITLES) if(l>=s) n=t; return n; };
+const lvPct=(x,l)=>l>=MAXLV?100:Math.round((x-lvFloor(l))/(lvFloor(l+1)-lvFloor(l))*100);
 
 /* ---------- 자동 복습(간격 반복) ---------- */
 function srsUpdate(key,ok){
@@ -156,15 +159,15 @@ let showAllUnits=false;
 /* ---------- 홈 화면 조각 ---------- */
 let openUnits=new Set();
 function statusHtml(){
-  const x=xpState(), l=lvOf(x.t), lo=lvFloor(l), hi=lvFloor(l+1), pc=Math.round((x.t-lo)/(hi-lo)*100), st=A().streakDays();
+  const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
   return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${st?st+"일 연속 · ":""}${x.t} XP · 현재 씨앗 ${charState().seeds||0}</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
 }
 /* 내 계정 화면: 내 참새 + 레벨·연속 출석·씨앗 */
 function profileHtml(){
-  const x=xpState(), l=lvOf(x.t), lo=lvFloor(l), hi=lvFloor(l+1), pc=Math.round((x.t-lo)/(hi-lo)*100), st=A().streakDays();
+  const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
   return `<div class="pfbird">${birdSvg(null,"big")}</div>
    <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>씨앗 <b>${charState().seeds||0}</b></span></div>
-   <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · 다음 레벨까지 ${hi-x.t} XP</small></div>`;
+   <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
 }
 function reviewHtml(){ const n=dueKeys().length; if(!n) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
 function pathHtml(full){
@@ -404,5 +407,22 @@ ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!im
 #shopDlg{border:0;border-radius:18px;padding:0;max-width:420px;width:calc(100% - 28px);max-height:88vh;overflow:auto;background:var(--card);color:var(--text)}#shopDlg::backdrop{background:rgba(0,0,0,.45)}
 #pathDlg{border:0;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#pathDlg::backdrop{background:rgba(0,0,0,.45)}`;
 document.head.appendChild(ST);
+/* 홈의 목표·레벨 칸을 넓고 시원하게 + 톡톡 튀는 색 포인트 */
+const ST2=document.createElement("style");
+ST2.textContent=`
+.hgoal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px 14px;margin:14px 0}
+.hgoal .sub{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px}.hgoal .sub b{color:#12a36d;font-size:16px}
+.hgoal .prog{height:12px;border-radius:6px;margin:0}.hgoal .prog div{border-radius:6px;background:linear-gradient(90deg,#2ed69b,#12a36d)}
+.pstat{border:1px solid var(--line)!important;background:var(--card)!important;border-radius:18px!important;padding:16px 18px 14px!important;margin:14px 0!important}
+.pstat .prow1{margin-bottom:10px;align-items:center}.pstat .prow1 b{font-size:17px;color:#6d4ce0}.pstat .prow1 span{font-size:13px}
+.pstat .prog{height:12px;border-radius:6px;margin:0}.pstat .prog div{border-radius:6px;background:linear-gradient(90deg,#8b6bff,#c08bff)}
+.jlv .pill.on[data-l=N5]{background:var(--n5)!important;color:#fff!important}.jlv .pill.on[data-l=N4]{background:var(--n4)!important;color:#fff!important}
+.jlv .pill.on[data-l=N3]{background:var(--n3)!important;color:#fff!important}.jlv .pill.on[data-l=N2]{background:var(--n2)!important;color:#fff!important}
+.jlv .pill.on[data-l=N1]{background:var(--n1)!important;color:#fff!important}
+.views .vb:nth-child(2).on{color:#2a7fc4;background:#e8f2fc}.views .vb:nth-child(3).on{color:#d98a00;background:#fff3d9}
+.views .vb:nth-child(4).on{color:#7c4dd8;background:#f0e8ff}.views .vb:nth-child(5).on{color:#12a36d;background:#e1f6ec}
+.views .vb:nth-child(6).on{color:#e0457b;background:#ffe6ef}.views .vb:nth-child(7).on{color:#0f9fb0;background:#dff5f8}
+`;
+document.head.appendChild(ST2);
 if(A()&&A().renderHome) A().renderHome();
 })();

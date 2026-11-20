@@ -2179,7 +2179,7 @@ const sayBtn=(attr,val,cls)=>canSay()?`<button type="button" class="say ${cls||"
 
 /* ---- 목록 ---- */
 function newsBar(){
-  return `<div class="nbar">${NEWS_CATS.map(([c,n])=>`<button class="pill ${c===newsCat?"on":""}" data-nc="${c}">${n}</button>`).join("")}</div>
+  return `${NEWS_CATS.length>1?`<div class="nbar">${NEWS_CATS.map(([c,n])=>`<button class="pill ${c===newsCat?"on":""}" data-nc="${c}">${n}</button>`).join("")}</div>`:""}
   ${newsCat==="art"?`<div class="nbar"><span class="sub">급수</span><button class="pill sm ${!lvSel.size&&level==="전체"?"on":""}" data-nl="">전체</button>${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill sm ${level==="전체"&&lvSel.has(l)?"on":""}" data-nl="${l}">${l}</button>`).join("")}</div>`:""}
   <div class="nbar"><span class="sub">분류</span>${NCATS.map(c=>`<button class="pill sm ${c===newsTopic?"on":""}" data-ntp="${c}">${c}</button>`).join("")}</div>
   <div class="nbar"><label class="tg"><input type="checkbox" id="nOnly" ${newsOnly?"checked":""}> 내 단어가 들어간 글만</label>
@@ -2686,7 +2686,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=55"></script>
+<script src="path.js?v=56"></script>
 <script src="community.js?v=9"></script>
 <script src="dev.js?v=3"></script>
 <script src="kowrap.js?v=1"></script>
