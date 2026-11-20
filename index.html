@@ -793,7 +793,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana.js?v=17"></script>
 <script src="games2.js?v=15"></script>
 <script src="bgm.js?v=37"></script>
-<script src="gametheme.js?v=10"></script>
+<script src="gametheme.js?v=11"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1762,13 +1762,16 @@ function beginMatch(uniq){
   G={type:"match",seen:new Map(),marks:new Set(),uniq,ptr:0,round:0,total:100000,end:Date.now()+100000,score:0,combo:0,pairs:0,maxc:0,wrong:new Map(),busy:false,pop:""};
   matchRound(); gTimer=setInterval(gTick,100); bgmStart();
 }
+function matchWord(){ const n=G.uniq.length; const shown=new Set([...G.cur,...G.right,...G.qL,...G.qR].map(x=>x.key)); let w,t=0; do{ w=G.uniq[G.ptr++%n]; }while(shown.has(w.key)&&++t<n); return w; }
 function matchRound(){
-  const n=G.uniq.length; G.cur=[]; for(let i=0;i<6;i++) G.cur.push(G.uniq[G.ptr++%n]);
-  G.cur.forEach(w=>{ if(!G.seen.has(w.key)) G.seen.set(w.key,{w,st:"no"}); });
-  G.right=shuffle(G.cur); G.done=new Set(); G.missed=new Set(); G.sel=null; G.bad=null; G.busy=false; renderMatch();
+  /* 처음 화면: 왼쪽 6개 · 오른쪽 6개. 짝이 없는 칸이 2개씩 있어서(w5·w6의 뜻은 나중에, w7·w8은 나중에 단어가 나와요) 새로 채워지는 칸이 서로의 짝이 되지 않아요 */
+  const ws=[], n=G.uniq.length; while(ws.length<8&&G.ptr<n*3){ const w=G.uniq[G.ptr++%n]; if(!ws.some(x=>x.key===w.key)) ws.push(w); }
+  G.cur=ws.slice(0,6); G.right=shuffle([ws[0],ws[1],ws[2],ws[3],ws[6],ws[7]]); G.qL=[ws[6],ws[7]]; G.qR=[ws[4],ws[5]];
+  ws.forEach(w=>{ if(!G.seen.has(w.key)) G.seen.set(w.key,{w,st:"no"}); });
+  G.done=new Set(); G.missed=new Set(); G.sel=null; G.bad=null; G.busy=false; renderMatch();
 }
 function renderMatch(){
-  const cls=(side,w)=>G.done.has(w.key)?"good"+(G.last===w.key?" just":""):(G.bad&&G.bad[side]===w.key)?"bad":(G.sel&&G.sel.side===side&&G.sel.key===w.key)?"sel":(G.newKey===w.key?"newin":"");
+  const cls=(side,w)=>G.done.has(w.key)?"good"+(G.last===w.key?" just":""):(G.bad&&G.bad[side]===w.key)?"bad":(G.sel&&G.sel.side===side&&G.sel.key===w.key)?"sel":((side==="l"?G.newL:G.newR)===w.key?"newin":"");
   const tile=(side,w,html)=>`<button class="opt ${cls(side,w)}" data-act="gm" data-side="${side}" data-key="${w.key}">${html}${side==="l"?`<span class="gst2 ${stars.has(w.key)?"on":""}" role="button" tabindex="-1" data-act="gmark" data-key="${w.key}" title="나중에 볼 단어로 저장" aria-label="나중에 볼 단어로 저장">${ic("star")}</span>`:""}</button>`;
   const left=Math.max(0,G.end-Date.now());
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>${mbarHTML(left)}
@@ -1780,7 +1783,7 @@ ${G.pop?`<p class="sub" style="text-align:center"><b>${G.pop}</b></p>`:""}
 }
 function matchPick(side,key){
   if(!G||G.type!=="match"||G.busy||G.done.has(key)) return;
-  G.last=null; G.newKey=null;
+  G.last=null; G.newL=null; G.newR=null;
   if(!G.sel||G.sel.side===side){ G.sel=(G.sel&&G.sel.side===side&&G.sel.key===key)?null:{side,key}; renderMatch(); return; }
   const lk=side==="l"?key:G.sel.key, rk=side==="r"?key:G.sel.key;
   if(lk===rk){
@@ -1793,13 +1796,11 @@ function matchPick(side,key){
     G.busy=true; renderMatch();
     /* 한 쌍을 맞히면 그 자리에 바로 새 단어가 채워져요 */
     const g=G, li=G.cur.findIndex(x=>x.key===lk), ri=G.right.findIndex(x=>x.key===lk);
-    gFlash=setTimeout(()=>{ if(G!==g) return; const shown=new Set(G.cur.map(x=>x.key)); let nw,tries=0;
-      do{ nw=G.uniq[G.ptr++%G.uniq.length]; }while(shown.has(nw.key)&&++tries<G.uniq.length);
-      if(!G.seen.has(nw.key)) G.seen.set(nw.key,{w:nw,st:"no"});
-      if(li>=0) G.cur[li]=nw; if(ri>=0) G.right[ri]=nw;
-      /* 새 단어의 뜻이 같은 줄·바로 옆 줄에 나오면 너무 쉬우니, 멀리 떨어진 칸과 자리를 바꿔요 */
-      if(li>=0&&ri>=0&&Math.abs(li-ri)<2){ const far=[...G.right.keys()].filter(i=>i!==ri&&Math.abs(i-li)>=2); if(far.length){ const t=far[Math.floor(Math.random()*far.length)]; [G.right[ri],G.right[t]]=[G.right[t],G.right[ri]]; } }
-      G.done.delete(lk); G.newKey=nw.key; G.busy=false; G.pop=""; renderMatch(); },200);
+    gFlash=setTimeout(()=>{ if(G!==g) return; let nl,nr;
+      if(G.qL.length){ nl=G.qL.shift(); nr=G.qR.shift(); }
+      else{ nl=matchWord(); G.qR.push(nl); nr=matchWord(); G.qL.push(nr); }
+      [nl,nr].forEach(w=>{ if(!G.seen.has(w.key)) G.seen.set(w.key,{w,st:"no"}); });
+      if(li>=0) G.cur[li]=nl; if(ri>=0) G.right[ri]=nr; G.done.delete(lk); G.newL=nl.key; G.newR=nr.key; G.busy=false; G.pop=""; renderMatch(); },200);
     popFx("+"+pts,"pts"); if(first&&G.combo>=3) popFx(G.combo+" 콤보!",cmbCls(G.combo));
   } else {
     G.combo=0; G.end-=3000; G.missed.add(lk); G.missed.add(rk); [lk,rk].forEach(k=>{ const r=G.seen.get(k); if(r) r.st="ng"; }); G.bad={l:lk,r:rk}; G.busy=true; G.pop="-3초"; sfx("ng"); renderMatch(); popFx("-3초","pts neg");
