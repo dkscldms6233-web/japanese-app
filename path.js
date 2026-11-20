@@ -169,16 +169,6 @@ function profileHtml(){
    <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>씨앗 <b>${charState().seeds||0}</b></span></div>
    <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
 }
-/* 단순한 홈: 윗부분(참새·레벨·오늘의 목표를 한 칸에) · 작은 칸들 · 접히는 7일 출석 */
-function homeHeroHtml(pc,g,n,greet){
-  const x=xpState(), l=lvOf(x.t);
-  return `<div class="hhero"><div class="hhl">${birdHtml()}</div><div class="hhr"><small>Lv.${l} ${titleOf(l)}</small><b>${greet}</b></div>
-   <div class="hgbar"><div style="width:${pc}%"></div></div><div class="hgl"><span>오늘의 목표</span><span><b>${Math.min(n,g)}</b> / ${g}문제</span></div></div>`;
-}
-function continueTile(){ const c=current(); if(!c) return ""; return `<button class="tile t-blue" data-pn="${c.n.id}"><small>이어서 하기</small><b>${E(c.n.L||"")} ${E(c.n.label)}</b></button>`; }
-function reviewTile(nw){ const n=dueKeys().length; return n?`<button class="tile t-pink" data-pr="1"><small>복습할 단어</small><b>${n}개</b></button>`:`<button class="tile t-pink" data-hq="review"><small>오답 노트</small><b>${nw?nw+"개":"비어 있어요"}</b></button>`; }
-function journeyBox(){ const J=journey(), body=journeyHtml();
-  return `<details class="jrbox" ${J.pending?"open":""}><summary><span>7일 연속 출석</span><b>${J.pos} / 7일${J.pending?" · 선물 도착":""}</b></summary>${body}</details>`; }
 function reviewHtml(){ const n=dueKeys().length; if(!n) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
 function pathHtml(full){
   const st=state(), cur=current(), all=vis(); if(cur) openUnits.add(cur.u.id);
@@ -320,7 +310,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,homeHeroHtml,continueTile,reviewTile,journeyBox,profileHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
+  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,profileHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
@@ -429,6 +419,9 @@ ST2.textContent=`
 .jlv .pill.on[data-l=N5]{background:var(--n5)!important;color:#fff!important}.jlv .pill.on[data-l=N4]{background:var(--n4)!important;color:#fff!important}
 .jlv .pill.on[data-l=N3]{background:var(--n3)!important;color:#fff!important}.jlv .pill.on[data-l=N2]{background:var(--n2)!important;color:#fff!important}
 .jlv .pill.on[data-l=N1]{background:var(--n1)!important;color:#fff!important}
+.views .vb:nth-child(2).on{color:#2a7fc4;background:#e8f2fc}.views .vb:nth-child(3).on{color:#d98a00;background:#fff3d9}
+.views .vb:nth-child(4).on{color:#7c4dd8;background:#f0e8ff}.views .vb:nth-child(5).on{color:#12a36d;background:#e1f6ec}
+.views .vb:nth-child(6).on{color:#e0457b;background:#ffe6ef}.views .vb:nth-child(7).on{color:#0f9fb0;background:#dff5f8}
 `;
 document.head.appendChild(ST2);
 if(A()&&A().renderHome) A().renderHome();

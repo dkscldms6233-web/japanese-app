@@ -76,7 +76,6 @@ const markRead=o=>{ const m=chatRead(); m[pairId(o)]=Date.now(); try{ localStora
 function badge(){
   const n=UN.cheers+Object.values(UN.chats).filter(Boolean).length, b=document.querySelector('.vb[data-view="community"]'); if(!b) return;
   let d=b.querySelector(".vbdot"); if(!n){ if(d) d.remove(); } else { if(!d){ d=document.createElement("b"); d.className="vbdot"; b.appendChild(d); } d.textContent=n>9?"9+":String(n); }
-  const mb=document.getElementById("moreBtn"); if(mb){ let m=mb.querySelector(".vbdot"); if(!n){ if(m) m.remove(); } else { if(!m){ m=document.createElement("b"); m.className="vbdot"; mb.appendChild(m); } m.textContent=n>9?"9+":String(n); } }
 }
 function notify(title,body){
   A().toast(title+(body?": "+body:""));
