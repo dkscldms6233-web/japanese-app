@@ -774,12 +774,12 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-bulk10.js"></script>
 <script src="words-auto.js"></script>
 <script src="words-detail.js"></script>
-<script src="words-detail2.js?v=4"></script>
+<script src="words-detail2.js?v=6"></script>
 <script src="kanji-extra.js"></script>
 <script src="words-wasei.js?v=4"></script>
-<script src="words-fix.js?v=2"></script>
+<script src="words-fix.js?v=3"></script>
 <script src="words-levels.js?v=5"></script>
-<script src="words-mynotes.js?v=3"></script>
+<script src="words-mynotes.js?v=4"></script>
 <script src="words-freq.js?v=1"></script>
 <script src="daily.js?v=3"></script>
 <script src="jlpt-bank.js"></script>
@@ -1130,10 +1130,10 @@ const applyDetail=()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
   WORDS.forEach(w=>{ const v=m.get(plain(w.f)+"|"+reading(w.f)); if(v) w.lv=v; }); })();
 /* 내 N3 노트 단어(words-mynotes.js): 이미 있으면 뜻만 보태고 N3에도 함께 나오게(lv2), 없으면 N3 새 단어로 추가 */
 (()=>{ const PC={n:"名詞",s:"名詞・する",1:"一段動詞",5:"五段動詞",i:"い形容詞",na:"な形容詞",adv:"副詞",k:"不規則動詞"};
-  const idx=new Map(WORDS.map(w=>[plain(w.f)+"|"+reading(w.f),w]));
+  const nz=s=>s.replace(/だ$/,""); const idx=new Map(WORDS.map(w=>[nz(plain(w.f))+"|"+nz(reading(w.f)),w]));
   String(window.WORDS_MYNOTES||"").split("\n").forEach(line=>{ line=line.trim(); if(!line) return;
     const p=line.split("|"); if(p.length<3||!PC[p[2].trim()]) return;
-    const f=p[0].trim(), ko=p[1].trim(), k=plain(f)+"|"+reading(f), w=idx.get(k);
+    const f=p[0].trim(), ko=p[1].trim(), k=nz(plain(f))+"|"+nz(reading(f)), w=idx.get(k);
     if(w){ const have=w.ko; const add=ko.split("·").map(x=>x.trim()).filter(x=>x&&!have.includes(x)&&!have.split("·").some(h=>h.trim()&&x.includes(h.trim())));
       if(add.length&&!ko.split("·").every(x=>have.includes(x.trim()))) w.ko=have+"·"+add.join("·");
       if(w.lv!=="N3") w.lv2="N3"; }
