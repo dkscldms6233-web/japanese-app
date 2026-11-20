@@ -423,6 +423,11 @@ ST2.textContent=`
 .views .vb:nth-child(4).on{color:#7c4dd8;background:#f0e8ff}.views .vb:nth-child(5).on{color:#12a36d;background:#e1f6ec}
 .views .vb:nth-child(6).on{color:#e0457b;background:#ffe6ef}.views .vb:nth-child(7).on{color:#0f9fb0;background:#dff5f8}
 `;
+ST2.textContent+=`
+.hgoal{background:#fff0d9!important;border-color:transparent!important}.hgoal .sub b{color:#d98a00!important}.hgoal .prog{background:rgba(255,255,255,.75)!important}.hgoal .prog div{background:#e89a14!important}
+.pstat{background:#ffe4ee!important;border-color:transparent!important}.pstat .prow1 b{color:#d93c72!important}.pstat .prog{background:rgba(255,255,255,.75)!important}.pstat .prog div{background:#e8588a!important}
+:root[data-theme=dark] .hgoal{background:#3a2f1c!important}:root[data-theme=dark] .pstat{background:#3a2230!important}
+`;
 document.head.appendChild(ST2);
 if(A()&&A().renderHome) A().renderHome();
 })();
