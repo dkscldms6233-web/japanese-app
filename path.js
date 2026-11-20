@@ -10,13 +10,13 @@ const A=()=>window.APP;
 const get=(k,d)=>A().LS.get(k,d), set=(k,v)=>A().LS.set(k,v);
 const LESSON_N=20, UNIT_N=5, PASS=.7;
 const IV=[10/1440,1,3,7,14,30,60];            // 복습 간격(일)
-const TITLES=[[1,"견습생"],[4,"수련생"],[8,"열혈 학습자"],[12,"중급 도전자"],[16,"숙련자"],[20,"고수"],[24,"달인"],[28,"명인"],[30,"일본어 마스터"]]; // [시작 레벨, 칭호]
-const MAXLV=30;
+const TITLES=[[1,"견습생"],[4,"수련생"],[8,"열혈 학습자"],[12,"중급 도전자"],[16,"숙련자"],[20,"고수"],[25,"달인"],[30,"명인"],[36,"현자"],[42,"대가"],[46,"전설"],[50,"일본어 마스터"]]; // [시작 레벨, 칭호]
+const MAXLV=50;
 
 /* ---------- 경험치 ---------- */
 const xpState=()=>get("jp-xp",{t:0,d:{}});
 function addXp(n){ if(!n) return; const s=xpState(); s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s);  try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
-/* 레벨이 오를수록 필요한 경험치가 점점 커져요. 30레벨까지 약 9,200 XP(= 한 급수를 거의 다 공부했을 때) */
+/* 레벨이 오를수록 필요한 경험치가 점점 커져요. 50레벨까지 약 20,800 XP(= N5·N4를 거의 다 공부했을 때) */
 const lvFloor=l=>Math.round(50*Math.pow(l-1,1.55));
 const lvOf=t=>{ let l=1; while(l<MAXLV&&(t||0)>=lvFloor(l+1)) l++; return l; };
 const titleOf=l=>{ let n=TITLES[0][1]; for(const [s,t] of TITLES) if(l>=s) n=t; return n; };
