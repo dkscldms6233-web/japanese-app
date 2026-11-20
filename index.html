@@ -760,8 +760,10 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-bulk10.js"></script>
 <script src="words-auto.js"></script>
 <script src="words-detail.js"></script>
+<script src="words-detail2.js?v=4"></script>
 <script src="kanji-extra.js"></script>
 <script src="words-wasei.js?v=4"></script>
+<script src="words-fix.js?v=2"></script>
 <script src="words-levels.js?v=5"></script>
 <script src="words-mynotes.js?v=3"></script>
 <script src="words-freq.js?v=1"></script>
@@ -1098,12 +1100,12 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[
     WORDS.push({lv,f,ko:p[1].trim(),pos:PC[p[2].trim()]}); });
 })();
 /* 상세 정보(words-detail.js): '표기|예문|예문 번역|헷갈리는 포인트|관련 단어(표기[읽기]:뜻;…)' — 표기는 후리가나 없는 글자 기준으로 단어에 붙여요 */
-(()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
+const applyDetail=()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
   String(window.WORD_DETAIL||"").split("\n").forEach(line=>{ line=line.trim(); if(!line||line[0]==="#") return;
-    const p=line.split("|"); const w=idx.get(p[0].trim()); if(!w||p.length<2) return;
+    const p=line.split("|"); const k0=p[0].trim(), w=idx.get(k0)||idx.get(k0.replace(/だ$/,"")); if(!w||p.length<2) return; /* な형용사는 아직 〜だ가 안 붙은 어간으로 들어 있어요 */
     if(p[1]&&!(w.ex&&w.ex.length)) w.ex=[{ja:p[1].trim(),ko:(p[2]||"").trim()}];
     if(p[3]&&p[3].trim()&&!w.note) w.note=p[3].trim();
-    if(p[4]&&p[4].trim()&&!(w.rel&&w.rel.length)) w.rel=p[4].split(";").map(s=>{ const q=s.split(":"); return q[0]&&q[1]?{f:q[0].trim(),ko:q[1].trim()}:null; }).filter(Boolean); }); })();
+    if(p[4]&&p[4].trim()&&!(w.rel&&w.rel.length)) w.rel=p[4].split(";").map(s=>{ const q=s.split(":"); return q[0]&&q[1]?{f:q[0].trim(),ko:q[1].trim()}:null; }).filter(Boolean); }); }; applyDetail();
 /* 가타카나 외래어 풀이 바로잡기(words-wasei.js): 한국어로 그대로 옮기면 어색하거나 뜻이 달라지는 말 */
 (()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
   Object.entries(window.KO_FIX||{}).forEach(([k,v])=>{ const w=idx.get(k); if(!w) return;
@@ -1121,10 +1123,14 @@ const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[
       if(add.length&&!ko.split("·").every(x=>have.includes(x.trim()))) w.ko=have+"·"+add.join("·");
       if(w.lv!=="N3") w.lv2="N3"; }
     else { const nw={lv:"N3",f,ko,pos:PC[p[2].trim()]}; WORDS.push(nw); idx.set(k,nw); } }); })();
+applyDetail(); /* 내 노트로 새로 들어온 단어에도 상세정보를 붙여요 */
 /* 형용사 풀이를 사전형으로 통일: 조용함 → 조용하다 */
 WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
   const FIX2={"편함":"편하다","잘함":"잘하다","딱함":"딱하다","분함":"분하다","멍함":"멍하다","기운참":"기운차다","예쁨":"예쁘다","힘듦":"힘들다","좋음":"좋다","나쁨":"나쁘다","싫음":"싫다","없음":"없다","있음":"있다"};
   w.ko=w.ko.split("·").map(s=>{ s=s.trim(); if(FIX2[s]) return FIX2[s]; if(s.length>=3&&s.endsWith("함")) return s.slice(0,-1)+"하다"; if(s.length>=4&&s.endsWith("러움")) return s.slice(0,-2)+"럽다"; if(/な形容詞/.test(w.pos)&&/^[가-힣]{2,}$/.test(s)&&!/다$/.test(s)) return s+(s.endsWith("적")?"이다":"하다"); return s; }).join("·"); });
+/* 뜻풀이 마무리 손질(words-fix.js): 자동 변환 뒤에 적용하고, 같은 뜻이 겹친 것은 하나로 합쳐요 */
+(()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w])); Object.entries(window.KO_FIX2||{}).forEach(([k,v])=>{ const w=idx.get(k)||idx.get(k.replace(/だ$/,"")); if(w&&v.ko) w.ko=v.ko; });
+  WORDS.forEach(w=>{ w.ko=[...new Set(w.ko.split("·").map(x=>x.trim()).filter(Boolean))].join("·"); }); })();
 /* 빈도 등급(words-freq.js): 1=핵심(자주 쓰이고 시험에 잘 나옴) · 2=보통 · 3=드묾. 퀴즈·게임에서 핵심은 더 자주, 드묾은 덜 나와요 */
 (()=>{ const m=new Map(); String(window.WORD_CORE||"").split("\n").forEach(l=>{ const q=l.split("|"); if(q.length===2) m.set(q[0]+"|"+q[1],1); });
   String(window.WORD_RARE||"").split("\n").forEach(l=>{ const q=l.split("|"); if(q.length===2) m.set(q[0]+"|"+q[1],3); });
