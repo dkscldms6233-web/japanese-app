@@ -1027,7 +1027,7 @@ const curProfile = () => profiles.find(p=>p.id===activeId);
 /* ---- 클라우드 계정(Firebase): 이메일 로그인 + 기록 동기화. 웹용 설정값은 공개돼도 안전하고, 데이터는 Firestore 규칙으로 본인만 읽고 써요 ---- */
 const FB_CFG={apiKey:"AIzaSyC4-ORKs33FovDyD7LtB5SPGt3LsWkDkA4",authDomain:"surasura-nihongo.firebaseapp.com",projectId:"surasura-nihongo",storageBucket:"surasura-nihongo.firebasestorage.app",messagingSenderId:"1021849361008",appId:"1:1021849361008:web:97c06deb47e9b0000672b5"};
 const cloud={ok:false};
-try{ if(window.firebase){ firebase.initializeApp(FB_CFG); cloud.auth=firebase.auth(); cloud.db=firebase.firestore(); cloud.ok=true; } }catch(e){}
+try{ if(window.firebase){ firebase.initializeApp(FB_CFG); cloud.auth=firebase.auth(); cloud.auth.languageCode="ko"; cloud.db=firebase.firestore(); cloud.ok=true; } }catch(e){}
 let cloudT=0;
 function cloudSchedule(){ clearTimeout(cloudT); cloudT=setTimeout(cloudPush,2500); }
 function cloudPush(){
