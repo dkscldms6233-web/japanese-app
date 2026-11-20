@@ -17,7 +17,7 @@ function btn(){ let b=$("devBtn"); if(!isDev){ if(b) b.remove(); return; } if(b)
 
 async function check(u){ isDev=false; me=u||null;
   try{ if(u){ const s=await db().collection("admins").doc(u.uid).get(); isDev=s.exists; } }catch(e){}
-  btn(); }
+  document.body.classList.toggle("dev-on",isDev); btn(); }
 
 const dlg=()=>{ let d=$("devDlg"); if(!d){ d=document.createElement("dialog"); d.id="devDlg"; document.body.appendChild(d);
   d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-dx]")){ d.close(); return; } const b=ev.target.closest("[data-d]"); if(b) act(b); }); } return d; };

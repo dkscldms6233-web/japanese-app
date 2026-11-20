@@ -92,6 +92,8 @@ select,textarea,.af input{padding:8px 10px;border:1px solid var(--line);border-r
 main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
 .count{font-size:14px;color:var(--sub);margin:2px 0 10px}
 .sub{color:var(--sub);font-size:14px}
+/* 개발자 모드로 로그인한 사람에게만 보이는 설명 */
+.devonly{display:none!important}body.dev-on .devonly{display:revert!important}
 .empty{text-align:center;color:var(--sub);padding:40px 0}
 
 /* ---- 급수 뱃지 / 품사 태그 ---- */
@@ -1199,7 +1201,7 @@ function renderPick(){
   const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`)).join("");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
   $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
-   <div class="sub">단어를 ${PART}개씩 파트로 나눠 보여 줘요${my.length?` · 내 급수: <b>${lvText(my)}</b>`:""}</div>
+   <div class="sub"><span class="devonly">단어를 ${PART}개씩 파트로 나눠 보여 줘요${my.length?" · ":""}</span>${my.length?`내 급수: <b>${lvText(my)}</b>`:""}</div>
    <div class="pkgrid five">${lv}</div>
    <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}</div>
    <div class="pkrow"><label class="tg"><input type="checkbox" id="pkMulti" ${pickMulti?"checked":""}> 여러 급수를 함께 보기</label>
@@ -1465,7 +1467,7 @@ function examSetup(){
   const jl=jlv();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>JLPT 모의시험</h2></div>
-   <p class="sub" style="margin:0 0 10px">문자·어휘, 문법, 독해, 청해를 시험처럼 연습해요. 직접 만든 연습 문제예요.</p>
+   <p class="sub devonly" style="margin:0 0 10px">문자·어휘, 문법, 독해, 청해를 시험처럼 연습해요. 직접 만든 연습 문제예요.</p>
    ${lvRow(jl,"급수")}
    <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 풀기</button>
    <div class="tiles2" style="margin-top:14px">
@@ -1482,7 +1484,7 @@ function gameSetup(){
   const jl=jlv(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>게임</h2></div>
-   <p class="sub" style="margin:0 0 10px">고른 급수의 단어로 게임을 해요.</p>
+   <p class="sub devonly" style="margin:0 0 10px">고른 급수의 단어로 게임을 해요.</p>
    ${lvRow(jl,"급수")}
    <div class="gcards">
     <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b><small>제한 시간 100초 · 틀리면 3초 감소 · 6쌍을 모두 맞히면 12초 추가</small>${bb("match2")}</span></button>
@@ -2670,9 +2672,9 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=53"></script>
+<script src="path.js?v=54"></script>
 <script src="community.js?v=9"></script>
-<script src="dev.js?v=1"></script>
+<script src="dev.js?v=2"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>

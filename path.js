@@ -276,7 +276,8 @@ function journeyHtml(){
   const line=[0,1,2,3,4,5,6].map(i=>`${i?"L":"M"}${JX(i)} ${JY(i)}`).join(" ");
   const pxy=p=>p<=0?[6,JY(0)]:[JX(p-1),JY(p-1)];
   const [fx,fy]=pxy(prev), [tx,ty]=pxy(J.pos);
-  const msg=J.pending?"일곱 걸음을 다 걸었어요! 선물 상자가 기다려요":J.pos===0?"오늘 공부하면 참새가 첫걸음을 떼요":J.pos<7?`${7-J.pos}일 더 걸으면 선물 상자가 열려요`:"도착했어요! 내일부터 새 여정이 시작돼요";
+  const DAYMSG=["오늘 첫걸음을 떼 볼까요? 참새가 기다리고 있어요","첫걸음 완료! 내일도 이어서 걸어요","이틀째! 좋은 출발이에요, 이 기세로 가요","사흘째! 벌써 절반 가까이 왔어요","나흘째! 절반을 넘었어요, 조금만 더요","닷새째! 선물 상자가 눈앞이에요","엿새째! 내일이면 선물 상자가 열려요"];
+  const msg=J.pending?"일곱 걸음을 다 걸었어요! 선물 상자가 기다려요":J.pos<7?DAYMSG[J.pos]:"도착했어요! 내일부터 새 여정이 시작돼요";
   setTimeout(()=>{ const b=document.querySelector(".jrb"); if(b){ b.style.left=(tx/3.2)+"%"; b.style.top=((ty-40)/JH*100)+"%"; } try{ localStorage.setItem("jp-jpos",String(J.pos)); }catch(e){} },80);
   return `<div class="jr" data-season="${sn}"><div class="jrh"><b>7일 연속 출석</b><span>${J.pos} / 7일</span></div>
    <div class="jrroad"><svg viewBox="0 0 320 ${JH}" aria-hidden="true">${DEFS}${forestBg(sn)}<path class="jl2" filter="url(#fWc)" d="${line}"/><path class="jl" d="${line}"/>${stops}${particles(sn)}</svg><div class="jrb" style="left:${fx/3.2}%;top:${(fy-40)/JH*100}%">${birdSvg(null)}</div></div>
