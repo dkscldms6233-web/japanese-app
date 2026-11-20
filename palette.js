@@ -1,29 +1,38 @@
-/* 색감 시안: A 블루+민트 · B 코랄+파스텔 · C 퍼플+비비드 (오른쪽 아래 작은 버튼으로 바꿔 볼 수 있어요. 주소 끝에 ?pal=a 도 돼요) */
+/* 파스텔 색감(코랄+연한 색 칸) · 단순한 홈 · 정리된 위쪽/아래 메뉴. 어두운 모드는 기존 색을 그대로 써요 */
 (function(){
-const P={
- a:{n:"A",acc:"#2f7df6",dk:"#1f63cf",soft:"#e8f2ff",chip:"#f1f5fb",line:"#e4ebf5",text:"#1b2a44",sub:"#62708a",gb:"#e8f2ff",gf:"#1f63cf",lb:"#dcf7ee",lf:"#0f8a63"},
- b:{n:"B",acc:"#ff6f59",dk:"#ee5a43",soft:"#ffeae4",chip:"#fff5f1",line:"#f5e6e0",text:"#3a2420",sub:"#85706a",gb:"#fff0d9",gf:"#d98a00",lb:"#ffe4ee",lf:"#d93c72"},
- c:{n:"C",acc:"#6c4cf0",dk:"#5636d6",soft:"#efeaff",chip:"#f5f3ff",line:"#e8e4f8",text:"#25194d",sub:"#6d6786",gb:"#e0f8ee",gf:"#0f9d6c",lb:"#fff0d6",lf:"#d98a00"}};
-const q=new URLSearchParams(location.search).get("pal");
-let cur=q||localStorage.getItem("jp-pal")||"";
-const ST=document.createElement("style"); document.head.appendChild(ST);
-function apply(k){
-  cur=P[k]?k:""; try{ localStorage.setItem("jp-pal",cur); }catch(e){}
-  const p=P[cur]; document.documentElement.dataset.pal=cur;
-  ST.textContent=p?`
-:root[data-pal]{--accent:${p.acc};--accent-dk:${p.dk};--accent-text:${p.dk};--accent-soft:${p.soft};--chip:${p.chip};--line:${p.line};--text:${p.text};--sub:${p.sub}}
-:root[data-pal] .hgoal{background:${p.gb}!important;border-color:transparent!important}
-:root[data-pal] .hgoal .sub b{color:${p.gf}}:root[data-pal] .hgoal .prog{background:rgba(255,255,255,.7)}:root[data-pal] .hgoal .prog div{background:${p.gf}!important}
-:root[data-pal] .pstat{background:${p.lb}!important;border-color:transparent!important}
-:root[data-pal] .pstat .prow1 b{color:${p.lf}}:root[data-pal] .pstat .prog{background:rgba(255,255,255,.7)}:root[data-pal] .pstat .prog div{background:${p.lf}!important}
-:root[data-pal] .cta{background:${p.acc}}:root[data-pal] .pill.on{background:${p.acc};border-color:${p.acc};color:#fff}
-`:"";
-  document.querySelectorAll("#palsw button").forEach(b=>b.classList.toggle("on",b.dataset.k===cur));
-}
-const sw=document.createElement("div"); sw.id="palsw";
-sw.innerHTML=[["","기본"],["a","A"],["b","B"],["c","C"]].map(([k,n])=>`<button data-k="${k}">${n}</button>`).join("");
-sw.addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) apply(b.dataset.k); });
-const S2=document.createElement("style");
-S2.textContent="#palsw{position:fixed;right:8px;bottom:84px;z-index:70;display:flex;gap:4px;background:#fff;border:1px solid #e5e7eb;border-radius:999px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.12)}#palsw button{border:0;background:none;font:inherit;font-size:12px;font-weight:700;color:#6b7280;padding:4px 9px;border-radius:999px;cursor:pointer}#palsw button.on{background:#25221e;color:#fff}";
-document.head.appendChild(S2); document.body.appendChild(sw); apply(cur);
+const ST=document.createElement("style");
+ST.textContent=`
+:root{--tb-bg:#e8f2ff;--tb-fg:#1f63cf;--tp-bg:#ffe4ee;--tp-fg:#b3365f;--ty-bg:#fff0d9;--ty-fg:#9a5d00;--tv-bg:#efe7ff;--tv-fg:#5a3bb0}
+:root[data-theme=dark]{--tb-bg:#1f2c3f;--tb-fg:#8ab8ff;--tp-bg:#3a2230;--tp-fg:#ff9fc2;--ty-bg:#3a2f1c;--ty-fg:#ffcf7a;--tv-bg:#2c2640;--tv-fg:#c3a8ff}
+:root:not([data-theme=dark]){--bg:#ffffff;--card:#ffffff;--text:#3a2420;--sub:#85706a;--line:#f5e6e0;--accent:#ff6f59;--accent-dk:#ee5a43;--accent-text:#d9482f;--accent-soft:#ffeae4;--chip:#fff5f1}
+body{background-image:none!important}
+header .hin::before,body[data-view=home]::before{display:none!important}
+header .theme{display:none}.pfmode .theme{display:flex}
+.vb-hid{display:none!important}
+.hs .hhero{background:var(--accent-soft);border-radius:22px;padding:16px;margin:6px 0 12px;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center}
+.hs .hhl .hbw{width:auto}.hs .hhl .hbtag{background:#fff;color:var(--accent-text)}
+.hs .hhr small{display:block;color:var(--accent-text);font-size:13px;font-weight:700;margin-bottom:2px}.hs .hhr b{font-size:18px;line-height:1.35}
+.hs .hgbar{grid-column:1/-1;height:10px;border-radius:99px;background:rgba(255,255,255,.85);margin-top:8px;overflow:hidden}
+.hs .hgbar div{height:100%;border-radius:99px;background:var(--accent);transition:width .3s}
+.hs .hgl{grid-column:1/-1;display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}.hs .hgl b{color:var(--accent-text)}
+.hs .cta{margin:0 0 12px}
+.hs .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.hs .tile{border:0;border-radius:18px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px;cursor:pointer;font:inherit;min-width:0}
+.hs .tile small{font-size:12px;font-weight:700;opacity:.85}.hs .tile b{font-size:15px;line-height:1.35;word-break:keep-all}
+.hs .t-blue{background:var(--tb-bg);color:var(--tb-fg)}.hs .t-pink{background:var(--tp-bg);color:var(--tp-fg)}
+.hs .hscard{display:block;width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--card);border-radius:18px;padding:14px 16px;margin:0 0 12px;text-align:left}
+.hs .jrbox{border:1px solid var(--line);border-radius:18px;margin:0 0 12px;background:var(--card);overflow:hidden}
+.hs .jrbox>summary{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;font-weight:700;cursor:pointer;list-style:none}
+.hs .jrbox>summary::-webkit-details-marker{display:none}.hs .jrbox>summary b{color:var(--accent-text);font-size:14px}
+.hs .jrbox[open]>summary{border-bottom:1px solid var(--line)}
+.hs .jrbox .jr{border:0;margin:0;padding:8px 12px 12px}.hs .jrbox .jrh{display:none}
+.hs .devnote{margin:0 0 12px}
+#moreDlg{border:0;border-radius:20px;padding:0;max-width:380px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#moreDlg::backdrop{background:rgba(0,0,0,.4)}
+#moreDlg .mrow{display:block;position:relative;width:100%;text-align:left;border:0;border-radius:16px;padding:14px 16px;margin-bottom:10px;font:inherit;cursor:pointer}
+#moreDlg .mrow b{display:block;font-size:16px}#moreDlg .mrow span{display:block;font-size:13px;margin-top:2px;opacity:.85}
+#moreDlg .m1{background:var(--tp-bg);color:var(--tp-fg)}#moreDlg .m2{background:var(--tv-bg);color:var(--tv-fg)}#moreDlg .m3{background:var(--ty-bg);color:var(--ty-fg)}
+#moreDlg .vbdot2{position:absolute;right:14px;top:14px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;border-radius:99px;padding:1px 7px}
+.pfmode{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}.pfmode small{color:var(--sub);font-size:13px}
+`;
+document.head.appendChild(ST);
 })();

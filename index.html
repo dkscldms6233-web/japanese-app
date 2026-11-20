@@ -94,8 +94,8 @@ main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
 .sub{color:var(--sub);font-size:14px}
 /* 개발자 모드로 로그인한 사람에게만 보이는 설명 */
 #profDlg .pfdb{text-align:center}
-#profDlg .pfbird{width:150px;height:150px;margin:2px auto 8px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--accent-soft),var(--chip));display:flex;align-items:center;justify-content:center;overflow:hidden}
-#profDlg .pfbird svg{width:132px;height:auto;display:block}
+#profDlg .pfbird{width:120px;height:120px;margin:2px auto 8px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--accent-soft),var(--chip));display:flex;align-items:center;justify-content:center;overflow:hidden}
+#profDlg .pfbird svg{width:104px;height:auto;display:block}
 #profDlg .pfchips{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
 #profDlg .pfchips span{background:var(--chip);border-radius:999px;padding:4px 11px;font-size:13px;color:var(--sub)}
 #profDlg .pfchips b{color:var(--text)}
@@ -805,10 +805,11 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
       <button class="vb on" data-view="home"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></i><span>홈</span></button>
       <button class="vb" data-view="list"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg></i><span>단어장</span></button>
       <button class="vb" data-view="quiz"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></i><span>퀴즈</span></button>
-      <button class="vb" data-view="exam"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>모의시험</span></button>
+      <button class="vb vb-hid" data-view="exam"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>모의시험</span></button>
       <button class="vb" data-view="game"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/><circle cx="18" cy="14" r=".8"/></svg></i><span>게임</span></button>
-      <button class="vb" data-view="community"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.8 0 5 2 5 5"/></svg></i><span>커뮤니티</span></button>
-      <button class="vb" data-view="news"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></i><span>뉴스</span></button>
+      <button class="vb vb-hid" data-view="community"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.8 0 5 2 5 5"/></svg></i><span>커뮤니티</span></button>
+      <button class="vb vb-hid" data-view="news"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></i><span>뉴스</span></button>
+      <button class="vb" id="moreBtn" aria-haspopup="dialog"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></i><span>더보기</span></button>
     </nav>
     <div class="tools"><button class="pill sm" id="profBtn" aria-label="프로필 전환"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
     <div class="theme" id="theme" role="group" aria-label="화면 모드">
@@ -2374,6 +2375,7 @@ function setView(v,opt){
   view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","news","anime","community","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===(v==="today"?"home":v==="read"?"news":v)));
+  { const mb=document.getElementById("moreBtn"); if(mb) mb.classList.toggle("on",["exam","community","news","read","anime"].includes(v)); }
   refresh(); window.scrollTo(0,0);
 }
 $("logo").addEventListener("click",()=>setView("home"));
@@ -2405,18 +2407,17 @@ function renderHome(){
   const greet=who+(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
   const pc=Math.min(100,Math.round(tl.n/g*100));
   const sent=qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장 · "+qt.by}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"+(my.includes(p.lv)?" · "+p.lv:"")}:null;
-  $("homeView").innerHTML=`<div class="home">
-   <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
-   ${window.DEV?DEV.bannerHtml():""}
-   <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
-   ${window.PATH?PATH.statusHtml():""}
-   ${window.PATH?PATH.journeyHtml():""}
+  const P=window.PATH;
+  $("homeView").innerHTML=`<div class="home hs">
+   ${P?P.homeHeroHtml(pc,g,tl.n,greet):""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
-   ${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}
+   ${window.DEV?DEV.bannerHtml():""}
+   ${P?`<div class="tiles">${P.continueTile()}${P.reviewTile(nw)}</div>`:""}
+   ${sent?`<button class="hsent hscard" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
+   ${P?P.journeyBox():""}
    <div class="lrows" style="margin-top:12px">
      <button class="lrow" data-ppage="path"><span>단계별로 공부하기</span><i>›</i></button>
      <button class="lrow" data-ppage="basic"><span>기초 (히라가나 · 가타카나)</span><i>›</i></button>
-     <button class="lrow" data-hq="review"><span>${nw?`오답 노트 · ${nw}개`:"오답 노트"}</span><i>›</i></button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
@@ -2467,7 +2468,15 @@ $("todayView").addEventListener("click",e=>{
     try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(todayJa); u.lang="ja-JP"; u.rate=.9; speechSynthesis.speak(u); }catch(err){}
   }
 });
-$("views").addEventListener("click",e=>{ const b=e.target.closest("[data-view]"); if(b) setView(b.dataset.view); });
+$("views").addEventListener("click",e=>{ const b=e.target.closest(".vb[data-view]"); if(b) return setView(b.dataset.view); if(e.target.closest("#moreBtn")) openMore(); });
+function openMore(){ let d=$("moreDlg"); if(!d){ d=document.createElement("dialog"); d.id="moreDlg"; document.body.appendChild(d);
+    d.addEventListener("click",e=>{ if(e.target===d||e.target.closest("[data-mx]")){ d.close(); return; } const b=e.target.closest("[data-mv]"); if(b){ d.close(); setView(b.dataset.mv); } }); }
+  const dot=(()=>{ const c=document.querySelector('.vb[data-view="community"] .vbdot'); return c?`<b class="vbdot2">${E(c.textContent)}</b>`:""; })();
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">더보기</h2><button class="x" data-mx aria-label="닫기">×</button></div><div class="db mrows">
+   <button class="mrow m1" data-mv="community"><b>커뮤니티</b><span>주간 리그 · 친구 · 응원</span>${dot}</button>
+   <button class="mrow m2" data-mv="exam"><b>JLPT 모의시험</b><span>문자·어휘, 문법, 독해, 청해</span></button>
+   <button class="mrow m3" data-mv="news"><b>뉴스</b><span>일본어 기사 읽기</span></button></div>`;
+  d.showModal(); }
 $("levels").addEventListener("click",e=>{
   const b=e.target.closest("[data-l]"); if(!b) return;
   const l=b.dataset.l;
@@ -2655,6 +2664,7 @@ function openProf(){
    ${p.cloud?`<button class="pfout" data-pa="logout">로그아웃</button>`
      :`<div class="qbtns" style="margin:0"><button class="pill" data-pa="login">로그인</button><button class="pill" data-pa="signup">회원가입</button></div>`}
    ${!p.cloud&&others.length?`<p class="sub" style="margin-top:14px">이 기기의 다른 프로필</p>${others.map(x=>`<div class="prow"><button class="pill" data-pa="use" data-id="${x.id}">${ic("user")} ${E(profName(x))}</button></div>`).join("")}`:""}</div>`;
+  { const th=$("theme"), box=$("profDlg").querySelector(".db"); if(th&&box){ const w=document.createElement("div"); w.className="pfmode"; w.innerHTML="<small>화면 모드</small>"; w.appendChild(th); box.appendChild(w); } }
   if(!$("profDlg").open) $("profDlg").showModal();
 }
 $("profBtn").addEventListener("click",openProf);
@@ -2686,11 +2696,11 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=56"></script>
-<script src="community.js?v=9"></script>
+<script src="path.js?v=57"></script>
+<script src="community.js?v=10"></script>
 <script src="dev.js?v=3"></script>
 <script src="kowrap.js?v=1"></script>
-<script src="palette.js?v=1"></script>
+<script src="palette.js?v=2"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
 </html>
