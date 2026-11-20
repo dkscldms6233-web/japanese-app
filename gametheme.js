@@ -3,7 +3,7 @@
 const G="body:has(#quizView .gbox)";
 const ST=document.createElement("style");
 ST.textContent=`
-${G}{background:radial-gradient(120% 70% at 50% 0%,#7f8cff 0%,rgba(127,140,255,0) 60%),linear-gradient(180deg,#5b61e8 0%,#4a44c9 100%) fixed!important;background-image:none;overflow-x:hidden}
+${G}{background:radial-gradient(120% 60% at 50% 0%,#34508f 0%,rgba(52,80,143,0) 65%),linear-gradient(180deg,#1b2a4d 0%,#142038 100%) fixed!important;background-image:none;overflow-x:hidden}
 ${G}::before{display:none!important}
 ${G} header{display:none!important}
 ${G} main{padding:62px 12px 28px!important;max-width:560px;margin:0 auto}
@@ -25,7 +25,7 @@ ${G} #quizView .monk.fast{animation-duration:.3s}
 ${G} #quizView .mbar::after{content:"★";position:absolute;right:6px;top:-9px;font-size:26px;color:#ffd43b;text-shadow:0 2px 0 #d9a400;z-index:1}
 /* 상태 칩 */
 ${G} #quizView .gbox .gstat{gap:6px;margin:6px 0 6px;font-size:15px}
-${G} #quizView .gbox .gstat span{background:none;border:0;color:#fff;padding:0 4px;font-size:26px;font-weight:800;text-shadow:none}
+${G} #quizView .gbox .gstat span{background:none;border:0;color:#fff;padding:0 4px;font-size:18px;font-weight:800;text-shadow:none}
 ${G} #quizView .gbox .gstat{align-items:center}
 /* 시간 막대 */
 ${G} #quizView .gbox .prog{height:22px;border-radius:14px;background:rgba(20,10,60,.4);border:3px solid rgba(255,255,255,.85);box-shadow:inset 0 3px 0 rgba(0,0,0,.18);overflow:hidden;margin:8px 0}
@@ -33,10 +33,10 @@ ${G} #quizView .gbox .prog div,${G} #gbar{border-radius:10px;background:linear-g
 ${G} #gbar.mid{background:linear-gradient(180deg,#ffd45e,#ff9d0a)!important}
 ${G} #gbar.low{background:linear-gradient(180deg,#ff8aa8,#ee2d63)!important}
 /* 도톰한 타일/버튼 */
-${G} #quizView .gbox .opt{font-weight:800;background:#fff;color:#1d1a3d;border:0;border-radius:20px;box-shadow:0 6px 0 #c8c3f0,0 10px 14px rgba(20,10,60,.25);padding:8px 8px;font-size:20px;min-height:46px;line-height:1.3;transition:transform .08s,box-shadow .08s}
+${G} #quizView .gbox .opt{font-weight:800;background:#fff;color:#1d1a3d;border:0;border-radius:20px;box-shadow:0 6px 0 #b8c3e0,0 10px 14px rgba(20,10,60,.25);padding:8px 8px;font-size:20px;min-height:46px;line-height:1.3;transition:transform .08s,box-shadow .08s}
 ${G} #quizView .gbox .opt small{color:#5d5890;font-size:13px;font-weight:700}
-${G} #quizView .gbox .opt:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 0 #c8c3f0,0 12px 16px rgba(20,10,60,.28)}
-${G} #quizView .gbox .opt:active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 #c8c3f0,0 2px 4px rgba(20,10,60,.25)}
+${G} #quizView .gbox .opt:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 0 #b8c3e0,0 12px 16px rgba(20,10,60,.28)}
+${G} #quizView .gbox .opt:active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 #b8c3e0,0 2px 4px rgba(20,10,60,.25)}
 ${G} #quizView .gbox .opt.sel{background:#fff5b8;box-shadow:0 6px 0 #f2b82a,0 0 0 4px #ffd43b inset,0 0 22px rgba(255,212,59,.75);transform:translateY(-2px)}
 ${G} #quizView .gbox .opt.good{background:#5be28a;color:#0b3b1d;box-shadow:0 6px 0 #2ea85a;opacity:.9}
 ${G} #quizView .gbox .opt.good small{color:#0b3b1d}
@@ -48,12 +48,12 @@ ${G} #quizView .gbox .pill{background:rgba(20,10,60,.38);color:#fff;border:2px s
 ${G} #quizView .gbox .pill.on{background:#ffd43b;color:#4a3300;border-color:#ffe98a;box-shadow:0 4px 0 #d9a400}
 ${G} #quizView .gbox [data-act=gquit]{position:fixed;top:12px;right:12px;z-index:30;font-size:0;width:44px;height:44px;padding:0;border-radius:50%}
 ${G} #quizView .gbox [data-act=gquit]::before{content:"✕";font-size:20px;line-height:40px;color:#fff}
-${G} #quizView .gbox input,${G} #quizView .gbox select{background:#fff;color:#2b2150;border:0;border-radius:14px;box-shadow:0 4px 0 #c8c3f0;font-size:18px;padding:12px}
+${G} #quizView .gbox input,${G} #quizView .gbox select{background:#fff;color:#2b2150;border:0;border-radius:14px;box-shadow:0 4px 0 #b8c3e0;font-size:18px;padding:12px}
 /* 시작 카운트다운 · 결과 */
 ${G} #quizView .cdnum{color:#ffe27a;font-size:150px;text-shadow:0 6px 0 #d9a400,0 12px 20px rgba(20,10,60,.4)}
-${G} #quizView .gbox .score{color:#ffe27a;font-size:72px;text-shadow:0 5px 0 #d9a400}
+${G} #quizView .gbox .score{font-family:'Mochiy Pop One','Jua','Hiragino Maru Gothic ProN',sans-serif!important;font-weight:400!important;color:#ffe27a;font-size:68px;line-height:1.15;text-shadow:0 5px 0 #d9a400}
 ${G} #quizView .gbox .rank{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:999px;padding:6px 22px;display:inline-block;font-size:24px}
-${G} #quizView .glist .grow{background:#fff;color:#1d1a3d;border:0;border-radius:16px;box-shadow:0 4px 0 #c8c3f0}
+${G} #quizView .glist .grow{background:#fff;color:#1d1a3d;border:0;border-radius:16px;box-shadow:0 4px 0 #b8c3e0}
 ${G} #quizView .glist .grow *{color:inherit}
 ${G} #quizView .glist .grow .gtag{color:#1d1a3d}
 ${G} #quizView .glist .grow .gk{color:#5d5890}

@@ -793,7 +793,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana.js?v=17"></script>
 <script src="games2.js?v=15"></script>
 <script src="bgm.js?v=37"></script>
-<script src="gametheme.js?v=9"></script>
+<script src="gametheme.js?v=10"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1796,7 +1796,10 @@ function matchPick(side,key){
     gFlash=setTimeout(()=>{ if(G!==g) return; const shown=new Set(G.cur.map(x=>x.key)); let nw,tries=0;
       do{ nw=G.uniq[G.ptr++%G.uniq.length]; }while(shown.has(nw.key)&&++tries<G.uniq.length);
       if(!G.seen.has(nw.key)) G.seen.set(nw.key,{w:nw,st:"no"});
-      if(li>=0) G.cur[li]=nw; if(ri>=0) G.right[ri]=nw; G.done.delete(lk); G.newKey=nw.key; G.busy=false; G.pop=""; renderMatch(); },200);
+      if(li>=0) G.cur[li]=nw; if(ri>=0) G.right[ri]=nw;
+      /* 새 단어의 뜻이 같은 줄·바로 옆 줄에 나오면 너무 쉬우니, 멀리 떨어진 칸과 자리를 바꿔요 */
+      if(li>=0&&ri>=0&&Math.abs(li-ri)<2){ const far=[...G.right.keys()].filter(i=>i!==ri&&Math.abs(i-li)>=2); if(far.length){ const t=far[Math.floor(Math.random()*far.length)]; [G.right[ri],G.right[t]]=[G.right[t],G.right[ri]]; } }
+      G.done.delete(lk); G.newKey=nw.key; G.busy=false; G.pop=""; renderMatch(); },200);
     popFx("+"+pts,"pts"); if(first&&G.combo>=3) popFx(G.combo+" 콤보!",cmbCls(G.combo));
   } else {
     G.combo=0; G.end-=3000; G.missed.add(lk); G.missed.add(rk); [lk,rk].forEach(k=>{ const r=G.seen.get(k); if(r) r.st="ng"; }); G.bad={l:lk,r:rk}; G.busy=true; G.pop="-3초"; sfx("ng"); renderMatch(); popFx("-3초","pts neg");
