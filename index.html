@@ -793,7 +793,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana.js?v=17"></script>
 <script src="games2.js?v=15"></script>
 <script src="bgm.js?v=37"></script>
-<script src="gametheme.js?v=5"></script>
+<script src="gametheme.js?v=9"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1726,14 +1726,13 @@ function gResult({title,big,note,isNew,seen,marks,type,score}){
   const rk=rankOf(score,type), order={ng:0,no:1,ok:2}, TXT={ng:"틀렸어요",ok:"맞혔어요",no:"풀지 못했어요"};
   const items=[...seen.values()].sort((a,b)=>(marks.has(a.w.key)?-1:0)-(marks.has(b.w.key)?-1:0)||order[a.st]-order[b.st]);
   const nm=marks.size, nng=items.filter(x=>x.st==="ng").length;
-  $("quizView").innerHTML=`<div class="qbox gbox"><h2>${title}</h2>
+  const segs=String(note||"").split(" · "), keep=[segs[0],...segs.filter(x=>/최고 기록/.test(x))].filter(Boolean);
+  $("quizView").innerHTML=`<div class="qbox gbox">
    <div class="score">${big}</div>
    <div class="rank">${rk.name}</div>
-   <div class="sub">${rk.next?`다음 칭호 「${rk.next.name}」까지 ${rk.next.gap}점`:"가장 높은 칭호예요!"}</div>
    ${isNew?`<div><span class="newbest">최고 기록!</span></div>`:""}
-   <div class="sub" style="margin-top:8px">${note}</div>
+   <div class="sub" style="margin-top:8px">${keep.map(E).join(" · ")}</div>
    <h3 style="text-align:left">이번 게임에 나온 단어 (${items.length}개)</h3>
-   <div class="sub" style="text-align:left">눌러서 뜻과 예문을 봐요. ★을 누르면 저장함에 담겨요${nng?` · 틀린 ${nng}개는 오답 노트에 담겼어요`:""}${nm?` · 궁금해서 표시한 ${nm}개가 맨 위에 있어요`:""}</div>
    <div class="glist">${items.map(({w,st})=>`<div class="grow" data-act="open" data-key="${w.key}">
       <span class="gw">${R(w.f)}</span><span class="gk">${marks.has(w.key)?`<span class="gtag q">궁금</span>`:""}<span class="gtag ${st}">${TXT[st]}</span>${E(w.ko)}</span>
       <button class="star ${stars.has(w.key)?"on":""}" data-act="gstar" data-key="${w.key}" title="저장함에 담기" aria-label="저장함에 담기">${ic("star")}</button></div>`).join("")}</div>
@@ -1769,7 +1768,7 @@ function matchRound(){
   G.right=shuffle(G.cur); G.done=new Set(); G.missed=new Set(); G.sel=null; G.bad=null; G.busy=false; renderMatch();
 }
 function renderMatch(){
-  const cls=(side,w)=>G.done.has(w.key)?"good"+(G.last===w.key?" just":""):(G.bad&&G.bad[side]===w.key)?"bad":(G.sel&&G.sel.side===side&&G.sel.key===w.key)?"sel":"";
+  const cls=(side,w)=>G.done.has(w.key)?"good"+(G.last===w.key?" just":""):(G.bad&&G.bad[side]===w.key)?"bad":(G.sel&&G.sel.side===side&&G.sel.key===w.key)?"sel":(G.newKey===w.key?"newin":"");
   const tile=(side,w,html)=>`<button class="opt ${cls(side,w)}" data-act="gm" data-side="${side}" data-key="${w.key}">${html}${side==="l"?`<span class="gst2 ${stars.has(w.key)?"on":""}" role="button" tabindex="-1" data-act="gmark" data-key="${w.key}" title="나중에 볼 단어로 저장" aria-label="나중에 볼 단어로 저장">${ic("star")}</span>`:""}</button>`;
   const left=Math.max(0,G.end-Date.now());
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>${mbarHTML(left)}
@@ -1781,7 +1780,7 @@ ${G.pop?`<p class="sub" style="text-align:center"><b>${G.pop}</b></p>`:""}
 }
 function matchPick(side,key){
   if(!G||G.type!=="match"||G.busy||G.done.has(key)) return;
-  G.last=null;
+  G.last=null; G.newKey=null;
   if(!G.sel||G.sel.side===side){ G.sel=(G.sel&&G.sel.side===side&&G.sel.key===key)?null:{side,key}; renderMatch(); return; }
   const lk=side==="l"?key:G.sel.key, rk=side==="r"?key:G.sel.key;
   if(lk===rk){
@@ -1790,11 +1789,14 @@ function matchPick(side,key){
     if(first){ G.score+=10+2*Math.min(G.combo,10); G.combo++; G.maxc=Math.max(G.maxc,G.combo); } else { G.score+=5; G.combo=0; }
     const pts=first?10+2*Math.min(G.combo-1,10):5;
     G.pairs++; G.done.add(lk); G.last=lk; G.sel=null; G.pop=""; sfx("ok");
-    if(G.done.size===G.cur.length){
-      G.busy=true; G.end+=12000; G.pop="+12초"; sfx("clear"); renderMatch();
-      popFx("라운드 클리어  +12초","clr");
-      const g=G; gFlash=setTimeout(()=>{ if(G!==g) return; G.round++; G.pop=""; matchRound(); },700);
-    } else renderMatch();
+    if(G.pairs%6===0){ G.end+=12000; G.pop="+12초"; sfx("clear"); popFx("+12초","clr"); }
+    G.busy=true; renderMatch();
+    /* 한 쌍을 맞히면 그 자리에 바로 새 단어가 채워져요 */
+    const g=G, li=G.cur.findIndex(x=>x.key===lk), ri=G.right.findIndex(x=>x.key===lk);
+    gFlash=setTimeout(()=>{ if(G!==g) return; const shown=new Set(G.cur.map(x=>x.key)); let nw,tries=0;
+      do{ nw=G.uniq[G.ptr++%G.uniq.length]; }while(shown.has(nw.key)&&++tries<G.uniq.length);
+      if(!G.seen.has(nw.key)) G.seen.set(nw.key,{w:nw,st:"no"});
+      if(li>=0) G.cur[li]=nw; if(ri>=0) G.right[ri]=nw; G.done.delete(lk); G.newKey=nw.key; G.busy=false; G.pop=""; renderMatch(); },200);
     popFx("+"+pts,"pts"); if(first&&G.combo>=3) popFx(G.combo+" 콤보!",cmbCls(G.combo));
   } else {
     G.combo=0; G.end-=3000; G.missed.add(lk); G.missed.add(rk); [lk,rk].forEach(k=>{ const r=G.seen.get(k); if(r) r.st="ng"; }); G.bad={l:lk,r:rk}; G.busy=true; G.pop="-3초"; sfx("ng"); renderMatch(); popFx("-3초","pts neg");
@@ -1806,7 +1808,7 @@ function endMatch(){
   const g=G, prev=getBest("match2"), isNew=g.score>0&&(prev==null||g.score>prev);
   if(isNew) setBest("match2",g.score);
   gResult({title:"짝 맞추기 결과",big:g.score+"점",score:g.score,isNew,seen:g.seen,marks:g.marks,type:"match",
-    note:`시간이 끝났어요 · 맞힌 짝 ${g.pairs}쌍 · 라운드 ${g.round+1} · 최고 연속 ${g.maxc}${prev!=null&&!isNew?` · 최고 기록 ${prev}점`:""}`});
+    note:`시간이 끝났어요${prev!=null&&!isNew?` · 최고 기록 ${prev}점`:""}`});
 }
 /* 60초 타임어택 */
 function startTime(){
