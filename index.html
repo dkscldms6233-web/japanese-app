@@ -93,6 +93,16 @@ main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
 .count{font-size:14px;color:var(--sub);margin:2px 0 10px}
 .sub{color:var(--sub);font-size:14px}
 /* 개발자 모드로 로그인한 사람에게만 보이는 설명 */
+#profDlg .pfdb{text-align:center}
+#profDlg .pfbird{width:150px;height:150px;margin:2px auto 8px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--accent-soft),var(--chip));display:flex;align-items:center;justify-content:center;overflow:hidden}
+#profDlg .pfbird svg{width:132px;height:auto;display:block}
+#profDlg .pfchips{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+#profDlg .pfchips span{background:var(--chip);border-radius:999px;padding:4px 11px;font-size:13px;color:var(--sub)}
+#profDlg .pfchips b{color:var(--text)}
+#profDlg .pfxp{max-width:260px;margin:0 auto 12px}#profDlg .pfxp small{display:block;margin-top:4px;color:var(--sub);font-size:12px}
+#profDlg .pfname{margin:4px 0 14px;display:flex;flex-direction:column;gap:2px}#profDlg .pfname b{font-size:20px}
+#profDlg .pfbtns{display:flex;gap:8px}#profDlg .pfbtns .pill{flex:1;justify-content:center;padding:12px 8px;font-size:15px}
+#profDlg .pfout{display:block;margin:14px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .devonly{display:none!important}body.dev-on .devonly{display:revert!important}
 .empty{text-align:center;color:var(--sub);padding:40px 0}
 
@@ -612,9 +622,9 @@ header .hin::before,#onb .ob-top::before{filter:grayscale(1) contrast(1.15)}
 }
 
 /* 도화지 느낌과 난초 먹그림 */
-body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .32 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='.06'/%3E%3C/svg%3E")}
+body{background-image:linear-gradient(180deg,#ffeee3 0,#fff8f3 260px)}
 :root[data-theme=dark] body{background-image:none}
-body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;width:320px;height:226px;background:var(--orchid) no-repeat;background-size:contain;opacity:.28;pointer-events:none;z-index:-1}
+body[data-view=home]::before{content:"";position:fixed;left:-40px;bottom:64px;width:320px;height:226px;background:var(--orchid) no-repeat;background-size:contain;opacity:.14;pointer-events:none;z-index:-1}
 
 /* 마스코트(병아리) 이미지 */
 .mascot{display:block;width:100%;height:100%;object-fit:contain}
@@ -658,8 +668,8 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 
 /* ================= 테마: 담백한 미니멀 (박스·그림자를 줄이고 여백·글자 위계·가는 선으로 구분. 포인트 색은 하나) ================= */
 :root{
-  --bg:#fbfaf7; --card:#ffffff; --text:#25221e; --sub:#7b756d; --line:#e8e3dc;
-  --accent:#e4694c; --accent-dk:#cf5538; --accent-text:#c9522f; --accent-soft:#fcece6; --chip:#f3efe9; --onacc:#ffffff;
+  --bg:#fff8f3; --card:#ffffff; --text:#25221e; --sub:#7a6f68; --line:#f2e4db;
+  --accent:#e4694c; --accent-dk:#cf5538; --accent-text:#c9522f; --accent-soft:#ffece4; --chip:#fdf0e9; --onacc:#ffffff;
   --blue:#4a8fc2; --blue-dk:#3b7aab; --blue-soft:#eaf3fa;
   --ok:#3fa98a; --ok-dk:#2f8e72; --ok-soft:#e4f4ee; --bad:#d9546a; --bad-soft:#fbe9ec;
   --seal:#d9483f; --sakura:#e58aa6; --kin:#d9a43a; --gold:#d9a43a; --g1:#fcece6; --g2:#f7f4ef;
@@ -2634,12 +2644,13 @@ function profBtn(){ $("profBtn").innerHTML=ic("user")+" "+E(profName(curProfile(
 function openProf(){
   const p=curProfile(), cu=cloud.ok&&cloud.auth.currentUser, others=profiles.filter(x=>!x.cloud&&x.id!==activeId);
   const acct=p.cloud
-    ? `<div class="prow" style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:18px">${E(p.name)}</b><span class="sub">${E((cu&&cu.email)||"")}</span><span class="sub">다른 기기에서도 같은 계정으로 로그인하면 기록이 이어져요.</span></div>`
-    : `<div class="prow" style="flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:18px">게스트</b><span class="sub">기록이 이 기기에만 저장돼요. 로그인하면 다른 기기에서도 이어져요.</span></div>`;
+    ? `<div class="pfname"><b>${E(p.name)}</b><span class="sub">${E((cu&&cu.email)||"")}</span></div>`
+    : `<div class="pfname"><b>게스트</b><span class="sub">기록이 이 기기에만 저장돼요. 로그인하면 다른 기기에서도 이어져요.</span></div>`;
+  const hero=window.PATH?PATH.profileHtml():"";
   $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">내 계정</h2><button class="x" data-close aria-label="닫기">×</button></div>
-  <div class="db">${acct}
-   <button class="pill on" data-pa="stats" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin:12px 0 8px">${ic("chart")} 내 학습 기록 보기</button>
-   ${p.cloud?`<button class="pill" data-pa="logout" style="width:100%;justify-content:center;padding:12px">로그아웃</button>`
+  <div class="db pfdb">${hero}${acct}
+   <div class="pfbtns">${window.PATH?`<button class="pill on" data-pa="shop">참새 꾸미기</button>`:""}<button class="pill ${window.PATH?"":"on"}" data-pa="stats">${ic("chart")} 학습 기록</button></div>
+   ${p.cloud?`<button class="pfout" data-pa="logout">로그아웃</button>`
      :`<div class="qbtns" style="margin:0"><button class="pill" data-pa="login">로그인</button><button class="pill" data-pa="signup">회원가입</button></div>`}
    ${!p.cloud&&others.length?`<p class="sub" style="margin-top:14px">이 기기의 다른 프로필</p>${others.map(x=>`<div class="prow"><button class="pill" data-pa="use" data-id="${x.id}">${ic("user")} ${E(profName(x))}</button></div>`).join("")}`:""}</div>`;
   if(!$("profDlg").open) $("profDlg").showModal();
@@ -2649,6 +2660,7 @@ $("profDlg").addEventListener("click",e=>{
   if(e.target===$("profDlg") || e.target.closest("[data-close]")) return $("profDlg").close();
   const b=e.target.closest("[data-pa]"); if(!b) return;
   if(b.dataset.pa==="stats"){ $("profDlg").close(); setView("stats"); return; }
+  if(b.dataset.pa==="shop"){ $("profDlg").close(); if(window.PATH) PATH.openShop(); return; }
   if(b.dataset.pa==="logout"){ (async()=>{ try{ clearTimeout(cloudT); cloudPush(); await new Promise(r=>setTimeout(r,600)); await cloud.auth.signOut(); }catch(e){} RAW.set("jp-auth-done",0); switchTo(profiles.find(x=>!x.cloud).id); })(); return; }
   if(b.dataset.pa==="login"||b.dataset.pa==="signup"){ $("profDlg").close(); obFrom=true; obStep="auth"; obAuth=b.dataset.pa; obMsg=""; renderOnb(); return; }
   const id=b.dataset.id; if(b.dataset.pa==="use"&&id!==activeId) switchTo(id);
@@ -2672,7 +2684,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=54"></script>
+<script src="path.js?v=55"></script>
 <script src="community.js?v=9"></script>
 <script src="dev.js?v=3"></script>
 <script src="kowrap.js?v=1"></script>

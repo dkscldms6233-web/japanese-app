@@ -159,6 +159,13 @@ function statusHtml(){
   const x=xpState(), l=lvOf(x.t), lo=lvFloor(l), hi=lvFloor(l+1), pc=Math.round((x.t-lo)/(hi-lo)*100), st=A().streakDays();
   return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${st?st+"일 연속 · ":""}${x.t} XP · 현재 씨앗 ${charState().seeds||0}</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
 }
+/* 내 계정 화면: 내 참새 + 레벨·연속 출석·씨앗 */
+function profileHtml(){
+  const x=xpState(), l=lvOf(x.t), lo=lvFloor(l), hi=lvFloor(l+1), pc=Math.round((x.t-lo)/(hi-lo)*100), st=A().streakDays();
+  return `<div class="pfbird">${birdSvg(null,"big")}</div>
+   <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>씨앗 <b>${charState().seeds||0}</b></span></div>
+   <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · 다음 레벨까지 ${hi-x.t} XP</small></div>`;
+}
 function reviewHtml(){ const n=dueKeys().length; if(!n) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
 function pathHtml(full){
   const st=state(), cur=current(), all=vis(); if(cur) openUnits.add(cur.u.id);
@@ -300,7 +307,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
+  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,profileHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
