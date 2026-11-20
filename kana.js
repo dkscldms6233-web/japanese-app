@@ -192,7 +192,7 @@ function renderLesson(L,k){
   root().innerHTML=`<div class="kana"><button class="back" data-kana="home">${ic("back")}글자표·레슨 목록</button><h2>레슨 ${L.i+1}. ${lessonLabel(L,k)}</h2><div class="sub">${k?"가타카나":"히라가나"} · ${L.g}</div>
   <div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>
   ${ch.length?`<div class="kgrid" style="grid-template-columns:repeat(${ch.length%3===0&&ch.length>5?3:5},minmax(0,1fr))">${ch.map(cellBtn).join("")}</div>`:""}
-  <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b><small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서 새로 읽을 수 있는 단어는 아직 없어요. 다음 행에서 단어를 읽게 돼요.</div>`}
+  <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b><small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서는 아직 읽을 수 있는 단어가 없어요.</div>`}
   <div class="kbtns">${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">단어 따라 쓰기</button>`:""}<button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="cta sec" data-kana="lesson" data-i="${prv?prv.i:L.i}" ${prv?"":"disabled"}>‹ 이전 레슨</button><button class="cta sec" data-kana="lesson" data-i="${nxt?nxt.i:L.i}" ${nxt?"":"disabled"}>다음 레슨 ›</button></div></div></div>`;
 }
@@ -259,7 +259,7 @@ function renderWrite(){
    <canvas id="kwc"></canvas></div>
   <div class="kwbar"><button data-kana="wanim">▶ 획순<br>보기</button><button data-kana="wundo">↶ 한 획<br>지우기</button><button data-kana="wclear">전부<br>지우기</button><button data-kana="wguide" class="${W.guide?"on":""}">밑그림<br>${W.guide?"켜짐":"꺼짐"}</button></div>
   <div class="kbtns" style="margin-top:6px"><button class="cta sec" data-kana="wsay">소리 듣기</button><div class="kwnav"><button class="cta sec" data-kana="wprev" ${W.i?"":"disabled"}>‹ 이전</button><button class="cta" data-kana="wnext">${W.i+1<W.items.length?"다음 ›":"완료 "}</button></div></div>
-  <div class="sub" style="margin-top:14px;font-size:12px">획 순서 데이터: KanjiVG (CC BY-SA 3.0). 밑그림을 끄면 보지 않고 쓰는 연습이 돼요. 쓰다가 막히면 '획순 보기'를 눌러 보세요.</div></div>`;
+  <div class="sub" style="margin-top:14px;font-size:12px">획 순서 데이터: KanjiVG (CC BY-SA 3.0). 밑그림을 끄면 보지 않고 써 볼 수 있어요. 막히면 '획순 보기'를 눌러요.</div></div>`;
   setupCanvas();
 }
 function setupCanvas(){

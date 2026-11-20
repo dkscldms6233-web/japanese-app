@@ -129,8 +129,8 @@ function startShiri(){
   if(pool.length<30){ toast("이 급수에는 끝말잇기에 쓸 단어가 부족해요"); return; }
   G={type:"shiri-intro"};
   $("quizView").innerHTML=`<div class="qbox gbox"><h2>しりとり 끝말잇기</h2>
-   <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>해요.<br>사전에 있는 단어는 어느 급수든 쓸 수 있어요.</div>
-   <div class="sub" style="text-align:center;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"><b>왜 「ん」으로 끝나면 질까요?</b><br>「ん」으로 시작하는 일본어 단어는 거의 없어서, 「ん」으로 끝내면 상대가 이을 수가 없어요. 한국 끝말잇기에서 이을 수 없는 '한방단어'로 끝내면 지는 것과 같은 규칙이에요.</div>
+   <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>해요.<br>사전에 있는 단어면 어느 급수든 괜찮아요.</div>
+   <div class="sub" style="text-align:center;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"><b>왜 「ん」으로 끝나면 질까요?</b><br>「ん」으로 시작하는 단어는 거의 없어서, 「ん」으로 끝내면 상대가 이을 수 없어요. 한국 끝말잇기의 '한방단어'와 같은 규칙이에요.</div>
    <h3 style="text-align:center;margin:16px 0 6px">상대 난이도</h3>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:0 auto">${[1,2,3].map(d=>`<button class="cta ${d===SHDIFF?"":"sec"}" data-sd="${d}" style="text-align:left"><b>${SH_D[d].name}</b><br><small style="opacity:.85">${SH_D[d].desc}</small></button>`).join("")}</div>
    <div class="qbtns" style="margin-top:14px"><button class="pill" data-act="gquit">그만하기</button></div></div>`;

@@ -115,7 +115,7 @@ function shopRender(){
   <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개<br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있어요.</p>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
   ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 돼요)</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?x.special:(!x.special&&x.slot===shopSlot)).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special?levelProgress(it.level):null;
-    return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?`${it.level} 전체 클리어 · ${lp.real} / ${lp.all} 레슨`:it.price+" 씨앗")}</small></div>
+    return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?`${it.level} 전체 클리어 · ${lp.real} / ${lp.all} 단계`:it.price+" 씨앗")}</small></div>
      ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"벗기":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"} style="line-height:1.15">購入<small style="display:block;font-size:10px;font-weight:400">구입</small></button>`)}</div>`; }).join("")}</div></div>`;
 }
 function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
@@ -167,7 +167,7 @@ function pathHtml(full){
     const done=u.nodes.filter(n=>isDone(n,st)).length, open=openUnits.has(u.id), alld=done===u.nodes.length;
     return `<div class="pu ${open?"open":""} ${alld?"all":""}"><button class="puh" data-pu="${u.id}"><span class="pun">${E(u.tag)}</span><b>${E(u.title)}</b><small>${done} / ${u.nodes.length}</small></button>
      ${open?`<div class="pnodes">${u.nodes.map((n,i)=>{ const dn=isDone(n,st), isCur=cur&&cur.n.id===n.id;
-        return `<div class="pn" style="margin-left:calc(50% - 32px + ${offs[i%offs.length]}px)"><button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small>${isCur?`<span class="pnow">지금 할 레슨</span>`:""}</div>`; }).join("")}
+        return `<div class="pn" style="margin-left:calc(50% - 32px + ${offs[i%offs.length]}px)"><button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small>${isCur?`<span class="pnow">지금 할 단계</span>`:""}</div>`; }).join("")}
        ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}</div>`;
 }
 /* 홈의 '이어서 하기' 한 줄 */
@@ -184,7 +184,7 @@ function basicHtml(){
 }
 function pageHtml(){
   if(page==="basic") return basicHtml();
-  return `<div class="home">${back}<h2 style="margin:6px 0 4px">단계별로 공부하기</h2><div class="sub">레슨을 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료돼요</div>${pathHtml(true)}</div>`;
+  return `<div class="home">${back}<h2 style="margin:6px 0 4px">단계별로 공부하기</h2><div class="sub">단계를 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료돼요</div>${pathHtml(true)}</div>`;
 }
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -194,7 +194,7 @@ function sheet(n){
   const ws=lessonWords(n.L,n.j); let d=document.getElementById("pathDlg");
   if(!d){ d=document.createElement("dialog"); d.id="pathDlg"; document.body.appendChild(d); d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-pclose]")) d.close(); }); }
   d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(n.L)} · ${E(n.label)}</h2><button class="x" data-pclose aria-label="닫기">×</button></div>
-   <div class="db"><p class="sub">${ws.length}개 단어를 보고, 퀴즈에서 ${Math.round(PASS*100)}% 이상 맞히면 레슨이 완료돼요.</p>
+   <div class="db"><p class="sub">${ws.length}개 단어를 보고, 퀴즈에서 ${Math.round(PASS*100)}% 이상 맞히면 단계가 완료돼요.</p>
    <div class="pwl">${ws.map(w=>`<div class="pwi"><b>${A().R(w.f)}</b><span>${E(w.ko)}</span></div>`).join("")}</div>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;margin-top:12px"><button class="cta sec" data-pgo="card">카드로 먼저 보기</button><button class="cta" data-pgo="quiz">퀴즈 시작</button></div></div>`;
   d.dataset.n=n.id; if(!d.open) d.showModal();
@@ -205,7 +205,7 @@ function startNode(id){
 }
 function go(mode){
   const d=document.getElementById("pathDlg"); if(!d) return; const id=d.dataset.n, [,L,j]=id.split(":"), ws=lessonWords(L,+j); d.close();
-  if(!ws.length){ A().toast("이 레슨에는 단어가 없어요"); return; }
+  if(!ws.length){ A().toast("이 단계에는 단어가 없어요"); return; }
   active=mode==="quiz"?{id,keys:new Set(ws.map(w=>w.key))}:null;
   A().setView("quiz"); A().startQuiz(mode==="quiz"?"meaning":"card",ws,ws.length);
 }
@@ -305,10 +305,10 @@ window.PATH={
     if(!active) return; const a=active; active=null;
     if(!keys.every(k=>a.keys.has(k))) return;
     const ok=keys.length&&score/keys.length>=PASS;
-    if(ok){ const st=state(); const first=!(st.done&&st.done[a.id]); markDone(a.id); if(first){ addXp(30); addSeeds(5); A().toast("레슨 완료! +30 XP · 씨앗 5개"); } else A().toast("레슨 완료!"); }
-    else A().toast("70% 이상 맞히면 레슨이 완료돼요. 한 번 더 도전해 보세요");
+    if(ok){ const st=state(); const first=!(st.done&&st.done[a.id]); markDone(a.id); if(first){ addXp(30); addSeeds(5); A().toast("단계 완료! +30 XP · 씨앗 5개"); } else A().toast("단계 완료!"); }
+    else A().toast("70% 이상 맞히면 완료돼요. 한 번 더 도전해 보세요");
   }catch(e){} },
-  kanaDone(id){ try{ const st=state(); st.kx=st.kx||{}; if(!st.kx[id]){ st.kx[id]=1; set("jp-path",st); addXp(30); addSeeds(5); A().toast("레슨 완료! +30 XP · 씨앗 5개"); } }catch(e){} },
+  kanaDone(id){ try{ const st=state(); st.kx=st.kx||{}; if(!st.kx[id]){ st.kx[id]=1; set("jp-path",st); addXp(30); addSeeds(5); A().toast("단계 완료! +30 XP · 씨앗 5개"); } }catch(e){} },
   review(){ const pool=duePool(); if(!pool.length){ A().toast("지금 복습할 단어가 없어요. 단어를 풀면 복습 일정이 생겨요"); return; } A().setView("quiz"); A().startQuiz("meaning",pool,Math.min(20,pool.length)); }
 };
 

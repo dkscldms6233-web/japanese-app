@@ -144,7 +144,7 @@ async function render(){
    <div class="sub cmact">오늘 ${nToday}명이 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중`:""}</div>
    <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
    <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><button class="pill on" data-cm="addfriend">친구 추가</button></div>
-   <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 위의 「친구 추가」를 눌러 친구 코드를 입력해 보세요.</p>`}</div>
+   <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 「친구 추가」에서 친구 코드를 입력해 보세요.</p>`}</div>
    <p class="sub" style="margin-top:6px">서로 친구로 추가하면 「대화」 버튼이 생겨요.</p>
    <h3 class="cmh3">받은 응원${unread?` <em class="cmnew">새 ${unread}</em>`:""}</h3>
    <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 <span class="stkv">${E(c.sticker)}</span> 응원을 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
