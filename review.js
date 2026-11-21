@@ -83,7 +83,7 @@ function openWrong(){
   const last={}, picks={}; log.forEach(e=>{ last[e.k]=Math.max(last[e.k]||0,e.t); (picks[e.k]=picks[e.k]||[]).push(e); });
   let ws=wrongWords(); ws.sort((a,b)=>wSort==="miss"?((miss[b.key]||0)-(miss[a.key]||0)):((last[b.key]||0)-(last[a.key]||0)));
   d.innerHTML=`<div class="dh"><h2 style="margin:0">오답 노트 <small class="sub">${ws.length}개</small></h2><button class="x" data-rvx aria-label="닫기">×</button></div><div class="db rvdb">
-   ${ws.length?`<p class="sub rvlab">틀린 단어 다시 풀기</p><div class="rvbtns" style="margin-top:6px;justify-content:flex-start"><button class="pill on" data-rv="wquiz">뜻 고르기</button><button class="pill" data-rv="wread">읽기 고르기</button><button class="pill" data-rv="wcard">플래시카드</button></div>
+   ${ws.length?`<p class="sub rvlab">틀린 단어 다시 풀기</p><div class="rvbtns" style="margin-top:6px;justify-content:flex-start"><button class="pill on" data-rv="wquiz">뜻 고르기</button><button class="pill" data-rv="wread">읽기 고르기</button><button class="pill" data-rv="wcard">단어 카드</button></div>
    <div class="rvsort"><label for="rvSort" class="sub">정렬</label><select id="rvSort"><option value="recent" ${wSort==="recent"?"selected":""}>최근에 틀린 순</option><option value="miss" ${wSort==="miss"?"selected":""}>많이 틀린 순</option></select></div>
    <div class="rvlist">${ws.map(w=>{ const p=(picks[w.key]||[]).slice(-1)[0], k=wr[w.key]||0;
      return `<button class="rvrow" data-rv="wopen" data-k="${E(w.key)}"><span class="rvr1"><b>${R(w.f)}</b><span class="rvko">${E(w.ko)}</span></span>
