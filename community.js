@@ -119,7 +119,7 @@ function row(x,rank,me,isFr,mutual){
   const mine=x.uid===(signedIn()?uid():"");
   return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><button class="cmbw" data-bird="${x.uid}" aria-label="${E(x.name||"")}님의 참새 보기">${bird(x.eq)}</button>
    <span class="cmn"><b>${E(x.name||"")}</b>${x.title?` <i class="cmtt ${x.title==="JLPT 정복자"?"gold":""}">${E(x.title)}</i>`:""}${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
-   ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}${isFr&&mutual?`<button class="cmb2" data-gift="${x.uid}" data-n="${E(x.name||"")}">선물</button>`:""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
+   ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}${isDevOn()?`<button class="cmb2" data-gift="${x.uid}" data-n="${E(x.name||"")}">선물</button>`:""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
 }
 async function render(){
   const v=$("communityView"); if(!v||busy) return;
@@ -166,7 +166,7 @@ function birdDlg(u){
       const ch=ev.target.closest("[data-bcheer]"), ct=ev.target.closest("[data-bchat]"), gf=ev.target.closest("[data-bgift]");
       if(gf){ d.close(); giftDlg(gf.dataset.bgift,gf.dataset.n); } else if(ch){ d.close(); cheerDlg(ch.dataset.bcheer,ch.dataset.n); } else if(ct){ d.close(); chatDlg(ct.dataset.bchat,ct.dataset.n); } }); }
   const me=signedIn()&&u===uid();
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv">${bird(x.eq,"big")}<div class="bn">${x.title?"「"+E(x.title)+"」 · ":""}${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button><button class="pill" data-bgift="${x.uid}" data-n="${E(x.name||"")}">선물하기</button>`:""}</div>`}</div>`;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv">${bird(x.eq,"big")}<div class="bn">${x.title?"「"+E(x.title)+"」 · ":""}${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button>`:""}${isDevOn()?`<button class="pill" data-bgift="${x.uid}" data-n="${E(x.name||"")}">선물하기</button>`:""}</div>`}</div>`;
   if(!d.open) d.showModal();
 }
 /* ---------- 응원 · 신고 · 친구 추가 ---------- */
@@ -231,13 +231,14 @@ function chatDlg(other,name){
 }
 
 
-/* ---------- 선물(서로 친구인 사람에게만, 하루에 한 사람당 한 번) ---------- */
-function giftPaint(d){ const P=PATH.gift, name=d.dataset.n, tab=d.dataset.tab, seeds=P.seeds(), its=P.items();
+/* ---------- 선물: 개발자만 보낼 수 있어요(이벤트·보상용). 받는 건 누구나 ---------- */
+const isDevOn=()=>document.body.classList.contains("dev-on");
+function giftPaint(d){ const P=PATH.gift, name=d.dataset.n, tab=d.dataset.tab, its=P.allItems();
     d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 선물</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db">
      <div class="shtabs" style="justify-content:flex-start"><button class="pill ${tab==="seed"?"on":""}" data-gtab="seed">씨앗</button><button class="pill ${tab==="item"?"on":""}" data-gtab="item">아이템</button></div>
-     ${tab==="seed"?`<p class="sub" style="margin:8px 0">내 씨앗 <b>${seeds}</b>개</p><div class="gseeds">${[10,30,50,100].map(n=>`<button class="pill" data-gseed="${n}" ${seeds<n?"disabled":""}>${n}개</button>`).join("")}</div>`
-     :`<div class="gitems">${its.length?its.map(i=>`<div class="gi2"><div class="gp">${PATH.birdSvg({[i.slot]:i.id},"mini")}</div><b>${E(i.name)}</b><button class="pill sm on" data-gitem="${E(i.id)}">보내기</button></div>`).join(""):`<p class="sub">선물할 수 있는 아이템이 없어요. (특별 아이템은 보낼 수 없어요)</p>`}</div>`}
-     <p class="sub" style="margin-top:10px">서로 친구인 사람에게 하루에 한 번 보낼 수 있어요. 보낸 선물은 되돌릴 수 없어요.</p></div>`; }
+     ${tab==="seed"?`<div class="gseeds" style="margin-top:10px">${[10,50,100,300,500,1000].map(n=>`<button class="pill" data-gseed="${n}">${n}개</button>`).join("")}</div>`
+     :`<div class="gitems">${its.map(i=>`<div class="gi2"><div class="gp">${PATH.birdSvg({[i.slot]:i.id},"mini")}</div><b>${E(i.name)}</b><button class="pill sm on" data-gitem="${E(i.id)}">보내기</button></div>`).join("")}</div>`}
+     <p class="sub" style="margin-top:10px">개발자 전용이에요. 내 씨앗·아이템은 줄지 않아요.</p></div>`; }
 let gBusy=false;
 function giftDlg(to,name){
   const P=window.PATH&&PATH.gift; if(!P) return;
@@ -247,14 +248,13 @@ function giftDlg(to,name){
       const sd=ev.target.closest("[data-gseed]"), it=ev.target.closest("[data-gitem]"); if(!sd&&!it||gBusy) return;
       const to=d.dataset.to, nm=d.dataset.n, day=A().today(), seed=!!sd;
       const amount=seed?+sd.dataset.gseed:0, item=seed?"":it.dataset.gitem, label=seed?"씨앗 "+amount+"개":"「"+P.itemName(item)+"」";
-      if(seed&&P.seeds()<amount){ A().toast("씨앗이 모자라요"); return; }
-      if(!confirm(nm+" 님에게 "+label+"를 선물할까요?\n보내면 되돌릴 수 없어요.")) return;
+      if(!isDevOn()){ A().toast("개발자만 보낼 수 있어요"); return; }
+      if(!confirm(nm+" 님에게 "+label+"를 선물할까요?")) return;
       gBusy=true;
-      try{ const g={from:uid(),fromName:A().curProfile().name,to,kind:seed?"seed":"item",day,claimed:false,at:Date.now()}; if(seed) g.amount=amount; else { g.item=item; g.itemName=P.itemName(item); }
-        await db().collection("gifts").doc(uid()+"_"+to+"_"+day).set(g);
-        if(seed) P.spendSeeds(amount); else P.removeItem(item);
+      try{ const g={from:uid(),fromName:"운영자",to,kind:seed?"seed":"item",day,claimed:false,at:Date.now()}; if(seed) g.amount=amount; else { g.item=item; g.itemName=P.itemName(item); }
+        await db().collection("gifts").add(g);
         A().toast(nm+" 님에게 선물을 보냈어요"); d.close(); }
-      catch(e){ A().toast("보내지 못했어요. 한 친구에게 하루에 한 번만 보낼 수 있고, 서로 친구여야 해요"); }
+      catch(e){ A().toast("보내지 못했어요(개발자 권한·서버 규칙 확인)"); }
       gBusy=false; }); }
   d.dataset.to=to; d.dataset.n=name; d.dataset.tab=d.dataset.tab||"seed";
   giftPaint(d); if(!d.open) d.showModal();

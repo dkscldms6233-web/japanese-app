@@ -67,17 +67,16 @@ service cloud.firestore {
         && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 200;
     }
 
-    // 선물(씨앗·아이템): 서로 친구인 사람에게만, 한 사람에게 하루 한 번(문서 ID로 막아요). 받는 사람만 '받음'으로 바꿀 수 있어요
+    // 선물(씨앗·아이템): 개발자만 보낼 수 있고(이벤트·보상용), 받는 사람만 '받음'으로 바꿀 수 있어요
     match /gifts/{id} {
-      allow create: if request.auth != null && verified() && request.resource.data.from == request.auth.uid
-        && id == request.auth.uid + '_' + request.resource.data.to + '_' + request.resource.data.day
+      allow create: if isDev() && request.resource.data.from == request.auth.uid
         && request.resource.data.claimed == false
-        && isMutual(request.auth.uid + '_' + request.resource.data.to)
-        && ((request.resource.data.kind == 'seed' && request.resource.data.amount is int && request.resource.data.amount >= 1 && request.resource.data.amount <= 200)
+        && ((request.resource.data.kind == 'seed' && request.resource.data.amount is int && request.resource.data.amount >= 1 && request.resource.data.amount <= 100000)
          || (request.resource.data.kind == 'item' && request.resource.data.item is string && request.resource.data.item.size() <= 30));
-      allow read: if request.auth != null && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+      allow read: if request.auth != null && (resource.data.to == request.auth.uid || isDev());
       allow update: if request.auth != null && resource.data.to == request.auth.uid && resource.data.claimed == false
         && request.resource.data.claimed == true && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimed']);
+      allow delete: if isDev();
     }
 
     // 신고: 쓰기만 가능(읽기는 콘솔에서만)
