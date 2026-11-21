@@ -678,7 +678,7 @@ body.kanamode .levels,body.kanamode .opts{display:none}
   --ok:#3fa98a; --ok-dk:#2f8e72; --ok-soft:#e4f4ee; --bad:#d9546a; --bad-soft:#fbe9ec;
   --seal:#d9483f; --sakura:#e58aa6; --kin:#d9a43a; --gold:#d9a43a; --g1:#fcece6; --g2:#f7f4ef;
   --on:#3b7aab; --kun:#2f8e72;
-  --n5:#3fa98a; --n4:#4a8fc2; --n3:#d9a43a; --n2:#e4694c; --n1:#d9546a;
+  --n5:#4a8fc2; --n4:#7a62c8; --n3:#d9a43a; --n2:#e4694c; --n1:#4b5368;
   --sh:none; --sh2:none;
   --fo1:#d5ebd7; --fo2:#b1d9b9; --fo3:#8cc8a0; --fo-trunk:#c9a27c; --fo-path:#f3e6cf;
 }
@@ -689,7 +689,7 @@ body.kanamode .levels,body.kanamode .opts{display:none}
   --ok:#64cfae; --ok-dk:#4fb596; --ok-soft:#1d3a30; --bad:#ff8196; --bad-soft:#42232a;
   --seal:#ff7d73; --sakura:#f0a3bb; --kin:#e6bd5c; --gold:#e6bd5c; --g1:#1c1c1c; --g2:#101010;
   --on:#7db8e0; --kun:#64cfae;
-  --n5:#64cfae; --n4:#7db8e0; --n3:#e6bd5c; --n2:#ff8a6b; --n1:#ff8196;
+  --n5:#7db8e0; --n4:#a894e8; --n3:#e6bd5c; --n2:#ff8a6b; --n1:#9aa3bd;
   --fo1:#27392d; --fo2:#30503c; --fo3:#3a6a4b; --fo-trunk:#6e5542; --fo-path:#3f3529;
 }
 h2,h3,.cta,.pill,.mode b,.pk b,.vb{font-weight:700}
@@ -892,6 +892,8 @@ button.qrow:active{background:var(--chip)}
 .inq .reveal{border-radius:16px 16px 0 0!important}
 dialog{border-radius:16px!important}
 .pill,.lvb,.tag,.qcnt,.qxp,.fk,.fu{border-radius:999px!important}
+/* ===== 색 역할 고정: 초록=정답·완료 · 분홍/빨강=틀림 · 주황=진행 · 테라코타=행동 · 하단 탭 선택색도 하나로 ===== */
+.views .vb.on{color:var(--accent-text)!important;background:var(--accent-soft)!important}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
