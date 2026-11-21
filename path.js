@@ -465,7 +465,7 @@ ST2.textContent=`
 `;
 ST2.textContent+=`
 .hgoal{background:none!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;padding:12px 2px 14px!important;margin:8px 0 12px!important}.hgoal .sub b{color:#d98a00!important}.hgoal .prog{background:var(--chip)!important;height:8px!important}.hgoal .prog div{background:#e89a14!important}
-.pstat{background:none!important;border:0!important;border-radius:0!important;padding:0 2px!important;margin:2px 0 12px!important}.pstat .prow1{margin-bottom:5px!important}.pstat .prow1 b{font-size:13px!important}.pstat .prow1 span{font-size:12px!important}.pstat .prow1 b{color:#3d5a99!important}.pstat .prog{background:var(--chip)!important;height:4px!important}.pstat .prog div{background:#3d5a99!important}:root[data-theme=dark] .pstat .prow1 b{color:#8fa8e0!important}:root[data-theme=dark] .pstat .prog div{background:#7f9be0!important}
+.pstat{background:none!important;border:0!important;border-radius:0!important;padding:0 2px!important;margin:0 0 8px!important}.pstat .prow1{margin-bottom:3px!important}.pstat .prow1 b{font-size:12px!important}.pstat .prow1 span{font-size:11px!important}.pstat .prow1 b{color:#3d5a99!important}.pstat .prog{background:var(--chip)!important;height:3px!important;margin:0!important}.pstat .prog div{background:#3d5a99!important}:root[data-theme=dark] .pstat .prow1 b{color:#8fa8e0!important}:root[data-theme=dark] .pstat .prog div{background:#7f9be0!important}
 
 `;
 document.head.appendChild(ST2);
