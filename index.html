@@ -770,6 +770,48 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 /* ---- 주간 리포트 · 복귀 안내 ---- */
 .rpt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.rpt>div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.rpt b{display:block;font-size:24px}.rpt b small{font-size:13px;font-weight:600;margin-left:2px}.rpt span{font-size:12px;color:var(--sub)}
 .rptn{margin:10px 0 0;line-height:1.55}.hback{margin:0 0 8px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);color:var(--accent-text);font-size:14px;line-height:1.5}
+/* ===== 디자인 정리: 화면마다 성격에 맞는 모양 · 색은 먹/종이/인주 · 모서리는 작게 ===== */
+:root{--rad:10px}
+/* 공통: 모서리 · 그림자 · 불필요한 움직임 */
+.t2,.gcard,.ncard,.tile,.klesson,.kcta,.prow,.panel,.kpi,.rpt>div,.rvsum>div,.hgoal,.pstat,.jr,.qset,.lrows,article.news,.tbox,.qbox .gc,.mylvbox{border-radius:var(--rad)!important}
+.card:hover,.t2:hover,.ncard:hover,.tile:hover{transform:none!important;box-shadow:none!important}
+.t2:active{transform:none!important;border-bottom-width:1.5px!important}
+/* 페이지 제목: 서점 장부처럼 먹선 하나 */
+.qm-h,#statsView h2,.grwrap>h2{padding-bottom:6px;border-bottom:2px solid var(--text);margin-bottom:10px}
+.qm-h h2,#statsView h2,.grwrap>h2{font-size:22px;letter-spacing:-.01em}
+.qm-sec{font-size:13px;color:var(--sub);text-transform:none;letter-spacing:.02em;margin:16px 0 4px}
+.qm-sec .ic{display:none}
+.qm-sec small{font-weight:500}
+/* 단어장 = 공부 노트: 한 줄에 한 단어, 줄 노트처럼 */
+body[data-view=list] #grid{display:block!important}
+body[data-view=list] #grid .card{display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) auto;grid-template-areas:"w m b" "w s b";align-items:center;column-gap:12px;row-gap:0;background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-left:3px solid var(--lc,var(--nx))!important;border-radius:0!important;padding:2px 6px 2px 12px!important;margin:0}
+body[data-view=list] #grid .card .ctop{display:contents}
+body[data-view=list] #grid .card .cbtns{grid-area:b;align-self:center}
+body[data-view=list] #grid .card .w{grid-area:w;font-size:24px!important;line-height:1.85!important;margin:0!important;word-break:normal!important}
+body[data-view=list] #grid .card .w.wl{font-size:17px!important}
+body[data-view=list] #grid .card .m{grid-area:m;font-size:15px!important;font-weight:600;margin:6px 0 0!important;-webkit-line-clamp:2}
+body[data-view=list] #grid .card .msub{grid-area:s;display:flex;gap:8px;align-items:center;margin-bottom:6px}
+body[data-view=list] #grid .card .msub .tag{background:none!important;border:0!important;padding:0!important;font-size:11px!important;color:var(--sub)!important;margin:0}
+.lvs{font-size:11px;color:var(--sub)}.grid.one .lvs{display:none}
+.msub{display:none}
+body[data-view=list] .msub{display:flex}
+/* 퀴즈·모의시험 = 시험지: 번호 붙은 문항 목록 */
+.tiles2{display:block!important;margin:6px 0;counter-reset:q}
+.tiles2 .t2{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:4px 10px;flex-wrap:wrap;width:100%;box-sizing:border-box;background:transparent!important;border:0!important;border-bottom:1px dashed var(--line)!important;border-radius:0!important;padding:14px 4px!important;min-height:0!important}
+.tiles2 .t2::before{counter-increment:q;content:counter(q) ".";font-weight:800;color:var(--accent-text);min-width:1.4em}
+.tiles2 .t2 .ti{display:none!important}
+.tiles2 .t2 b{font-size:17px}
+.tiles2 .t2 small{flex-basis:100%;padding-left:calc(1.4em + 10px);font-size:12.5px}
+.tiles2 .t2:hover{background:var(--accent-soft)!important}
+/* 학습 리포트 = 대시보드: 아이콘 없이 숫자 중심 */
+.kpi .ki{display:none!important}
+.kpis{gap:0!important;border:1px solid var(--line);border-radius:var(--rad);overflow:hidden;grid-template-columns:repeat(2,1fr)!important}
+.kpi{border:0!important;border-radius:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;padding:12px 14px!important;background:transparent!important}
+.kpi b,.rpt b{font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px!important;letter-spacing:.02em}
+.panel h3,.wk h3{font-size:13px;color:var(--sub);font-weight:700;letter-spacing:.03em;margin-bottom:8px}
+.rpt{gap:0!important;border:1px solid var(--line);border-radius:var(--rad);overflow:hidden}.rpt>div{border:0!important;border-radius:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}
+.qset summary .ic{display:none}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -842,7 +884,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
   <div class="opts">
     <select id="posf" aria-label="품사 필터"><option value="">모든 품사</option></select>
     <label class="tg list-only"><input type="checkbox" id="hide"> 뜻 가리기</label>
-    <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기 (마우스를 올리거나 탭하면 보여요)</label>
+    <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기</label>
   </div>
 </div>
 </header>
@@ -1280,16 +1322,16 @@ function renderGrid(){
   $("partTop").innerHTML=`<div class="pbar"><button class="back" data-act="pkback">${ic("back")}급수 선택</button><b>${E(scopeLabel())}${posf?" · "+POS[posf][0]:""}</b></div>`+pager(true);
   $("partBot").innerHTML=pager(false);
   $("count").textContent = list.length + "개 단어" + (np>1?` · 파트 ${listPart+1} / ${np} (${a+1}~${a+shown.length}번)`:"");
-  $("grid").className = "grid" + ($("hide").checked ? " hide" : "");
+  $("grid").className = "grid" + ($("hide").checked ? " hide" : "") + (level==="전체"&&lvSel.size===1 ? " one" : "");
   const empty = level==="내 단어" ? "아직 추가한 단어가 없어요. 위의 「＋ 단어 추가」를 눌러 보세요."
               : level==="저장함" ? "저장한 단어가 없어요."
               : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요.";
   $("grid").innerHTML = shown.length ? shown.map(w=>`
     <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" data-key="${w.key}">
-      <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}<span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
+      <div class="ctop"><span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
       <div class="w${w.text.length>=6?" wl":""}">${R(w.f)}</div>
       <div class="m">${E(w.ko)}</div>
-      ${posTag(w.pos)}
+      <div class="msub">${posTag(w.pos)}<span class="lvs">${w.lv}${w.lv2?" · "+w.lv2:""}</span></div>
     </div>`).join("") : `<div class="empty" style="grid-column:1/-1">${empty}</div>`;
 }
 function refresh(){
