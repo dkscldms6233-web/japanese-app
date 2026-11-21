@@ -97,7 +97,7 @@ function checkSpecial(){ try{ const s=charState(); let changed=false;
   ITEMS.filter(x=>x.special).forEach(it=>{ if(!s.owned.includes(it.id)&&levelCleared(it.level)){ s.owned.push(it.id); changed=true; A().toast(it.level+" 클리어! 특별 아이템 「"+it.name+"」을(를) 받았어요"); } });
   if(changed) saveChar(s);
   /* N5부터 N1까지 모든 단계를 직접 끝내면 특별 칭호 */
-  if(["N5","N4","N3","N2","N1"].every(levelCleared)){ const gs=giftState(); gs.extra=gs.extra||[]; if(!gs.extra.some(x=>x.title===MASTER_TITLE)){ gs.extra.push({title:MASTER_TITLE,at:Date.now()}); set("jp-gift",gs); A().toast("N5~N1 전부 클리어! 칭호 「"+MASTER_TITLE+"」을(를) 받았어요"); } }
+  if(["N5","N4","N3","N2","N1"].every(levelCleared)){ const gs=giftState(); gs.extra=gs.extra||[]; if(!gs.extra.some(x=>x.title===MASTER_TITLE)){ gs.extra.push({title:MASTER_TITLE,at:Date.now()}); set("jp-gift",gs); addSeeds(500); addXp(300); A().toast("N5~N1 전부 클리어! 「"+MASTER_TITLE+"」 칭호 + 씨앗 500개 + 300 XP"); } }
   }catch(e){} }
 const saveChar=s=>{ set("jp-char",s); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} };
 function addSeeds(n){ const s=charState(); s.seeds=(s.seeds||0)+n; saveChar(s); }
@@ -317,7 +317,7 @@ function giftAct(a){
     d.innerHTML=`<div class="dh"><h2 style="margin:0">내 칭호 모음</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db">
      <p class="sub gsum">받은 칭호 <b>${new Set(cards.map(c=>c.title)).size}</b>개 · 대표 칭호 <b>${cur?"「"+E(cur)+"」":"없음"}</b></p>
      <p class="sub" style="font-size:12px;margin:0 0 10px">칸을 누르면 대표 칭호가 바뀌어요. 내 계정과 리그에 보여요.</p>
-     <div class="gl">${cards.map(c=>`<button class="gi ${c.title===cur?"rep":""}" data-rt="${E(c.title)}">${c.master?`<div class="stamp"><b style="font-size:30px">全</b><small>制覇</small></div>`:stamp(c.n)}<b>${E(c.title)}</b><small>${new Date(c.at).toLocaleDateString("ko-KR")}</small>${c.title===cur?`<em class="grp">대표</em>`:""}</button>`).join("")}</div></div>`;
+     <div class="gl">${cards.map(c=>`<button class="gi ${c.title===cur?"rep":""} ${c.master?"master":""}" data-rt="${E(c.title)}">${c.master?`<div class="stamp"><b style="font-size:30px">全</b><small>制覇</small></div>`:stamp(c.n)}<b>${E(c.title)}</b><small>${new Date(c.at).toLocaleDateString("ko-KR")}</small>${c.title===cur?`<em class="grp">대표</em>`:""}</button>`).join("")}</div></div>`;
     if(!d.open) d.showModal(); }
 }
 
@@ -392,7 +392,7 @@ ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!im
 .stamp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:76px;height:76px;padding:0 8px;border:3px solid var(--seal);border-radius:10px;color:var(--seal);transform:rotate(-4deg);animation:gstamp .5s cubic-bezier(.2,1.5,.4,1)}
 .stamp b{font-weight:900;line-height:1}.stamp small{font-size:10px;font-weight:700;letter-spacing:.2em;margin-top:3px}
 @keyframes gstamp{from{transform:rotate(-4deg) scale(2);opacity:0}to{transform:rotate(-4deg) scale(1);opacity:1}}
-.gl{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gi{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 6px;font:inherit;color:inherit;cursor:pointer}.gi.rep{border-color:var(--accent);background:var(--accent-soft)}.grp{position:absolute;top:6px;right:6px;font-style:normal;font-size:10px;font-weight:800;background:var(--accent);color:var(--onacc);border-radius:99px;padding:1px 7px}.gsum{margin:0 0 4px;font-size:14px}.gsum b{color:var(--accent-text)}.gi small{color:var(--sub);font-size:11px}
+.gl{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gi{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 6px;font:inherit;color:inherit;cursor:pointer}.gi.rep{border-color:var(--accent);background:var(--accent-soft)}.grp{position:absolute;top:6px;right:6px;font-style:normal;font-size:10px;font-weight:800;background:var(--accent);color:var(--onacc);border-radius:99px;padding:1px 7px}.gi.master{border:2px solid #e0a020;background:linear-gradient(160deg,#fff8dc,#ffe7a0);box-shadow:0 0 14px rgba(240,168,36,.45)}.gi.master b{color:#8a5a00}.gi.master .stamp{color:#b07a00;border-color:#b07a00;background:rgba(255,255,255,.55)}.gi.master.rep{background:linear-gradient(160deg,#fff3c0,#ffd96a)}.gi.master .grp{background:#b07a00}:root[data-theme=dark] .gi.master{background:linear-gradient(160deg,#4a3a10,#3a2c0a)}:root[data-theme=dark] .gi.master b{color:#ffd96a}.gsum{margin:0 0 4px;font-size:14px}.gsum b{color:var(--accent-text)}.gi small{color:var(--sub);font-size:11px}
 .jr{--fg1:var(--fo1);--fg2:var(--fo2);--fp2:var(--fo2);--fp3:var(--fo3)}
 .jr[data-season="spring"]{--fo1:#f8dfe8;--fo2:#f3bdd0;--fo3:#ea9fba;--fg1:#d5ebd7;--fg2:#b7dcbd;--fp2:#9fcfa8;--fp3:#7fbe92;--fo-trunk:#b98d70;--fo-path:#f3e6cf}
 .jr[data-season="summer"]{--fw1:#bfe3f2;--fw2:#8fcbe6;--fo1:#b9dfb0;--fo2:#8fcb92;--fo3:#6db97a;--fg1:#cde9bf;--fg2:#a8d9a0;--fp2:#7fc08a;--fp3:#5fae73;--fo-trunk:#b08968;--fo-path:#f1e3c6}
