@@ -853,16 +853,22 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .fbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .fno{color:#b43a50!important;border-color:#e3b3ad!important;border-bottom-color:#e3b3ad!important}
 .fyes{background:var(--ok)!important;border-bottom-color:var(--ok-dk,#2f8e72)!important}
-/* ---- 오늘의 퀘스트 ---- */
-.quest{margin:6px 0 14px;padding:12px 2px 6px;border-bottom:1px solid var(--line)}
-.qh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}.qh b{font-size:15px}.qh span{font-size:13px;color:var(--sub);font-weight:700}
-.qrow{display:grid;grid-template-columns:22px 1fr auto;gap:2px 10px;align-items:center;padding:7px 0}
-.qchk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
-.qrow.dn .qchk{background:var(--ok,#3fa98a);border-color:var(--ok,#3fa98a);box-shadow:inset 0 0 0 4px var(--bg,#fff)}
-.qt{font-size:15px;font-weight:600}.qrow.dn .qt{color:var(--sub);text-decoration:line-through}
-.qrow em{font-style:normal;font-size:13px;color:var(--sub);font-weight:700}
-.qpb{grid-column:2/4;height:5px;border-radius:3px;background:var(--chip);overflow:hidden}.qpb i{display:block;height:100%;background:#e89a14;border-radius:3px}.qrow.dn .qpb i{background:var(--ok,#3fa98a)}
-.qrw{margin-top:6px;font-size:12.5px;color:var(--accent-text);font-weight:700}.qrw.dn{color:var(--ok-dk,#2f8e72)}
+/* ---- 오늘의 퀘스트: 원형 진행 · 퀘스트마다 보상 · 보물상자 ---- */
+.quest{margin:8px 0 16px;padding:14px 14px 12px;border:2px solid var(--line);border-bottom-width:5px;border-radius:16px;background:var(--card)}
+.qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.qh b{font-size:17px;font-weight:800}
+.qcnt{font-size:13px;font-weight:800;color:#b36b00;background:#fff1d1;border-radius:999px;padding:2px 11px}
+.qrow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.qrow:last-child{border-bottom:0}
+.qring{width:44px;height:44px;flex:none}.qtr{fill:none;stroke:var(--chip);stroke-width:5}.qfg{fill:none;stroke:#e89a14;stroke-width:5;stroke-linecap:round}
+.qring.dn .qfg{stroke:var(--ok,#3fa98a)}.qck{fill:none;stroke:var(--ok,#3fa98a);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.qn{font-size:15px;font-weight:800;fill:var(--text)}
+.qm{flex:1;min-width:0}.qm b{display:block;font-size:15px;font-weight:700}.qm small{font-size:12.5px;color:var(--sub);font-weight:600}
+.qrow.dn .qm b{color:var(--sub)}
+.qxp{font-size:12.5px;font-weight:800;color:#b36b00;background:#fff1d1;border-radius:999px;padding:3px 10px;flex:none}.qrow.dn .qxp{color:var(--ok-dk,#2f8e72);background:var(--ok-soft,#e4f4ee)}
+.qchest{display:flex;align-items:center;gap:12px;margin-top:10px;padding:10px 12px;border-radius:12px;background:#fff6e0;border:2px dashed #e8c277}
+.qchest.dn{border-style:solid;background:#fff1c4}
+.qchsv{width:46px;height:42px;flex:none}.qct b{display:block;font-size:15px;font-weight:800;color:#7a4a1c}.qct small{font-size:12.5px;color:#9a6a2a;font-weight:700}
+:root[data-theme=dark] .qcnt,:root[data-theme=dark] .qxp{background:#3a2f1c;color:#f2c14e}
+:root[data-theme=dark] .qchest{background:#3a2f1c;border-color:#7a5c24}:root[data-theme=dark] .qct b{color:#f2c14e}:root[data-theme=dark] .qct small{color:#d1b077}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -1280,12 +1286,17 @@ function questList(){
   if(Object.keys(wrong).length||q.fix) L.push({id:"f",t:"오답 3개 맞히기",n:Math.min(q.fix||0,3),of:3});
   return L;
 }
-function questCheck(){ try{ const L=questList(), q=questState(); if(L.length>=2&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; LS.set("jp-quest",q); if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 완료! 씨앗 5개 · 20 XP"); } }catch(e){} }
+function questCheck(){ try{ const L=questList(); let q=questState(); q.got=q.got||{}; let ch=false;
+    L.forEach(x=>{ if(x.n>=x.of&&!q.got[x.id]){ q.got[x.id]=1; ch=true; if(window.PATH) PATH.addXp(10); toast("퀘스트 완료! +10 XP"); } });
+    if(L.length>=2&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; ch=true; if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 모두 완료! 씨앗 5개 · 20 XP"); }
+    if(ch) LS.set("jp-quest",q); }catch(e){} }
 function questHtml(){
-  questCheck(); const L=questList(), done=L.filter(x=>x.n>=x.of).length, q=questState();
-  return `<div class="quest"><div class="qh"><b>오늘의 퀘스트</b><span>${done} / ${L.length}</span></div>
-   ${L.map(x=>`<div class="qrow ${x.n>=x.of?"dn":""}"><i class="qchk" aria-hidden="true"></i><span class="qt">${E(x.t)}</span><em>${x.n} / ${x.of}</em><div class="qpb"><i style="width:${Math.round(x.n/x.of*100)}%"></i></div></div>`).join("")}
-   ${L.length>=2?`<div class="qrw ${q.paid?"dn":""}">${q.paid?"보상을 받았어요":"모두 끝내면 씨앗 5개 · 20 XP"}</div>`:""}</div>`;
+  questCheck(); const L=questList(), done=L.filter(x=>x.n>=x.of).length, q=questState(), C=2*Math.PI*18;
+  const ring=x=>{ const dn=x.n>=x.of, pc=Math.min(1,x.n/x.of); return `<svg class="qring ${dn?"dn":""}" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" class="qtr"/><circle cx="22" cy="22" r="18" class="qfg" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 22 22)"/>${dn?`<path d="M14 23l6 6 11-12" class="qck"/>`:`<text x="22" y="27.5" text-anchor="middle" class="qn">${x.n}</text>`}</svg>`; };
+  const chest=`<svg class="qchsv ${q.paid?"open":""}" viewBox="0 0 48 44" aria-hidden="true"><rect x="5" y="20" width="38" height="20" rx="4" fill="#d98a3a" stroke="#7a4a1c" stroke-width="2.4"/><path d="${q.paid?"M5 22 L9 6 Q24 -2 39 6 L43 22Z":"M5 22 Q5 8 24 8 Q43 8 43 22Z"}" fill="#eaa650" stroke="#7a4a1c" stroke-width="2.4" stroke-linejoin="round"/><rect x="20" y="22" width="8" height="10" rx="2" fill="#ffd54a" stroke="#7a4a1c" stroke-width="1.8"/>${q.paid?`<path d="M24 0v4M12 2l2 3M36 2l-2 3" stroke="#ffb703" stroke-width="2.4" stroke-linecap="round"/>`:""}</svg>`;
+  return `<div class="quest"><div class="qh"><b>오늘의 퀘스트</b><span class="qcnt">${done} / ${L.length}</span></div>
+   <div class="qlist">${L.map(x=>`<div class="qrow ${x.n>=x.of?"dn":""}">${ring(x)}<div class="qm"><b>${E(x.t)}</b><small>${x.n} / ${x.of}</small></div><span class="qxp">${x.n>=x.of?"받음":"+10 XP"}</span></div>`).join("")}</div>
+   ${L.length>=2?`<div class="qchest ${q.paid?"dn":""}">${chest}<div class="qct"><b>${q.paid?"오늘의 보상을 받았어요":"모두 끝내면 보물상자!"}</b><small>${q.paid?"내일 또 만나요":"씨앗 5개 · 20 XP"}</small></div></div>`:""}</div>`;
 }
 function logWrong(w,mode,picked,correct){ try{ if(!w||w.sent||!w.key) return; wlog.push({k:w.key,m:mode,p:String(picked||"").slice(0,60),c:String(correct||"").slice(0,60),t:Date.now()}); if(wlog.length>300) wlog=wlog.slice(-300); LS.set("jp-wlog",wlog); }catch(e){} }
 /* 복습 화면에서 스스로 매긴 기억 정도(again/hard/good/easy)를 기록 · 오답 노트 · 복습 일정에 반영 */
