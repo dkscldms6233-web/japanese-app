@@ -301,9 +301,9 @@ function journeyHtml(){
   return `<div class="jr" data-season="${sn}"><div class="jrh"><b>7일 연속 출석</b><span>${J.pos} / 7일</span></div>
    <div class="jrroad"><svg viewBox="0 0 320 ${JH}" aria-hidden="true">${DEFS}${forestBg(sn)}<path class="jl2" filter="url(#fWc)" d="${line}"/><path class="jl" d="${line}"/>${stops}${particles(sn)}</svg><div class="jrb" style="left:${fx/3.2}%;top:${(fy-40)/JH*100}%">${birdSvg(null)}</div></div>
    <div class="jrf"><span>${msg}</span>${J.pending?`<button class="cta" data-gift="open" style="width:auto;padding:10px 18px;font-size:15px">선물 받기</button>`:""}</div>
-   ${J.items.length?`<div class="jrx"><button class="jrc" data-gift="box">내 선물함 · ${J.items.length}개 ›</button></div>`:""}</div>`;
+   ${(J.items.length||(giftState().extra||[]).length)?`<div class="jrx"><button class="jrc" data-gift="box">내 칭호 모음 · ${earnedTitles().length}개 ›</button></div>`:""}</div>`;
 }
-function giftDlg(){ let d=document.getElementById("giftDlg"); if(!d){ d=document.createElement("dialog"); d.id="giftDlg"; document.body.appendChild(d); d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-gclose]")){ d.close(); A().renderHome(); } else { const g=ev.target.closest("[data-gift]"); if(g) giftAct(g.dataset.gift); } }); } return d; }
+function giftDlg(){ let d=document.getElementById("giftDlg"); if(!d){ d=document.createElement("dialog"); d.id="giftDlg"; document.body.appendChild(d); d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-gclose]")){ d.close(); A().renderHome(); } else { const rt=ev.target.closest("[data-rt]"); if(rt){ setRepTitle(rt.dataset.rt); giftAct("box"); return; } const g=ev.target.closest("[data-gift]"); if(g) giftAct(g.dataset.gift); } }); } return d; }
 const stamp=n=>{ const t=kan(n)+"日"; return `<div class="stamp"><b style="font-size:${t.length>3?22:28}px">${t}</b><small>連続</small></div>`; };
 function giftAct(a){
   const d=giftDlg();
@@ -311,9 +311,13 @@ function giftAct(a){
     d.innerHTML=`<div class="db" style="text-align:center;padding:28px 20px"><p class="sub">${J.pending*7}일 연속 달성!</p><svg class="giftbox" viewBox="0 0 120 110" aria-hidden="true"><rect x="20" y="46" width="80" height="54" rx="6"/><rect x="14" y="32" width="92" height="20" rx="5"/><path d="M60 32v68M60 32q-16 -22 -26 -10q-6 12 26 10zM60 32q16 -22 26 -10q6 12 -26 10z"/></svg><div><button class="cta" data-gift="reveal" data-j="${J.pending}" style="max-width:220px;margin:14px auto 0">상자 열기</button></div></div>`;
     if(!d.open) d.showModal(); return; }
   if(a==="reveal"){ const J=journey(), j=J.pending; if(!j) return; const gs=giftState(); gs.claimed[J.run+":"+j]=1; gs.items.push({j,n:j*7,title:giftTitle(j),at:Date.now()}); set("jp-gift",gs); addXp(100); addSeeds(70);
-    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했어요</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 씨앗 70개 · 선물함에 보관돼요</p><button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋아요</button></div>`; return; }
-  if(a==="box"){ const its=giftState().items;
-    d.innerHTML=`<div class="dh"><h2 style="margin:0">내 선물함</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db"><div class="gl">${its.slice().reverse().map(x=>`<div class="gi">${stamp(x.n)}<b>${E(x.title)}</b><small>${new Date(x.at).toLocaleDateString("ko-KR")}</small></div>`).join("")}</div></div>`;
+    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했어요</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 씨앗 70개 · 칭호 모음에 보관돼요</p><button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋아요</button></div>`; return; }
+  if(a==="box"){ const gs=giftState(), cur=repTitle();
+    const cards=[...(gs.extra||[]).map(x=>({title:x.title,at:x.at,master:1})),...(gs.items||[]).slice().reverse().map(x=>({title:x.title,at:x.at,n:x.n}))];
+    d.innerHTML=`<div class="dh"><h2 style="margin:0">내 칭호 모음</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db">
+     <p class="sub gsum">받은 칭호 <b>${new Set(cards.map(c=>c.title)).size}</b>개 · 대표 칭호 <b>${cur?"「"+E(cur)+"」":"없음"}</b></p>
+     <p class="sub" style="font-size:12px;margin:0 0 10px">칸을 누르면 대표 칭호가 바뀌어요. 내 계정과 리그에 보여요.</p>
+     <div class="gl">${cards.map(c=>`<button class="gi ${c.title===cur?"rep":""}" data-rt="${E(c.title)}">${c.master?`<div class="stamp"><b style="font-size:30px">全</b><small>制覇</small></div>`:stamp(c.n)}<b>${E(c.title)}</b><small>${new Date(c.at).toLocaleDateString("ko-KR")}</small>${c.title===cur?`<em class="grp">대표</em>`:""}</button>`).join("")}</div></div>`;
     if(!d.open) d.showModal(); }
 }
 
@@ -388,7 +392,7 @@ ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!im
 .stamp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:76px;height:76px;padding:0 8px;border:3px solid var(--seal);border-radius:10px;color:var(--seal);transform:rotate(-4deg);animation:gstamp .5s cubic-bezier(.2,1.5,.4,1)}
 .stamp b{font-weight:900;line-height:1}.stamp small{font-size:10px;font-weight:700;letter-spacing:.2em;margin-top:3px}
 @keyframes gstamp{from{transform:rotate(-4deg) scale(2);opacity:0}to{transform:rotate(-4deg) scale(1);opacity:1}}
-.gl{display:grid;grid-template-columns:1fr 1fr;gap:14px}.gi{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.gi small{color:var(--sub);font-size:11px}
+.gl{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gi{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 6px;font:inherit;color:inherit;cursor:pointer}.gi.rep{border-color:var(--accent);background:var(--accent-soft)}.grp{position:absolute;top:6px;right:6px;font-style:normal;font-size:10px;font-weight:800;background:var(--accent);color:var(--onacc);border-radius:99px;padding:1px 7px}.gsum{margin:0 0 4px;font-size:14px}.gsum b{color:var(--accent-text)}.gi small{color:var(--sub);font-size:11px}
 .jr{--fg1:var(--fo1);--fg2:var(--fo2);--fp2:var(--fo2);--fp3:var(--fo3)}
 .jr[data-season="spring"]{--fo1:#f8dfe8;--fo2:#f3bdd0;--fo3:#ea9fba;--fg1:#d5ebd7;--fg2:#b7dcbd;--fp2:#9fcfa8;--fp3:#7fbe92;--fo-trunk:#b98d70;--fo-path:#f3e6cf}
 .jr[data-season="summer"]{--fw1:#bfe3f2;--fw2:#8fcbe6;--fo1:#b9dfb0;--fo2:#8fcb92;--fo3:#6db97a;--fg1:#cde9bf;--fg2:#a8d9a0;--fp2:#7fc08a;--fp3:#5fae73;--fo-trunk:#b08968;--fo-path:#f1e3c6}
