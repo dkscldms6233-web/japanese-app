@@ -1494,7 +1494,7 @@ function quizSetup(){
    ${lvRow(jl,"급수")}
    <div class="qm-sec">${ic("pencil")}단어 연습<small>${jl} 단어 ${n.toLocaleString()}개로 풀어요</small></div>
    <div class="tiles2">
-    ${quizTile("start",'data-mode="card"',"c1","cards","플래시카드","보고 떠올린 뒤 뒤집어서 확인")}
+    ${quizTile("start",'data-mode="card"',"c1","cards","단어 카드","보고 떠올린 뒤 뒤집어서 확인")}
     ${quizTile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
     ${quizTile("start",'data-mode="reading"',"c3","abc","읽기 고르기","후리가나 없는 한자의 읽기")}
     ${quizTile("start",'data-mode="order"',"c4","order","문장 순서",`조각을 맞춰 문장 만들기 · ${no+sentPool().length}문제`)}
@@ -2625,7 +2625,7 @@ function renderOnb(){
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
   }
   if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작해요.</p>
-    <div class="feat">${feat("vocab","단어장",`N5~N1 단어 ${ALL.length.toLocaleString()}개와 예문`)}${feat("pencil","퀴즈와 게임","플래시카드 · 짝 맞추기 · 타임어택")}${feat("target","JLPT 모의시험","문자·어휘, 문법, 독해, 청해")}${feat("news","일본 뉴스 읽기","매일 새 기사가 올라와요")}</div>
+    <div class="feat">${feat("vocab","단어장",`N5~N1 단어 ${ALL.length.toLocaleString()}개와 예문`)}${feat("pencil","퀴즈와 게임","단어 카드 · 짝 맞추기 · 타임어택")}${feat("target","JLPT 모의시험","문자·어휘, 문법, 독해, 청해")}${feat("news","일본 뉴스 읽기","매일 새 기사가 올라와요")}</div>
     <button class="cta" data-ob="next">시작하기</button><button class="obskip" data-ob="skip">이미 써 본 적 있어요</button></div>`;
   else if(obStep===1) o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>지금 일본어 실력은 어느 정도예요?</h2><p class="sub">나중에 홈에서 언제든 바꿀 수 있어요.</p><div class="obopts">${OB_LV.map((x,i)=>`<button class="mode" data-ob="lv" data-i="${i}"><b>${x[0]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
   else o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>하루 목표를 정해요</h2><p class="sub">부담 없이 시작하고, 익숙해지면 늘려 보세요.</p><div class="obopts">${OB_GOAL.map(x=>`<button class="mode" data-ob="goal" data-n="${x[0]}"><b>${x[1]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
