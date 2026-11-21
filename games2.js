@@ -63,14 +63,14 @@ function wdIntro(){
      <button class="pill ${WDK?"":"on"}" style="justify-content:center;padding:10px" data-wd="script" data-k="0">히라가나 <small>ひらがな</small></button>
      <button class="pill ${WDK?"on":""}" style="justify-content:center;padding:10px" data-wd="script" data-k="1">가타카나 <small>カタカナ</small></button></div>
    <div class="sub" style="text-align:center">${WDK?"외래어 단어를 가타카나로 입력해요 (ー, ッ, ァィゥェォ, ャュョ 포함)":"한자어·고유어 단어의 읽기를 히라가나로 입력해요 (っ, ゃゅょ, ぁぃぅぇぉ, ー 포함)"}</div>
-   <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:360px;margin:14px auto"><button class="cta" data-wd="new" data-m="daily">오늘의 문제 (${jlv()})</button><button class="cta sec" data-wd="new" data-m="free">연습 (무제한)</button></div>
+   <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:360px;margin:14px auto"><button class="cta" data-wd="new" data-m="daily">오늘의 문제 (${jlvQ()})</button><button class="cta sec" data-wd="new" data-m="free">연습 (무제한)</button></div>
    <div class="qbtns"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
 function hashStr(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h; }
 function wdBegin(mode){
   const pool=wdPool(WDK);
   if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족해요 (다른 급수나 문자를 골라 보세요)`); return; }
-  const pick=mode==="daily"?pool[hashStr(today()+"|"+jlv()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
+  const pick=mode==="daily"?pool[hashStr(today()+"|"+jlvQ()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
   G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map()};
   wdRender(); bgmStop();
 }

@@ -809,7 +809,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
 <script src="kana.js?v=17"></script>
-<script src="games2.js?v=15"></script>
+<script src="games2.js?v=16"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=18"></script>
 <script src="quotes.js"></script>
@@ -1490,16 +1490,16 @@ const GFONTS=[["round","둥근 글꼴"],["hand","손글씨"],["soft","부드러�
 const gfont = () => GFONTS.some(f=>f[0]===prefs.gfont) ? prefs.gfont : "round";
 const QV = v => v==="quiz"||v==="exam"||v==="game";
 function quizTile(act,attr,cls,icon,title,sub){ return `<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`; }
-function lvRow(jl,label){ return `<div class="lvrow"><span>${label}</span><div class="jlv">${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div></div>`; }
+function lvRow(jl,label,withAll){ return `<div class="lvrow"><span>${label}</span><div class="jlv">${(withAll?["전체","N5","N4","N3","N2","N1"]:["N5","N4","N3","N2","N1"]).map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div></div>`; }
 function quizSetup(){
   stopG(); document.body.classList.remove("inq","inr");
-  level="전체"; lvSel=new Set([jlv()]); posf=""; $("posf").value="";
+  level="전체"; lvSel=(view==="quiz"||view==="game")&&jlvQ()==="전체"?new Set():new Set([jlv()]); posf=""; $("posf").value="";
   if(view==="exam") return examSetup(); if(view==="game") return gameSetup();
-  const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlv();
+  const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlvQ();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2></div>
-   ${lvRow(jl,"급수")}
-   <div class="qm-sec">${ic("pencil")}단어 연습<small>${jl} 단어 ${n.toLocaleString()}개로 풀어요</small></div>
+   ${lvRow(jl,"급수",true)}
+   <div class="qm-sec">${ic("pencil")}단어 연습<small>${jl==="전체"?"전체 급수":jl} 단어 ${n.toLocaleString()}개로 풀어요</small></div>
    <div class="tiles2">
     ${quizTile("start",'data-mode="card"',"c1","cards","단어 카드","보고 떠올린 뒤 뒤집어서 확인")}
     ${quizTile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
@@ -1529,16 +1529,15 @@ function examSetup(){
 }
 function gameSetup(){
   const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">내 최고 ${v}점</span>`:""; };
-  const jl=jlv(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
+  const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>게임</h2></div>
-   <p class="sub devonly" style="margin:0 0 10px">고른 급수의 단어로 게임을 해요.</p>
-   ${lvRow(jl,"급수")}
+   ${lvRow(jl,"급수",true)}
    <div class="gcards">
-    <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b><small>제한 시간 100초 · 틀리면 3초 감소 · 6쌍을 모두 맞히면 12초 추가</small>${bb("match2")}</span></button>
-    <button class="gc" data-act="gstart" data-g="wordle"><span class="gi">${MONKEY}</span><span><b>일본어 워들</b><small>뜻 힌트를 보고 히라가나 읽기를 6번 안에 맞혀요 · 매일 새 문제</small>${bb("wordle")}</span></button>
-    <button class="gc" data-act="gstart" data-g="shiri"><span class="gi">${MONKEY}</span><span><b>しりとり 끝말잇기</b><small>컴퓨터와 일본어 끝말잇기 · 「ん」으로 끝나면 져요</small>${bm(["shiri1","shiri2","shiri3"])}</span></button>
-    <button class="gc" data-act="gstart" data-g="fall"><span class="gi">${MONKEY}</span><span><b>떨어지는 단어</b><small>떨어지는 단어의 뜻을 바닥에 닿기 전에 골라요 · 점점 빨라져요</small>${bb("fall")}</span></button>
+    <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b>${bb("match2")}</span></button>
+    <button class="gc" data-act="gstart" data-g="wordle"><span class="gi">${MONKEY}</span><span><b>일본어 워들</b>${bb("wordle")}</span></button>
+    <button class="gc" data-act="gstart" data-g="shiri"><span class="gi">${MONKEY}</span><span><b>しりとり</b>${bm(["shiri1","shiri2","shiri3"])}</span></button>
+    <button class="gc" data-act="gstart" data-g="fall"><span class="gi">${MONKEY}</span><span><b>떨어지는 단어</b>${bb("fall")}</span></button>
    </div>
    <div class="bgmbar"><span class="bgml">${ic("sound")}배경음악</span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="-1" aria-label="이전 음악">‹</button>
@@ -1896,6 +1895,7 @@ function endTime(){
 /* ---------- JLPT 모의시험 ---------- */
 const JSEC={vocab:"문자·어휘",pair:"유의 표현",gram:"문법",read:"독해",listen:"청해"};
 const jlv=()=>["N5","N4","N3","N2","N1"].includes(prefs.jl)?prefs.jl:(myLv()[0]||"N5");
+const jlvQ=()=>prefs.jl==="전체"?"전체":jlv();   /* 퀴즈·게임은 '전체' 급수도 고를 수 있어요 */
 const jWords=lv=>ALL.filter(w=>w.lv===lv);
 function jShuf(opts,ai){ const o=shuffle(opts.map((x,i)=>({x,ok:i===ai}))); return {o:o.map(v=>v.x),a:o.findIndex(v=>v.ok)}; }
 function jBank(bank,lv){
@@ -2120,7 +2120,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="bgmnav"){ bgmNav(+b.dataset.d); return; }
   if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
-  if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
+  if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="jstart"){ jStart(b.dataset.s); return; }
   if(a==="jpick"){ jPick(+b.dataset.i); return; }
   if(a==="jnext"){ jNext(); return; }
@@ -2756,7 +2756,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="path.js?v=78"></script>
 <script src="community.js?v=14"></script>
 <script src="review.js?v=7"></script>
-<script src="grammar.js?v=4"></script>
+<script src="grammar.js?v=5"></script>
 <script src="dev.js?v=5"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

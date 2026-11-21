@@ -277,7 +277,7 @@ let lv="N5", q="";
 const R=s=>A().R(s);
 
 function card(g,i){
-  return `<details class="gr"><summary><b class="grt">${R(g.t)}</b><span class="grm">${E(g.m)}</span></summary><div class="grb">
+  return `<details class="gr"><summary><b class="grt">${R(g.t)}${lv==="전체"?` <em class="grlvb">${g.lv}</em>`:""}</b><span class="grm">${E(g.m)}</span></summary><div class="grb">
    ${g.c?`<div class="grc"><small>만드는 법</small><span>${R(g.c)}</span></div>`:""}
    <div class="grex">${g.ex.map(([ja,ko])=>`<div class="gre"><div class="grj">${R(ja)}</div><div class="grk">${E(ko)}</div></div>`).join("")}</div>
    ${g.tip?`<div class="grtip"><b>헷갈리는 점</b><p>${R(g.tip)}</p></div>`:""}
@@ -285,9 +285,9 @@ function card(g,i){
 }
 function render(){
   const v=$("grammarView"); if(!v) return;
-  const list=G.filter(g=>g.lv===lv&&(!q||(g.t+g.m+(g.c||"")).toLowerCase().includes(q.toLowerCase())));
+  const list=G.filter(g=>(lv==="전체"||g.lv===lv)&&(!q||(g.t+g.m+(g.c||"")).toLowerCase().includes(q.toLowerCase())));
   v.innerHTML=`<div class="grwrap"><h2 style="margin:6px 0 4px">문법</h2><p class="sub" style="margin:0 0 10px">한국어와 다른 점을 중심으로 설명해요. 누르면 펼쳐져요.</p>
-   <div class="grlv">${["N5","N4","N3","N2","N1"].map(l=>{ const n=G.filter(g=>g.lv===l).length; return `<button class="pill ${lv===l?"on":""}" data-grlv="${l}" ${n?"":"disabled"}>${l}${n?"":" · 준비 중"}</button>`; }).join("")}</div>
+   <div class="grlv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const n=l==="전체"?G.length:G.filter(g=>g.lv===l).length; return `<button class="pill ${lv===l?"on":""}" data-grlv="${l}" ${n?"":"disabled"}>${l}${n?"":" · 준비 중"}</button>`; }).join("")}</div>
    <input type="search" id="grq" class="grq" placeholder="문법·뜻으로 검색" value="${E(q)}">
    <div class="grlist">${list.length?list.map(card).join(""):`<p class="sub">찾는 문법이 없어요.</p>`}</div>
    <p class="sub grfoot">급수 분류는 교재마다 조금 달라서 참고용이에요. 내용은 계속 다듬는 중이에요.</p></div>`;
@@ -301,7 +301,7 @@ ST.textContent=`.grlv{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.gr
 .grq{width:100%;box-sizing:border-box;font:inherit;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card);color:var(--text);margin-bottom:8px}
 .grlist{display:flex;flex-direction:column}.gr{border-bottom:1px solid var(--line)}.gr summary{list-style:none;cursor:pointer;padding:12px 2px;display:flex;flex-direction:column;gap:3px}.gr summary::-webkit-details-marker{display:none}
 .gr summary::after{content:"›";position:absolute;right:6px;color:var(--sub);transition:transform .15s}.gr{position:relative}.gr[open] summary::after{transform:rotate(90deg)}
-.grt{font-size:19px}.grm{font-size:13px;color:var(--sub);padding-right:18px}.grb{padding:0 2px 14px}
+.grt{font-size:19px}.grlvb{font-style:normal;font-size:11px;font-weight:700;color:var(--accent-text);background:var(--accent-soft);border-radius:999px;padding:1px 8px;vertical-align:middle;margin-left:4px}.grm{font-size:13px;color:var(--sub);padding-right:18px}.grb{padding:0 2px 14px}
 .grc{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;background:var(--chip);border-radius:10px;padding:8px 10px;font-size:14px}.grc small{color:var(--sub);font-weight:700}
 .grex{margin:10px 0;display:flex;flex-direction:column;gap:8px}.gre{border-left:3px solid var(--accent);padding-left:10px}.grj{font-size:16px;line-height:1.9}.grk{font-size:13px;color:var(--sub)}
 .grtip,.grcmp{border-radius:10px;padding:10px 12px;margin-top:8px;font-size:14px;line-height:1.6}.grtip{background:var(--accent-soft)}.grcmp{background:var(--chip)}.grtip b,.grcmp b{font-size:12px;color:var(--accent-text)}.grtip p,.grcmp p{margin:3px 0 0}
