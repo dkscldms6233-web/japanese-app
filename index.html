@@ -754,8 +754,6 @@ header{border-bottom:1px solid var(--line);box-shadow:none}
 .hanko{border-color:var(--seal)}
 /* ---- 헤더 정리: 홈이 아닌 화면은 한 줄로, 테마 전환은 버튼 하나로 ---- */
 .theme{display:none}
-#themeCycle{border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:5px 11px;cursor:pointer;line-height:1.4;display:inline-flex;align-items:center;gap:4px}
-#themeCycle .ic{width:15px;height:15px}
 body:not([data-view=home]) header .hin::before{display:none}
 body:not([data-view=home]) header{padding:8px 16px 6px}
 body:not([data-view=home]) .top{flex-wrap:nowrap;margin-bottom:4px}
@@ -2753,7 +2751,10 @@ document.addEventListener("click",e=>{
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300);
   }
 });
-window.APP={view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E};
+window.APP={view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
+  applyMyLevels:cur=>{ prefs.myLevels=cur; delete prefs.myLevel; LS.set("jp-prefs",prefs); lvSel=new Set(cur); level="전체"; todayOff=0; renderLevels(); renderHome(); },
+  applyFuri:v=>{ prefs.nofuri=v; LS.set("jp-prefs",prefs); $("nofuri").checked=v; applyPrefs(); },
+  resetLearning:()=>{ log={}; miss={}; wrong={}; wlog=[]; LS.set("jp-log",log); LS.set("jp-miss",miss); LS.set("jp-wrong",wrong); LS.set("jp-wlog",wlog); renderLevels(); }};
 if(needOnb()) openOnb();
 // 프로필 (이 기기 안에서만 저장 · 비밀번호 없음)
 const saveProfiles = () => RAW.set("jp-profiles",profiles);
@@ -2808,15 +2809,9 @@ renderLevels(); renderGrid(); setView("home");
 <script src="community.js?v=15"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=5"></script>
+<script src="settings.js?v=2"></script>
 <script src="dev.js?v=6"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
-<script>(function(){ const tools=document.querySelector(".tools"), grp=document.getElementById("theme"); if(!tools||!grp) return;
- const b=document.createElement("button"); b.id="themeCycle"; b.type="button"; tools.appendChild(b);
- const order=["auto","light","dark"], NAME={auto:"자동",light:"라이트",dark:"다크"};
- const cur=()=>{ const on=grp.querySelector(".on"); return on?on.dataset.t:"auto"; };
- const sync=()=>{ const m=cur(), src=grp.querySelector('[data-t="'+m+'"]'); b.innerHTML=(src&&src.querySelector("svg")?src.querySelector("svg").outerHTML:"")+"<span>"+NAME[m]+"</span>"; b.title="화면 모드: "+NAME[m]+" (눌러서 바꾸기)"; b.setAttribute("aria-label",b.title); };
- b.addEventListener("click",()=>{ const n=order[(order.indexOf(cur())+1)%3], t=grp.querySelector('[data-t="'+n+'"]'); if(t) t.click(); sync(); });
- new MutationObserver(sync).observe(grp,{attributes:true,subtree:true,attributeFilter:["class"]}); sync(); })();</script>
 </body>
 </html>
