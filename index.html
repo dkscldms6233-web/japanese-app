@@ -799,6 +799,20 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .panel h3,.wk h3{font-size:13px;color:var(--sub);font-weight:700;letter-spacing:.03em;margin-bottom:8px}
 .rpt{gap:0!important;border:1px solid var(--line);border-radius:var(--rad);overflow:hidden}.rpt>div{border:0!important;border-radius:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}
 .qset summary .ic{display:none}
+/* ---- 게임 탭: 게임 포스터 타일 ---- */
+.gbanner{display:flex;align-items:center;justify-content:space-between;background:#3f8f5f;color:#fff;border-radius:var(--rad);padding:14px 18px 0;margin:2px 0 12px;overflow:hidden;position:relative;min-height:84px}
+.gbanner b{display:block;font-size:26px;letter-spacing:-.01em}.gbanner span{font-size:14px;opacity:.9}
+.gbanner img{height:82px;width:auto;margin-bottom:-6px}
+.gbanner::before{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#2f7a4c}
+.gcards{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;border-top:0!important}
+.gc{display:flex!important;flex-direction:column;align-items:stretch!important;gap:0!important;padding:0!important;border:2px solid #3b342f!important;border-bottom-width:5px!important;border-radius:var(--rad)!important;overflow:hidden;background:var(--card)!important;text-align:left}
+.gc:active{transform:translateY(2px)!important;border-bottom-width:3px!important}
+.gc .gi{display:flex!important;width:100%!important;height:auto!important;border-radius:0!important;padding:14px 8px 10px;box-sizing:border-box;border-bottom:2px solid #3b342f}
+.gc .gi svg{width:100%!important;height:auto!important}
+.g-match .gi{background:#cfe9d6}.g-wordle .gi{background:#ffe6a8}.g-shiri .gi{background:#cfe3f3}.g-fall .gi{background:#f6d3c4}
+.gc .gt{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
+.gc .gt b{font-size:17px}
+.gc:hover{background:var(--card)!important}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -1556,17 +1570,23 @@ function examSetup(){
    <div style="margin-top:14px">${jrdgBlock(jl)}</div>
   </div>`;
 }
+const GART={
+ match:`<svg viewBox="0 0 120 76" aria-hidden="true"><rect x="10" y="14" width="44" height="52" rx="7" fill="#fffdf6" stroke="#3b342f" stroke-width="3"/><text x="32" y="48" font-size="26" font-weight="800" text-anchor="middle" fill="#3b342f">犬</text><rect x="66" y="14" width="44" height="52" rx="7" fill="#fff0c9" stroke="#3b342f" stroke-width="3"/><text x="88" y="46" font-size="18" font-weight="800" text-anchor="middle" fill="#3b342f">いぬ</text><circle cx="60" cy="38" r="9" fill="#e9573f" stroke="#3b342f" stroke-width="2.5"/><path d="M55.5 38.5l3.2 3.2 6-6.4" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ wordle:`<svg viewBox="0 0 120 76" aria-hidden="true">${[["さ","#4f9d69"],["く","#e3b341"],["ら","#8d8478"],["",""],["",""]].map((t,i)=>`<rect x="${6+i*22}" y="22" width="19" height="24" rx="4" fill="${t[1]||"#fffdf6"}" stroke="#3b342f" stroke-width="2.5"/>${t[0]?`<text x="${15.5+i*22}" y="40" font-size="15" font-weight="800" text-anchor="middle" fill="#fff">${t[0]}</text>`:""}`).join("")}<rect x="6" y="52" width="19" height="6" rx="3" fill="#d8cfbf"/><rect x="28" y="52" width="19" height="6" rx="3" fill="#d8cfbf"/></svg>`,
+ shiri:`<svg viewBox="0 0 120 76" aria-hidden="true"><rect x="6" y="10" width="54" height="24" rx="12" fill="#fffdf6" stroke="#3b342f" stroke-width="3"/><text x="33" y="27" font-size="13" font-weight="800" text-anchor="middle" fill="#3b342f">りんご</text><rect x="60" y="42" width="54" height="24" rx="12" fill="#fff0c9" stroke="#3b342f" stroke-width="3"/><text x="87" y="59" font-size="13" font-weight="800" text-anchor="middle" fill="#3b342f">ごりら</text><path d="M44 36 q-2 10 12 12" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M52 44l5 4-6 3" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ fall:`<svg viewBox="0 0 120 76" aria-hidden="true"><rect x="22" y="6" width="34" height="22" rx="5" fill="#fffdf6" stroke="#3b342f" stroke-width="3"/><text x="39" y="23" font-size="15" font-weight="800" text-anchor="middle" fill="#3b342f">雨</text><path d="M39 32v14M33 41l6 7 6-7" stroke="#e9573f" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="72" y="22" width="34" height="22" rx="5" fill="#fff0c9" stroke="#3b342f" stroke-width="3"/><text x="89" y="39" font-size="15" font-weight="800" text-anchor="middle" fill="#3b342f">花</text><path d="M4 66h112" stroke="#3b342f" stroke-width="3" stroke-linecap="round"/><path d="M12 66q3-9 6 0M28 66q3-7 6 0M88 66q3-9 6 0M104 66q3-7 6 0" stroke="#3b342f" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>`
+};
 function gameSetup(){
   const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">내 최고 ${v}점</span>`:""; };
   const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
-   <div class="qm-h"><h2>게임</h2></div>
+   <div class="gbanner"><div><b>게임</b><span>단어로 놀아요</span></div><img src="mascot.png" alt=""></div>
    ${lvRow(jl,"급수",true)}
    <div class="gcards">
-    <button class="gc" data-act="gstart" data-g="match"><span class="gi">${MONKEY}</span><span><b>짝 맞추기</b>${bb("match2")}</span></button>
-    <button class="gc" data-act="gstart" data-g="wordle"><span class="gi">${MONKEY}</span><span><b>일본어 워들</b>${bb("wordle")}</span></button>
-    <button class="gc" data-act="gstart" data-g="shiri"><span class="gi">${MONKEY}</span><span><b>しりとり</b>${bm(["shiri1","shiri2","shiri3"])}</span></button>
-    <button class="gc" data-act="gstart" data-g="fall"><span class="gi">${MONKEY}</span><span><b>떨어지는 단어</b>${bb("fall")}</span></button>
+    <button class="gc g-match" data-act="gstart" data-g="match"><span class="gi">${GART.match}</span><span class="gt"><b>짝 맞추기</b>${bb("match2")}</span></button>
+    <button class="gc g-wordle" data-act="gstart" data-g="wordle"><span class="gi">${GART.wordle}</span><span class="gt"><b>일본어 워들</b>${bb("wordle")}</span></button>
+    <button class="gc g-shiri" data-act="gstart" data-g="shiri"><span class="gi">${GART.shiri}</span><span class="gt"><b>しりとり</b>${bm(["shiri1","shiri2","shiri3"])}</span></button>
+    <button class="gc g-fall" data-act="gstart" data-g="fall"><span class="gi">${GART.fall}</span><span class="gt"><b>떨어지는 단어</b>${bb("fall")}</span></button>
    </div>
    <div class="bgmbar"><span class="bgml">${ic("sound")}배경음악</span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="-1" aria-label="이전 음악">‹</button>
