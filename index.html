@@ -1178,7 +1178,7 @@ const SRS_IV=[10/1440,1,3,7,14,30,60];
 function recordRating(w,grade){
   if(!w||!w.key) return; const ok=grade==="good"||grade==="easy";
   const d=today(), e=log[d]||(log[d]={n:0,c:0}); e.n++; if(ok) e.c++;
-  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트 졸업!"); } } }
+  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트에서 뺐어요!"); } } }
   else if(grade==="again"){ wrong[w.key]=0; miss[w.key]=(miss[w.key]||0)+1; logWrong(w,"review",w.ko,w.ko); }
   LS.set("jp-log",log); LS.set("jp-wrong",wrong); LS.set("jp-miss",miss);
   const sr=LS.get("jp-srs",{}), x=sr[w.key]||{b:0}, b=x.b||0;
@@ -1219,7 +1219,7 @@ function record(w,ok){
   if(window.PATH&&!w.sent) PATH.rec(w,ok);
   const d=today(), e=log[d]||(log[d]={n:0,c:0}); e.n++; if(ok) e.c++;
   if(w.sent){ LS.set("jp-log",log); return; }
-  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트 졸업!"); } } }
+  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트에서 뺐어요!"); } } }
   else { wrong[w.key]=0; miss[w.key]=(miss[w.key]||0)+1; }
   LS.set("jp-log",log); LS.set("jp-wrong",wrong); LS.set("jp-miss",miss);
   renderLevels();
@@ -2725,7 +2725,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="anime.js?v=14"></script>
 <script src="path.js?v=78"></script>
 <script src="community.js?v=14"></script>
-<script src="review.js?v=2"></script>
+<script src="review.js?v=5"></script>
 <script src="dev.js?v=5"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

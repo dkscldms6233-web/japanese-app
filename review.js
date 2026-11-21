@@ -5,7 +5,7 @@
 (function(){
 const A=()=>window.APP, $=id=>document.getElementById(id), E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const IV=[10/1440,1,3,7,14,30,60], DAY=864e5, PER_SESSION=20;
-const TYPE={meaning:"뜻 퀴즈",reading:"읽기 퀴즈",card:"카드",review:"복습",order:"문장 순서"};
+const TYPE={meaning:"뜻 고르기",reading:"읽기 고르기",card:"카드",review:"복습",order:"문장 순서"};
 
 /* ---------- 복습 일정 계산 ---------- */
 const srs=()=>A().LS.get("jp-srs",{});
@@ -83,14 +83,15 @@ function openWrong(){
   const last={}, picks={}; log.forEach(e=>{ last[e.k]=Math.max(last[e.k]||0,e.t); (picks[e.k]=picks[e.k]||[]).push(e); });
   let ws=wrongWords(); ws.sort((a,b)=>wSort==="miss"?((miss[b.key]||0)-(miss[a.key]||0)):((last[b.key]||0)-(last[a.key]||0)));
   d.innerHTML=`<div class="dh"><h2 style="margin:0">오답 노트 <small class="sub">${ws.length}개</small></h2><button class="x" data-rvx aria-label="닫기">×</button></div><div class="db rvdb">
-   ${ws.length?`<div class="rvbtns" style="margin-top:0"><button class="pill on" data-rv="wquiz">뜻 퀴즈로 다시</button><button class="pill" data-rv="wread">읽기 퀴즈로</button><button class="pill" data-rv="wcard">카드로 복습</button></div>
-   <div class="rvsort"><button class="pill sm ${wSort==="recent"?"on":""}" data-rv="wsort" data-s="recent">최근 틀린 순</button><button class="pill sm ${wSort==="miss"?"on":""}" data-rv="wsort" data-s="miss">많이 틀린 순</button></div>
+   ${ws.length?`<p class="sub rvlab">틀린 단어 다시 풀기</p><div class="rvbtns" style="margin-top:6px;justify-content:flex-start"><button class="pill on" data-rv="wquiz">뜻 고르기</button><button class="pill" data-rv="wread">읽기 고르기</button><button class="pill" data-rv="wcard">플래시카드</button></div>
+   <div class="rvsort"><label for="rvSort" class="sub">정렬</label><select id="rvSort"><option value="recent" ${wSort==="recent"?"selected":""}>최근에 틀린 순</option><option value="miss" ${wSort==="miss"?"selected":""}>많이 틀린 순</option></select></div>
    <div class="rvlist">${ws.map(w=>{ const p=(picks[w.key]||[]).slice(-1)[0], k=wr[w.key]||0;
      return `<button class="rvrow" data-rv="wopen" data-k="${E(w.key)}"><span class="rvr1"><b>${R(w.f)}</b><span class="rvko">${E(w.ko)}</span></span>
-      <span class="rvr2">${p&&p.p&&p.p!==p.c?`내가 고른 답: <i>${E(p.p)}</i> · ${E(TYPE[p.m]||"퀴즈")}`:(p?E(TYPE[p.m]||"퀴즈")+"에서 틀림":"이전에 틀린 단어")} · ${miss[w.key]||1}번 틀림 · 졸업까지 ${Math.max(0,2-k)}번</span></button>`; }).join("")}</div>`
-   :`<p class="rvdone">오답 노트가 비었어요 🎉</p><p class="sub rvnote">퀴즈에서 틀린 단어가 여기에 쌓이고, 2번 연속 맞히면 졸업해요.</p>`}
+      <span class="rvr2">${p&&p.p&&p.p!==p.c?`내가 고른 답: <i>${E(p.p)}</i> · ${E(TYPE[p.m]||"퀴즈")}`:(p?E(TYPE[p.m]||"퀴즈")+"에서 틀림":"이전에 틀린 단어")} · ${miss[w.key]||1}번 틀림 · ${Math.max(1,2-k)}번 더 맞히면 빠져요</span></button>`; }).join("")}</div>`
+   :`<p class="rvdone">오답 노트가 비었어요 🎉</p><p class="sub rvnote">퀴즈에서 틀린 단어가 여기에 쌓이고, 2번 연속 맞히면 오답에서 빠져요.</p>`}
    <div class="rvbtns"><button class="pill" data-rv="back">복습으로</button></div></div>`;
   d.querySelector('[data-rv="back"]').addEventListener("click",overview);
+  const so=d.querySelector("#rvSort"); if(so) so.addEventListener("change",()=>{ wSort=so.value; openWrong(); });
   if(!d.open) d.showModal();
 }
 
@@ -104,6 +105,6 @@ ST.textContent=`#rvDlg{border:0;border-radius:18px;padding:0;max-width:440px;wid
 .rvcard{text-align:center;padding:28px 8px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}.rvw{font-size:34px;font-weight:800;line-height:1.5}.rvm{font-size:22px;font-weight:700}.rvp{font-size:13px;color:var(--sub)}.rvex{margin-top:8px;font-size:15px;text-align:left;border-left:3px solid var(--line);padding-left:10px}.rvex small{display:block;color:var(--sub);margin-top:2px}
 .rvrate{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.rvrate button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 2px;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center}.rvrate b{font-size:14px}.rvrate small{font-size:11px;color:var(--sub)}
 .rvrate .rv-again{border-color:#d98a80;color:#b5483c}.rvrate .rv-good{border-color:#8cc3a0}.rvrate .rv-easy{border-color:#8cc3a0;background:var(--accent-soft)}
-.rvsort{display:flex;gap:6px;margin:10px 0}.rvlist{display:flex;flex-direction:column}.rvrow{text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;font:inherit;padding:10px 2px;cursor:pointer;display:flex;flex-direction:column;gap:3px}.rvr1{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.rvr1 b{font-size:18px}.rvko{color:var(--sub);font-size:14px}.rvr2{font-size:12px;color:var(--sub)}.rvr2 i{font-style:normal;color:#b5483c;font-weight:700}`;
+.rvlab{margin:0;font-size:13px}.rvsort{display:flex;gap:8px;align-items:center;margin:12px 0 4px}.rvsort select{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--card);color:var(--text)}.rvlist{display:flex;flex-direction:column}.rvrow{text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;font:inherit;padding:10px 2px;cursor:pointer;display:flex;flex-direction:column;gap:3px}.rvr1{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.rvr1 b{font-size:18px}.rvko{color:var(--sub);font-size:14px}.rvr2{font-size:12px;color:var(--sub)}.rvr2 i{font-style:normal;color:#b5483c;font-weight:700}`;
 document.head.appendChild(ST);
 })();
