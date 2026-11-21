@@ -122,7 +122,7 @@ function birdSvg(equip,cls){
 }
 function birdHtml(){
   const s=charState(), cheapest=Math.min(...ITEMS.filter(x=>!s.owned.includes(x.id)).map(x=>x.price),Infinity), can=cheapest<=(s.seeds||0);
-  return `<div class="hbw"><button class="hbird" data-shop="1" aria-label="${E(birdTitle())} 꾸미기">${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">현재 씨앗 ${s.seeds||0}</button></div>`;
+  return `<div class="hbw"><button class="hbird" data-shop="1" aria-label="${E(birdTitle())} 꾸미기">${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">현재 씨앗 ${s.seeds||0} ›</button></div>`;
 }
 const birdTitle=()=>{ try{ const p=A().curProfile(); return p&&p.cloud?p.name+"님의 참새":"내 참새"; }catch(e){ return "내 참새"; } };
 let shopSlot="head", shopPrev={};
