@@ -337,7 +337,11 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,profileHtml,repTitle,setRepTitle,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
+  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS,maxLv:MAXLV,
+    setLevel(L){ const x=xpState(); x.t=lvFloor(Math.max(1,Math.min(MAXLV,L))); set("jp-xp",x); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} },
+    pathSet(L,on){ const st=get("jp-path",{done:{}}); st.done=st.done||{}; build().forEach(u=>{ if(L==="ALL"||u.tag===L) u.nodes.forEach(n=>{ if(on) st.done[n.id]=1; else delete st.done[n.id]; }); }); set("jp-path",st); if(on) checkSpecial(); },
+    giftReset(){ set("jp-gift",{}); },
+    giveMaster(on){ const gs=giftState(); gs.extra=(gs.extra||[]).filter(x=>x.title!==MASTER_TITLE); if(on) gs.extra.push({title:MASTER_TITLE,at:Date.now()}); set("jp-gift",gs); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }},addSeeds,addXp,birdSvg,statusHtml,profileHtml,repTitle,setRepTitle,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;
