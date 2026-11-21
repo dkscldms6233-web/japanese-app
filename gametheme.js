@@ -104,8 +104,12 @@ body:has(#quizView .gbox) #quizView .gbox .fw{font-size:26px!important}
 /* 떨어지는 단어 바닥선: 줄무늬 대신 단색 */
 body:has(#quizView .gbox) #quizView .gbox .fallarea .gr{background:#ef6a85!important;opacity:1!important;height:6px!important;border-radius:3px}
 /* 게임의 한국어 설명 글자: 도트(픽셀) 글꼴 · 일본어 단어와 읽기는 그대로 */
-body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizView .gbox p,body:has(#quizView .gbox) #quizView .gbox h3,body:has(#quizView .gbox) #quizView .gbox .gstat span,body:has(#quizView .gbox) #quizView .gbox .cta,body:has(#quizView .gbox) #quizView .gbox .pill:not(.on){font-family:Galmuri14,Galmuri11,"Apple SD Gothic Neo",sans-serif!important;font-weight:400!important;letter-spacing:0}
-body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizView .gbox p{font-size:16px!important}
+body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizView .gbox p,body:has(#quizView .gbox) #quizView .gbox h3,body:has(#quizView .gbox) #quizView .gbox .gstat span,body:has(#quizView .gbox) #quizView .gbox .cta,body:has(#quizView .gbox) #quizView .gbox .pill:not(.on):not([data-act=gquit]){font-family:Galmuri14,Galmuri11,"Apple SD Gothic Neo",sans-serif!important;font-weight:400!important;letter-spacing:0}
+body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizView .gbox p{font-size:14px!important;line-height:1.7}
+body:has(#quizView .gbox) #quizView .gbox .gstat span,body:has(#quizView .gbox) #quizView .gbox .cta{font-size:16px!important}
+body:has(#quizView .gbox) #quizView .gbox .pill:not(.on):not([data-act=gquit]){font-size:14px!important}
+/* 도트 글꼴은 조금만 두껍게 */
+body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizView .gbox p,body:has(#quizView .gbox) #quizView .gbox h3,body:has(#quizView .gbox) #quizView .gbox .gstat span,body:has(#quizView .gbox) #quizView .gbox .cta,body:has(#quizView .gbox) #quizView .gbox .pill:not(.on):not([data-act=gquit]){-webkit-text-stroke:.45px currentColor}
 `;
 document.head.appendChild(ST);
 })();
