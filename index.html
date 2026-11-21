@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>すらすら日本語 - 술술 일본어</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" content="#f7faff">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -669,24 +669,24 @@ body.kanamode .levels,body.kanamode .opts{display:none}
 
 /* ================= 테마: 담백한 미니멀 (박스·그림자를 줄이고 여백·글자 위계·가는 선으로 구분. 포인트 색은 하나) ================= */
 :root{
-  --bg:#ffffff; --card:#ffffff; --text:#1f2430; --sub:#6b7280; --line:#e9ecf1;
-  --accent:#e4694c; --accent-dk:#cf5538; --accent-text:#c9522f; --accent-soft:#fff0ea; --chip:#f4f6f9; --onacc:#ffffff;
-  --blue:#4a8fc2; --blue-dk:#3b7aab; --blue-soft:#eaf3fa;
-  --ok:#3fa98a; --ok-dk:#2f8e72; --ok-soft:#e4f4ee; --bad:#d9546a; --bad-soft:#fbe9ec;
-  --seal:#d9483f; --sakura:#e58aa6; --kin:#d9a43a; --gold:#d9a43a; --g1:#fcece6; --g2:#f7f4ef;
-  --on:#3b7aab; --kun:#2f8e72;
-  --n5:#3fa98a; --n4:#4a8fc2; --n3:#d9a43a; --n2:#e4694c; --n1:#d9546a;
+  --bg:#f7faff; --card:#ffffff; --text:#14224a; --sub:#5b6a8c; --line:#e1e9f6;
+  --accent:#3b82e6; --accent-dk:#2f6fcb; --accent-text:#1f55b5; --accent-soft:#e6f1fe; --chip:#edf3fb; --onacc:#ffffff;
+  --blue:#4a95e6; --blue-dk:#2f6fcb; --blue-soft:#e6f1fe;
+  --ok:#2fa89c; --ok-dk:#23897f; --ok-soft:#dff5f2; --bad:#ec5a8f; --bad-soft:#ffe8f1;
+  --seal:#ff6fa0; --sakura:#ff86b3; --kin:#a07ae6; --gold:#e6a100; --g1:#e6f1fe; --g2:#f4f8ff;
+  --on:#2f6fcb; --kun:#23897f;
+  --n5:#40b8ac; --n4:#4a95e6; --n3:#9a74e6; --n2:#ff86b3; --n1:#14224a;
   --sh:none; --sh2:none;
   --fo1:#d5ebd7; --fo2:#b1d9b9; --fo3:#8cc8a0; --fo-trunk:#c9a27c; --fo-path:#f3e6cf;
 }
 :root[data-theme=dark]{
-  --bg:#1c1917; --card:#252120; --text:#f4efe9; --sub:#a59d94; --line:#38322e;
-  --accent:#ff8a6b; --accent-dk:#ee7455; --accent-text:#ff9d82; --accent-soft:#3a2823; --chip:#2e2927; --onacc:#2a1510;
-  --blue:#7db8e0; --blue-dk:#7db8e0; --blue-soft:#1f3140;
-  --ok:#64cfae; --ok-dk:#4fb596; --ok-soft:#1d3a30; --bad:#ff8196; --bad-soft:#42232a;
-  --seal:#ff7d73; --sakura:#f0a3bb; --kin:#e6bd5c; --gold:#e6bd5c; --g1:#3a2823; --g2:#272220;
-  --on:#7db8e0; --kun:#64cfae;
-  --n5:#64cfae; --n4:#7db8e0; --n3:#e6bd5c; --n2:#ff8a6b; --n1:#ff8196;
+  --bg:#0e1630; --card:#17224a; --text:#eaf0ff; --sub:#9fb0d6; --line:#26356a;
+  --accent:#6fb0ff; --accent-dk:#5399f0; --accent-text:#8fc2ff; --accent-soft:#1e3260; --chip:#1d2b58; --onacc:#0a1430;
+  --blue:#7db8ff; --blue-dk:#7db8ff; --blue-soft:#1b2d5c;
+  --ok:#5fd3c6; --ok-dk:#45b8ab; --ok-soft:#163d44; --bad:#ff8fb6; --bad-soft:#4a2040;
+  --seal:#ff8fb6; --sakura:#ffa3c6; --kin:#c0a2f5; --gold:#f2c14e; --g1:#1e3260; --g2:#17224a;
+  --on:#7db8ff; --kun:#5fd3c6;
+  --n5:#5fd3c6; --n4:#7db8ff; --n3:#c0a2f5; --n2:#ff8fb6; --n1:#c9d6ff;
   --fo1:#27392d; --fo2:#30503c; --fo3:#3a6a4b; --fo-trunk:#6e5542; --fo-path:#3f3529;
 }
 h2,h3,.cta,.pill,.mode b,.pk b,.vb{font-weight:700}
@@ -805,11 +805,11 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .gbanner img{height:82px;width:auto;margin-bottom:-6px}
 .gbanner::before{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#2f7a4c}
 .gcards{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;border-top:0!important}
-.gc{display:flex!important;flex-direction:column;align-items:stretch!important;gap:0!important;padding:0!important;border:2px solid #3b342f!important;border-bottom-width:5px!important;border-radius:var(--rad)!important;overflow:hidden;background:var(--card)!important;text-align:left}
+.gc{display:flex!important;flex-direction:column;align-items:stretch!important;gap:0!important;padding:0!important;border:2px solid #14224a!important;border-bottom-width:5px!important;border-radius:var(--rad)!important;overflow:hidden;background:var(--card)!important;text-align:left}
 .gc:active{transform:translateY(2px)!important;border-bottom-width:3px!important}
-.gc .gi{display:flex!important;width:100%!important;height:auto!important;border-radius:0!important;padding:14px 8px 10px;box-sizing:border-box;border-bottom:2px solid #3b342f}
+.gc .gi{display:flex!important;width:100%!important;height:auto!important;border-radius:0!important;padding:14px 8px 10px;box-sizing:border-box;border-bottom:2px solid #14224a}
 .gc .gi svg{width:100%!important;height:auto!important}
-.g-match .gi{background:#cfe9d6}.g-wordle .gi{background:#ffe6a8}.g-shiri .gi{background:#cfe3f3}.g-fall .gi{background:#f6d3c4}
+.g-match .gi{background:#cfe6fd}.g-wordle .gi{background:#d7f3ef}.g-shiri .gi{background:#e6dcfb}.g-fall .gi{background:#ffdcea}
 .gc .gt{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
 .gc .gt b{font-size:17px}
 .gc:hover{background:var(--card)!important}
@@ -1570,14 +1570,14 @@ function examSetup(){
    <div style="margin-top:14px">${jrdgBlock(jl)}</div>
   </div>`;
 }
-const GINK="#3b342f";
+const GINK="#14224a";
 const gStar=(x,y,r,f="#fff")=>`<path d="M${x} ${y-r}L${x+r*.28} ${y-r*.28}L${x+r} ${y}L${x+r*.28} ${y+r*.28}L${x} ${y+r}L${x-r*.28} ${y+r*.28}L${x-r} ${y}L${x-r*.28} ${y-r*.28}Z" fill="${f}" stroke="${GINK}" stroke-width="1.6" stroke-linejoin="round"/>`;
-const gTile=(x,y,w,h,fill,txt,fs,tc="#3b342f")=>`<rect x="${x+1.6}" y="${y+2.4}" width="${w}" height="${h}" rx="6" fill="${GINK}" opacity=".22"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${fill}" stroke="${GINK}" stroke-width="2.6"/>${txt?`<text x="${x+w/2}" y="${y+h/2+fs*.36}" font-size="${fs}" font-weight="800" text-anchor="middle" fill="${tc}">${txt}</text>`:""}`;
+const gTile=(x,y,w,h,fill,txt,fs,tc="#14224a")=>`<rect x="${x+1.6}" y="${y+2.4}" width="${w}" height="${h}" rx="6" fill="${GINK}" opacity=".22"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${fill}" stroke="${GINK}" stroke-width="2.6"/>${txt?`<text x="${x+w/2}" y="${y+h/2+fs*.36}" font-size="${fs}" font-weight="800" text-anchor="middle" fill="${tc}">${txt}</text>`:""}`;
 const GART={
- match:`<svg viewBox="0 0 120 80" aria-hidden="true"><g transform="rotate(-9 34 42)">${gTile(11,12,46,56,"#fffdf6","犬",30)}</g><g transform="rotate(9 86 42)">${gTile(63,12,46,56,"#ffe9ad","いぬ",20)}</g><circle cx="60" cy="67" r="10" fill="#e9573f" stroke="${GINK}" stroke-width="2.6"/><path d="M55 67.5l3.6 3.6 6.6-7.2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${gStar(12,10,6)}${gStar(110,12,5)}${gStar(104,72,4)}</svg>`,
- wordle:`<svg viewBox="0 0 120 80" aria-hidden="true">${[["し","#9a9183"],["く","#e8b83a"],["ら","#9a9183"]].map((t,i)=>gTile(19+i*29,7,24,25,t[1],t[0],16,"#fff")).join("")}${[["さ"],["く"],["ら"]].map((t,i)=>gTile(19+i*29,38,24,25,"#4f9d69",t[0],16,"#fff")).join("")}${[0,1,2,3,4,5].map(i=>`<circle cx="${33+i*11}" cy="72" r="3.2" fill="${i<2?"#3b342f":"none"}" stroke="${GINK}" stroke-width="1.8"/>`).join("")}${gStar(108,16,6,"#ffe9ad")}</svg>`,
- shiri:`<svg viewBox="0 0 120 80" aria-hidden="true">${[[5,6,"りんご","#fffdf6"],[63,30,"ごりら","#ffe9ad"],[5,54,"らっぱ","#fffdf6"]].map(([x,y,t,f])=>`<rect x="${x+1.6}" y="${y+2.4}" width="52" height="20" rx="10" fill="${GINK}" opacity=".22"/><rect x="${x}" y="${y}" width="52" height="20" rx="10" fill="${f}" stroke="${GINK}" stroke-width="2.6"/><text x="${x+26}" y="${y+14.5}" font-size="12" font-weight="800" text-anchor="middle" fill="${GINK}">${t}</text>`).join("")}<path d="M36 28q2 12 24 12" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M54 36l7 4-6 5" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 52q-2 12-24 12" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M74 60l-7 4 6 5" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${gStar(108,10,5)}</svg>`,
- fall:`<svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="${GINK}" stroke-width="2" stroke-linecap="round" opacity=".45"><path d="M30 2v8M44 0v6M82 6v8M96 2v6"/></g><g transform="rotate(-8 36 24)">${gTile(18,10,36,26,"#fffdf6","雨",18)}</g><g transform="rotate(7 86 38)">${gTile(68,24,36,26,"#ffe9ad","花",18)}</g><path d="M36 42v10M30 49l6 7 6-7" stroke="#e9573f" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="0" y="62" width="120" height="18" fill="#7fbf86" stroke="${GINK}" stroke-width="2.6"/><path d="M12 62q3-9 6 0M30 62q3-7 6 0M90 62q3-9 6 0M106 62q3-7 6 0" stroke="${GINK}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M60 70.5c-4-3-7-5-4.4-8 2-2 4.400-.6 4.400 1 0-1.600 2.400-3 4.400-1 2.600 3-.4 5-4.400 8z" fill="#e9573f" stroke="${GINK}" stroke-width="1.6" transform="translate(0 1)"/></svg>`
+ match:`<svg viewBox="0 0 120 80" aria-hidden="true"><g transform="rotate(-9 34 42)">${gTile(11,12,46,56,"#fffdf6","犬",30)}</g><g transform="rotate(9 86 42)">${gTile(63,12,46,56,"#e6f1fe","いぬ",20)}</g><circle cx="60" cy="67" r="10" fill="#ff6fa0" stroke="${GINK}" stroke-width="2.6"/><path d="M55 67.5l3.6 3.6 6.6-7.2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${gStar(12,10,6)}${gStar(110,12,5)}${gStar(104,72,4)}</svg>`,
+ wordle:`<svg viewBox="0 0 120 80" aria-hidden="true">${[["し","#9a9183"],["く","#b58feb"],["ら","#9a9183"]].map((t,i)=>gTile(19+i*29,7,24,25,t[1],t[0],16,"#fff")).join("")}${[["さ"],["く"],["ら"]].map((t,i)=>gTile(19+i*29,38,24,25,"#40b8ac",t[0],16,"#fff")).join("")}${[0,1,2,3,4,5].map(i=>`<circle cx="${33+i*11}" cy="72" r="3.2" fill="${i<2?"#3b342f":"none"}" stroke="${GINK}" stroke-width="1.8"/>`).join("")}${gStar(108,16,6,"#e6f1fe")}</svg>`,
+ shiri:`<svg viewBox="0 0 120 80" aria-hidden="true">${[[5,6,"りんご","#fffdf6"],[63,30,"ごりら","#e6f1fe"],[5,54,"らっぱ","#fffdf6"]].map(([x,y,t,f])=>`<rect x="${x+1.6}" y="${y+2.4}" width="52" height="20" rx="10" fill="${GINK}" opacity=".22"/><rect x="${x}" y="${y}" width="52" height="20" rx="10" fill="${f}" stroke="${GINK}" stroke-width="2.6"/><text x="${x+26}" y="${y+14.5}" font-size="12" font-weight="800" text-anchor="middle" fill="${GINK}">${t}</text>`).join("")}<path d="M36 28q2 12 24 12" stroke="#ff6fa0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M54 36l7 4-6 5" stroke="#ff6fa0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 52q-2 12-24 12" stroke="#ff6fa0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M74 60l-7 4 6 5" stroke="#ff6fa0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${gStar(108,10,5)}</svg>`,
+ fall:`<svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="${GINK}" stroke-width="2" stroke-linecap="round" opacity=".45"><path d="M30 2v8M44 0v6M82 6v8M96 2v6"/></g><g transform="rotate(-8 36 24)">${gTile(18,10,36,26,"#fffdf6","雨",18)}</g><g transform="rotate(7 86 38)">${gTile(68,24,36,26,"#e6f1fe","花",18)}</g><path d="M36 42v10M30 49l6 7 6-7" stroke="#ff6fa0" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="0" y="62" width="120" height="18" fill="#8ed3c9" stroke="${GINK}" stroke-width="2.6"/><path d="M12 62q3-9 6 0M30 62q3-7 6 0M90 62q3-9 6 0M106 62q3-7 6 0" stroke="${GINK}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M60 70.5c-4-3-7-5-4.4-8 2-2 4.400-.6 4.400 1 0-1.600 2.400-3 4.400-1 2.600 3-.4 5-4.400 8z" fill="#ff6fa0" stroke="${GINK}" stroke-width="1.6" transform="translate(0 1)"/></svg>`
 };
 function gameSetup(){
   const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">내 최고 ${v}점</span>`:""; };
@@ -2804,9 +2804,9 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=87"></script>
+<script src="path.js?v=88"></script>
 <script src="community.js?v=15"></script>
-<script src="review.js?v=7"></script>
+<script src="review.js?v=8"></script>
 <script src="grammar.js?v=5"></script>
 <script src="dev.js?v=6"></script>
 <script src="kowrap.js?v=1"></script>
