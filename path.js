@@ -464,9 +464,9 @@ ST2.textContent=`
 .views .vb:nth-child(6).on{color:#e0457b;background:#ffe6ef}.views .vb:nth-child(7).on{color:#0f9fb0;background:#dff5f8}
 `;
 ST2.textContent+=`
-.hgoal{background:#fff0d9!important;border-color:transparent!important}.hgoal .sub b{color:#d98a00!important}.hgoal .prog{background:rgba(255,255,255,.75)!important}.hgoal .prog div{background:#e89a14!important}
-.pstat{background:#ffe4ee!important;border-color:transparent!important}.pstat .prow1 b{color:#d93c72!important}.pstat .prog{background:rgba(255,255,255,.75)!important}.pstat .prog div{background:#e8588a!important}
-:root[data-theme=dark] .hgoal{background:#3a2f1c!important}:root[data-theme=dark] .pstat{background:#3a2230!important}
+.hgoal{background:none!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;padding:12px 2px 14px!important;margin:8px 0 12px!important}.hgoal .sub b{color:#d98a00!important}.hgoal .prog{background:var(--chip)!important;height:8px!important}.hgoal .prog div{background:#e89a14!important}
+.pstat{background:none!important;border:0!important;border-top:1px solid var(--line)!important;border-radius:0!important;padding:14px 2px 4px!important;margin:12px 0 4px!important}.pstat .prow1 b{color:#d93c72!important}.pstat .prog{background:var(--chip)!important;height:8px!important}.pstat .prog div{background:#e8588a!important}
+
 `;
 document.head.appendChild(ST2);
 if(A()&&A().renderHome) A().renderHome();

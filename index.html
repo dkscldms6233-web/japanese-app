@@ -769,7 +769,7 @@ body:not([data-view=home]) #logo .lgm{font-size:.82em}
 body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:none}
 /* ---- 주간 리포트 · 복귀 안내 ---- */
 .rpt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.rpt>div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.rpt b{display:block;font-size:24px}.rpt b small{font-size:13px;font-weight:600;margin-left:2px}.rpt span{font-size:12px;color:var(--sub)}
-.rptn{margin:10px 0 0;line-height:1.55}.hback{margin:0 0 8px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);color:var(--accent-text);font-size:14px;line-height:1.5}
+.rptn{margin:10px 0 0;line-height:1.55}.hback{margin:0 0 10px;padding:0;background:none;color:var(--accent-text);font-size:14px;line-height:1.5}
 /* ===== 디자인 정리: 화면마다 성격에 맞는 모양 · 색은 먹/종이/인주 · 모서리는 작게 ===== */
 :root{--rad:10px}
 /* 공통: 모서리 · 그림자 · 불필요한 움직임 */
@@ -2805,11 +2805,11 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=78"></script>
+<script src="path.js?v=79"></script>
 <script src="community.js?v=14"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=5"></script>
-<script src="dev.js?v=5"></script>
+<script src="dev.js?v=6"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <script>(function(){ const tools=document.querySelector(".tools"), grp=document.getElementById("theme"); if(!tools||!grp) return;
