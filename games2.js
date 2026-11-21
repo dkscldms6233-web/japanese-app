@@ -57,7 +57,7 @@ function startWordle(){
   wdIntro();
 }
 function wdIntro(){
-  $("quizView").innerHTML=`<div class="qbox gbox"><h2>일본어 워들</h2>
+  $("quizView").innerHTML=`<div class="qbox gbox wdbox"><h2>일본어 워들</h2>
    <div class="sub" style="text-align:center">뜻 힌트를 보고 <b>읽기</b>를 맞혀요. 6번 안에 도전!<br>초록=글자와 위치가 맞음 · 노랑=글자는 있지만 위치가 달라요 · 회색=없는 글자</div>
    <div class="kseg" style="max-width:360px;margin:14px auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--chip);border-radius:14px;padding:4px">
      <button class="pill ${WDK?"":"on"}" style="justify-content:center;padding:10px" data-wd="script" data-k="0">히라가나 <small>ひらがな</small></button>
@@ -86,7 +86,7 @@ function wdRender(){
     const guess=g.guesses[r], isCur=r===g.guesses.length&&!g.over;
     const cells=[...Array(g.len)].map((_,i)=>{ if(guess) return `<div class="wd-c ${guess.res[i]}">${guess.s[i]}</div>`; if(isCur) return `<div class="wd-c cur">${g.cur[i]||""}</div>`; return `<div class="wd-c"></div>`; }).join("");
     rows.push(`<div class="wd-row" style="grid-template-columns:repeat(${g.len},${g.len>5?40:46}px)">${cells}</div>`); }
-  $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
+  $("quizView").innerHTML=`<div class="qbox gbox wdbox"><div class="gfx" id="gfx"></div>
    <div class="gstat"><span>${g.guesses.length} / 6번</span><button class="pill sm" data-act="gquit">그만하기</button></div>
    <div class="wd-hint"><b>${E(w.ko)}</b>${show}<small>${g.len}글자 · ${(POS[w.pos]||[w.pos])[0]}${w.text!==w.yomi?(g.hint?(g.showKanji?"":" · 한자 힌트 사용함"):` · <a href="#" data-wd="hint" style="color:var(--accent)">한자 힌트 3초 보기(-10점)</a>`):""}</small></div>
    <div class="wd-grid">${rows.join("")}</div>

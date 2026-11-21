@@ -68,6 +68,15 @@ ${G} #quizView .gbox .newbest{background:#ffd43b;color:#4a3300}
 ${G} #quizView .gbox:has(.fallarea){background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 ${G} #quizView .gbox .fallarea{background:transparent!important;border:0!important}
 ${G} #quizView .gbox:has(.fallarea) .sub,${G} #quizView .gbox:has(.fallarea) .score,${G} #quizView .gbox:has(.fallarea) .gstat,${G} #quizView .gbox:has(.fallarea) .gstat *{text-shadow:0 1px 3px rgba(10,40,28,.7)}
+/* 일본어 워들: 숲 대신 깔끔한 단색 배경 */
+body:has(#quizView .wdbox){background:var(--bg)!important}
+body:has(#quizView .wdbox)::after{display:none!important}
+body:has(#quizView .wdbox) #quizView .gbox{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important;color:var(--text)}
+body:has(#quizView .wdbox) #quizView .gbox h2,body:has(#quizView .wdbox) #quizView .gbox .gstat span,body:has(#quizView .wdbox) #quizView .gbox .wd-hint b{color:var(--text)!important;text-shadow:none!important}
+body:has(#quizView .wdbox) #quizView .gbox .sub,body:has(#quizView .wdbox) #quizView .gbox small{color:var(--sub)!important;text-shadow:none!important}
+body:has(#quizView .wdbox) #quizView .gbox .pill{background:var(--chip);color:var(--text);border:1.5px solid var(--line);box-shadow:none}
+body:has(#quizView .wdbox) #quizView .gbox .pill.on{background:#ffd43b;color:#4a3300;border-color:#e8b800;box-shadow:none}
+body:has(#quizView .wdbox) #quizView .gbox .wd-c{border:2px solid color-mix(in srgb,var(--text) 20%,transparent)}
 `;
 document.head.appendChild(ST);
 })();
