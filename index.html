@@ -88,7 +88,7 @@ select,textarea,.af input{padding:8px 10px;border:1px solid var(--line);border-r
 .pbar select{max-width:100%;flex:1;min-width:150px}
 .pg{justify-content:center}
 [data-view=news] :is(.list-only,.levels,.opts),[data-view=anime] :is(.list-only,.levels,.opts),[data-view=community] :is(.list-only,.levels,.opts),[data-view=stats] :is(.list-only,.levels,.opts),
-[data-view=home] :is(.list-only,.levels,.opts),[data-view=today] :is(.list-only,.levels,.opts),[data-view=read] :is(.list-only,.levels,.opts){display:none}
+[data-view=grammar] :is(.list-only,.levels,.opts),[data-view=home] :is(.list-only,.levels,.opts),[data-view=today] :is(.list-only,.levels,.opts),[data-view=read] :is(.list-only,.levels,.opts){display:none}
 
 main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
 .count{font-size:14px;color:var(--sub);margin:2px 0 10px}
@@ -821,7 +821,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
       <button class="vb on" data-view="home"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></i><span>홈</span></button>
       <button class="vb" data-view="list" data-grp="study"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg></i><span>학습</span></button>
       <button class="vb" data-view="exam"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>모의시험</span></button>
-      <button class="vb" data-view="game" data-grp="fun"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/><circle cx="18" cy="14" r=".8"/></svg></i><span>즐기기</span></button>
+      <button class="vb" data-view="game"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/><circle cx="18" cy="14" r=".8"/></svg></i><span>게임</span></button>
       <button class="vb" data-view="community"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.8 0 5 2 5 5"/></svg></i><span>커뮤니티</span></button>
     </nav>
     <div class="tools"><button class="pill sm" id="profBtn" aria-label="프로필 전환"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
@@ -849,6 +849,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
   <section id="todayView" hidden></section>
   <section id="listView" hidden><div id="pickBox"></div><div id="partTop"></div><div class="count" id="count"></div><div class="grid" id="grid"></div><div id="partBot"></div></section>
   <section id="quizView" hidden></section>
+  <section id="grammarView" hidden></section>
   <section id="newsView" hidden></section>
   <section id="animeView" hidden></section>
   <section id="communityView" hidden></section>
@@ -1293,6 +1294,7 @@ function refresh(){
   else if(view==="home") renderHome();
   else if(view==="today") renderToday();
   else if(view==="list") renderGrid();
+  else if(view==="grammar"){ if(window.GRAMMAR_UI) GRAMMAR_UI.render(); }
   else if(view==="news") renderNews();
   else if(view==="anime") renderAnime();
   else if(view==="community"){ if(window.COMMUNITY) COMMUNITY.render(); }
@@ -2405,17 +2407,17 @@ $("statsView").addEventListener("click",e=>{
 });
 
 /* ---------- 이벤트 ---------- */
-/* 하단 탭은 5개: 학습(단어장·퀴즈), 즐기기(게임·뉴스)는 탭 안에서 위쪽 스위치로 오가요 */
-const GROUP={list:"study",quiz:"study",game:"fun",news:"fun",read:"fun"};
-const SUB={study:[["list","단어장"],["quiz","퀴즈"]],fun:[["game","게임"],["news","뉴스"]]};
-const lastSub={study:"list",fun:"game"};
+/* 하단 탭은 5개: 학습(단어장·퀴즈·문법·뉴스)은 탭 안에서 위쪽 스위치로 오가요 */
+const GROUP={list:"study",quiz:"study",grammar:"study",news:"study",read:"study"};
+const SUB={study:[["list","단어장"],["quiz","퀴즈"],["grammar","문법"],["news","뉴스"]]};
+const lastSub={study:"list"};
 function renderSub(eff){ const g=GROUP[eff], el=$("subtabs"); if(!g||eff==="read"){ el.hidden=true; return; } el.hidden=false;
   el.innerHTML=SUB[g].map(([k,l])=>`<button role="tab" data-sv="${k}" class="${k===eff?"on":""}" aria-selected="${k===eff}">${l}</button>`).join(""); }
 function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
-  const sec=QV(v)?"quiz":v; ["home","today","list","quiz","news","anime","community","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
+  const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","anime","community","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
     document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.grp?b.dataset.grp===g:b.dataset.view===eff)); renderSub(eff); }
   refresh(); window.scrollTo(0,0);
@@ -2736,6 +2738,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="path.js?v=78"></script>
 <script src="community.js?v=14"></script>
 <script src="review.js?v=7"></script>
+<script src="grammar.js?v=3"></script>
 <script src="dev.js?v=5"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
