@@ -8,7 +8,7 @@ ${G}::after{content:"";position:fixed;inset:0;z-index:-1;background:url("data:im
 ${G}::before{display:none!important}
 ${G} header{display:none!important}
 ${G} main{padding:62px 12px 28px!important;max-width:560px;margin:0 auto}
-${G} #quizView .gbox{background:none!important;border:0!important;box-shadow:none!important;overflow:visible;padding:8px 0 14px;color:#fff;font-size:17px;font-family:'Do Hyeon','Pretendard','Apple SD Gothic Neo','Noto Sans KR','Hiragino Sans','Yu Gothic','Malgun Gothic',system-ui,sans-serif;font-weight:700;letter-spacing:0;font-synthesis:none}
+${G} #quizView .gbox{background:rgba(16,58,40,.62)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border:0!important;box-shadow:0 8px 24px rgba(10,40,28,.28)!important;overflow:visible;border-radius:24px!important;padding:14px 12px 16px;color:#fff;font-size:17px;font-family:'Do Hyeon','Pretendard','Apple SD Gothic Neo','Noto Sans KR','Hiragino Sans','Yu Gothic','Malgun Gothic',system-ui,sans-serif;font-weight:700;letter-spacing:0;font-synthesis:none}
 ${G} #quizView .gbox *{font-family:inherit;font-weight:700;letter-spacing:0}
 ${G} #quizView .gbox .sub,${G} #quizView .gbox p{color:#fff!important;font-size:14px;margin:4px 0}
 ${G} #quizView .gbox h2,${G} #quizView .gbox .qw{color:#fff}
@@ -27,7 +27,7 @@ ${G} #quizView .mbar::after{content:"★";position:absolute;right:6px;top:-9px;f
 /* 상태 칩 */
 ${G} #quizView .gbox .gstat{gap:6px;margin:6px 0 6px;font-size:15px}
 ${G} #quizView .gbox .gstat span{background:none;border:0;color:#fff;padding:0 4px;font-size:18px;font-weight:800;text-shadow:none}
-${G} #quizView .gbox .gstat{align-items:center}
+${G} #quizView .gbox .gstat{align-items:center;padding-right:54px}
 /* 시간 막대 */
 ${G} #quizView .gbox .prog{height:22px;border-radius:14px;background:rgba(20,10,60,.4);border:3px solid rgba(255,255,255,.85);box-shadow:inset 0 3px 0 rgba(0,0,0,.18);overflow:hidden;margin:8px 0}
 ${G} #quizView .gbox .prog div,${G} #gbar{border-radius:10px;background:linear-gradient(180deg,#f3ff9a,#a4e22a)!important;box-shadow:inset 0 5px 0 rgba(255,255,255,.5)}
@@ -44,6 +44,11 @@ ${G} #quizView .gbox .opt.good small{color:#0b3b1d}
 ${G} #quizView .gbox .opt.bad{background:#ff7b8f;color:#fff;box-shadow:0 6px 0 #d83a58}
 ${G} #quizView .gbox .gcols{gap:10px}${G} #quizView .gbox .gcol{gap:9px}
 ${G} #quizView .gbox .gst2{filter:drop-shadow(0 1px 0 rgba(0,0,0,.2))}
+${G} #quizView .gbox .cta.sec{background:rgba(255,255,255,.14)!important;color:#fff!important;border:2px solid rgba(255,255,255,.75)!important}
+${G} #quizView .gbox .cta:not(.sec){box-shadow:0 5px 0 rgba(0,0,0,.22)}
+${G} #quizView .gbox .sh-w,${G} #quizView .gbox .sh-w *{color:#1d1a3d!important}${G} #quizView .gbox .sh-w small{color:#5d5890!important}
+${G} #quizView .gbox .fw,${G} #quizView .gbox .fw *{color:#1d1a3d!important}
+${G} #quizView .gbox .fallarea{background:rgba(255,255,255,.92)}
 /* 보조 버튼 */
 ${G} #quizView .gbox .pill{background:rgba(20,10,60,.38);color:#fff;border:2px solid rgba(255,255,255,.35);border-radius:14px;padding:9px 16px;font-size:15px;box-shadow:0 4px 0 rgba(20,10,60,.3)}
 ${G} #quizView .gbox .pill.on{background:#ffd43b;color:#4a3300;border-color:#ffe98a;box-shadow:0 4px 0 #d9a400}
