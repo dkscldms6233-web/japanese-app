@@ -2278,7 +2278,7 @@ $("quizView").addEventListener("click",e=>{
   else if(a==="next") nextQ();
   else if(a==="retry") startQuiz(Q.mode,Q.wrong.slice(),0);
   else if(a==="saveWrong"){ Q.wrong.filter(w=>!w.sent).forEach(w=>stars.add(w.key)); LS.set("jp-star",[...stars]); toast(Q.wrong.length+"개를 저장함에 담았어요"); }
-  else if(a==="again"||a==="qquit"){ jStop(); Q=null; quizSetup(); }
+  else if(a==="again"||a==="qquit"){ jStop(); Q=null; if(a==="qquit"&&quizFrom){ const v=quizFrom; quizFrom=null; setView(v); return; } quizSetup(); }
   else if(a==="open"){ if(byKey(b.dataset.key)) openWord(b.dataset.key); }
 });
 
@@ -2564,6 +2564,7 @@ $("statsView").addEventListener("click",e=>{
 
 /* ---------- 이벤트 ---------- */
 /* 하단 탭은 5개: 학습(단어장·퀴즈·문법·뉴스)은 탭 안에서 위쪽 스위치로 오가요 */
+let quizFrom=null;   /* 홈의 바로가기로 시작한 퀴즈는 그만두면 홈으로 돌아와요 */
 const GROUP={list:"study",quiz:"study",grammar:"study",news:"study",read:"study"};
 const SUB={study:[["list","단어장"],["quiz","퀴즈"],["grammar","문법"],["news","뉴스"]]};
 const lastSub={study:"list"};
@@ -2572,6 +2573,7 @@ function renderSub(eff){ const g=GROUP[eff], el=$("subtabs"); if(!g||eff==="read
 function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
+  if(!QV(v)) quizFrom=null;
   view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","anime","community","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
@@ -2759,7 +2761,7 @@ $("nofuri").checked = !!prefs.nofuri; applyPrefs();
 // 내 급수 선택: 홈 · 오늘의 문장 · 단어장 · 퀴즈의 기본 범위가 돼요
 $("homeView").addEventListener("click",e=>{
   const qg=e.target.closest("[data-qgo]");
-  if(qg){ const k=qg.dataset.qgo; if(k==="n"){ setView("quiz"); startQuiz("meaning",null,goalN()); } else if(k==="r"&&window.REVIEW) REVIEW.open(); else if(k==="f"&&window.REVIEW) REVIEW.openWrong(); return; }
+  if(qg){ const k=qg.dataset.qgo; if(k==="n"){ setView("quiz"); quizFrom="home"; startQuiz("meaning",null,goalN()); } else if(k==="r"&&window.REVIEW) REVIEW.open(); else if(k==="f"&&window.REVIEW) REVIEW.openWrong(); return; }
   if(e.target.closest("[data-quest]")){ prefs.questOpen=!(prefs.questOpen!==false); LS.set("jp-prefs",prefs); renderHome(); return; }
   const q=e.target.closest("[data-hq]");
   if(q){
@@ -2767,8 +2769,8 @@ $("homeView").addEventListener("click",e=>{
       if(window.REVIEW){ REVIEW.openWrong(); return; }
       const pool=ALL.filter(w=>w.key in wrong);
       if(!pool.length){ toast("오답 노트가 비었어요. 퀴즈를 풀면 틀린 단어가 쌓여요"); return; }
-      setView("quiz"); startQuiz("meaning",pool,Math.min(goalN(),pool.length));
-    } else { setView("quiz"); startQuiz("meaning",null,goalN()); }
+      quizFrom="home"; setView("quiz"); quizFrom="home"; startQuiz("meaning",pool,Math.min(goalN(),pool.length));
+    } else { setView("quiz"); quizFrom="home"; startQuiz("meaning",null,goalN()); }
     return;
   }
   const b=e.target.closest("[data-mylv]"); if(!b) return;
