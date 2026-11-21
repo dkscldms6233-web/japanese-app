@@ -841,6 +841,18 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .pk .pgt{flex-basis:100%;font-size:12px;color:var(--sub);margin-top:4px;text-align:left}
 .wst{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:2px;background:var(--line)}
 .wst.s1{background:#e89a14}.wst.s2{background:var(--ok,#3fa98a)}
+/* ---- 단어 카드(암기): 큰 카드 · 알아요/몰라요 · 밀어서 넘기기 ---- */
+.fcs{display:flex;gap:8px;justify-content:center;margin:8px 0 12px}
+.fk,.fu{font-size:13px;font-weight:700;padding:3px 12px;border-radius:999px}
+.fk{background:var(--ok-soft,#e4f4ee);color:var(--ok-dk,#2f8e72)}.fu{background:var(--bad-soft,#fbe9ec);color:#b43a50}
+.fcard{width:100%;min-height:300px;border:2px solid var(--line);border-bottom-width:5px;border-radius:18px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px 16px;font:inherit;color:var(--text);text-align:center;cursor:pointer;touch-action:pan-y}
+.fcard.back{border-color:var(--accent);cursor:default}
+.fw0{font-size:52px;line-height:1.6;font-weight:700}.fw1{font-size:44px;line-height:1.7;font-weight:700}
+.fm{font-size:24px;font-weight:800}.fhint,.ftap{font-size:13px;color:var(--sub)}
+.fex{text-align:left;font-size:16px;margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;width:100%;line-height:1.9}.fex small{display:block;color:var(--sub);font-size:14px;line-height:1.5}
+.fbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.fno{color:#b43a50!important;border-color:#e3b3ad!important;border-bottom-color:#e3b3ad!important}
+.fyes{background:var(--ok)!important;border-bottom-color:var(--ok-dk,#2f8e72)!important}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -1659,12 +1671,15 @@ function renderQ(){
     <div class="sub">${Q.i+1} / ${Q.list.length}</div>`;
   let body;
   if(Q.mode==="card"){
-    body = Q.flip
-     ? `<div class="qw s">${R(w.f)}</div><div class="qm">${E(w.ko)}</div>${posTag(w.pos)}
-        ${w.ex&&w.ex[0]?`<div class="ex" style="text-align:left;margin-top:14px"><div class="ja">${R(w.ex[0].ja)}</div><div class="ko">${E(w.ex[0].ko)}</div></div>`:""}
-        <div class="qbtns"><button class="pill" data-act="open" data-key="${w.key}">자세히 보기</button><button class="pill" data-act="grade" data-ok="0">몰랐어요 (←)</button><button class="pill on" data-act="grade" data-ok="1">알았어요 (→)</button></div>`
-     : `<div class="sub">뜻과 읽기를 떠올려 보세요</div><div class="qw">${E(w.text)}</div>
-        <div class="qbtns"><button class="pill on" data-act="flip">정답 보기 (Space)</button></div>`;
+    const ex=w.ex&&w.ex[0]&&w.ex[0].ja?w.ex[0]:null;
+    body = `<div class="fcs"><span class="fk">알아요 ${Q.score}</span><span class="fu">몰라요 ${Q.wrong.length}</span></div>
+     <button type="button" class="fcard ${Q.flip?"back":""}" data-act="${Q.flip?"fnone":"flip"}" aria-label="${Q.flip?"카드 뒷면":"카드를 눌러 뒤집기"}">
+      ${Q.flip?`<div class="fw1">${R(w.f)}</div><div class="fm">${E(w.ko)}</div><div class="fp">${posTag(w.pos)}</div>${ex?`<div class="fex"><div>${R(ex.ja)}</div><small>${E(ex.ko||"")}</small></div>`:""}`
+        :`<div class="fhint">뜻과 읽기를 떠올려 보세요</div><div class="fw0">${E(w.text)}</div><div class="ftap">카드를 눌러 뒤집기</div>`}
+     </button>
+     ${Q.flip?`<div class="fbtns"><button class="cta sec fno" data-act="grade" data-ok="0">몰라요</button><button class="cta fyes" data-act="grade" data-ok="1">알아요</button></div>
+       <div class="qbtns" style="justify-content:center"><button class="pill sm" data-act="open" data-key="${w.key}">자세히 보기</button></div>`
+       :`<p class="sub" style="text-align:center;margin-top:12px">뒤집은 뒤 알면 오른쪽, 모르면 왼쪽으로 밀어도 돼요</p>`}`;
   } else if(Q.mode==="order"){
     const o=Q.ord;
     body = `<div class="sub">알맞은 순서로 문장을 만들어 보세요</div><div class="qm" style="margin-top:14px">${E(w.ex[0].ko)}</div>
@@ -1712,12 +1727,12 @@ function renderResult(){
   try{ if(window.PATH) PATH.quizEnd(Q.score,Q.list.map(w=>w.key)); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.list.length, rsec=Math.max(1,Math.round((Date.now()-(Q.t0||Date.now()))/1000));
-  $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.wrong.length?"수고했어요!":"완벽해요!"}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
-   <div class="rst"><div class="rt rxp"><b>+${Q.mode==="order"?0:Q.score*10}</b><span>경험치</span></div><div class="rt racc"><b>${Math.round(Q.score/t*100)}%</b><span>정답률 · ${Q.score}/${t}</span></div><div class="rt rtime"><b>${Math.floor(rsec/60)}:${String(rsec%60).padStart(2,"0")}</b><span>걸린 시간</span></div></div>
-   <div class="sub">${Q.wrong.length?"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요":"모두 맞혔어요!"}</div>
+  $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.mode==="card"?(Q.wrong.length?"카드 끝!":"전부 알아요!"):(Q.wrong.length?"수고했어요!":"완벽해요!")}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
+   <div class="rst"><div class="rt rxp"><b>+${Q.mode==="order"?0:Q.score*10}</b><span>경험치</span></div><div class="rt racc"><b>${Math.round(Q.score/t*100)}%</b><span>${Q.mode==="card"?"알아요":"정답률"} · ${Q.score}/${t}</span></div><div class="rt rtime"><b>${Math.floor(rsec/60)}:${String(rsec%60).padStart(2,"0")}</b><span>걸린 시간</span></div></div>
+   <div class="sub">${Q.wrong.length?(Q.mode==="card"?"몰라요로 고른 단어는 오답 노트에 담겼어요. 눌러서 다시 확인해 보세요":"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요"):(Q.mode==="card"?"모든 카드를 알고 있어요!":"모두 맞혔어요!")}</div>
    ${Q.wrong.length?`<div class="rel" style="justify-content:center;margin-top:12px">${Q.wrong.map(w=>`<div class="lnk" data-act="open" data-key="${w.key}">${R(w.f)} <small>${E(w.ko)}</small></div>`).join("")}</div>`:""}
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">
-     ${Q.wrong.length?`<button class="cta" data-act="retry">틀린 단어만 다시</button><button class="cta sec" data-go="home">홈으로</button><button class="pill" data-act="saveWrong">틀린 단어 저장함에 담기</button>`:`<button class="cta" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 퀴즈 하기</button>`}
+     ${Q.wrong.length?`<button class="cta" data-act="retry">${Q.mode==="card"?"몰라요 카드만 다시":"틀린 단어만 다시"}</button><button class="cta sec" data-go="home">홈으로</button><button class="pill" data-act="saveWrong">틀린 단어 저장함에 담기</button>`:`<button class="cta" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 퀴즈 하기</button>`}
    </div></div>`;
   if(Q.score/t>=.7) sakura(Q.wrong.length?14:26);
 }
@@ -2685,6 +2700,12 @@ document.addEventListener("keydown",e=>{
   } else if(e.key===" "){ if(Q.sel!==null){ e.preventDefault(); nextQ(); } }
   else if(/^[1-4]$/.test(e.key)) pick(+e.key-1);
 });
+
+/* 단어 카드: 뒤집은 뒤 오른쪽으로 밀면 '알아요', 왼쪽으로 밀면 '몰라요' */
+{ let sx=null, sy=0;
+  document.addEventListener("touchstart",e=>{ if(!(Q&&Q.mode==="card"&&!Q.done&&QV(view))||!e.target.closest(".fcard")){ sx=null; return; } sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  document.addEventListener("touchend",e=>{ if(sx===null) return; const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy; sx=null;
+    if(!Q||Q.mode!=="card"||Q.done||!Q.flip) return; if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5) grade(dx>0); },{passive:true}); }
 
 /* ---------- 시작 ---------- */
 rebuild();
