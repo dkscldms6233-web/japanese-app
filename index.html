@@ -784,12 +784,13 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .qm-sec small{font-weight:500}
 /* 단어장 = 공부 노트: 한 줄에 한 단어, 줄 노트처럼 */
 body[data-view=list] #grid{display:block!important}
-body[data-view=list] #grid .card{display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) auto;grid-template-areas:"w m b" "w s b";align-items:center;column-gap:12px;row-gap:0;background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-left:3px solid var(--lc,var(--nx))!important;border-radius:0!important;padding:2px 6px 2px 12px!important;margin:0}
+body[data-view=list] #grid .card{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) auto;grid-template-areas:"w m b" "w s b";align-items:center;column-gap:12px;row-gap:0;background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-left:3px solid var(--lc,var(--nx))!important;border-radius:0!important;padding:8px 6px 8px 12px!important;margin:0}
 body[data-view=list] #grid .card .ctop{display:contents}
 body[data-view=list] #grid .card .cbtns{grid-area:b;align-self:center}
-body[data-view=list] #grid .card .w{grid-area:w;font-size:24px!important;line-height:1.85!important;margin:0!important;word-break:normal!important}
-body[data-view=list] #grid .card .w.wl{font-size:17px!important}
-body[data-view=list] #grid .card .m{grid-area:m;font-size:15px!important;font-weight:600;margin:6px 0 0!important;-webkit-line-clamp:2}
+body[data-view=list] #grid .card .w{grid-area:w;font-size:32px!important;font-weight:700;line-height:1.75!important;margin:0!important;word-break:normal!important;color:var(--text)}
+body[data-view=list] #grid .card .w rt{font-size:.42em;font-weight:500;color:var(--sub)}
+body[data-view=list] #grid .card .w.wl{font-size:20px!important}
+body[data-view=list] #grid .card .m{grid-area:m;font-size:14.5px!important;font-weight:600;color:color-mix(in srgb,var(--text) 78%,transparent);margin:0!important;-webkit-line-clamp:2}
 body[data-view=list] #grid .card .msub{grid-area:s;display:flex;gap:8px;align-items:center;margin-bottom:6px}
 body[data-view=list] #grid .card .msub .tag{background:none!important;border:0!important;padding:0!important;font-size:11px!important;color:var(--sub)!important;margin:0}
 .lvs{font-size:11px;color:var(--sub)}.grid.one .lvs{display:none}
