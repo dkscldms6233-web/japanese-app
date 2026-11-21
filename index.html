@@ -894,6 +894,14 @@ dialog{border-radius:16px!important}
 .pill,.lvb,.tag,.qcnt,.qxp,.fk,.fu{border-radius:999px!important}
 /* ===== 색 역할 고정: 초록=정답·완료 · 분홍/빨강=틀림 · 주황=진행 · 테라코타=행동 · 하단 탭 선택색도 하나로 ===== */
 .views .vb.on{color:var(--accent-text)!important;background:var(--accent-soft)!important}
+/* ---- 뉴스 필터: 평소엔 한 줄로 접어 두기 ---- */
+.nfil{margin:6px 0 10px;border:1px solid var(--line);border-radius:var(--rad);padding:0 12px}
+.nfil summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 0;font-weight:700;font-size:15px}
+.nfil summary::-webkit-details-marker{display:none}
+.nfil summary span{flex:1;color:var(--sub);font-weight:500;font-size:13.5px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nfil summary::after{content:"";width:9px;height:9px;border-right:2.5px solid var(--sub);border-bottom:2.5px solid var(--sub);transform:rotate(45deg) translateY(-2px);flex:none}
+.nfil[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
+.nfil[open]{padding-bottom:8px}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -2387,12 +2395,14 @@ const canSay=()=>"speechSynthesis" in window;
 const sayBtn=(attr,val,cls)=>canSay()?`<button type="button" class="say ${cls||""}" ${attr}="${E(val)}" title="발음 듣기" aria-label="발음 듣기">${ic("sound")}</button>`:"";
 
 /* ---- 목록 ---- */
+let newsFilOpen=false;
 function newsBar(){
   return `${NEWS_CATS.length>1?`<div class="nbar">${NEWS_CATS.map(([c,n])=>`<button class="pill ${c===newsCat?"on":""}" data-nc="${c}">${n}</button>`).join("")}</div>`:""}
+  <details class="nfil" ${newsFilOpen?"open":""}><summary>필터<span>${newsCat==="art"?(level==="전체"&&lvSel.size?[...lvSel].sort().join("·"):"전체 급수")+" · ":""}${newsTopic}${newsOnly?" · 내 단어":""}${newsHideRead?" · 안 읽은 글":""}</span></summary>
   ${newsCat==="art"?`<div class="nbar"><span class="sub">급수</span><button class="pill sm ${!lvSel.size&&level==="전체"?"on":""}" data-nl="">전체</button>${["N5","N4","N3","N2","N1"].map(l=>`<button class="pill sm ${level==="전체"&&lvSel.has(l)?"on":""}" data-nl="${l}">${l}</button>`).join("")}</div>`:""}
   <div class="nbar"><span class="sub">분류</span>${NCATS.map(c=>`<button class="pill sm ${c===newsTopic?"on":""}" data-ntp="${c}">${c}</button>`).join("")}</div>
   <div class="nbar"><label class="tg"><input type="checkbox" id="nOnly" ${newsOnly?"checked":""}> 내 단어가 들어간 글만</label>
-  <label class="tg"><input type="checkbox" id="nHideRead" ${newsHideRead?"checked":""}> 읽은 글 숨기기</label></div>`;
+  <label class="tg"><input type="checkbox" id="nHideRead" ${newsHideRead?"checked":""}> 읽은 글 숨기기</label></div></details>`;
 }
 function renderNews(){
   const ms=buildMatchers(); let body="";
@@ -2428,6 +2438,7 @@ function renderNews(){
     }
   }
   $("newsView").innerHTML=`<div class="news-wrap">${newsBar()}${body}</div>`;
+  $("newsView").querySelectorAll(".nfil").forEach(d=>d.addEventListener("toggle",()=>{ newsFilOpen=d.open; }));
 }
 
 /* ---- 앱 안 리더 ---- */
