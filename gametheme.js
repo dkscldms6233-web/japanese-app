@@ -91,6 +91,18 @@ body:has(#quizView .gbox) #quizView .gbox.cdbox .sub:first-of-type{font-weight:7
 body:has(#quizView .gbox) #quizView .gbox .cdmk{filter:none}
 body:has(#quizView .gbox) #quizView .gbox .prog{background:rgba(255,255,255,.8)!important;border:2px solid #fff}
 body:has(#quizView .gbox) #quizView .gbox.cdbox .cdmk{margin-bottom:6px}
+/* 글자 크기 기준: 안내 16 · 보조(읽기 등) 15 · 보기 18 · 가장 작은 글자도 13 */
+body:has(#quizView .gbox) #quizView .gbox .sub{font-size:16px!important}
+body:has(#quizView .gbox) #quizView .gbox small{font-size:15px!important}
+body:has(#quizView .gbox) #quizView .gbox .opt{font-size:18px}
+body:has(#quizView .gbox) #quizView .gbox kbd{font-size:13px}
+body:has(#quizView .gbox) #quizView .gbox .wd-hint a,body:has(#quizView .gbox) #quizView .gbox .wd-hint small{font-size:15px!important}
+body:has(#quizView .gbox) #quizView .gbox .gstat span{font-size:19px}
+/* 캐릭터는 게임 화면에서 뺐어요 */
+body:has(#quizView .gbox) #quizView .gbox .cdmk,body:has(#quizView .gbox) #quizView .gbox .rmk,body:has(#quizView .gbox) #quizView .gbox .mascot,body:has(#quizView .gbox) #quizView .gbox .gfx .mascot{display:none!important}
+body:has(#quizView .gbox) #quizView .gbox .fw{font-size:26px!important}
+/* 떨어지는 단어 바닥선: 줄무늬 대신 단색 */
+body:has(#quizView .gbox) #quizView .gbox .fallarea .gr{background:#ef6a85!important;opacity:1!important;height:6px!important;border-radius:3px}
 `;
 document.head.appendChild(ST);
 })();
