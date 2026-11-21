@@ -772,7 +772,7 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .rpt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.rpt>div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.rpt b{display:block;font-size:24px}.rpt b small{font-size:13px;font-weight:600;margin-left:2px}.rpt span{font-size:12px;color:var(--sub)}
 .rptn{margin:10px 0 0;line-height:1.55}.hback{margin:0 0 10px;padding:0;background:none;color:var(--accent-text);font-size:14px;line-height:1.5}
 /* ===== 디자인 정리: 화면마다 성격에 맞는 모양 · 색은 먹/종이/인주 · 모서리는 작게 ===== */
-:root{--rad:10px}
+:root{--rad:12px}
 /* 공통: 모서리 · 그림자 · 불필요한 움직임 */
 .t2,.gcard,.ncard,.tile,.klesson,.kcta,.prow,.panel,.kpi,.rpt>div,.rvsum>div,.hgoal,.pstat,.jr,.qset,.lrows,article.news,.tbox,.qbox .gc,.mylvbox{border-radius:var(--rad)!important}
 .card:hover,.t2:hover,.ncard:hover,.tile:hover{transform:none!important;box-shadow:none!important}
@@ -887,6 +887,11 @@ button.qrow:active{background:var(--chip)}
 .quest .qact .hback{margin:0 0 10px}
 .quest.shut .qact{margin-top:10px}
 #profBtn{background:var(--card)!important;border:1px solid var(--line)!important;position:relative;z-index:2}
+/* ===== 디자인 규칙 하나로: 모서리 12px(창은 16px) · 버튼은 '도톰한 주 버튼'과 '보조 버튼' 두 가지 · 칩은 완전히 둥글게 ===== */
+.quest,.qchest,.fcard,.rt,.pk,.card,.t2,.gcard,.ncard,.tile,.panel,.kpi,.tbox,.reveal,.opt,.cta,.cta.sec,.qbox .opt,.opts4 .opt,.ex,.rel .lnk,.stats .panel,.jr,.mylvbox,select,input[type=search],input[type=text],textarea{border-radius:var(--rad)!important}
+.inq .reveal{border-radius:16px 16px 0 0!important}
+dialog{border-radius:16px!important}
+.pill,.lvb,.tag,.qcnt,.qxp,.fk,.fu{border-radius:999px!important}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
