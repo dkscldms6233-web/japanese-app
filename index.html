@@ -53,7 +53,7 @@ h1 span{color:var(--accent)}
 @media(max-width:699px){
   body{padding-bottom:76px}
   .views{position:fixed;left:0;right:0;bottom:0;z-index:20;border-radius:0;background:var(--card);border-top:1px solid var(--line);
-    display:grid;grid-template-columns:repeat(6,1fr);gap:0;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
+    display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
   .vb{flex-direction:column;gap:0;font-size:12px;padding:6px 0;border-radius:8px}
   .vb i{font-size:20px}
   .vb.on{box-shadow:none;color:var(--accent);background:var(--accent-soft)}
@@ -575,8 +575,6 @@ header .hin::before,#onb .ob-top::before{filter:grayscale(1) contrast(1.15)}
 .t2.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;min-height:0}
 .t2.wide .ti{margin:0;flex:none}
 .t2.wide>div{display:flex;flex-direction:column;gap:2px}
-.t2.c1 .ti{background:#fff1d6;color:#c77700}.t2.c2 .ti{background:#dff3ea;color:#1f8a5b}.t2.c3 .ti{background:#e6ecff;color:#3d5bd9}.t2.c4 .ti{background:#fde4ee;color:#c2407a}
-:root[data-theme=dark] .t2.c1 .ti{background:#3a2c12;color:#ffb74d}:root[data-theme=dark] .t2.c2 .ti{background:#14352a;color:#6fd3a5}:root[data-theme=dark] .t2.c3 .ti{background:#243036;color:#9cc4c9}:root[data-theme=dark] .t2.c4 .ti{background:#40182c;color:#f28bb5}
 .gcards{display:grid;gap:10px}
 .gc{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--line);border-bottom-width:4px;background:var(--card);color:var(--text);border-radius:20px;padding:12px 14px;cursor:pointer;font-family:inherit}
 .gc:active{transform:translateY(2px);border-bottom-width:2px}
@@ -719,7 +717,7 @@ header{border-bottom:1px solid var(--line);box-shadow:none}
 .vb.on{color:var(--accent-text)}
 @media(max-width:699px){
   body{padding-bottom:70px}
-  .views{left:0;right:0;bottom:0;border:0;border-top:1px solid var(--line);border-radius:0;background:var(--bg);box-shadow:none;padding:4px 2px calc(4px + env(safe-area-inset-bottom));grid-template-columns:repeat(7,1fr)}
+  .views{left:0;right:0;bottom:0;border:0;border-top:1px solid var(--line);border-radius:0;background:var(--bg);box-shadow:none;padding:4px 2px calc(4px + env(safe-area-inset-bottom));grid-template-columns:repeat(5,1fr)}
   .vb{border-radius:0;font-size:11px;font-weight:600}
   .vb i{font-size:19px}
   .vb.on{background:none;color:var(--accent-text);outline:0}
@@ -742,7 +740,6 @@ header{border-bottom:1px solid var(--line);box-shadow:none}
 .t2:hover,.gcard:hover,.ncard:hover,.tile:hover{border-color:var(--text)!important;background:var(--card)}
 .t2 .ti,.t2.c1 .ti,.t2.c2 .ti,.t2.c3 .ti,.t2.c4 .ti{background:var(--accent-soft)!important;color:var(--accent-text)!important;border-radius:10px}
 /* 색을 다양하게: 칸마다 다른 파스텔 */
-.t2.c1 .ti{background:#fff3d9!important;color:#b7791f!important}.t2.c2 .ti{background:#e1f6ec!important;color:#1f8a5f!important}.t2.c3 .ti{background:#e3f0fd!important;color:#2b6cb0!important}.t2.c4 .ti{background:#f0e8ff!important;color:#6b46c1!important}
 .pkgrid{grid-template-columns:1fr!important;gap:0!important;border-top:1px solid var(--line)}
 .pk{display:flex!important;align-items:center;gap:14px;padding:14px 4px 14px 14px!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:none!important;box-shadow:none!important}
 .pk::before{left:0!important;top:50%!important;width:4px!important;height:30px!important;border-radius:2px!important;transform:translateY(-50%)}
@@ -764,6 +761,12 @@ body:not([data-view=home]) header{padding:8px 16px 6px}
 body:not([data-view=home]) .top{flex-wrap:nowrap;margin-bottom:4px}
 body:not([data-view=home]) #logo small{display:none}
 body:not([data-view=home]) #logo .lgm{font-size:.82em}
+/* ---- 하단 탭 5개 · 탭 안 전환 스위치 ---- */
+.subtabs{display:flex;gap:2px;background:var(--chip);padding:3px;border-radius:999px;margin:10px auto 6px;width:max-content;max-width:100%}
+.subtabs[hidden]{display:none}
+.subtabs button{border:0;background:none;color:var(--sub);font:inherit;font-size:14px;font-weight:700;padding:6px 18px;border-radius:999px;cursor:pointer}
+.subtabs button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:none}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -816,12 +819,10 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
     <h1 id="logo" title="술술 일본어"><b class="lgm">すらすら<span>日本語</span></b><small>술술 일본어</small></h1>
     <nav class="views" id="views">
       <button class="vb on" data-view="home"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></i><span>홈</span></button>
-      <button class="vb" data-view="list"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg></i><span>단어장</span></button>
-      <button class="vb" data-view="quiz"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></i><span>퀴즈</span></button>
+      <button class="vb" data-view="list" data-grp="study"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg></i><span>학습</span></button>
       <button class="vb" data-view="exam"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>모의시험</span></button>
-      <button class="vb" data-view="game"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/><circle cx="18" cy="14" r=".8"/></svg></i><span>게임</span></button>
+      <button class="vb" data-view="game" data-grp="fun"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/><circle cx="18" cy="14" r=".8"/></svg></i><span>즐기기</span></button>
       <button class="vb" data-view="community"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.8 0 5 2 5 5"/></svg></i><span>커뮤니티</span></button>
-      <button class="vb" data-view="news"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></i><span>뉴스</span></button>
     </nav>
     <div class="tools"><button class="pill sm" id="profBtn" aria-label="프로필 전환"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
     <div class="theme" id="theme" role="group" aria-label="화면 모드">
@@ -843,6 +844,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 </div>
 </header>
 <main>
+  <div id="subtabs" class="subtabs" role="tablist" hidden></div>
   <section id="homeView"></section>
   <section id="todayView" hidden></section>
   <section id="listView" hidden><div id="pickBox"></div><div id="partTop"></div><div class="count" id="count"></div><div class="grid" id="grid"></div><div id="partBot"></div></section>
@@ -2403,12 +2405,19 @@ $("statsView").addEventListener("click",e=>{
 });
 
 /* ---------- 이벤트 ---------- */
+/* 하단 탭은 5개: 학습(단어장·퀴즈), 즐기기(게임·뉴스)는 탭 안에서 위쪽 스위치로 오가요 */
+const GROUP={list:"study",quiz:"study",game:"fun",news:"fun",read:"fun"};
+const SUB={study:[["list","단어장"],["quiz","퀴즈"]],fun:[["game","게임"],["news","뉴스"]]};
+const lastSub={study:"list",fun:"game"};
+function renderSub(eff){ const g=GROUP[eff], el=$("subtabs"); if(!g||eff==="read"){ el.hidden=true; return; } el.hidden=false;
+  el.innerHTML=SUB[g].map(([k,l])=>`<button role="tab" data-sv="${k}" class="${k===eff?"on":""}" aria-selected="${k===eff}">${l}</button>`).join(""); }
 function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   view=v; document.body.dataset.view=v; hideSel(); document.body.classList.remove("inq","inr","kanamode");
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","news","anime","community","read","stats"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
-  document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===(v==="today"?"home":v==="read"?"news":v)));
+  { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
+    document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.grp?b.dataset.grp===g:b.dataset.view===eff)); renderSub(eff); }
   refresh(); window.scrollTo(0,0);
 }
 $("logo").addEventListener("click",()=>setView("home"));
@@ -2502,7 +2511,8 @@ $("todayView").addEventListener("click",e=>{
     try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(todayJa); u.lang="ja-JP"; u.rate=.9; speechSynthesis.speak(u); }catch(err){}
   }
 });
-$("views").addEventListener("click",e=>{ const b=e.target.closest("[data-view]"); if(b) setView(b.dataset.view); });
+$("views").addEventListener("click",e=>{ const b=e.target.closest("[data-view]"); if(!b) return; const g=b.dataset.grp; setView(g&&lastSub[g]&&GROUP[view]!==g?lastSub[g]:b.dataset.view); });
+$("subtabs").addEventListener("click",e=>{ const b=e.target.closest("[data-sv]"); if(b&&b.dataset.sv!==view) setView(b.dataset.sv); });
 $("levels").addEventListener("click",e=>{
   const b=e.target.closest("[data-l]"); if(!b) return;
   const l=b.dataset.l;
