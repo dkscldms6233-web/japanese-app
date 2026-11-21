@@ -864,6 +864,8 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .qcnt{font-size:13px;font-weight:800;color:#b36b00;background:#fff1d1;border-radius:999px;padding:2px 11px}
 .qrow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
 .qrow:last-child{border-bottom:0}
+button.qrow{width:100%;background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+button.qrow:active{background:var(--chip)}
 .qring{width:44px;height:44px;flex:none}.qtr{fill:none;stroke:var(--chip);stroke-width:5}.qfg{fill:none;stroke:#e89a14;stroke-width:5;stroke-linecap:round}
 .qring.dn .qfg{stroke:var(--ok,#3fa98a)}.qck{fill:none;stroke:var(--ok,#3fa98a);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.qn{font-size:15px;font-weight:800;fill:var(--text)}
 .qm{flex:1;min-width:0}.qm b{display:block;font-size:15px;font-weight:700}.qm small{font-size:12.5px;color:var(--sub);font-weight:600}
@@ -1301,7 +1303,7 @@ function questHtml(){
   const chest=`<svg class="qchsv ${q.paid?"open":""}" viewBox="0 0 48 44" aria-hidden="true"><rect x="5" y="20" width="38" height="20" rx="4" fill="#d98a3a" stroke="#7a4a1c" stroke-width="2.4"/><path d="${q.paid?"M5 22 L9 6 Q24 -2 39 6 L43 22Z":"M5 22 Q5 8 24 8 Q43 8 43 22Z"}" fill="#eaa650" stroke="#7a4a1c" stroke-width="2.4" stroke-linejoin="round"/><rect x="20" y="22" width="8" height="10" rx="2" fill="#ffd54a" stroke="#7a4a1c" stroke-width="1.8"/>${q.paid?`<path d="M24 0v4M12 2l2 3M36 2l-2 3" stroke="#ffb703" stroke-width="2.4" stroke-linecap="round"/>`:""}</svg>`;
   const open=prefs.questOpen!==false;
   return `<div class="quest ${open?"":"shut"}"><button type="button" class="qh" data-quest="toggle" aria-expanded="${open}"><b>오늘의 퀘스트</b><span class="qcnt">${done} / ${L.length}</span><i class="qchev" aria-hidden="true"></i></button>
-   <div class="qbody"><div class="qlist">${L.map(x=>`<div class="qrow ${x.n>=x.of?"dn":""}">${ring(x)}<div class="qm"><b>${E(x.t)}</b><small>${x.n} / ${x.of}</small></div><span class="qxp">${x.n>=x.of?"받음":"+10 XP"}</span></div>`).join("")}</div>
+   <div class="qbody"><div class="qlist">${L.map(x=>{ const dn=x.n>=x.of, inner=`${ring(x)}<div class="qm"><b>${E(x.t)}</b><small>${x.n} / ${x.of}${dn?"":" · 눌러서 하러 가기"}</small></div><span class="qxp">${dn?"받음":"+10 XP"}</span>`; return dn?`<div class="qrow dn">${inner}</div>`:`<button type="button" class="qrow go" data-qgo="${x.id}">${inner}</button>`; }).join("")}</div>
    ${L.length>=2?`<div class="qchest ${q.paid?"dn":""}">${chest}<div class="qct"><b>${q.paid?"오늘의 보상을 받았어요":"모두 끝내면 보물상자!"}</b><small>${q.paid?"내일 또 만나요":"씨앗 5개 · 20 XP"}</small></div></div>`:""}</div></div>`;
 }
 function logWrong(w,mode,picked,correct){ try{ if(!w||w.sent||!w.key) return; wlog.push({k:w.key,m:mode,p:String(picked||"").slice(0,60),c:String(correct||"").slice(0,60),t:Date.now()}); if(wlog.length>300) wlog=wlog.slice(-300); LS.set("jp-wlog",wlog); }catch(e){} }
@@ -2756,6 +2758,8 @@ $("posf").innerHTML += POSLIST.map(p=>`<option value="${p}">${POS[p][0]}</option
 $("nofuri").checked = !!prefs.nofuri; applyPrefs();
 // 내 급수 선택: 홈 · 오늘의 문장 · 단어장 · 퀴즈의 기본 범위가 돼요
 $("homeView").addEventListener("click",e=>{
+  const qg=e.target.closest("[data-qgo]");
+  if(qg){ const k=qg.dataset.qgo; if(k==="n"){ setView("quiz"); startQuiz("meaning",null,goalN()); } else if(k==="r"&&window.REVIEW) REVIEW.open(); else if(k==="f"&&window.REVIEW) REVIEW.openWrong(); return; }
   if(e.target.closest("[data-quest]")){ prefs.questOpen=!(prefs.questOpen!==false); LS.set("jp-prefs",prefs); renderHome(); return; }
   const q=e.target.closest("[data-hq]");
   if(q){
@@ -2906,7 +2910,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=5"></script>
 <script src="settings.js?v=3"></script>
-<script src="dev.js?v=7"></script>
+<script src="dev.js?v=8"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>
