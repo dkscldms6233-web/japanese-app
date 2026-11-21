@@ -1583,7 +1583,7 @@ function gameSetup(){
   const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">내 최고 ${v}점</span>`:""; };
   const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
-   <div class="gbanner"><div><b>게임</b><span>단어로 놀아요</span></div><img src="mascot.png" alt=""></div>
+   <div class="qm-h"><h2>게임</h2></div>
    ${lvRow(jl,"급수",true)}
    <div class="gcards">
     <button class="gc g-match" data-act="gstart" data-g="match"><span class="gi">${GART.match}</span><span class="gt"><b>짝 맞추기</b>${bb("match2")}</span></button>
