@@ -95,7 +95,10 @@ function levelProgress(L){ const st=get("jp-path",{done:{}}); let all=0, real=0;
 const levelCleared=L=>{ const p=levelProgress(L); return p.all>0&&p.real>=p.all; };
 function checkSpecial(){ try{ const s=charState(); let changed=false;
   ITEMS.filter(x=>x.special).forEach(it=>{ if(!s.owned.includes(it.id)&&levelCleared(it.level)){ s.owned.push(it.id); changed=true; A().toast(it.level+" 클리어! 특별 아이템 「"+it.name+"」을(를) 받았어요"); } });
-  if(changed) saveChar(s); }catch(e){} }
+  if(changed) saveChar(s);
+  /* N5부터 N1까지 모든 단계를 직접 끝내면 특별 칭호 */
+  if(["N5","N4","N3","N2","N1"].every(levelCleared)){ const gs=giftState(); gs.extra=gs.extra||[]; if(!gs.extra.some(x=>x.title===MASTER_TITLE)){ gs.extra.push({title:MASTER_TITLE,at:Date.now()}); set("jp-gift",gs); A().toast("N5~N1 전부 클리어! 칭호 「"+MASTER_TITLE+"」을(를) 받았어요"); } }
+  }catch(e){} }
 const saveChar=s=>{ set("jp-char",s); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} };
 function addSeeds(n){ const s=charState(); s.seeds=(s.seeds||0)+n; saveChar(s); }
 const DEFS=`<defs><linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f0a824"/></linearGradient><linearGradient id="gPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd3e0"/><stop offset="1" stop-color="#ff93b4"/></linearGradient><linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a7e"/><stop offset="1" stop-color="#e0483f"/></linearGradient><linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9ebb2"/><stop offset="1" stop-color="#52b870"/></linearGradient><linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8f7"/><stop offset="1" stop-color="#4294d4"/></linearGradient><linearGradient id="gStraw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeab9"/><stop offset="1" stop-color="#ebc67c"/></linearGradient><linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5552"/><stop offset="1" stop-color="#211e1d"/></linearGradient><filter id="fWc" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".018 .026" numOctaves="3" seed="7" result="warp"/><feDisplacementMap in="SourceGraphic" in2="warp" scale="6" result="d"/><feGaussianBlur in="d" stdDeviation="1.6" result="b"/><feComposite in="d" in2="b" operator="arithmetic" k1="0" k2="1.55" k3="-.55" k4="0" result="edge"/><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="gr"/><feColorMatrix in="gr" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.55 1.05" result="ga"/><feComposite in="edge" in2="ga" operator="in"/></filter></defs>`;
@@ -227,7 +230,8 @@ const GIFT_TITLES=["새싹 참새","날갯짓 참새","하늘 참새","한 달 �
 const NUM=["零","一","二","三","四","五","六","七","八","九","十"];
 const kan=n=>n<=10?NUM[n]:n<20?"十"+(n%10?NUM[n%10]:""):NUM[Math.floor(n/10)]+"十"+(n%10?NUM[n%10]:"");
 /* 대표 칭호: 받은 칭호 중 하나를 골라 내 계정·리그에 보여 줘요(안 고르면 가장 높은 칭호) */
-const earnedTitles=()=>{ const seen=new Set(), out=[]; (giftState().items||[]).slice().sort((a,b)=>b.j-a.j).forEach(i=>{ if(!seen.has(i.title)){ seen.add(i.title); out.push(i.title); } }); return out; };
+const MASTER_TITLE="JLPT 정복자";
+const earnedTitles=()=>{ const seen=new Set(), out=[]; const gs0=giftState(); (gs0.extra||[]).forEach(x=>{ if(!seen.has(x.title)){ seen.add(x.title); out.push(x.title); } }); (gs0.items||[]).slice().sort((a,b)=>b.j-a.j).forEach(i=>{ if(!seen.has(i.title)){ seen.add(i.title); out.push(i.title); } }); return out; };
 const repTitle=()=>{ const gs=giftState(), t=earnedTitles(); if(gs.rep==="") return ""; if(gs.rep&&t.includes(gs.rep)) return gs.rep; return t[0]||""; };
 function setRepTitle(t){ const gs=giftState(); gs.rep=t; set("jp-gift",gs); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
 const giftTitle=j=>j<=GIFT_TITLES.length?GIFT_TITLES[j-1]:"전설의 참새";
