@@ -2520,13 +2520,13 @@ function renderHome(){
   const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
   const sent=qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장 · "+qt.by}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"+(my.includes(p.lv)?" · "+p.lv:"")}:null;
   $("homeView").innerHTML=`<div class="home">
-   <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
+   <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}</div>
+   ${window.PATH?PATH.statusHtml():""}
    ${window.DEV?DEV.bannerHtml():""}
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
    ${away>=3&&!tl.n?`<p class="hback">${away}일 만에 오셨네요. 오늘은 가볍게 복습부터 시작해 볼까요?</p>`:""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    ${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}
-   ${window.PATH?PATH.statusHtml():""}
    ${window.PATH?PATH.journeyHtml():""}
    <div class="lrows" style="margin-top:12px">
      <button class="lrow" data-ppage="path"><span>단계별로 공부하기</span><i>›</i></button>
@@ -2805,7 +2805,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=80"></script>
+<script src="path.js?v=81"></script>
 <script src="community.js?v=15"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=5"></script>
