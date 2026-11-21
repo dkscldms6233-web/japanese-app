@@ -6,6 +6,7 @@
 <title>すらすら日本語 - 술술 일본어</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#fbfaf7">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -754,6 +755,15 @@ header{border-bottom:1px solid var(--line);box-shadow:none}
 .gc .gi{display:none!important}
 .gc:hover{background:var(--chip)!important}
 .hanko{border-color:var(--seal)}
+/* ---- 헤더 정리: 홈이 아닌 화면은 한 줄로, 테마 전환은 버튼 하나로 ---- */
+.theme{display:none}
+#themeCycle{border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:5px 11px;cursor:pointer;line-height:1.4;display:inline-flex;align-items:center;gap:4px}
+#themeCycle .ic{width:15px;height:15px}
+body:not([data-view=home]) header .hin::before{display:none}
+body:not([data-view=home]) header{padding:8px 16px 6px}
+body:not([data-view=home]) .top{flex-wrap:nowrap;margin-bottom:4px}
+body:not([data-view=home]) #logo small{display:none}
+body:not([data-view=home]) #logo .lgm{font-size:.82em}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -2418,10 +2428,10 @@ function renderHome(){
    <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    ${window.DEV?DEV.bannerHtml():""}
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
-   ${window.PATH?PATH.statusHtml():""}
-   ${window.PATH?PATH.journeyHtml():""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    ${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}
+   ${window.PATH?PATH.statusHtml():""}
+   ${window.PATH?PATH.journeyHtml():""}
    <div class="lrows" style="margin-top:12px">
      <button class="lrow" data-ppage="path"><span>단계별로 공부하기</span><i>›</i></button>
      <button class="lrow" data-ppage="basic"><span>기초 (히라가나 · 가타카나)</span><i>›</i></button>
@@ -2696,10 +2706,17 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=75"></script>
+<script src="path.js?v=76"></script>
 <script src="community.js?v=14"></script>
 <script src="dev.js?v=5"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+<script>(function(){ const tools=document.querySelector(".tools"), grp=document.getElementById("theme"); if(!tools||!grp) return;
+ const b=document.createElement("button"); b.id="themeCycle"; b.type="button"; tools.appendChild(b);
+ const order=["auto","light","dark"], NAME={auto:"자동",light:"라이트",dark:"다크"};
+ const cur=()=>{ const on=grp.querySelector(".on"); return on?on.dataset.t:"auto"; };
+ const sync=()=>{ const m=cur(), src=grp.querySelector('[data-t="'+m+'"]'); b.innerHTML=(src&&src.querySelector("svg")?src.querySelector("svg").outerHTML:"")+"<span>"+NAME[m]+"</span>"; b.title="화면 모드: "+NAME[m]+" (눌러서 바꾸기)"; b.setAttribute("aria-label",b.title); };
+ b.addEventListener("click",()=>{ const n=order[(order.indexOf(cur())+1)%3], t=grp.querySelector('[data-t="'+n+'"]'); if(t) t.click(); sync(); });
+ new MutationObserver(sync).observe(grp,{attributes:true,subtree:true,attributeFilter:["class"]}); sync(); })();</script>
 </body>
 </html>

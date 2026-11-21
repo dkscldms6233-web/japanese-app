@@ -177,7 +177,7 @@ let showAllUnits=false;
 let openUnits=new Set();
 function statusHtml(){
   const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
-  return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${st?st+"일 연속 · ":""}${x.t} XP · 현재 씨앗 ${charState().seeds||0}</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
+  return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
 }
 /* 내 계정 화면: 내 참새 + 레벨·연속 출석·씨앗 */
 function profileHtml(){
