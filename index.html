@@ -928,7 +928,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana.js?v=17"></script>
 <script src="games2.js?v=20"></script>
 <script src="bgm.js?v=37"></script>
-<script src="gametheme.js?v=39"></script>
+<script src="gametheme.js?v=40"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1890,11 +1890,11 @@ const elapsedPct = ms => 100-Math.min(100,ms/((G&&G.total)||60000)*100);
 const monkX = p => `calc(${p}% - ${(p*.46).toFixed(1)}px)`;
 function mbarHTML(ms){
   const p=elapsedPct(ms);
-  return `<div class="mbar"><div class="monk ${ms<=10000?"fast":""}" id="gmk" style="left:${monkX(p)}">${MONKEY}</div><div class="prog"><div id="gbar" class="${barCls(ms)}" style="width:${p}%"></div></div></div>`;
+  return `<div class="mbar"><div class="monk ${ms<=10000?"fast":""}" id="gmk" style="left:${monkX(p)}">${MONKEY}</div><div class="prog"><div id="gbar" class="${barCls(ms)}" style="width:${(100-p).toFixed(1)}%"></div></div></div>`;
 }
 function setMbar(ms){
   const p=elapsedPct(ms), bar=$("gbar"), mk=$("gmk");
-  if(bar){ bar.style.width=p+"%"; bar.className=barCls(ms); }
+  if(bar){ bar.style.width=(100-p).toFixed(1)+"%"; bar.className=barCls(ms); }
   if(mk){ mk.style.left=monkX(p); mk.classList.toggle("fast",ms<=10000); }
 }
 const barCls = ms => ms<=10000?"low":ms<=20000?"mid":"";

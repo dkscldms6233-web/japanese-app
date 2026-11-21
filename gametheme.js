@@ -114,6 +114,14 @@ body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizVi
 :root[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .opt{background:#141414;color:#f4f2ee}
 :root[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .fw,:root[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .fw *{color:#f4f2ee!important}
 :root[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .sh-w,:root[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .sh-w *{color:#f4f2ee!important}
+/* 짝 맞추기 시간 표시: 참새·별 없이 깔끔한 단색 막대(초록 → 주황 → 빨강) */
+body:has(#quizView .gbox) #quizView .mbar .monk,body:has(#quizView .gbox) #quizView .mbar::after{display:none!important}
+body:has(#quizView .gbox) #quizView .mbar{padding-top:0!important;margin:12px 0 6px}
+body:has(#quizView .gbox) #quizView .mbar .prog{height:16px!important;border-radius:8px!important;background:rgba(255,255,255,.9)!important;border:0!important;box-shadow:inset 0 0 0 2px rgba(20,34,74,.14)}
+body:has(#quizView .gbox) #quizView #gbar{background:#3fa98a!important;box-shadow:none!important;border-radius:8px!important;animation:none!important}
+body:has(#quizView .gbox) #quizView #gbar.mid{background:#e89a14!important}
+body:has(#quizView .gbox) #quizView #gbar.low{background:#ef4b6a!important}
+:root[data-theme=dark] body:has(#quizView .gbox) #quizView .mbar .prog{background:#1a1a1a!important;box-shadow:inset 0 0 0 2px #3a3a3a}
 `;
 document.head.appendChild(ST);
 
