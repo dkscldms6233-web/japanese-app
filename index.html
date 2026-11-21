@@ -1041,7 +1041,7 @@ const RAW = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 // 프로필: 이 기기 안에서만 저장돼요. 아래 키들은 프로필별로 따로 보관해요.
-const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs","jp-gift","jp-char","jp-friends","jp-league"];
+const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs","jp-wlog","jp-gift","jp-char","jp-friends","jp-league"];
 let profiles = RAW.get("jp-profiles",null), activeId = RAW.get("jp-active",null);
 if(!Array.isArray(profiles)||!profiles.length){
   profiles=[{id:"p1",name:"기본"}]; activeId="p1";
@@ -1171,6 +1171,22 @@ let stars  = new Set(LS.get("jp-star",[]).map(x=>typeof x==="number"?"b"+x:x));
 let prefs  = LS.get("jp-prefs",{});
 let wrong  = LS.get("jp-wrong",{});    // 오답 노트: 단어키 → 연속 정답 수 (2번 연속 맞히면 졸업)
 let miss   = LS.get("jp-miss",{});     // 단어키 → 누적 오답 횟수
+let wlog   = LS.get("jp-wlog",[]);     // 오답 기록(최근 300개): {k:단어키, m:문제유형, p:내가 고른 답, c:정답, t:시각}
+function logWrong(w,mode,picked,correct){ try{ if(!w||w.sent||!w.key) return; wlog.push({k:w.key,m:mode,p:String(picked||"").slice(0,60),c:String(correct||"").slice(0,60),t:Date.now()}); if(wlog.length>300) wlog=wlog.slice(-300); LS.set("jp-wlog",wlog); }catch(e){} }
+/* 복습 화면에서 스스로 매긴 기억 정도(again/hard/good/easy)를 기록 · 오답 노트 · 복습 일정에 반영 */
+const SRS_IV=[10/1440,1,3,7,14,30,60];
+function recordRating(w,grade){
+  if(!w||!w.key) return; const ok=grade==="good"||grade==="easy";
+  const d=today(), e=log[d]||(log[d]={n:0,c:0}); e.n++; if(ok) e.c++;
+  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트 졸업!"); } } }
+  else if(grade==="again"){ wrong[w.key]=0; miss[w.key]=(miss[w.key]||0)+1; logWrong(w,"review",w.ko,w.ko); }
+  LS.set("jp-log",log); LS.set("jp-wrong",wrong); LS.set("jp-miss",miss);
+  const sr=LS.get("jp-srs",{}), x=sr[w.key]||{b:0}, b=x.b||0;
+  x.b=grade==="again"?0:grade==="hard"?Math.max(1,b-1):grade==="good"?Math.min(6,b+1):Math.min(6,b+2);
+  x.d=Date.now()+SRS_IV[x.b]*864e5; sr[w.key]=x; LS.set("jp-srs",sr);
+  if(ok&&window.PATH) PATH.addXp(grade==="easy"?12:10);
+  renderLevels();
+}
 let log    = LS.get("jp-log",{});      // 날짜 → {n:푼 문제, c:맞힌 문제}
 let readSet = new Set(LS.get("jp-read",[]));
 let ALL = [];
@@ -1589,7 +1605,7 @@ function grade(ok){
 function pick(i){
   if(Q.mode==="order"||Q.sel!==null||i>=Q.opts.length) return;
   const w=Q.list[Q.i], key=Q.mode==="meaning"?"ko":"yomi", ok=Q.opts[i]===w[key];
-  Q.sel=i; ok?Q.score++:Q.wrong.push(w); record(w,ok); renderQ();
+  Q.sel=i; ok?Q.score++:Q.wrong.push(w); if(!ok) logWrong(w,Q.mode,Q.opts[i],w[key]); record(w,ok); renderQ();
 }
 function orderCheck(){
   const o=Q.ord, w=Q.list[Q.i];
@@ -2381,7 +2397,7 @@ $("statsView").addEventListener("click",e=>{
   if(b.dataset.act==="quizWrong"){ level="오답 노트"; renderLevels(); setView("quiz"); }
   else if(b.dataset.act==="resetLog"){
     if(!confirm("학습 기록과 오답 노트를 모두 지울까요? (단어와 저장함은 그대로예요)")) return;
-    log={}; miss={}; wrong={}; LS.set("jp-log",log); LS.set("jp-miss",miss); LS.set("jp-wrong",wrong);
+    log={}; miss={}; wrong={}; wlog=[]; LS.set("jp-log",log); LS.set("jp-miss",miss); LS.set("jp-wrong",wrong); LS.set("jp-wlog",wlog);
     renderLevels(); renderStats(); toast("기록을 초기화했어요");
   }
 });
@@ -2569,6 +2585,7 @@ $("homeView").addEventListener("click",e=>{
   const q=e.target.closest("[data-hq]");
   if(q){
     if(q.dataset.hq==="review"){
+      if(window.REVIEW){ REVIEW.openWrong(); return; }
       const pool=ALL.filter(w=>w.key in wrong);
       if(!pool.length){ toast("오답 노트가 비었어요. 퀴즈를 풀면 틀린 단어가 쌓여요"); return; }
       setView("quiz"); startQuiz("meaning",pool,Math.min(goalN(),pool.length));
@@ -2655,7 +2672,7 @@ document.addEventListener("click",e=>{
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300);
   }
 });
-window.APP={view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome()};
+window.APP={view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E};
 if(needOnb()) openOnb();
 // 프로필 (이 기기 안에서만 저장 · 비밀번호 없음)
 const saveProfiles = () => RAW.set("jp-profiles",profiles);
@@ -2706,8 +2723,9 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=76"></script>
+<script src="path.js?v=78"></script>
 <script src="community.js?v=14"></script>
+<script src="review.js?v=2"></script>
 <script src="dev.js?v=5"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
