@@ -64,6 +64,10 @@ ${G} #quizView .glist .grow *{color:inherit}
 ${G} #quizView .glist .grow .gtag{color:#1d1a3d}
 ${G} #quizView .glist .grow .gk{color:#5d5890}
 ${G} #quizView .gbox .newbest{background:#ffd43b;color:#4a3300}
+/* 떨어지는 단어: 회색 판과 어두운 패널을 없애 뒤 배경이 그대로 보이게 */
+${G} #quizView .gbox:has(.fallarea){background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
+${G} #quizView .gbox .fallarea{background:transparent!important;border:0!important}
+${G} #quizView .gbox:has(.fallarea) .sub,${G} #quizView .gbox:has(.fallarea) .score,${G} #quizView .gbox:has(.fallarea) .gstat,${G} #quizView .gbox:has(.fallarea) .gstat *{text-shadow:0 1px 3px rgba(10,40,28,.7)}
 `;
 document.head.appendChild(ST);
 })();
