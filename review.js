@@ -87,8 +87,8 @@ function openWrong(){
    <div class="rvsort"><label for="rvSort" class="sub">정렬</label><select id="rvSort"><option value="recent" ${wSort==="recent"?"selected":""}>최근에 틀린 순</option><option value="miss" ${wSort==="miss"?"selected":""}>많이 틀린 순</option></select></div>
    <div class="rvlist">${ws.map(w=>{ const p=(picks[w.key]||[]).slice(-1)[0], k=wr[w.key]||0;
      return `<button class="rvrow" data-rv="wopen" data-k="${E(w.key)}"><span class="rvr1"><b>${R(w.f)}</b><span class="rvko">${E(w.ko)}</span></span>
-      <span class="rvr2">${p&&p.p&&p.p!==p.c?`내가 고른 답: <i>${E(p.p)}</i> · ${E(TYPE[p.m]||"퀴즈")}`:(p?E(TYPE[p.m]||"퀴즈")+"에서 틀림":"이전에 틀린 단어")} · ${miss[w.key]||1}번 틀림 · ${Math.max(1,2-k)}번 더 맞히면 빠져요</span></button>`; }).join("")}</div>`
-   :`<p class="rvdone">오답 노트가 비었어요 🎉</p><p class="sub rvnote">퀴즈에서 틀린 단어가 여기에 쌓이고, 2번 연속 맞히면 오답에서 빠져요.</p>`}
+      <span class="rvr2">${p&&p.p&&p.p!==p.c?`내가 고른 답: <i>${E(p.p)}</i> · ${E(TYPE[p.m]||"퀴즈")}`:(p?E(TYPE[p.m]||"퀴즈")+"에서 틀림":"이전에 틀린 단어")} · ${miss[w.key]||1}번 틀림 · ${Math.max(1,2-k)}번 더 맞히면 노트에서 제외</span></button>`; }).join("")}</div>`
+   :`<p class="rvdone">오답 노트가 비었어요 🎉</p><p class="sub rvnote">퀴즈에서 틀린 단어가 여기에 쌓이고, 2번 연속 맞히면 노트에서 제외돼요.</p>`}
    <div class="rvbtns"><button class="pill" data-rv="back">복습으로</button></div></div>`;
   d.querySelector('[data-rv="back"]').addEventListener("click",overview);
   const so=d.querySelector("#rvSort"); if(so) so.addEventListener("change",()=>{ wSort=so.value; openWrong(); });
