@@ -337,7 +337,15 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS,maxLv:MAXLV,
+  equip:()=>charState().equip||{},gift:{
+    seeds:()=>charState().seeds||0,
+    items:()=>{ const c=charState(); return ITEMS.filter(i=>!i.special&&c.owned.includes(i.id)).map(i=>({id:i.id,name:i.name,slot:i.slot,price:i.price})); },
+    itemName:id=>{ const i=ITEMS.find(x=>x.id===id); return i?i.name:""; },
+    spendSeeds(n){ const c=charState(); if(!(n>0)||(c.seeds||0)<n) return false; c.seeds-=n; saveChar(c); return true; },
+    removeItem(id){ const c=charState(), i=ITEMS.find(x=>x.id===id); if(!i||i.special||!c.owned.includes(id)) return false; c.owned=c.owned.filter(x=>x!==id); Object.keys(c.equip||{}).forEach(k=>{ if(c.equip[k]===id) delete c.equip[k]; }); saveChar(c); return true; },
+    receive(g){ const c=charState(); if(g.kind==="seed"){ const n=Math.max(0,Math.min(200,+g.amount||0)); c.seeds=(c.seeds||0)+n; saveChar(c); return "씨앗 "+n+"개"; }
+      const i=ITEMS.find(x=>x.id===g.item&&!x.special); if(!i) return ""; if(c.owned.includes(i.id)){ c.seeds=(c.seeds||0)+i.price; saveChar(c); return "「"+i.name+"」(이미 있어서 씨앗 "+i.price+"개로 바꿨어요)"; } c.owned.push(i.id); saveChar(c); return "「"+i.name+"」"; } },
+  dev:{state:charState,save:saveChar,items:()=>ITEMS,maxLv:MAXLV,
     setLevel(L){ const x=xpState(); x.t=lvFloor(Math.max(1,Math.min(MAXLV,L))); set("jp-xp",x); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} },
     pathSet(L,on){ const st=get("jp-path",{done:{}}); st.done=st.done||{}; build().forEach(u=>{ if(L==="ALL"||u.tag===L) u.nodes.forEach(n=>{ if(on) st.done[n.id]=1; else delete st.done[n.id]; }); }); set("jp-path",st); if(on) checkSpecial(); },
     giftReset(){ set("jp-gift",{}); },
