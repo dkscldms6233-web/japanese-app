@@ -3,7 +3,6 @@
  * 값은 기존 설정(prefs)에 그대로 저장돼요. */
 (function(){
 const A=()=>window.APP, $=id=>document.getElementById(id);
-const KEYS=["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs","jp-wlog","jp-gift","jp-char"];
 const SCALES=[["normal","보통",1],["large","크게",1.1],["xl","아주 크게",1.2]];
 
 /* 글자 크기: 시작할 때 저장된 값을 적용해요 */
@@ -25,9 +24,11 @@ function render(){
    ${row("게임 소리","배경음악과 효과음",`<label class="stsw"><input type="checkbox" data-st="sound" ${P.sound===false?"":"checked"}><span>켜기</span></label>`)}
    <h3 class="sth">계정</h3>
    ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장돼요",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}
+   <h3 class="sth">도움</h3>
+   ${row("친구 초대하기","앱을 아직 안 쓰는 친구에게 링크 보내기",`<button type="button" class="pill" data-st="invite">초대</button>`)}
+   ${row("문의하기","오류·제안을 보내 주세요",`<button type="button" class="pill" data-st="inq">문의</button>`)}
    <h3 class="sth">내 기록</h3>
-   <div class="stbtns"><button type="button" class="pill" data-st="backup">백업 복사</button><button type="button" class="pill" data-st="restore">백업에서 복원</button><button type="button" class="pill dng" data-st="reset">학습 기록 지우기</button></div>
-   <p class="sub stnote">백업은 기록을 글자로 복사해 둬요. 다른 기기에서 「백업에서 복원」에 붙여 넣으면 이어서 쓸 수 있어요.</p>
+   <div class="stbtns"><button type="button" class="pill dng" data-st="reset">학습 기록 지우기</button></div>
   </div>`;
   if(!d.open) d.showModal();
 }
@@ -47,19 +48,50 @@ async function act(b){ const k=b.dataset.st, v=b.dataset.v, a=A();
   else if(k==="goal"){ a.setPref("goal",+v); a.renderHome(); render(); }
   else if(k==="lv"){ let cur=a.myLv().slice(); if(v==="전체") cur=[]; else cur=cur.includes(v)?cur.filter(x=>x!==v):cur.concat(v); a.applyMyLevels(cur); render(); }
   else if(k==="acct"){ $("setDlg").close(); a.openProf(); }
-  else if(k==="backup"){ const o={}; KEYS.forEach(x=>{ const val=a.LS.get(x,null); if(val!==null) o[x]=val; }); const t=JSON.stringify({app:"surasura",v:1,data:o});
-    try{ await navigator.clipboard.writeText(t); a.toast("기록을 복사했어요. 메모 앱 같은 곳에 붙여 넣어 보관하세요"); }catch(e){ prompt("아래 글자를 모두 복사해서 보관하세요",t); } }
-  else if(k==="restore"){ const t=prompt("복사해 둔 백업을 붙여 넣어 주세요"); if(!t) return; let o; try{ o=JSON.parse(t); }catch(e){ a.toast("백업 형식이 아니에요"); return; }
-    if(!o||o.app!=="surasura"||!o.data){ a.toast("이 앱의 백업이 아니에요"); return; }
-    if(!confirm("지금 기록을 백업 내용으로 바꿀까요? 지금 기록은 사라져요.")) return;
-    Object.keys(o.data).filter(x=>KEYS.includes(x)).forEach(x=>a.LS.set(x,o.data[x])); a.toast("복원했어요"); setTimeout(()=>location.reload(),600); }
+  else if(k==="invite"){ invite(); }
+  else if(k==="inq"){ inquiry(); }
   else if(k==="reset"){ if(!confirm("학습 기록과 오답 노트를 모두 지울까요? 단어와 저장함은 그대로예요.")) return; if(!confirm("정말 지울까요? 되돌릴 수 없어요.")) return; a.resetLearning(); a.toast("기록을 지웠어요"); a.renderHome(); }
 }
 
+
+/* ---------- 친구 초대: 앱을 아직 안 쓰는 친구에게 링크를 보내요 ---------- */
+function appUrl(){ return location.href.split("#")[0].split("?")[0].replace(/index\.html$/,""); }
+async function invite(code){
+  const text="일본어 같이 공부해요! 술술 일본어에서 만나요."+(code?" 내 친구 코드는 "+code+"예요.":""), url=appUrl();
+  try{ if(navigator.share){ await navigator.share({title:"술술 일본어",text,url}); return; } }catch(e){ if(e&&e.name==="AbortError") return; }
+  try{ await navigator.clipboard.writeText(text+"\n"+url); A().toast("초대 문구와 링크를 복사했어요"); }catch(e){ prompt("복사해서 친구에게 보내 주세요",text+"\n"+url); }
+}
+
+/* ---------- 문의하기: 로그인한 이용자가 개발자에게 글을 남겨요(하루 3번까지) ---------- */
+function inqDlg(){ let d=$("inqDlg"); if(!d){ d=document.createElement("dialog"); d.id="inqDlg"; document.body.appendChild(d);
+  d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-iqx]")){ d.close(); return; }
+    if(ev.target.closest("[data-iqlogin]")){ d.close(); const s=$("setDlg"); if(s&&s.open) s.close(); A().openAuth("login"); return; }
+    if(!ev.target.closest("[data-iqsend]")) return;
+    const text=($("iqText").value||"").trim(), kind=$("iqKind").value, err=$("iqErr");
+    if(!text){ err.textContent="내용을 적어 주세요"; return; }
+    const btn=ev.target.closest("[data-iqsend]"); btn.disabled=true;
+    try{ const c=A().cloud, u=c.auth.currentUser, day=A().today(); let ok=false;
+      for(let n=0;n<3&&!ok;n++){ try{ await c.db.collection("inquiries").doc(u.uid+"_"+day+"_"+n).set({from:u.uid,name:String(A().curProfile().name||"").slice(0,20),kind,text:text.slice(0,500),day,at:Date.now()}); ok=true; }catch(e){} }
+      if(!ok) throw 0; A().toast("문의를 보냈어요. 고마워요"); d.close(); }
+    catch(e){ err.textContent="보내지 못했어요. 하루에 3번까지 보낼 수 있고, 잠시 뒤 다시 해 주세요"; btn.disabled=false; } }); }
+  return d; }
+function inquiry(){
+  const d=inqDlg(), p=A().curProfile(), c=A().cloud;
+  const ok=p&&p.cloud&&c&&c.ok&&c.auth.currentUser;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">문의하기</h2><button class="x" data-iqx aria-label="닫기">×</button></div><div class="db iqdb">
+   ${ok?`<label class="iql">종류<select id="iqKind"><option value="bug">오류 신고</option><option value="idea">기능 제안</option><option value="etc">기타</option></select></label>
+   <label class="iql">내용<textarea id="iqText" rows="5" maxlength="500" placeholder="어떤 화면에서 어떤 일이 있었는지 적어 주세요"></textarea></label>
+   <p class="iqerr" id="iqErr" role="alert"></p>
+   <button type="button" class="cta" data-iqsend>보내기</button>
+   <p class="sub stnote">하루에 3번까지 보낼 수 있어요. 이름과 문의 내용만 전달돼요.</p>`
+   :`<p class="sub" style="margin:8px 0 14px">문의는 로그인한 뒤에 보낼 수 있어요.</p><button type="button" class="cta" data-iqlogin>로그인</button>`}
+  </div>`;
+  if(!d.open) d.showModal();
+}
 function addBtn(){ const tools=document.querySelector(".tools"); if(!tools||$("setBtn")) return;
   const b=document.createElement("button"); b.id="setBtn"; b.type="button"; b.className="pill sm"; b.setAttribute("aria-label","설정"); b.title="설정"; b.innerHTML=A().ic("gear"); b.addEventListener("click",render); tools.appendChild(b); }
 try{ applyScale(); addBtn(); }catch(e){}
-window.SETTINGS={open:render};
+window.SETTINGS={open:render,invite,inquiry};
 
 const ST=document.createElement("style");
 ST.textContent=`#setBtn{padding:5px 9px;display:inline-flex;align-items:center;background:var(--card)!important;border:1px solid var(--line);color:var(--text);position:relative;z-index:2}#setBtn .ic{width:17px;height:17px}
@@ -71,6 +103,8 @@ ST.textContent=`#setBtn{padding:5px 9px;display:inline-flex;align-items:center;b
 .stsw{display:inline-flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}.stsw input{width:20px;height:20px;accent-color:var(--accent)}
 .sth{font-size:13px;color:var(--sub);font-weight:700;letter-spacing:.03em;margin:18px 0 0}
 .stbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.stbtns .dng{color:#c0392b;border-color:#e3b3ad}
-.stnote{margin:10px 0 2px;line-height:1.5}`;
+.stnote{margin:10px 0 2px;line-height:1.5}
+#inqDlg{border:0;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 24px);background:var(--card);color:var(--text)}#inqDlg::backdrop{background:rgba(0,0,0,.45)}
+.iql{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700;margin-bottom:12px}.iql select,.iql textarea{font:inherit;font-weight:400;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--bg);color:var(--text);width:100%;box-sizing:border-box}.iqerr{color:#c0392b;font-size:13px;min-height:18px;margin:0 0 6px}`;
 document.head.appendChild(ST);
 })();

@@ -24,9 +24,10 @@ const dlg=()=>{ let d=$("devDlg"); if(!d){ d=document.createElement("dialog"); d
   d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-dx]")){ d.close(); return; } const b=ev.target.closest("[data-d]"); if(b) act(b); }); } return d; };
 
 function ps(){ const P=window.PATH&&PATH.dev; return P; }
-async function open(){ if(!isDev) return; const d=dlg(); let mem=[], rep=[], err="";
+async function open(){ if(!isDev) return; const d=dlg(); let mem=[], rep=[], inq=[], err="";
   try{ const w=weekKey(); const ms=await db().collection("leagues").doc(w).collection("members").orderBy("xp","desc").limit(50).get(); mem=ms.docs.map(x=>({id:x.id,...x.data()}));
-    const rs=await db().collection("reports").orderBy("at","desc").limit(30).get(); rep=rs.docs.map(x=>({id:x.id,...x.data()})); }catch(e){ err="서버 규칙에 개발자 권한이 아직 없어요(firestore.rules 배포 필요)"; }
+    const rs=await db().collection("reports").orderBy("at","desc").limit(30).get(); rep=rs.docs.map(x=>({id:x.id,...x.data()}));
+    try{ const qs=await db().collection("inquiries").orderBy("at","desc").limit(30).get(); inq=qs.docs.map(x=>({id:x.id,...x.data()})); }catch(e){} }catch(e){ err="서버 규칙에 개발자 권한이 아직 없어요(firestore.rules 배포 필요)"; }
   const st=ps()?PATH.dev.state():{seeds:0,owned:[]}, nameOf=u=>(mem.find(m=>m.id===u)||{}).name||u.slice(0,6)+"…";
   const ver=[...document.scripts].map(s=>s.getAttribute("src")||"").filter(s=>/\.js\?v=/.test(s)).map(s=>s.replace("?v=","@")).join(" · ");
   d.innerHTML=`<div class="dh"><h2 style="margin:0">🛠 개발자 모드</h2><button class="x" data-dx aria-label="닫기">×</button></div><div class="db devdb">
@@ -44,6 +45,7 @@ async function open(){ if(!isDev) return; const d=dlg(); let mem=[], rep=[], err
    <p class="sub">받는 사람은 커뮤니티 「받은 선물」에서 받아요. 개별 선물은 리그·친구 목록의 「선물」 버튼이에요.</p>
    <h3>학습 기록</h3><div class="devrow"><button class="pill" data-d="wipe" data-k="jp-wrong,jp-miss">오답 기록 비우기</button><button class="pill" data-d="wipe" data-k="jp-star">별표 비우기</button><button class="pill" data-d="wipe" data-k="jp-srs">복습 일정 비우기</button><button class="pill" data-d="wipe" data-k="jp-best">최고기록 비우기</button></div>
    <h3>공지 (홈 화면 맨 위)</h3><textarea id="devNote" rows="2" maxlength="120" placeholder="비우고 저장하면 공지가 사라져요">${E(notice)}</textarea><div class="devrow"><button class="pill on" data-d="note">공지 저장</button></div>
+   <h3>문의 ${inq.length}건</h3>${inq.length?inq.map(q=>`<div class="devli" style="align-items:flex-start"><span style="min-width:0"><b>${E(({bug:"오류",idea:"제안",etc:"기타"})[q.kind]||"기타")}</b> <small>${E(q.name||"")} · ${new Date(q.at||0).toLocaleDateString("ko-KR")}</small><br><span style="white-space:pre-wrap;word-break:break-word;font-size:13px">${E(q.text||"")}</span></span><button class="pill sm" data-d="delinq" data-r="${E(q.id)}">삭제</button></div>`).join(""):`<p class="sub">아직 없어요</p>`}
    <h3>신고 ${rep.length}건</h3>${rep.length?rep.map(r=>`<div class="devli"><span><b>${E(nameOf(r.target||""))}</b> <small>${E((r.target||"").slice(0,8))} · ${new Date(r.at||0).toLocaleDateString("ko-KR")}</small></span><span><button class="pill sm" data-d="kick" data-u="${E(r.target||"")}" data-r="${r.id}">리그에서 삭제</button><button class="pill sm" data-d="dismiss" data-r="${r.id}">무시</button></span></div>`).join(""):`<p class="sub">없어요</p>`}
    <h3>이번 주 리그 ${mem.length}명</h3>${mem.map(m=>`<div class="devli"><span><b>${E(m.name||"")}</b> <small>${m.xp||0}XP · ${E(m.id.slice(0,8))}</small></span><button class="pill sm" data-d="kick" data-u="${m.id}">삭제</button></div>`).join("")||`<p class="sub">없어요</p>`}
    <h3>도구</h3><p class="sub" style="word-break:break-all">${E(ver)}</p><div class="devrow"><button class="pill" data-d="cache">캐시 비우고 새로고침</button><button class="pill" data-d="export">내 데이터 복사(JSON)</button><button class="pill" data-d="noticeoff">공지 지우기</button><button class="pill" data-d="wipeall">이 기기 학습 전부 초기화</button></div></div>`;
@@ -57,6 +59,7 @@ async function act(b){ const a=b.dataset.d, P=ps();
    else if(a==="reset"){ if(!confirm("이 기기의 아이템·씨앗을 처음 상태(씨앗 30)로 되돌릴까요?")) return; P.save({seeds:30,owned:[],equip:{}}); A().toast("초기화했어요"); }
    else if(a==="note"){ const t=($("devNote").value||"").trim(); await db().collection("config").doc("announce").set({text:t,at:Date.now()}); notice=t; A().toast(t?"공지를 올렸어요":"공지를 지웠어요"); }
    else if(a==="kick"){ if(!confirm("이 사용자를 이번 주 리그에서 삭제할까요?")) return; await db().collection("leagues").doc(weekKey()).collection("members").doc(b.dataset.u).delete(); if(b.dataset.r) await db().collection("reports").doc(b.dataset.r).delete(); A().toast("삭제했어요"); }
+   else if(a==="delinq"){ if(!confirm("이 문의를 지울까요?")) return; await db().collection("inquiries").doc(b.dataset.r).delete(); }
    else if(a==="dismiss"){ await db().collection("reports").doc(b.dataset.r).delete(); }
    else if(a==="giftall"){ const seed=b.dataset.k==="seed", amount=seed?Math.floor(+$("devGSeed").value):0, item=seed?"":$("devGItem").value;
      if(seed&&!(amount>=1&&amount<=100000)){ A().toast("1~100000 사이로 넣어주세요"); return; }

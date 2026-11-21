@@ -79,6 +79,17 @@ service cloud.firestore {
       allow delete: if isDev();
     }
 
+    // 문의: 로그인한 이용자가 하루 3번까지 남기고(문서 ID로 막아요), 읽기·삭제는 개발자만
+    match /inquiries/{id} {
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid
+        && request.resource.data.day is string
+        && id in [request.auth.uid + '_' + request.resource.data.day + '_0', request.auth.uid + '_' + request.resource.data.day + '_1', request.auth.uid + '_' + request.resource.data.day + '_2']
+        && request.resource.data.kind in ['bug', 'idea', 'etc']
+        && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 500
+        && request.resource.data.name is string && request.resource.data.name.size() <= 20;
+      allow read, delete: if isDev();
+    }
+
     // 신고: 쓰기만 가능(읽기는 콘솔에서만)
     match /reports/{id} {
       allow create: if request.auth != null && request.resource.data.by == request.auth.uid;

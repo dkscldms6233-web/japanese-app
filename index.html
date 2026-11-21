@@ -811,6 +811,17 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .gc .gt{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
 .gc .gt b{font-size:17px}
 .gc:hover{background:var(--card)!important}
+/* ---- 단어장 위쪽 정리: 한 줄씩, 가로로 밀어서 보기 · 켜고 끄는 항목은 칩 ---- */
+.levels{flex-wrap:nowrap!important;overflow-x:auto;gap:6px!important;margin:8px 0 6px!important;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.levels::-webkit-scrollbar{display:none}
+.levels .pill{flex:none;padding:6px 13px!important;font-size:14px!important}
+.opts{flex-wrap:nowrap!important;overflow-x:auto;gap:8px!important;margin:4px 0 8px!important;scrollbar-width:none}
+.opts::-webkit-scrollbar{display:none}
+.opts select{flex:none;font-size:13px;padding:6px 10px;height:auto;border-radius:999px}
+.opts label.tg{flex:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--sub);white-space:nowrap}
+.opts label.tg input{display:none}
+.opts label.tg:has(input:checked){background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent);font-weight:700}
+.bar.list-only{margin-bottom:0}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -2806,11 +2817,11 @@ renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
 <script src="path.js?v=87"></script>
-<script src="community.js?v=15"></script>
+<script src="community.js?v=16"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=5"></script>
-<script src="settings.js?v=2"></script>
-<script src="dev.js?v=6"></script>
+<script src="settings.js?v=3"></script>
+<script src="dev.js?v=7"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 </body>

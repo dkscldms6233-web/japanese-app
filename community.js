@@ -147,7 +147,7 @@ async function render(){
    <div class="cmqa"><button class="pill on" data-cm="addfriend">친구 추가</button><span class="sub">내 친구 코드 <b>${E(lg().code)}</b></span></div>
    <div class="sub cmact">${nToday?`오늘 ${nToday}명이 함께 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중이에요`:""}`:"오늘의 첫 번째 주인공이 되어 보세요"}</div>
    <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
-   <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><button class="pill on" data-cm="addfriend">친구 추가</button></div>
+   <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><span class="cmfb"><button class="pill" data-cm="invite">앱 초대하기</button><button class="pill on" data-cm="addfriend">친구 추가</button></span></div>
    <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 「친구 추가」에서 친구 코드를 입력해 보세요.</p>`}</div>
    <p class="sub" style="margin-top:6px">서로 친구로 추가하면 「대화」 버튼이 생겨요.</p>
    ${d.gifts&&d.gifts.length?`<h3 class="cmh3">받은 선물 <em class="cmnew">${d.gifts.length}</em></h3><div class="cml">${d.gifts.map(g=>`<div class="cmc cmg"><span><b>${E(g.fromName||"친구")}</b> 님이 ${g.kind==="seed"?"씨앗 "+(+g.amount||0)+"개":"「"+E(g.itemName||"아이템")+"」"}를 보냈어요<small>${new Date(g.at).toLocaleDateString("ko-KR")}</small></span><button class="pill on sm" data-claim="${E(g.id)}">받기</button></div>`).join("")}</div>`:""}
@@ -265,7 +265,7 @@ document.addEventListener("click",async e=>{
   if(bd){ birdDlg(bd.dataset.bird); return; }
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
-    else if(a==="addfriend") addDlg(); else if(a==="notify") askNotify();
+    else if(a==="invite"){ if(window.SETTINGS) SETTINGS.invite(lg().code); } else if(a==="addfriend") addDlg(); else if(a==="notify") askNotify();
     else if(a==="verified"){ try{ await cloud().auth.currentUser.reload(); await cloud().auth.currentUser.getIdToken(true); }catch(err){} if(verified()) A().toast("인증됐어요!"); else A().toast("아직 인증되지 않았어요"); render(); }
     else if(a==="resend"){ try{ await cloud().auth.currentUser.sendEmailVerification(); A().toast("인증 메일을 다시 보냈어요"); }catch(err){ A().toast("잠시 후 다시 해 주세요"); } }
     else if(a==="join") join(); else if(a==="leave") leave(); else if(a==="reload") render();
@@ -296,7 +296,7 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cmadd{display:flex;gap:8px;margin-bottom:8px}.cmadd input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit;text-transform:uppercase}
 .cmc{padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}.cmc small{display:block;color:var(--sub);font-size:11px}
 .cmwait{font-size:11px;color:var(--sub);white-space:nowrap}.cmb2.chat{background:var(--accent);border-color:var(--accent);color:var(--onacc)}
-.cmfh{display:flex;justify-content:space-between;align-items:center;margin-top:22px}.cmqa{display:flex;align-items:center;gap:10px;margin:6px 0 4px}.cmqa b{letter-spacing:.1em;color:var(--text)}
+.cmfh{display:flex;justify-content:space-between;align-items:center;margin-top:22px}.cmfb{display:flex;gap:6px}.cmqa{display:flex;align-items:center;gap:10px;margin:6px 0 4px}.cmqa b{letter-spacing:.1em;color:var(--text)}
 .chmsgs{height:46vh;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:6px}.chm{display:flex}.chm span{max-width:78%;padding:8px 12px;border-radius:16px;background:var(--chip);word-break:break-word;font-size:15px}.chm.mine{justify-content:flex-end}.chm.mine span{background:var(--accent);color:var(--onacc)}
 .chform{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}.chform input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit}
 #chatDlg,#addFrDlg{border:0;border-radius:18px;padding:0;max-width:400px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#chatDlg::backdrop,#addFrDlg::backdrop{background:rgba(0,0,0,.45)}
