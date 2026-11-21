@@ -99,9 +99,11 @@ main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
 #profDlg .pfchips{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
 #profDlg .pfchips span{background:var(--chip);border-radius:999px;padding:4px 11px;font-size:13px;color:var(--sub)}
 #profDlg .pfchips b{color:var(--text)}
+#profDlg .pftt{display:flex;justify-content:center;align-items:center;gap:8px;margin:0 0 10px}#profDlg .pftt small{color:var(--sub);font-size:13px}#profDlg .pftt select{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--card);color:var(--text)}
 #profDlg .pfxp{max-width:260px;margin:0 auto 12px}#profDlg .pfxp small{display:block;margin-top:4px;color:var(--sub);font-size:12px}
 #profDlg .pfname{margin:4px 0 14px;display:flex;flex-direction:column;gap:2px}#profDlg .pfname b{font-size:20px}
 #profDlg .pfbtns{display:flex;gap:8px}#profDlg .pfbtns .pill{flex:1;justify-content:center;padding:12px 8px;font-size:15px}
+#profDlg .qbtns{display:flex!important;gap:8px!important;margin:12px 0 0!important}#profDlg .qbtns .pill{flex:1;justify-content:center;text-align:center;padding:12px 8px;font-size:15px}
 #profDlg .pfout{display:block;margin:14px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .devonly{display:none!important}body.dev-on .devonly{display:revert!important}
 .empty{text-align:center;color:var(--sub);padding:40px 0}
@@ -2665,6 +2667,7 @@ function openProf(){
   if(!$("profDlg").open) $("profDlg").showModal();
 }
 $("profBtn").addEventListener("click",openProf);
+$("profDlg").addEventListener("change",e=>{ const s=e.target.closest("[data-reptitle]"); if(s&&window.PATH){ PATH.setRepTitle(s.value); openProf(); } });
 $("profDlg").addEventListener("click",e=>{
   if(e.target===$("profDlg") || e.target.closest("[data-close]")) return $("profDlg").close();
   const b=e.target.closest("[data-pa]"); if(!b) return;
@@ -2693,8 +2696,8 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=58"></script>
-<script src="community.js?v=9"></script>
+<script src="path.js?v=59"></script>
+<script src="community.js?v=11"></script>
 <script src="dev.js?v=3"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

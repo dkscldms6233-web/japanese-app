@@ -167,6 +167,7 @@ function profileHtml(){
   const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
   return `<div class="pfbird">${birdSvg(null,"big")}</div>
    <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>씨앗 <b>${charState().seeds||0}</b></span></div>
+   ${earnedTitles().length?`<div class="pftt"><small>대표 칭호</small><select data-reptitle aria-label="대표 칭호">${["",...earnedTitles()].map(t=>`<option value="${E(t)}" ${t===repTitle()?"selected":""}>${t?"「"+E(t)+"」":"없음"}</option>`).join("")}</select></div>`:""}
    <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
 }
 function reviewHtml(){ const n=dueKeys().length; if(!n) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
@@ -225,6 +226,10 @@ function markDone(id,skip){ const st=state(); st.done=st.done||{}; if(!st.done[i
 const GIFT_TITLES=["새싹 참새","날갯짓 참새","하늘 참새","한 달 참새"];
 const NUM=["零","一","二","三","四","五","六","七","八","九","十"];
 const kan=n=>n<=10?NUM[n]:n<20?"十"+(n%10?NUM[n%10]:""):NUM[Math.floor(n/10)]+"十"+(n%10?NUM[n%10]:"");
+/* 대표 칭호: 받은 칭호 중 하나를 골라 내 계정·리그에 보여 줘요(안 고르면 가장 높은 칭호) */
+const earnedTitles=()=>{ const seen=new Set(), out=[]; (giftState().items||[]).slice().sort((a,b)=>b.j-a.j).forEach(i=>{ if(!seen.has(i.title)){ seen.add(i.title); out.push(i.title); } }); return out; };
+const repTitle=()=>{ const gs=giftState(), t=earnedTitles(); if(gs.rep==="") return ""; if(gs.rep&&t.includes(gs.rep)) return gs.rep; return t[0]||""; };
+function setRepTitle(t){ const gs=giftState(); gs.rep=t; set("jp-gift",gs); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
 const giftTitle=j=>j<=GIFT_TITLES.length?GIFT_TITLES[j-1]:"전설의 참새";
 const ds=i=>new Date(Date.now()-i*864e5).toLocaleDateString("sv-SE");
 const giftState=()=>get("jp-gift",{claimed:{},items:[]});
@@ -310,7 +315,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,profileHtml,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
+  equip:()=>charState().equip||{},dev:{state:charState,save:saveChar,items:()=>ITEMS},addSeeds,addXp,birdSvg,statusHtml,profileHtml,repTitle,setRepTitle,reviewHtml,pathHtml,continueHtml,pageHtml,page:()=>page,journeyHtml,birdHtml,openShop,
   rec(w,ok){ try{ if(w&&w.key){ srsUpdate(w.key,ok); if(ok) addXp(10); } }catch(e){} },
   quizEnd(score,keys){ try{
     if(!active) return; const a=active; active=null;

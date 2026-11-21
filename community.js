@@ -35,7 +35,7 @@ function touch(){ if(!lg().joined) return; clearTimeout(pubT); pubT=setTimeout(p
 async function publish(){
   if(!signedIn()||!verified()||!lg().joined) return;
   const p=A().curProfile();
-  try{ await members(weekKey()).doc(uid()).set({name:p.name,xp:weekXp(),streak:A().streakDays(),day:A().today(),eq:(window.PATH&&PATH.equip())||{},at:Date.now()}); }catch(e){}
+  try{ await members(weekKey()).doc(uid()).set({name:p.name,title:(window.PATH&&PATH.repTitle&&PATH.repTitle())||"",xp:weekXp(),streak:A().streakDays(),day:A().today(),eq:(window.PATH&&PATH.equip())||{},at:Date.now()}); }catch(e){}
 }
 const genCode=()=>{ const al="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<6;i++) s+=al[Math.floor(Math.random()*al.length)]; return s; };
 async function join(){
@@ -114,7 +114,7 @@ function row(x,rank,me,isFr,mutual){
   ROWS[x.uid]=Object.assign({mutual:!!mutual,isFr:!!isFr},x);
   const mine=x.uid===(signedIn()?uid():"");
   return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><button class="cmbw" data-bird="${x.uid}" aria-label="${E(x.name||"")}님의 참새 보기">${bird(x.eq)}</button>
-   <span class="cmn"><b>${E(x.name||"")}</b>${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
+   <span class="cmn"><b>${E(x.name||"")}</b>${x.title?` <i class="cmtt">${E(x.title)}</i>`:""}${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
    ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
 }
 async function render(){
@@ -161,7 +161,7 @@ function birdDlg(u){
       const ch=ev.target.closest("[data-bcheer]"), ct=ev.target.closest("[data-bchat]");
       if(ch){ d.close(); cheerDlg(ch.dataset.bcheer,ch.dataset.n); } else if(ct){ d.close(); chatDlg(ct.dataset.bchat,ct.dataset.n); } }); }
   const me=signedIn()&&u===uid();
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv">${bird(x.eq,"big")}<div class="bn">${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button>`:""}</div>`}</div>`;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv">${bird(x.eq,"big")}<div class="bn">${x.title?"「"+E(x.title)+"」 · ":""}${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button>`:""}</div>`}</div>`;
   if(!d.open) d.showModal();
 }
 /* ---------- 응원 · 신고 · 친구 추가 ---------- */
@@ -266,7 +266,7 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 #chatDlg,#addFrDlg{border:0;border-radius:18px;padding:0;max-width:400px;width:calc(100% - 28px);background:var(--card);color:var(--text)}#chatDlg::backdrop,#addFrDlg::backdrop{background:rgba(0,0,0,.45)}
 .chhr{display:flex;gap:6px;align-items:center}.dh{position:relative}
 .chmenu{position:absolute;right:46px;top:46px;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;flex-direction:column;min-width:130px;overflow:hidden}.chmenu[hidden]{display:none}.chmenu button{background:none;border:0;font:inherit;font-size:14px;text-align:left;padding:12px 14px;cursor:pointer;color:var(--text)}.chmenu button+button{border-top:1px solid var(--line)}.chmenu .danger{color:var(--bad)}
-.vb{position:relative}.vbdot{position:absolute;top:2px;right:calc(50% - 22px);min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:var(--onacc);font-size:10px;font-weight:800;line-height:17px;text-align:center;padding:0 4px}
+.cmtt{font-style:normal;font-size:11px;font-weight:700;background:var(--accent-soft);color:var(--accent-text);border-radius:999px;padding:1px 8px;margin-left:4px;white-space:nowrap}.vb{position:relative}.vbdot{position:absolute;top:2px;right:calc(50% - 22px);min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:var(--onacc);font-size:10px;font-weight:800;line-height:17px;text-align:center;padding:0 4px}
 .cmb2.dotb{position:relative}.cmb2.dotb::after{content:"";position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:var(--bad);border:2px solid var(--bg)}
 .cmnotif{display:block;margin:10px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .cmleave{display:block;margin:20px auto 0;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
