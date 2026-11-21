@@ -34,7 +34,7 @@ function overview(){
   d.innerHTML=`<div class="dh"><h2 style="margin:0">복습</h2><button class="x" data-rvx aria-label="닫기">×</button></div><div class="db rvdb">
    <div class="rvsum"><div><b>${c.due}</b><span>지금 복습</span></div><div><b>${c.tom}</b><span>오늘 남은 것·내일</span></div><div><b>${c.week}</b><span>이번 주</span></div></div>
    ${c.due?`<button class="cta" data-rv="start">복습 시작 (${Math.min(c.due,PER_SESSION)}개)</button><p class="sub rvnote">자주 틀린 단어부터 나와요. 카드를 본 뒤 얼마나 기억했는지 골라 주세요.</p>`
-     :`<p class="rvdone">${c.total?"오늘 복습은 끝났어요 🎉":"아직 복습할 단어가 없어요"}</p><p class="sub rvnote">${c.total?(c.tom?"내일 "+c.tom+"개가 돌아와요.":"다음 복습은 며칠 뒤에 돌아와요."):"단어 퀴즈를 풀면 복습 일정이 만들어져요."}</p>`}
+     :`<p class="rvdone">${c.total?"오늘 복습은 끝났어요 🎉":"아직 복습할 단어가 없어요"}</p><p class="sub rvnote">${c.total?(c.tom?"내일 "+c.tom+"개가 돌아와요.":"다음 복습은 며칠 뒤에 돌아와요."):"단어 퀴즈를 풀면 복습 일정이 만들어져요."}</p>${c.total?"":`<button class="cta" data-rv="gopick">단어 퀴즈 풀러 가기</button>`}`}
    <div class="rvbtns"><button class="pill" data-rv="quizrv" ${c.due?"":"disabled"}>퀴즈로 복습하기</button><button class="pill" data-rv="wrong">오답 노트</button></div></div>`;
   if(!d.open) d.showModal();
 }
@@ -68,6 +68,7 @@ function act(b,d){ const a=b.dataset.rv;
     S.i++; S.show=false; card(); }
   else if(a==="quizrv"){ const pool=dueWords(); d.close(); A().setView("quiz"); A().startQuiz("meaning",pool,Math.min(PER_SESSION,pool.length)); }
   else if(a==="wrong") openWrong();
+  else if(a==="gopick"){ d.close(); A().setView("quiz"); }
   else if(a==="close"){ d.close(); A().renderHome(); }
   else if(a==="wsort"){ wSort=b.dataset.s; openWrong(); }
   else if(a==="wquiz"||a==="wread"){ const pool=wrongWords(); if(!pool.length) return; d.close(); A().setView("quiz"); A().startQuiz(a==="wread"?"reading":"meaning",pool,Math.min(PER_SESSION,pool.length)); }
@@ -88,7 +89,7 @@ function openWrong(){
    <div class="rvlist">${ws.map(w=>{ const p=(picks[w.key]||[]).slice(-1)[0], k=wr[w.key]||0;
      return `<button class="rvrow" data-rv="wopen" data-k="${E(w.key)}"><span class="rvr1"><b>${R(w.f)}</b><span class="rvko">${E(w.ko)}</span></span>
       <span class="rvr2">${p&&p.p&&p.p!==p.c?`내가 고른 답: <i>${E(p.p)}</i> · ${E(TYPE[p.m]||"퀴즈")}`:(p?E(TYPE[p.m]||"퀴즈")+"에서 틀림":"이전에 틀린 단어")} · ${miss[w.key]||1}번 틀림 · ${Math.max(1,2-k)}번 더 맞히면 노트에서 제외</span></button>`; }).join("")}</div>`
-   :`<p class="rvdone">오답 노트가 비었어요 🎉</p><p class="sub rvnote">퀴즈에서 틀린 단어가 여기에 쌓이고, 2번 연속 맞히면 노트에서 제외돼요.</p>`}
+   :`<p class="rvdone">오답 노트가 비었어요 🎉</p><p class="sub rvnote">퀴즈에서 틀린 단어가 여기에 쌓이고, 2번 연속 맞히면 노트에서 제외돼요.</p><button class="cta" data-rv="gopick">단어 퀴즈 풀러 가기</button>`}
    <div class="rvbtns"><button class="pill" data-rv="back">복습으로</button></div></div>`;
   d.querySelector('[data-rv="back"]').addEventListener("click",overview);
   const so=d.querySelector("#rvSort"); if(so) so.addEventListener("change",()=>{ wSort=so.value; openWrong(); });

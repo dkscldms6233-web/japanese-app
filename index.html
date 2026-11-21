@@ -1448,8 +1448,8 @@ function renderGrid(){
   $("count").textContent = list.length + "개 단어" + (np>1?` · 파트 ${listPart+1} / ${np} (${a+1}~${a+shown.length}번)`:"");
   $("grid").className = "grid" + ($("hide").checked ? " hide" : "") + (level==="전체"&&lvSel.size===1 ? " one" : "");
   const empty = level==="내 단어" ? "아직 추가한 단어가 없어요. 위의 「＋ 단어 추가」를 눌러 보세요."
-              : level==="저장함" ? "저장한 단어가 없어요."
-              : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요.";
+              : level==="저장함" ? "저장한 단어가 없어요. 단어 카드의 별을 누르면 여기에 모여요."
+              : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요. 철자나 뜻을 바꿔 다시 찾아 보세요.";
   $("grid").innerHTML = shown.length ? shown.map(w=>`
     <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" data-key="${w.key}">
       <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}<i class="wst s${SMG[w.key]?((SMG[w.key].b||0)>=3?2:1):0}" title="${SMG[w.key]?((SMG[w.key].b||0)>=3?"암기 완료":"학습 중"):"아직 안 외웠어요"}"></i><span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
