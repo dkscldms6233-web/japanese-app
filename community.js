@@ -127,7 +127,7 @@ async function render(){
   if(!cloud()||!cloud().ok){ v.innerHTML=head+`<p class="sub">서버에 연결할 수 없어요. 인터넷을 확인해 주세요.</p></div>`; return; }
   if(!signedIn()){
     v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>경험치는 일주일마다 초기화됩니다.</p>
-     <div class="lrows"><div class="cmrow3"><b>주간 리그</b><span>이번 주 경험치 순위와 지난주 상위 3명에게 씨앗 선물</span></div><div class="cmrow3"><b>친구</b><span>친구 코드로 추가하고 서로 응원하기</span></div><div class="cmrow3"><b>함께 공부 중</b><span>오늘 몇 명이 공부했는지 한눈에</span></div></div>
+     <div class="lrows"><div class="cmrow3"><b>주간 리그</b><span>이번 주 경험치 순위</span></div><div class="cmrow3"><b>친구</b><span>친구 코드로 추가하고 서로 응원하기</span></div><div class="cmrow3"><b>함께 공부 중</b><span>오늘 몇 명이 함께 공부하고 있을까요?</span></div></div>
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="login" style="max-width:240px">로그인</button><button class="cta sec" data-cm="signup" style="max-width:240px">회원가입</button></div></div>`; return; }
   if(!verified()){
     v.innerHTML=head+`<p class="sub">이메일 인증이 필요해요.<br><b>${E(cloud().auth.currentUser.email||"")}</b> 로 보낸 인증 메일의 링크를 누른 뒤, 아래 버튼을 눌러 주세요.<br>메일이 안 보이면 스팸함도 확인해 주세요.</p>
@@ -145,7 +145,7 @@ async function render(){
   const seen=+(localStorage.getItem("jp-cheer-seen")||0), unread=d.cheers.filter(c=>c.at>seen).length;
   v.innerHTML=head+`<div class="cmhd"><div><b>이번 주 리그</b><small>${rangeText()}</small></div><div class="cmme">${myIdx>=0?(myIdx+1)+"위":"50위 밖"} · ${myXp} XP</div></div>
    <div class="cmqa"><button class="pill on" data-cm="addfriend">친구 추가</button><span class="sub">내 친구 코드 <b>${E(lg().code)}</b></span></div>
-   <div class="sub cmact">오늘 ${nToday}명이 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중`:""}</div>
+   <div class="sub cmact">${nToday?`오늘 ${nToday}명이 함께 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중이에요`:""}`:"오늘의 첫 번째 주인공이 되어 보세요"}</div>
    <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
    <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><button class="pill on" data-cm="addfriend">친구 추가</button></div>
    <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 「친구 추가」에서 친구 코드를 입력해 보세요.</p>`}</div>
