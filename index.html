@@ -822,6 +822,23 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 .opts label.tg input{display:none}
 .opts label.tg:has(input:checked){background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent);font-weight:700}
 .bar.list-only{margin-bottom:0}
+/* ===== 벤치마킹 패스(듀오링고·말해보카·클래스카드의 좋은 점을 우리 색으로): 도톰한 버튼 · 학습 완료 화면 · 암기 현황 ===== */
+.cta{border-bottom:4px solid var(--accent-dk)!important;border-radius:14px!important;font-weight:800!important}
+.cta:active{transform:translateY(2px)!important;border-bottom-width:2px!important}
+.cta.sec{border:1.5px solid var(--line)!important;border-bottom:4px solid var(--line)!important;font-weight:700!important}
+.cta.sec:active{border-bottom-width:2px!important}
+.cta:disabled{border-bottom-width:4px}
+.rst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 8px}
+.rt{border:2px solid var(--c,var(--line));border-radius:12px;overflow:hidden;text-align:center;background:var(--card)}
+.rt b{display:block;font-size:22px;padding:10px 4px 6px;color:var(--c)}
+.rt span{display:block;font-size:12px;padding:4px 2px 6px;background:var(--c);color:#fff;font-weight:700}
+.rt.rxp{--c:#e89a14}.rt.racc{--c:var(--ok,#3fa98a)}.rt.rtime{--c:var(--blue,#4a8fc2)}
+.pk{flex-wrap:wrap}
+.pk .pgb{flex-basis:100%;height:8px;border-radius:3px;background:var(--chip);display:flex;overflow:hidden;margin-top:8px}
+.pk .pgb .pm{background:var(--ok,#3fa98a)}.pk .pgb .pl{background:#e89a14}
+.pk .pgt{flex-basis:100%;font-size:12px;color:var(--sub);margin-top:4px;text-align:left}
+.wst{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:2px;background:var(--line)}
+.wst.s1{background:#e89a14}.wst.s2{background:var(--ok,#3fa98a)}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -1296,8 +1313,9 @@ function setStage(st){ listStage=st; document.body.dataset.stage=st; }
 const LV_DESC={N5:"입문 · 기초",N4:"초급",N3:"중급",N2:"중상급",N1:"상급"};
 function renderPick(){
   const nw=Object.keys(wrong).length, cnt=l=>ALL.filter(w=>w.lv===l||w.lv2===l).length, my=myLv();
-  const card=(id,name,sub,n,c)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em></button>`;
-  const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`)).join("");
+  const SM=LS.get("jp-srs",{}), prog=l=>{ const ws=ALL.filter(w=>w.lv===l); let m=0,lr=0; ws.forEach(w=>{ const e=SM[w.key]; if(e){ if((e.b||0)>=3) m++; else lr++; } }); const n=ws.length||1; return `<span class="pgb"><i class="pm" style="width:${(m/n*100).toFixed(1)}%"></i><i class="pl" style="width:${(lr/n*100).toFixed(1)}%"></i></span><span class="pgt">암기 ${m} · 학습 중 ${lr}</span>`; };
+  const card=(id,name,sub,n,c,pr)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em>${pr||""}</button>`;
+  const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`,prog(l))).join("");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
   $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
    <div class="sub"><span class="devonly">단어를 ${PART}개씩 파트로 나눠 보여 줘요${my.length?" · ":""}</span>${my.length?`내 급수: <b>${lvText(my)}</b>`:""}</div>
@@ -1317,7 +1335,7 @@ function openList(l){
   setStage("words"); listPart=0; listSig=""; renderLevels(); renderGrid(); window.scrollTo(0,0);
 }
 function renderGrid(){
-  const pick=listStage==="pick";
+  const pick=listStage==="pick", SMG=LS.get("jp-srs",{});
   ["partTop","count","grid","partBot"].forEach(id=>$(id).style.display=pick?"none":"");
   $("pickBox").style.display=pick?"":"none";
   if(pick){ renderPick(); return; }
@@ -1338,7 +1356,7 @@ function renderGrid(){
               : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요.";
   $("grid").innerHTML = shown.length ? shown.map(w=>`
     <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" data-key="${w.key}">
-      <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}<span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
+      <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}<i class="wst s${SMG[w.key]?((SMG[w.key].b||0)>=3?2:1):0}" title="${SMG[w.key]?((SMG[w.key].b||0)>=3?"암기 완료":"학습 중"):"아직 안 외웠어요"}"></i><span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
       <div class="w${w.text.length>=6?" wl":""}">${R(w.f)}</div>
       <div class="m">${E(w.ko)}</div>
       ${posTag(w.pos)}
@@ -1628,7 +1646,7 @@ function startQuiz(mode,pool,n){
   if(mode==="order"){ pool=pool.filter(w=>w.sent||(!["N3","N2","N1"].includes(w.lv)&&canOrder(w))); if(!given) pool=pool.concat(sentPool()); }
   if(!pool.length){ toast("이 범위에는 출제할 단어가 없어요"); return; }
   let list=wshuffle(pool); if(n>0) list=list.slice(0,n);
-  Q={mode,list,i:0,score:0,wrong:[],flip:false,sel:null,done:false,opts:[],ord:null};
+  Q={mode,list,i:0,score:0,wrong:[],flip:false,sel:null,done:false,opts:[],ord:null,t0:Date.now()};
   setOpts(); renderQ();
 }
 function renderQ(){
@@ -1691,9 +1709,9 @@ function sakura(n){
 function renderResult(){
   try{ if(window.PATH) PATH.quizEnd(Q.score,Q.list.map(w=>w.key)); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
-  const t=Q.list.length;
+  const t=Q.list.length, rsec=Math.max(1,Math.round((Date.now()-(Q.t0||Date.now()))/1000));
   $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.wrong.length?"수고했어요!":"완벽해요!"}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
-   <div class="score">${Q.score} / ${t}</div>
+   <div class="rst"><div class="rt rxp"><b>+${Q.mode==="order"?0:Q.score*10}</b><span>경험치</span></div><div class="rt racc"><b>${Math.round(Q.score/t*100)}%</b><span>정답률 · ${Q.score}/${t}</span></div><div class="rt rtime"><b>${Math.floor(rsec/60)}:${String(rsec%60).padStart(2,"0")}</b><span>걸린 시간</span></div></div>
    <div class="sub">${Q.wrong.length?"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요":"모두 맞혔어요!"}</div>
    ${Q.wrong.length?`<div class="rel" style="justify-content:center;margin-top:12px">${Q.wrong.map(w=>`<div class="lnk" data-act="open" data-key="${w.key}">${R(w.f)} <small>${E(w.ko)}</small></div>`).join("")}</div>`:""}
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">
