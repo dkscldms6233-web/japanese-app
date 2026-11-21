@@ -128,7 +128,7 @@ function startShiri(){
   stopG(); Q=null; const pool=shScope();
   if(pool.length<30){ toast("이 급수에는 끝말잇기에 쓸 단어가 부족해요"); return; }
   G={type:"shiri-intro"};
-  $("quizView").innerHTML=`<div class="qbox gbox"><h2>しりとり 끝말잇기</h2>
+  $("quizView").innerHTML=`<div class="qbox gbox wdbox"><h2>しりとり 끝말잇기</h2>
    <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>해요.<br>사전에 있는 단어면 어느 급수든 괜찮아요.</div>
    <div class="sub" style="text-align:center;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"><b>왜 「ん」으로 끝나면 질까요?</b><br>「ん」으로 시작하는 단어는 거의 없어서, 「ん」으로 끝내면 상대가 이을 수 없어요. 한국 끝말잇기의 '한방단어'와 같은 규칙이에요.</div>
    <h3 style="text-align:center;margin:16px 0 6px">상대 난이도</h3>
@@ -137,7 +137,7 @@ function startShiri(){
 }
 function startShiriGo(d){
   SHDIFF=d; const pool=shScope();
-  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 져요<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없어요)</small>`,()=>shBegin(pool));
+  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 져요<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없어요)</small>`,()=>shBegin(pool),"wdbox");
 }
 function shBegin(pool){
   const used=new Set(), cnt=(ch)=>pool.filter(x=>x.r[0]===ch).length, starts=shuffle(pool.filter(x=>lastKana(x.r)!=="ん"&&cnt(lastKana(x.r))>=4)), start=starts[0]||pool.find(x=>lastKana(x.r)!=="ん");
@@ -161,7 +161,7 @@ function shNatInput(el){
 function shRender(){
   const g=G, chain=g.chain.slice(-2), nat=!!(typeof prefs!=="undefined"&&prefs.shNative);
   const oldNat=nat?$("shNat"):null;
-  $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
+  $("quizView").innerHTML=`<div class="qbox gbox wdbox"><div class="gfx" id="gfx"></div>
    <div class="gstat"><span>점수 ${g.score}</span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
    <div class="sh-chain">${chain.map(c=>`<div class="sh-w ${c.who}"><b style="font-size:20px">${E(c.w.text)}</b><small>${c.r} · ${E(c.w.ko)}</small></div>`).join("")}</div>
    <div class="sh-need"><b>${g.need}</b> 로 시작하는 단어를 입력하세요</div>

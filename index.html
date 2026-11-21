@@ -861,9 +861,9 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
 <script src="kana.js?v=17"></script>
-<script src="games2.js?v=18"></script>
+<script src="games2.js?v=20"></script>
 <script src="bgm.js?v=37"></script>
-<script src="gametheme.js?v=23"></script>
+<script src="gametheme.js?v=24"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 </head>
@@ -1835,11 +1835,11 @@ function gResult({title,big,note,isNew,seen,marks,type,score}){
    <div class="qbtns"><button class="pill on" data-act="gstart" data-g="${type}">한 번 더</button><button class="pill" data-act="again">처음으로</button></div></div>`;
 }
 /* 게임 시작 전 3-2-1 카운트다운 (끝나면 시간이 흐르기 시작해요) */
-function gCountdown(rule,go){
+function gCountdown(rule,go,extraCls){
   stopG(); Q=null; G={type:"cd"}; let n=3;
   const tick=()=>{
     if(!G||G.type!=="cd"||!QV(view)) return;
-    $("quizView").innerHTML=`<div class="qbox gbox cdbox"><div class="cdmk">${MONKEY}</div><div class="sub">준비하세요</div><div class="cdnum">${n>0?n:"시작!"}</div><p class="sub">${rule}</p><div class="qbtns"><button class="pill" data-act="gquit">취소</button></div></div>`;
+    $("quizView").innerHTML=`<div class="qbox gbox cdbox ${extraCls||""}"><div class="cdmk">${MONKEY}</div><div class="sub">준비하세요</div><div class="cdnum">${n>0?n:"시작!"}</div><p class="sub">${rule}</p><div class="qbtns"><button class="pill" data-act="gquit">취소</button></div></div>`;
     sfx(n>0?"tick":"go");
     if(n===0){ gFlash=setTimeout(()=>{ if(G&&G.type==="cd") go(); },600); return; }
     n--; gFlash=setTimeout(tick,850);

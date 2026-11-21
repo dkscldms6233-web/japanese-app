@@ -80,6 +80,10 @@ body:has(#quizView .wdbox) #quizView .gbox .pill{background:var(--chip);color:va
 body:has(#quizView .wdbox) #quizView .gbox .pill.on{background:#ffd43b;color:#4a3300;border-color:#e8b800;box-shadow:none}
 body:has(#quizView .wdbox) #quizView .gbox .wd-c{border:2px solid color-mix(in srgb,var(--text) 22%,transparent);background:#fff}
 :root[data-theme=dark] body:has(#quizView .wdbox) #quizView .gbox .wd-c{background:#1f2f52}
+body:has(#quizView .wdbox) #quizView .gbox .cta.sec{background:#fff!important;color:var(--text)!important;border:1.5px solid color-mix(in srgb,var(--text) 18%,transparent)!important;box-shadow:none!important}
+body:has(#quizView .wdbox) #quizView .gbox .cta.sec small,body:has(#quizView .wdbox) #quizView .gbox .cta.sec b{color:var(--text)!important}
+body:has(#quizView .wdbox) #quizView .gbox .cta:not(.sec) small{color:#fff!important}
+body:has(#quizView .wdbox) #quizView .gbox.cdbox .cdnum{text-shadow:0 5px 0 #d9a400,0 8px 14px rgba(40,70,110,.25)}
 `;
 document.head.appendChild(ST);
 })();
