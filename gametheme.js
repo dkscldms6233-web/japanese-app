@@ -112,4 +112,26 @@ body:has(#quizView .gbox) #quizView .gbox .pill:not(.on):not([data-act=gquit]){f
 body:has(#quizView .gbox) #quizView .gbox .sub,body:has(#quizView .gbox) #quizView .gbox p,body:has(#quizView .gbox) #quizView .gbox h3,body:has(#quizView .gbox) #quizView .gbox .gstat span,body:has(#quizView .gbox) #quizView .gbox .cta,body:has(#quizView .gbox) #quizView .gbox .pill:not(.on):not([data-act=gquit]){-webkit-text-stroke:.45px currentColor}
 `;
 document.head.appendChild(ST);
+
+/* 설명 글(앱 전체): 문장·쉼표·가운뎃점(·)마다 줄을 바꿔서 한 줄에 한 덩어리씩 보이게
+ * 뉴스·읽기 본문, 오늘의 문장, 문법 카드 본문, 단어 상세처럼 '내용' 자체인 글은 건드리지 않아요. */
+(function(){
+  if(!window.MutationObserver) return;
+  function start(){
+  const SEL=".sub, .stnote, .rvnote, .hback, .iqerr, .qrw", SKIP="#newsView, #readView, #todayView, .hsent, .grb, .ex, .ncard, article, .tbox, #dlg, .gst2, [data-noln]";
+  const SPLIT=/(?<=[,，、])\s*|(?<=[.!?。])\s+|\s·\s/;
+  function one(el){
+    if(el.dataset.ln||el.closest(SKIP)) return; el.dataset.ln="1";
+    const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT), nodes=[]; while(w.nextNode()) nodes.push(w.currentNode);
+    nodes.forEach(n=>{ const t=n.nodeValue; if(!t||t.trim().length<10) return; const parts=t.split(SPLIT).filter(x=>x!==undefined&&x.trim()!==""); if(parts.length<2) return;
+      const f=document.createDocumentFragment(); parts.forEach((x,i)=>{ if(i) f.appendChild(document.createElement("br")); f.appendChild(document.createTextNode(x.trim())); }); n.parentNode.replaceChild(f,n); });
+  }
+  function fmt(root){ if(!root||root.nodeType!==1) return; if(root.matches&&root.matches(SEL)) one(root); root.querySelectorAll&&root.querySelectorAll(SEL).forEach(one); }
+  let pend=new Set(), raf=0;
+  new MutationObserver(ms=>{ ms.forEach(m=>{ m.addedNodes.forEach(n=>{ if(n.nodeType===1) pend.add(n); }); if(m.type==="characterData"&&m.target.parentNode) pend.add(m.target.parentNode); });
+    if(!raf) raf=requestAnimationFrame(()=>{ raf=0; const L=[...pend]; pend=new Set(); L.forEach(fmt); }); }).observe(document.body,{childList:true,subtree:true});
+  fmt(document.body);
+  }
+  if(document.body) start(); else document.addEventListener("DOMContentLoaded",start);
+})();
 })();
