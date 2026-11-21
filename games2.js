@@ -72,7 +72,7 @@ function wdBegin(mode){
   if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족해요 (다른 급수나 문자를 골라 보세요)`); return; }
   const pick=mode==="daily"?pool[hashStr(today()+"|"+jlvQ()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
   G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map()};
-  wdRender(); bgmStop();
+  wdRender(); bgmStart();
 }
 function wdEval(guess,ans){
   const res=Array(ans.length).fill("no"), rest={};
