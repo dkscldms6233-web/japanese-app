@@ -193,9 +193,9 @@ function pathHtml(full){
   const offs=[0,26,44,26,0,-26,-44,-26];
   return `<div class="path">${all.map(u=>{
     const done=u.nodes.filter(n=>isDone(n,st)).length, open=openUnits.has(u.id), alld=done===u.nodes.length;
-    return `<div class="pu ${open?"open":""} ${alld?"all":""}"><button class="puh" data-pu="${u.id}"><span class="pun">${E(u.tag)}</span><b>${E(u.title)}</b><small>${done} / ${u.nodes.length}</small></button>
+    return `<div class="pu ${open?"open":""} ${alld?"all":""}"><button class="puh" data-pu="${u.id}" data-lv="${E(u.tag)}"><span class="pun">${E(u.tag)}</span><b>${E(u.title)}</b><small>${alld?"완료":done+" / "+u.nodes.length}</small><i class="pbar" aria-hidden="true"><i style="width:${Math.round(done/Math.max(1,u.nodes.length)*100)}%"></i></i></button>
      ${open?`<div class="pnodes">${u.nodes.map((n,i)=>{ const dn=isDone(n,st), isCur=cur&&cur.n.id===n.id;
-        return `<div class="pn" style="margin-left:calc(50% - 32px + ${offs[i%offs.length]}px)"><button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small>${isCur?`<span class="pnow">지금 할 단계</span>`:""}</div>`; }).join("")}
+        return `<div class="pn" style="margin-left:calc(50% - 36px + ${offs[i%offs.length]}px)">${isCur?`<span class="pnow">시작</span><span class="pbird ${offs[i%offs.length]>0?"l":"r"}">${birdSvg(null,"mini")}</span>`:""}<button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small></div>`; }).join("")}
        ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}</div>`;
 }
 /* 홈의 '이어서 하기' 한 줄 */
@@ -467,6 +467,29 @@ ST2.textContent+=`
 .hgoal{background:none!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;padding:12px 2px 14px!important;margin:8px 0 12px!important}.hgoal .sub b{color:#d98a00!important}.hgoal .prog{background:var(--chip)!important;height:8px!important}.hgoal .prog div{background:#e89a14!important}
 .pstat{background:none!important;border:0!important;border-radius:0!important;padding:0 2px!important;margin:0 18px 18px!important}.hcol{flex:1;min-width:0;display:flex;flex-direction:column;align-items:stretch}.hcol .pstat{margin:8px 0 0!important;padding:0!important}.hcol .hsent{flex:none}.pstat .prow1{margin-bottom:4px!important}.pstat .prow1 b{font-size:12px!important}.pstat .prow1 span{font-size:11px!important}.pstat .prow1 b{color:#3d5a99!important}.pstat .prog{background:var(--chip)!important;height:4px!important;margin:0!important}.pstat .prog div{background:#3d5a99!important}:root[data-theme=dark] .pstat .prow1 b{color:#8fa8e0!important}:root[data-theme=dark] .pstat .prog div{background:#7f9be0!important}
 
+`;
+ST2.textContent+=`
+/* ---- 학습 길(듀오링고식): 색 띠 단원 제목 · 도톰한 원형 단계 · 지금 단계에 '시작' 말풍선과 참새 ---- */
+.pu{border-top:0!important;margin-bottom:8px!important}
+.pu.all{opacity:1}
+.puh{flex-wrap:wrap;background:var(--lc,var(--accent))!important;color:#fff!important;border-radius:14px!important;padding:12px 14px!important;border-bottom:4px solid rgba(0,0,0,.2)!important;gap:8px 10px!important}
+.puh[data-lv=N5]{--lc:var(--n5)}.puh[data-lv=N4]{--lc:var(--n4)}.puh[data-lv=N3]{--lc:var(--n3)}.puh[data-lv=N2]{--lc:var(--n2)}.puh[data-lv=N1]{--lc:var(--n1)}
+.puh:active{transform:translateY(2px);border-bottom-width:2px!important}
+.puh .pun{background:rgba(255,255,255,.25)!important;color:#fff!important}
+.puh b{color:#fff}.puh small{color:rgba(255,255,255,.9)!important;font-weight:700}
+.puh .pbar{flex-basis:100%;height:6px;border-radius:3px;background:rgba(255,255,255,.3);overflow:hidden;display:block}
+.puh .pbar i{display:block;height:100%;background:#fff;border-radius:3px}
+.pnodes{padding:6px 0 22px!important}
+.pnodes::before{border-left:4px dotted var(--line)!important;top:22px!important}
+.pn{width:72px!important;margin-top:18px!important}
+.pnb{width:72px!important;height:72px!important;border:2px solid var(--line)!important;border-bottom:6px solid var(--line)!important;font-size:22px!important;background:var(--card)!important;color:var(--sub)!important;box-shadow:none!important}
+.pnb:active{transform:translateY(3px)!important;border-bottom-width:3px!important}
+.pnb.done{background:var(--ok)!important;border-color:var(--ok)!important;border-bottom-color:var(--ok-dk,#2f8e72)!important;color:#fff!important}
+.pnb.cur{background:var(--accent)!important;border-color:var(--accent)!important;border-bottom-color:var(--accent-dk)!important;color:var(--onacc)!important}
+.pn small{display:block;margin-top:6px;font-size:12px;color:var(--sub)}
+.pnow{position:absolute!important;left:50%!important;top:-22px!important;transform:translateX(-50%)!important;margin:0!important;background:var(--text)!important;color:var(--card)!important;font-size:12px!important;font-weight:800!important;padding:3px 12px!important;border-radius:10px!important;z-index:3}
+.pnow::after{content:"";position:absolute;left:50%;bottom:-5px;width:9px;height:9px;background:var(--text);transform:translateX(-50%) rotate(45deg)}
+.pbird{position:absolute;top:8px;width:60px;height:56px;z-index:2}.pbird svg{width:100%;height:100%}.pbird.r{left:80px}.pbird.l{right:80px}
 `;
 document.head.appendChild(ST2);
 if(A()&&A().renderHome) A().renderHome();
