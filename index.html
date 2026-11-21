@@ -1308,6 +1308,12 @@ function questCheck(){ try{ const L=questList(); let q=questState(); q.got=q.got
     L.forEach(x=>{ if(x.n>=x.of&&!q.got[x.id]){ q.got[x.id]=1; ch=true; if(window.PATH) PATH.addXp(10); toast("퀘스트 완료! +10 XP"); } });
     if(L.length>=2&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; ch=true; if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 모두 완료! 씨앗 5개 · 20 XP"); }
     if(ch) LS.set("jp-quest",q); }catch(e){} }
+function nextQuestBtn(){
+  const L=questList(), g=goalN(), x=L.find(q=>q.n<q.of);
+  if(!x) return `<button class="cta" data-hq="today">오늘 ${g}문제 더 풀기</button>`;
+  if(x.id==="n") return `<button class="cta" data-hq="today">오늘 ${g}문제 시작</button>`;
+  return `<button class="cta" data-qgo="${x.id}">${E(x.t)}</button>`;
+}
 function questHtml(extra){
   questCheck(); const L=questList(), done=L.filter(x=>x.n>=x.of).length, q=questState(), C=2*Math.PI*18;
   const ring=x=>{ const dn=x.n>=x.of, pc=Math.min(1,x.n/x.of); return `<svg class="qring ${dn?"dn":""}" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" class="qtr"/><circle cx="22" cy="22" r="18" class="qfg" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 22 22)"/>${dn?`<path d="M14 23l6 6 11-12" class="qck"/>`:`<text x="22" y="27.5" text-anchor="middle" class="qn">${x.n}</text>`}</svg>`; };
@@ -2626,7 +2632,7 @@ function renderHome(){
   $("homeView").innerHTML=`<div class="home">
    <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div><div class="hcol">${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${window.PATH?PATH.statusHtml():""}</div>${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    ${window.DEV?DEV.bannerHtml():""}
-   ${questHtml(`${away>=3&&!tl.n?`<p class="hback">${away}일 만에 오셨네요. 오늘은 가볍게 복습부터 시작해 볼까요?</p>`:""}<button class="cta" data-hq="today">오늘 ${g}문제 시작</button>${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}`)}
+   ${questHtml(`${away>=3&&!tl.n?`<p class="hback">${away}일 만에 오셨네요. 오늘은 가볍게 복습부터 시작해 볼까요?</p>`:""}${nextQuestBtn()}${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}`)}
    ${window.PATH?PATH.journeyHtml():""}
    <div class="lrows" style="margin-top:12px">
      <button class="lrow" data-ppage="path"><span>단계별로 공부하기</span><i>›</i></button>
