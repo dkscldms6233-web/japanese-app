@@ -902,6 +902,11 @@ dialog{border-radius:16px!important}
 .nfil summary::after{content:"";width:9px;height:9px;border-right:2.5px solid var(--sub);border-bottom:2.5px solid var(--sub);transform:rotate(45deg) translateY(-2px);flex:none}
 .nfil[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
 .nfil[open]{padding-bottom:8px}
+/* ===== 글자 하한선: 설명 글 14px · 보조·배지 12.5~13.5px (후리가나와 숫자 표시는 제외) ===== */
+main .sub,main small,.fcs span,.grm,.grk{font-size:14px!important}
+.pk em,.pk .pgt,.nmeta .sub,.src{font-size:13px!important}
+.hbtag,.qcnt,.nbadge,.hsent .lab,.lvs,.fk,.fu{font-size:12.5px!important}
+.grc small,.grtip b,.grcmp b{font-size:13px!important}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
