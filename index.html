@@ -767,6 +767,9 @@ body:not([data-view=home]) #logo .lgm{font-size:.82em}
 .subtabs button{border:0;background:none;color:var(--sub);font:inherit;font-size:14px;font-weight:700;padding:6px 18px;border-radius:999px;cursor:pointer}
 .subtabs button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)}
 body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:none}
+/* ---- 주간 리포트 · 복귀 안내 ---- */
+.rpt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.rpt>div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.rpt b{display:block;font-size:24px}.rpt b small{font-size:13px;font-weight:600;margin-left:2px}.rpt span{font-size:12px;color:var(--sub)}
+.rptn{margin:10px 0 0;line-height:1.55}.hback{margin:0 0 8px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);color:var(--accent-text);font-size:14px;line-height:1.5}
 </style>
 <script>
 // 화면이 깜빡이지 않도록 가장 먼저 테마를 적용해요 (라이트 / 다크 / 자동)
@@ -2373,6 +2376,17 @@ function renderStats(){
   const top=Object.entries(miss).filter(([k])=>byKey(k)).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const acc=(c,n)=>n?Math.round(c/n*100):null, nw=Object.keys(wrong).length;
   const accT=acc(all.c,all.n), accD=acc(t.c,t.n);
+  /* 이번 주(최근 7일) 리포트 · 지난 7일과 비교 */
+  const prev=[7,8,9,10,11,12,13].map(i=>log[dayStr(i)]||{n:0,c:0}), prevN=prev.reduce((a,x)=>a+x.n,0), prevC=prev.reduce((a,x)=>a+x.c,0);
+  const wAcc=weekN?Math.round(weekC/weekN*100):null, pAcc=prevN?Math.round(prevC/prevN*100):null;
+  const dN=weekN-prevN, dA=(wAcc!=null&&pAcc!=null)?wAcc-pAcc:null, sgn=v=>(v>0?"+":v<0?"−":"±")+Math.abs(v);
+  const srsAll=LS.get("jp-srs",{}), longMem=Object.keys(srsAll).filter(k=>(srsAll[k].b||0)>=3&&byKey(k)).length;
+  const wkStart=Date.now()-7*864e5, TYPE_KO={meaning:"뜻 고르기",reading:"읽기 고르기",review:"복습 카드",order:"문장 순서",card:"단어 카드"}, tc={};
+  wlog.filter(x=>x.t>=wkStart).forEach(x=>{ tc[x.m]=(tc[x.m]||0)+1; });
+  const weak=Object.entries(tc).sort((a,b)=>b[1]-a[1])[0];
+  const rpt=`<div class="panel"><h3>이번 주 리포트</h3>${weekN?`<div class="rpt"><div><b>${active}<small>일</small></b><span>학습한 날</span></div><div><b>${weekN}<small>문제</small></b><span>푼 문제${prevN||weekN?` · 지난주보다 ${sgn(dN)}`:""}</span></div><div><b>${wAcc}<small>%</small></b><span>정답률${dA!=null?` · ${sgn(dA)}%p`:""}</span></div><div><b>${longMem}<small>개</small></b><span>오래 기억 중인 단어</span></div></div>
+    <p class="sub rptn">${weak?`이번 주에는 「${TYPE_KO[weak[0]]||"퀴즈"}」에서 가장 많이 틀렸어요(${weak[1]}번). 오답 노트에서 다시 풀어 보세요.`:"이번 주에는 틀린 문제가 거의 없어요. 잘하고 있어요!"}</p>`
+    :`<p class="sub">이번 주에는 아직 학습 기록이 없어요. 오늘 10문제부터 가볍게 시작해 보세요.</p>`}</div>`;
   $("statsView").innerHTML=`<div class="stats">
    <button class="back" data-go="home">${ic("back")}홈으로</button><h2 style="margin:6px 0 10px">내 학습 기록 <small style="font-weight:400;font-size:14px;color:var(--sub)">· ${E(curProfile().name)}</small></h2>
    <div class="kpis">
@@ -2381,6 +2395,7 @@ function renderStats(){
      <div class="kpi k3"><div class="ki">${ic("target")}</div><b>${accT!=null?accT:"-"}<small>${accT!=null?"%":""}</small></b><span>전체 정답률 · ${all.n}문제</span></div>
      <div class="kpi k4"><div class="ki">${ic("mark")}</div><b>${nw}<small>개</small></b><span>오답 노트 단어</span></div>
    </div>
+   ${rpt}
    <div class="wk"><h3>최근 7일 학습량<em>하루 목표 ${g}문제</em></h3>
      <div class="sum">이번 주 <b>${weekN}문제</b>${weekN?` · 정답률 ${Math.round(weekC/weekN*100)}%`:""} · ${active}일 학습</div>
      <div class="wchart"><div class="goal" style="bottom:calc((100% - 16px) * ${Math.min(1,g/scale).toFixed(3)})"><span>목표</span></div>
@@ -2450,11 +2465,13 @@ function renderHome(){
   const who=(profiles.length>1||curProfile().name!=="기본")?curProfile().name+"님, ":"";
   const greet=who+(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
   const pc=Math.min(100,Math.round(tl.n/g*100));
+  const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
   const sent=qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장 · "+qt.by}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"+(my.includes(p.lv)?" · "+p.lv:"")}:null;
   $("homeView").innerHTML=`<div class="home">
    <div class="hhead"><div class="hmk">${window.PATH?PATH.birdHtml():MONKEY}</div>${sent?`<button class="hsent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:`<div><h2>${greet}</h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div>`}${st?`<div class="hanko" title="${st}일 연속 학습 중" aria-label="${st}일 연속 학습 중"><b>${st}</b><span>日連続</span></div>`:""}</div>
    ${window.DEV?DEV.bannerHtml():""}
    <div class="hgoal"><div class="sub"><span>오늘의 목표</span><span><b>${Math.min(tl.n,g)}</b> / ${g}문제</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>
+   ${away>=3&&!tl.n?`<p class="hback">${away}일 만에 오셨네요. 오늘은 가볍게 복습부터 시작해 볼까요?</p>`:""}
    <button class="cta" data-hq="today">오늘 ${g}문제 시작</button>
    ${window.PATH?PATH.continueHtml()+PATH.reviewHtml():""}
    ${window.PATH?PATH.statusHtml():""}
@@ -2463,6 +2480,7 @@ function renderHome(){
      <button class="lrow" data-ppage="path"><span>단계별로 공부하기</span><i>›</i></button>
      <button class="lrow" data-ppage="basic"><span>기초 (히라가나 · 가타카나)</span><i>›</i></button>
      <button class="lrow" data-hq="review"><span>${nw?`오답 노트 · ${nw}개`:"오답 노트"}</span><i>›</i></button>
+     <button class="lrow" data-go="stats"><span>이번 주 학습 리포트</span><i>›</i></button>
    </div>
    <details class="mylvbox"><summary>내 급수: <b>${my.length?lvText(my):"전체"}</b> · 바꾸기</summary>
     <div class="mylv">${["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button class="pill sm ${on?"on":""}" data-mylv="${l}" aria-pressed="${on}">${l}</button>`; }).join("")}</div>
