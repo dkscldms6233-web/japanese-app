@@ -323,7 +323,7 @@ function renderCard(){
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
   const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
   root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
-  <div class="kbird"><img src="mascot.png" alt=""><div class="kbub">${say1}</div></div>
+  <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
    ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span></span></button>`:""}
