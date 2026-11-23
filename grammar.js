@@ -294,7 +294,7 @@ function render(){
 }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-grlv]"); if(!b||!$("grammarView").contains(b)||b.disabled) return; lv=b.dataset.grlv; render(); });
 document.addEventListener("input",e=>{ if(e.target.id!=="grq") return; q=e.target.value; const pos=q.length; render(); const el=$("grq"); if(el){ el.focus(); el.setSelectionRange(pos,pos); } });
-window.GRAMMAR_UI={render,count:()=>G.length};
+window.GRAMMAR_UI={render,count:()=>G.length,all:()=>G};
 
 const ST=document.createElement("style");
 ST.textContent=`.grlv{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.grlv .pill:disabled{opacity:.45}
