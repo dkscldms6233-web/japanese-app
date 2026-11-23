@@ -609,3 +609,17 @@ html[data-gbg=night] body:has(#quizView .gbox) #quizView .gbox{box-shadow:0 7px 
 .h2flame.on{background:linear-gradient(135deg,#ffb23d,#ff6a3a)!important;border-color:transparent!important;color:#fff!important;box-shadow:0 4px 14px rgba(255,106,58,.4)!important}
 .h2flame.on svg{filter:drop-shadow(0 1px 0 rgba(160,50,0,.35))}
 :root[data-theme=dark] .h2flame.on{background:linear-gradient(135deg,#e8902a,#d9512a)!important}
+.h2flame .h2ft b{font-size:19px}
+.h2flame,.h2flame.on,:root[data-theme=dark] .h2flame.on{position:relative;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;width:48px;height:56px;color:#fff!important}
+.h2flame .fl3{width:48px!important;height:56px!important;fill:none!important;filter:drop-shadow(0 3px 6px rgba(255,106,58,.45))}
+.h2flame:not(.on) .fl3{filter:grayscale(1) opacity(.45)}
+.h2flame .fln{position:absolute;right:-4px;bottom:0;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#fff;color:#e8501c;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.h2top{align-items:center!important;gap:12px!important}
+.h2 .h2bird,.h2bird{width:64px!important}
+.h2 .h2bird .hbird,.h2bird .hbird,.h2 .h2bird .hbw{width:64px!important;height:64px!important}
+.h2hello h2{line-height:1.2!important}
+.h2hello h2 .h2nm{font-size:20px!important;line-height:1.2!important}
+.h2hello h2 .h2gm{font-size:15px!important;line-height:1.25!important;margin-top:1px!important}
+.h2hello .sub{font-size:13px!important;line-height:1.25!important;margin-top:1px!important}
+.h2flame .fl3{width:52px!important;height:60px!important}
+.h2flame:not(.on) .fl3{filter:grayscale(1) opacity(.4)}
