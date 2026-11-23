@@ -965,7 +965,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
-<link rel="stylesheet" href="design-v2.css?v=84">
+<link rel="stylesheet" href="design-v2.css?v=93">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=4"></script>
@@ -3127,9 +3127,9 @@ function openProf(){
   $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">내 계정</h2><button class="x" data-close aria-label="닫기">×</button></div>
   <div class="db pfdb">${hero}${acct}
    <div class="pfbtns">${window.PATH?`<button class="pill on" data-pa="shop">참새 꾸미기</button>`:""}<button class="pill ${window.PATH?"":"on"}" data-pa="stats">${ic("chart")} 학습 기록</button></div>
-   ${p.cloud?`<button class="pfout" data-pa="logout">로그아웃</button>`
+   ${p.cloud?`<button class="pfout" data-pa="logout">로그아웃</button><button class="pfout pfdel" data-pa="delacct">계정 삭제</button>`
      :`<div class="qbtns" style="margin:0"><button class="pill" data-pa="login">로그인</button><button class="pill" data-pa="signup">회원가입</button></div>`}
-   ${!p.cloud&&others.length?`<p class="sub" style="margin-top:14px">이 기기의 다른 프로필</p>${others.map(x=>`<div class="prow"><button class="pill" data-pa="use" data-id="${x.id}">${ic("user")} ${E(profName(x))}</button></div>`).join("")}`:""}</div>`;
+   ${!p.cloud&&others.length?`<p class="sub" style="margin-top:14px">이 기기의 다른 프로필</p>${others.map(x=>`<div class="prow"><button class="pill" data-pa="use" data-id="${x.id}">${ic("user")} ${E(profName(x))}</button></div>`).join("")}`:""}<p class="sub" style="text-align:center;margin:16px 0 0;font-size:12px"><a href="privacy.html" target="_blank" rel="noopener" style="color:var(--sub)">개인정보처리방침</a></p></div>`;
   if(!$("profDlg").open) $("profDlg").showModal();
 }
 $("profBtn").addEventListener("click",openProf);
@@ -3140,6 +3140,20 @@ $("profDlg").addEventListener("click",e=>{
   if(b.dataset.pa==="stats"){ $("profDlg").close(); setView("stats"); return; }
   if(b.dataset.pa==="shop"){ $("profDlg").close(); if(window.PATH) PATH.openShop(); return; }
   if(b.dataset.pa==="logout"){ (async()=>{ try{ clearTimeout(cloudT); cloudPush(); await new Promise(r=>setTimeout(r,600)); await cloud.auth.signOut(); }catch(e){} RAW.set("jp-auth-done",0); switchTo(profiles.find(x=>!x.cloud).id); })(); return; }
+  if(b.dataset.pa==="delacct"){ (async()=>{
+    if(!confirm("계정을 삭제하면 클라우드에 저장된 학습 기록과 친구·리그 정보가 모두 사라지고 되돌릴 수 없어요.\n정말 삭제할까요?")) return;
+    const u=cloud.ok&&cloud.auth.currentUser, p=curProfile(); if(!u||!p.cloud){ toast("로그인 상태에서만 삭제할 수 있어요"); return; }
+    const pw=prompt("본인 확인을 위해 비밀번호를 입력해 주세요"); if(pw===null) return;
+    try{ await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,pw)); }catch(e){ toast("비밀번호가 맞지 않아요"); return; }
+    clearTimeout(cloudT);
+    try{
+      try{ const cs=await cloud.db.collection("codes").where("uid","==",u.uid).get(); await Promise.all(cs.docs.map(d=>d.ref.delete())); }catch(e){}
+      try{ await cloud.db.collection("users").doc(u.uid).delete(); }catch(e){}
+      await u.delete();
+    }catch(e){ toast("삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요"); return; }
+    profiles=profiles.filter(x=>x.id!==p.id); if(!profiles.some(x=>!x.cloud)) profiles.push({id:"p1",name:"기본"}); saveProfiles(); RAW.set("jp-auth-done",0);
+    toast("계정을 삭제했어요"); setTimeout(()=>switchTo(profiles.find(x=>!x.cloud).id),600);
+  })(); return; }
   if(b.dataset.pa==="login"||b.dataset.pa==="signup"){ $("profDlg").close(); obFrom=true; obStep="auth"; obAuth=b.dataset.pa; obMsg=""; renderOnb(); return; }
   const id=b.dataset.id; if(b.dataset.pa==="use"&&id!==activeId) switchTo(id);
 });
