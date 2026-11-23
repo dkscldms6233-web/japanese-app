@@ -1343,14 +1343,19 @@ let wlog   = LS.get("jp-wlog",[]);     // 오답 기록(최근 300개): {k:단�
 function questState(){ let q=LS.get("jp-quest",{}); if(q.d!==today()) q={d:today(),rev:0,fix:0,paid:false}; return q; }
 function questInc(k){ const q=questState(); q[k]=(q[k]||0)+1; LS.set("jp-quest",q); }
 function questList(){
+  /* 복습·오답 퀘스트는 '오늘 실제로 할 수 있는 만큼'만 목표로 잡고(하루 한 번 정해요), 할 게 없으면 게임·뉴스 퀘스트로 대신해요 */
   const g=goalN(), tl=log[today()]||{n:0,c:0}, q=questState(), L=[{id:"n",t:`오늘 ${g}문제 풀기`,n:Math.min(tl.n,g),of:g}];
-  if(Object.keys(LS.get("jp-srs",{})).length||q.rev) L.push({id:"r",t:"복습 카드 5개 하기",n:Math.min(q.rev||0,5),of:5});
-  if(Object.keys(wrong).length||q.fix) L.push({id:"f",t:"오답 3개 맞히기",n:Math.min(q.fix||0,3),of:3});
+  if(q.tr==null&&window.REVIEW){ let due=0; try{ due=REVIEW.counts().due; }catch(e){} q.tr=Math.min(5,due); q.tf=Math.min(3,Object.keys(wrong).length); LS.set("jp-quest",q); }
+  if(q.tr>0||q.rev){ const of=q.tr||5; L.push({id:"r",t:`복습 카드 ${of}개 하기`,n:Math.min(q.rev||0,of),of}); }
+  else L.push({id:"g",t:"게임 1판 하기",n:Math.min(q.gm||0,1),of:1});
+  if(q.tf>0||q.fix){ const of=q.tf||3; L.push({id:"f",t:`오답 ${of}개 맞히기`,n:Math.min(q.fix||0,of),of}); }
+  else L.push({id:"w",t:"뉴스 1편 읽기",n:Math.min((q.nws||[]).length,1),of:1});
   return L;
 }
+function questSeen(k,id){ const q=questState(); q[k]=q[k]||[]; if(q[k].includes(id)) return; q[k].push(id); LS.set("jp-quest",q); }
 function questCheck(){ try{ const L=questList(); let q=questState(); q.got=q.got||{}; let ch=false;
     L.forEach(x=>{ if(x.n>=x.of&&!q.got[x.id]){ q.got[x.id]=1; ch=true; if(window.PATH) PATH.addXp(10); toast("퀘스트 완료! +10 XP"); } });
-    if(L.length>=2&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; ch=true; if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 모두 완료! 씨앗 5개 · 20 XP"); }
+    if(L.length>=1&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; ch=true; if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 모두 완료! 씨앗 5개 · 20 XP"); }
     if(ch) LS.set("jp-quest",q); }catch(e){} }
 function nextQuestBtn(){
   const L=questList(), g=goalN(), x=L.find(q=>q.n<q.of);
@@ -1365,7 +1370,7 @@ function questHtml(extra){
   const open=prefs.questOpen!==false;
   return `<div class="quest ${open?"":"shut"}"><button type="button" class="qh" data-quest="toggle" aria-expanded="${open}"><b>오늘의 퀘스트</b><span class="qcnt">${done} / ${L.length}</span><i class="qchev" aria-hidden="true"></i></button>
    <div class="qbody"><div class="qlist">${L.map(x=>{ const dn=x.n>=x.of, inner=`${ring(x)}<div class="qm"><b>${E(x.t)}</b><small>${x.n} / ${x.of}${dn?"":" · 눌러서 하러 가기"}</small></div><span class="qxp">${dn?"받음":"+10 XP"}</span>`; return dn?`<div class="qrow dn">${inner}</div>`:`<button type="button" class="qrow go" data-qgo="${x.id}">${inner}</button>`; }).join("")}</div>
-   ${L.length>=2?`<div class="qchest ${q.paid?"dn":""}">${chest}<div class="qct"><b>${q.paid?"오늘의 보상을 받았어요":"모두 끝내면 보물상자!"}</b><small>${q.paid?"내일 또 만나요":"씨앗 5개 · 20 XP"}</small></div></div>`:""}</div>${extra?`<div class="qact">${extra}</div>`:""}</div>`;
+   ${L.length>=1?`<div class="qchest ${q.paid?"dn":""}">${chest}<div class="qct"><b>${q.paid?"오늘의 보상을 받았어요":"모두 끝내면 보물상자!"}</b><small>${q.paid?"내일 또 만나요":"씨앗 5개 · 20 XP"}</small></div></div>`:""}</div>${extra?`<div class="qact">${extra}</div>`:""}</div>`;
 }
 function logWrong(w,mode,picked,correct){ try{ if(!w||w.sent||!w.key) return; wlog.push({k:w.key,m:mode,p:String(picked||"").slice(0,60),c:String(correct||"").slice(0,60),t:Date.now()}); if(wlog.length>300) wlog=wlog.slice(-300); LS.set("jp-wlog",wlog); }catch(e){} }
 /* 복습 화면에서 스스로 매긴 기억 정도(again/hard/good/easy)를 기록 · 오답 노트 · 복습 일정에 반영 */
@@ -2081,6 +2086,7 @@ function gTick(){
 }
 function gResult({title,big,note,isNew,seen,marks,type,score}){
   stopG();
+  try{ questInc("gm"); questCheck(); }catch(e){}
   const rk=rankOf(score,type), order={ng:0,no:1,ok:2}, TXT={ng:"틀렸어요",ok:"맞혔어요",no:"풀지 못했어요"};
   const items=[...seen.values()].sort((a,b)=>(marks.has(a.w.key)?-1:0)-(marks.has(b.w.key)?-1:0)||order[a.st]-order[b.st]);
   const nm=marks.size, nng=items.filter(x=>x.st==="ng").length;
@@ -2632,6 +2638,7 @@ function speakNatural(paras,done){
   setTimeout(next,160); }   /* cancel 바로 뒤에 말하면 크롬이 소리를 삼키는 경우가 있어 잠깐 기다려요 */
 function renderReader(){
   if(!readCur){ setView("news"); return; }
+  try{ questSeen("nws",String(readCur.id||readCur.kind)); questCheck(); }catch(e){}
   const ms=buildMatchers(), back=`<button class="back" data-act="rback">${ic("back")}목록으로</button>`;
   const speech = text => "speechSynthesis" in window ? `<button class="pill sm" data-act="rspeak" data-t="${E(text)}">${ic("sound")} 듣기</button>` : "";
   let inner;
@@ -3015,7 +3022,7 @@ $("nofuri").checked = !!prefs.nofuri; applyPrefs();
 // 내 급수 선택: 홈 · 오늘의 문장 · 단어장 · 퀴즈의 기본 범위가 돼요
 $("homeView").addEventListener("click",e=>{
   const qg=e.target.closest("[data-qgo]");
-  if(qg){ const k=qg.dataset.qgo; if(k==="n"){ setView("quiz"); quizFrom="home"; startQuiz("meaning",null,goalN()); } else if(k==="r"&&window.REVIEW) REVIEW.open(); else if(k==="f"&&window.REVIEW) REVIEW.openWrong(); return; }
+  if(qg){ const k=qg.dataset.qgo; if(k==="n"){ setView("quiz"); quizFrom="home"; startQuiz("meaning",null,goalN()); } else if(k==="g"){ setView("game"); } else if(k==="w"){ setView("news"); } else if(k==="r"&&window.REVIEW) REVIEW.open(); else if(k==="f"&&window.REVIEW) REVIEW.openWrong(); return; }
   if(e.target.closest("[data-quest]")){ prefs.questOpen=!(prefs.questOpen!==false); LS.set("jp-prefs",prefs); renderHome(); return; }
   const q=e.target.closest("[data-hq]");
   if(q){

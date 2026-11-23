@@ -3,7 +3,7 @@
     "public": ".",
     "ignore": [
       "firebase.json", "**/.*", "!.well-known/**", "**/node_modules/**",
-      "tools/**", "notes-organizer/**", "*.py", "*.md", "firestore.rules"
+      "tools/**", "store/**", "notes-organizer/**", "*.py", "*.md", "firestore.rules"
     ],
     "cleanUrls": false,
     "headers": [
