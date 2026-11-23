@@ -185,7 +185,7 @@ function shRender(){
   const g=G, chain=g.chain.slice(-2), nat=natOn();
   const oldNat=nat?$("shNat"):null;
   $("quizView").innerHTML=`<div class="qbox gbox wdbox"><div class="gfx" id="gfx"></div>
-   <div class="gstat"><span>점수 ${g.score}</span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
+   <div class="gstat"><span class="gsc"><small>점수</small><b>${g.score}</b></span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
    <div class="sh-chain">${chain.map(c=>`<div class="sh-w ${c.who}"><b style="font-size:20px">${E(c.w.text)}</b><small>${c.r} · ${E(c.w.ko)}</small></div>`).join("")}</div>
    <div class="sh-need"><b>${g.need}</b> 로 시작하는 단어를 입력하세요</div>
    <div class="sh-in">${[...g.cur].map((c,i)=>`<span class="${i===0?"lock":""}">${c}</span>`).join("")}<span class="caret"></span></div>
@@ -265,11 +265,11 @@ function fSpawn(){
 function fRenderShell(){
   const g=G;
   $("quizView").innerHTML=`<div class="qbox gbox"><div class="gfx" id="gfx"></div>
-   <div class="gstat"><span id="fsc">점수 ${g.score}</span>
+   <div class="gstat"><span id="fsc" class="gsc"><small>점수</small><b>${g.score}</b></span>
     <span class="hp" id="fhp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,i===g.lostIdx)).join("")}</span></div>
    <div class="fallarea" id="fallarea"><div class="gr"></div></div>
    <div class="sub" id="fq" style="text-align:center"></div><div class="opts4" id="fopts"></div>
-   <div class="qbtns">${sndBtn()}<button class="pill" data-act="gquit">그만하기</button></div></div>`;
+   <div class="qbtns">${sndBtn()}<button class="pill" data-act="gstop">게임 중단</button><button class="pill" data-act="gquit">그만하기</button></div></div>`;
   g.words.forEach(o=>{ const a=$("fallarea"); if(a) a.appendChild(o.el); });
 }
 function fLowest(){ const g=G; return g.words.reduce((a,b)=>!a||b.y>a.y?b:a,null); }
@@ -312,7 +312,7 @@ function fPick(i){
     g.combo=0; sfx("ng"); record(t.w,false); g.seen.set(t.w.key,{w:t.w,st:"ng"}); t.y=Math.min(.97,t.y+.14); popFx("틀렸어요 -","pts neg");
     const b=document.querySelector(`#fopts [data-fo="${i}"]`); if(b){ b.classList.add("wrong"); b.disabled=true; }
   }
-  const sc=$("fsc"); if(sc) sc.textContent="점수 "+g.score; const cb=$("fcb"); if(cb) cb.textContent="연속 "+g.combo;
+  const sc=$("fsc"); if(sc) sc.innerHTML="<small>점수</small><b>"+g.score+"</b>"; const cb=$("fcb"); if(cb) cb.textContent="연속 "+g.combo;
 }
 function fEnd(){
   const g=G; if(!g) return; g.words.forEach(o=>{ if(!g.seen.has(o.w.key)) g.seen.set(o.w.key,{w:o.w,st:"no"}); });
@@ -324,6 +324,7 @@ function fEnd(){
 /* ======================= 입력 처리 ======================= */
 document.addEventListener("click",e=>{
   const q=$("quizView"); if(!q.contains(e.target)) return;
+  if(e.target.closest("[data-act=gstop]")&&G&&G.type==="fall"&&!G.over){ G.over=true; fEnd(); return; }
   const wd=e.target.closest("[data-wd]"); if(wd){ e.preventDefault(); const a=wd.dataset.wd;
     if(a==="script"){ WDK=wd.dataset.k==="1"; if(G&&G.type==="wordle"&&G.intro) wdIntro(); }
     else if(a==="new") wdBegin(wd.dataset.m);

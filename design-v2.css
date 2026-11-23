@@ -429,3 +429,183 @@ body:has(.wd-dock) #devBtn{display:none!important}
 /* 게임 화면 안에서도: 선택된(보라색) 버튼의 작은 일본어 글씨는 흰색으로 */
 body:has(#quizView .gbox) #quizView .gbox .pill.on small{color:#fff!important;opacity:.95}
 body:has(#quizView .gbox) #quizView .gbox .pill:not(.on) small{color:var(--text)!important}
+
+/* 뉴스 기사: 왼쪽엔 작은 보기 옵션, 본문 오른쪽 위엔 속도 + 듣기 아이콘 */
+.rtools2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 4px}
+.rtools2 .rtl,.rtools2 .rtr{display:flex;align-items:center;gap:6px}
+.rtools2 .pill.xs,.rtools2 .lspdb{font-size:11.5px!important;padding:4px 9px!important;min-height:0!important;line-height:1.3;border-radius:999px}
+.rtools2 .lspdmenu{left:auto!important;right:0;transform:none!important}
+.rplay{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7b7bff,#5b5bf0);box-shadow:0 3px 10px rgba(91,91,240,.35);font-size:14px;padding:0}
+.rplay svg{width:20px;height:20px}
+.rplay.on{background:linear-gradient(135deg,#ff8a7a,#ef5a5a);box-shadow:0 3px 10px rgba(239,90,90,.35)}
+
+/* ===== 게임 화면 깔끔하게 (v3): 구름·두꺼운 버튼·둥근 글꼴 걷어내고 앱 본문과 같은 글꼴·카드 ===== */
+html body:has(#quizView .gbox){background:linear-gradient(180deg,#eef1fb 0,#f6f7fc 60%,#f6f7fc 100%) fixed!important}
+html[data-theme=dark] body:has(#quizView .gbox){background:linear-gradient(180deg,#12152b 0,#0d0f1e 100%) fixed!important}
+html body:has(#quizView .gbox)::after{display:none!important;content:none!important;background:none!important}
+html body:has(#quizView .gbox) #quizView .gbox{--gfont:var(--font);font-family:var(--font)!important;background:transparent!important;box-shadow:none!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:6px 2px 18px!important}
+html body:has(#quizView .gbox) #quizView .gbox *{font-family:var(--font)!important;font-weight:600}
+html body:has(#quizView .gbox) #quizView .gbox :is(.sub,p,h2,h3,.qw,.gstat,.gstat span,kbd){color:var(--text)!important;text-shadow:none!important}
+html body:has(#quizView .gbox) #quizView .gbox :is(.sub,p){color:var(--sub)!important;font-size:13.5px;font-weight:600}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span{font-size:16px;font-weight:800;background:none!important;border:0!important}
+html body:has(#quizView .gbox) #quizView .gbox .prog{height:10px!important;border-radius:999px!important;background:var(--chip)!important;border:0!important;box-shadow:none!important;margin:8px 0!important}
+html body:has(#quizView .gbox) #quizView .gbox .prog div,html body:has(#quizView .gbox) #quizView #gbar{border-radius:999px!important;background:linear-gradient(90deg,#7b7bff,#5b5bf0)!important;box-shadow:none!important}
+html body:has(#quizView .gbox) #quizView #gbar.mid{background:linear-gradient(90deg,#ffc53d,#ff9a2e)!important}
+html body:has(#quizView .gbox) #quizView #gbar.low{background:linear-gradient(90deg,#ff8a8a,#f0525a)!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 1px 2px rgba(20,26,51,.05),0 4px 12px rgba(20,26,51,.06)!important;font-weight:700;font-size:18px;transition:transform .08s,box-shadow .08s}
+html body:has(#quizView .gbox) #quizView .gbox .opt small{color:var(--sub)!important;font-weight:600}
+html body:has(#quizView .gbox) #quizView .gbox .opt:hover:not(:disabled){transform:none;box-shadow:0 1px 2px rgba(20,26,51,.05),0 6px 16px rgba(20,26,51,.1)!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt:active:not(:disabled){transform:scale(.97)}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel,html body:has(#quizView .gbox) #quizView .gbox .opt.picked{border-color:var(--accent)!important;background:var(--accent-soft)!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt.good,html body:has(#quizView .gbox) #quizView .gbox .opt.correct{border-color:var(--ok)!important;background:color-mix(in srgb,var(--ok) 14%,var(--card))!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt.bad,html body:has(#quizView .gbox) #quizView .gbox .opt.wrong{border-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 12%,var(--card))!important}
+html body:has(#quizView .gbox) #quizView .gbox .pill{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+html body:has(#quizView .gbox) #quizView .gbox .pill.on{background:var(--accent)!important;color:var(--onacc)!important;border-color:var(--accent)!important}
+
+/* 게임 결과: 점수·버튼을 맨 위에, 단어 목록은 안에서 스크롤 */
+.gres{text-align:center}
+.gres-top{padding:18px 8px 6px}
+.gres .score{font-size:54px;line-height:1.1;font-weight:800!important;letter-spacing:-.02em}
+.gres .rank{font-size:16px;color:var(--accent-text);font-weight:800;margin-top:2px}
+.gres-note{margin-top:6px!important}
+.gres-acts{display:flex;gap:10px;margin:12px 0 6px}
+.gres-acts .pill{flex:1;padding:14px 10px;font-size:16px;font-weight:800;border-radius:14px}
+.gres-acts .pill:first-child{flex:1.6}
+.gres-link{display:block;margin:4px auto 0;border:0;background:none;color:var(--accent-text);font:inherit;font-weight:700;font-size:14px;padding:8px;cursor:pointer}
+.gres-words{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:left}
+.gres .gwh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.gres .gwh b{font-size:15px}
+.gres .gwh b span{color:var(--sub);font-weight:600;margin-left:4px}
+.gres .gwh .pill{font-size:12px;padding:5px 10px}
+.gres .glist{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch;margin:0!important;padding:4px 10px 8px}
+html body:has(#quizView .gbox) #quizView .gres .glist .grow{background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important;margin:0!important;padding:10px 4px}
+html body:has(#quizView .gbox) #quizView .gres .glist .grow:last-child{border-bottom:0!important}
+html body:has(#quizView .gbox) #quizView .gres .glist .grow .gk{color:var(--sub)!important}
+html body:has(#quizView .gbox) #quizView .gres .glist .grow .gw{font-size:19px;min-width:84px;color:var(--text)}
+html body:has(#quizView .gbox) #quizView .gres .score{color:var(--text)!important;-webkit-text-stroke:0!important;text-shadow:none!important;background:none!important;font-size:54px}
+html body:has(#quizView .gbox) #quizView .gres .rank{color:var(--accent-text)!important;background:var(--accent-soft)!important;display:inline-block;padding:4px 14px;border-radius:999px;font-size:14px;text-shadow:none!important;box-shadow:none!important;border:0!important}
+html body:has(#quizView .gbox) #quizView .gres .newbest{background:var(--gold)!important;color:#5a3d00!important;border-radius:999px;padding:3px 10px;font-size:12px}
+
+/* 게임: 색감 있는 배경 + 흰 카드 박스 안에서 진행 */
+html body:has(#quizView .gbox){background:linear-gradient(165deg,#7f86ff 0,#9a7dff 48%,#c78cff 100%) fixed!important}
+html[data-theme=dark] body:has(#quizView .gbox){background:linear-gradient(165deg,#262a6b 0,#33286e 55%,#44286b 100%) fixed!important}
+html body:has(#quizView .gbox) #quizView .gbox{background:var(--card)!important;border-radius:26px!important;padding:16px 14px 18px!important;box-shadow:0 14px 40px rgba(40,30,120,.35)!important;overflow:visible}
+html body:has(#quizView .gbox) #quizView .gbox .opt{background:var(--chip)!important;border:0!important;box-shadow:none!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt:hover:not(:disabled){box-shadow:none!important;background:var(--accent-soft)!important}
+html body:has(#quizView .gbox) #quizView .gbox .pill:not(.on){background:var(--chip)!important;border:0!important}
+html body:has(#quizView .gbox) #quizView .gbox .prog{background:var(--chip)!important}
+html body:has(#quizView .gbox) #quizView .gres .gres-words{background:var(--chip);box-shadow:none;border:0}
+html body:has(#quizView .gbox) #quizView .gres .gwh{border-bottom-color:rgba(127,127,160,.2)}
+html body:has(#quizView .gbox) #quizView .gres .glist .grow{border-bottom-color:rgba(127,127,160,.2)!important}
+html body:has(#quizView .gbox) #quizView .gres .gwh .pill{background:var(--card)!important}
+
+/* 게임 느낌 더하기: 떠다니는 방울 배경, 도톰하게 눌리는 버튼, 반짝이는 시간 막대, 점수 팝 */
+@keyframes gbub{from{background-position:0 0,0 0,0 0,0 0}to{background-position:60px -120px,-80px -160px,40px -200px,-50px -100px}}
+html body:has(#quizView .gbox)::after{display:block!important;content:""!important;position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.22) 0 9px,transparent 10px) 0 0/130px 130px,
+             radial-gradient(circle,rgba(255,255,255,.16) 0 16px,transparent 17px) 40px 70px/190px 190px,
+             radial-gradient(circle,rgba(255,255,255,.14) 0 5px,transparent 6px) 90px 30px/90px 90px,
+             radial-gradient(circle,rgba(255,255,255,.12) 0 24px,transparent 25px) 20px 120px/260px 260px!important;animation:gbub 40s linear infinite}
+html body:has(#quizView .gbox) #quizView .gbox{box-shadow:0 7px 0 rgba(50,35,150,.38),0 20px 40px rgba(40,30,120,.3)!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt{box-shadow:0 4px 0 rgba(120,125,190,.28)!important;margin-bottom:4px}
+html body:has(#quizView .gbox) #quizView .gbox .opt:active:not(:disabled){transform:translateY(3px)!important;box-shadow:0 1px 0 rgba(120,125,190,.28)!important}
+@keyframes gshake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes gbounce{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+html body:has(#quizView .gbox) #quizView .gbox .opt:is(.bad,.wrong,.ng){animation:gshake .35s}
+html body:has(#quizView .gbox) #quizView .gbox .opt:is(.good,.correct,.ok){animation:gbounce .35s}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span{background:var(--accent-soft)!important;color:var(--accent-text)!important;border-radius:999px!important;padding:5px 14px!important;font-size:16px;font-weight:800;box-shadow:0 2px 0 rgba(91,91,240,.2)}
+html body:has(#quizView .gbox) #quizView .gbox .gstat{justify-content:space-between;padding-right:0!important}
+html body:has(#quizView .gbox) #quizView .gbox .prog{height:16px!important;position:relative}
+html body:has(#quizView .gbox) #quizView .gbox .prog div,html body:has(#quizView .gbox) #quizView #gbar{box-shadow:inset 0 5px 0 rgba(255,255,255,.35)!important;background-size:28px 28px!important;background-image:linear-gradient(135deg,rgba(255,255,255,.18) 25%,transparent 25% 50%,rgba(255,255,255,.18) 50% 75%,transparent 75%),linear-gradient(90deg,#7b7bff,#5b5bf0)!important}
+html body:has(#quizView .gbox) #quizView #gbar.mid{background-image:linear-gradient(135deg,rgba(255,255,255,.2) 25%,transparent 25% 50%,rgba(255,255,255,.2) 50% 75%,transparent 75%),linear-gradient(90deg,#ffc53d,#ff9a2e)!important}
+html body:has(#quizView .gbox) #quizView #gbar.low{background-image:linear-gradient(135deg,rgba(255,255,255,.2) 25%,transparent 25% 50%,rgba(255,255,255,.2) 50% 75%,transparent 75%),linear-gradient(90deg,#ff8a8a,#f0525a)!important}
+@keyframes gscore{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1)}}
+html body:has(#quizView .gbox) #quizView .gres .score{animation:gscore .6s cubic-bezier(.2,1.3,.4,1) both;background:linear-gradient(180deg,#7b7bff,#5b5bf0)!important;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent!important;filter:drop-shadow(0 3px 0 rgba(91,91,240,.25))}
+html body:has(#quizView .gbox) #quizView .gres .gres-acts .pill.on{box-shadow:0 4px 0 var(--accent-dk)!important}
+html body:has(#quizView .gbox) #quizView .gres .gres-acts .pill{box-shadow:0 4px 0 rgba(120,125,190,.28)}
+html body:has(#quizView .gbox) #quizView .gres .gres-acts .pill:active{transform:translateY(3px);box-shadow:none!important}
+html body:has(#quizView .gbox) #quizView .gres .newbest{animation:gbounce .8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){html body:has(#quizView .gbox)::after,html body:has(#quizView .gbox) #quizView .gbox *{animation:none!important}}
+/* 짝 맞추기: 고른 칸은 확실히 티 나게 */
+@keyframes gsel{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1.03)}}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel{background:linear-gradient(180deg,#7b7bff,#5b5bf0)!important;color:#fff!important;border:0!important;box-shadow:0 4px 0 #3a3ac0,0 0 0 3px rgba(255,255,255,.9) inset,0 6px 16px rgba(91,91,240,.45)!important;transform:scale(1.03);animation:gsel .2s ease-out}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel *{color:#fff!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel .gst2{color:#ffe27a!important}
+/* 짝 맞추기 선택: 노란 칸 + 주황 테두리 (보라 배경과 확 구분) */
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel{background:#ffe27a!important;color:#3a2a00!important;border:3px solid #ff9a2e!important;box-shadow:0 4px 0 #e07a00,0 8px 18px rgba(255,154,46,.5)!important;transform:translateY(-2px) scale(1.03)}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel *{color:#3a2a00!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel .gst2{color:#e07a00!important}
+/* 점수 표시: 금빛 배지 + 큰 숫자 */
+html body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc{display:inline-flex;align-items:baseline;gap:6px;background:linear-gradient(180deg,#ffe27a,#ffbf3c)!important;color:#5a3a00!important;box-shadow:0 3px 0 #e39a12!important;padding:4px 16px 5px!important}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc small{font-size:11px;font-weight:800;opacity:.75;letter-spacing:.04em;color:#5a3a00!important}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc b{font-size:22px;font-weight:800;line-height:1;color:#5a3a00!important;font-variant-numeric:tabular-nums}
+/* 점수 표시 v2: 배지 없이 작은 라벨 + 큰 숫자를 세로로 */
+html body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc{display:inline-flex;flex-direction:column;align-items:flex-end;gap:0;background:none!important;box-shadow:none!important;padding:0 4px!important;border-radius:0!important}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc small{font-size:11px;font-weight:700;opacity:1;letter-spacing:.06em;color:var(--sub)!important;line-height:1.1}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc b{font-size:26px;font-weight:800;line-height:1.05;color:var(--accent-text)!important;letter-spacing:-.02em}
+html body:has(#quizView .gbox) #quizView .gbox .gstat span#gt{background:none!important;box-shadow:none!important;padding:0 4px!important;font-size:26px!important;font-weight:800!important;color:var(--text)!important;letter-spacing:-.02em;line-height:1.05}
+html body:has(#quizView .gbox) #quizView .gbox .gstat{margin:0 0 2px!important}
+html body:has(#quizView .gbox) #quizView .mbar{margin:4px 0 10px!important}
+
+/* 게임 종료 연출 */
+@keyframes govin{0%{transform:scale(2.6) rotate(-6deg);opacity:0}45%{transform:scale(.92) rotate(2deg);opacity:1}60%{transform:scale(1.08) rotate(-1deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes govflash{0%,30%{background:rgba(240,82,90,.55)}100%{background:rgba(20,14,70,.6)}}
+.govr{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:rgba(20,14,70,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:govflash .5s ease-out;touch-action:none}
+.govr b{font-size:46px;font-weight:800;color:#fff;letter-spacing:-.02em;text-shadow:0 4px 0 rgba(91,91,240,.9),0 10px 30px rgba(0,0,0,.4);animation:govin .5s cubic-bezier(.2,1.2,.4,1) both}
+@media(prefers-reduced-motion:reduce){.govr,.govr b{animation:none}}
+/* 결과 점수: 그라데이션 글자가 막대처럼 보이던 문제 → 단색으로 */
+html body:has(#quizView .gbox) #quizView .gres .score{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;color:var(--accent-text)!important;filter:none!important}
+
+/* 게임 배경 테마 (게임 첫 화면 "게임 배경"에서 고르기) */
+.gbgrow{display:flex;align-items:center;gap:8px;margin:10px 0;flex-wrap:wrap}
+.gbgsw{border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--sub);font:inherit;font-size:11px}
+.gbgsw i{width:38px;height:38px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 2px var(--line);display:block}
+.gbgsw.on i{box-shadow:0 0 0 3px var(--accent)}
+.gbgsw.on{color:var(--accent-text);font-weight:700}
+.gbgsw[data-sw=wa] i{background:radial-gradient(circle at 50% 100%,transparent 0 6px,#fff 6px 8px,transparent 8px),#3b4a8f}
+.gbgsw[data-sw=sakura] i{background:#fff0f5 url("data:image/svg+xml,<g transform='translate(12 16)' fill='%23ff9fbd' opacity='1'><ellipse rx='4.5' ry='8.1' cy='-7.2' transform='rotate(0)'/><ellipse rx='4.5' ry='8.1' cy='-7.2' transform='rotate(72)'/><ellipse rx='4.5' ry='8.1' cy='-7.2' transform='rotate(144)'/><ellipse rx='4.5' ry='8.1' cy='-7.2' transform='rotate(216)'/><ellipse rx='4.5' ry='8.1' cy='-7.2' transform='rotate(288)'/><circle r='2.7' fill='%23fff6a8'/></g>") 0 0/24px 24px}
+.gbgsw[data-sw=ichi] i{background:conic-gradient(#3a7a66 25%,#2b5e4e 0 50%,#3a7a66 0 75%,#2b5e4e 0) 0 0/16px 16px}
+.gbgsw[data-sw=pastel] i{background:linear-gradient(160deg,#ffe3ef,#e3ecff)}
+.gbgsw[data-sw=pcloud] i{background:#cfe8ff}
+.gbgsw[data-sw=pflower] i{background:#dff7ea}
+/* 일본풍 1: 청해파(물결) */
+html[data-gbg=wa] body:has(#quizView .gbox){background:#3d4c93 fixed!important}
+html[data-gbg=wa] body:has(#quizView .gbox)::after{display:block!important;animation:none!important;background:
+ radial-gradient(circle at 50% 100%,transparent 0 12px,rgba(255,255,255,.17) 12px 14px,transparent 14px 20px,rgba(255,255,255,.17) 20px 22px,transparent 22px 28px,rgba(255,255,255,.17) 28px 30px,transparent 30px) 0 0/60px 30px,
+ radial-gradient(circle at 50% 100%,transparent 0 12px,rgba(255,255,255,.17) 12px 14px,transparent 14px 20px,rgba(255,255,255,.17) 20px 22px,transparent 22px 28px,rgba(255,255,255,.17) 28px 30px,transparent 30px) 30px 15px/60px 30px!important}
+/* 일본풍 2: 벚꽃 */
+html[data-gbg=sakura] body:has(#quizView .gbox){background:#ffeef4 fixed!important}
+html[data-gbg=sakura] body:has(#quizView .gbox)::after{display:block!important;animation:none!important;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><g transform='translate(32 34)' fill='%23ffb3cb' opacity='0.8'><ellipse rx='5' ry='9' cy='-8' transform='rotate(0)'/><ellipse rx='5' ry='9' cy='-8' transform='rotate(72)'/><ellipse rx='5' ry='9' cy='-8' transform='rotate(144)'/><ellipse rx='5' ry='9' cy='-8' transform='rotate(216)'/><ellipse rx='5' ry='9' cy='-8' transform='rotate(288)'/><circle r='3' fill='%23fff6a8'/></g><g transform='translate(105 70)' fill='%23ffc9da' opacity='0.8'><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(0)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(72)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(144)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(216)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(288)'/><circle r='2.0999999999999996' fill='%23fff6a8'/></g><g transform='translate(60 120)' fill='%23ffd3e0' opacity='0.7'><ellipse rx='2.75' ry='4.95' cy='-4.4' transform='rotate(0)'/><ellipse rx='2.75' ry='4.95' cy='-4.4' transform='rotate(72)'/><ellipse rx='2.75' ry='4.95' cy='-4.4' transform='rotate(144)'/><ellipse rx='2.75' ry='4.95' cy='-4.4' transform='rotate(216)'/><ellipse rx='2.75' ry='4.95' cy='-4.4' transform='rotate(288)'/><circle r='1.6500000000000001' fill='%23fff6a8'/></g></svg>") 0 0/150px 150px!important}
+html[data-gbg=sakura] body:has(#quizView .gbox) #quizView .gbox{box-shadow:0 6px 0 rgba(220,120,160,.35),0 14px 30px rgba(220,120,160,.2)!important}
+/* 일본풍 3: 이치마츠(바둑판) */
+html[data-gbg=ichi] body:has(#quizView .gbox){background:conic-gradient(#3a7a66 25%,#2b5e4e 0 50%,#3a7a66 0 75%,#2b5e4e 0) 0 0/64px 64px fixed!important}
+html[data-gbg=ichi] body:has(#quizView .gbox)::after{display:none!important}
+/* 파스텔 1: 점 */
+html[data-gbg=pastel] body:has(#quizView .gbox){background:linear-gradient(160deg,#ffe6f1 0,#e8eeff 60%,#e3f7ff 100%) fixed!important}
+html[data-gbg=pastel] body:has(#quizView .gbox)::after{display:block!important;animation:none!important;background:radial-gradient(circle,rgba(255,170,200,.5) 0 6px,transparent 7px) 0 0/110px 110px,radial-gradient(circle,rgba(140,170,255,.45) 0 4px,transparent 5px) 55px 55px/110px 110px,radial-gradient(circle,rgba(255,220,120,.55) 0 3px,transparent 4px) 30px 80px/110px 110px!important}
+/* 파스텔 2: 구름·별 */
+html[data-gbg=pcloud] body:has(#quizView .gbox){background:linear-gradient(180deg,#bfe0ff,#e4f2ff) fixed!important}
+html[data-gbg=pcloud] body:has(#quizView .gbox)::after{display:block!important;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><g transform='translate(30 50) scale(1)' fill='%23fff' opacity='0.9'><circle cx='0' cy='0' r='14'/><circle cx='18' cy='-8' r='18'/><circle cx='38' cy='0' r='14'/><rect x='-14' y='0' width='66' height='14' rx='7'/></g><g transform='translate(130 150) scale(0.8)' fill='%23fff' opacity='0.9'><circle cx='0' cy='0' r='14'/><circle cx='18' cy='-8' r='18'/><circle cx='38' cy='0' r='14'/><rect x='-14' y='0' width='66' height='14' rx='7'/></g><polygon points='150.0,31.0 152.4,36.7 158.6,37.2 153.9,41.3 155.3,47.3 150.0,44.0 144.7,47.3 146.1,41.3 141.4,37.2 147.6,36.7' fill='%23ffe27a' opacity='.9'/><polygon points='40.0,153.0 41.9,157.5 46.7,157.8 43.0,161.0 44.1,165.7 40.0,163.1 35.9,165.7 37.0,161.0 33.3,157.8 38.1,157.5' fill='%23ffd1e3' opacity='.9'/><polygon points='195.0,104.0 196.6,107.8 200.7,108.1 197.6,110.8 198.5,114.9 195.0,112.7 191.5,114.9 192.4,110.8 189.3,108.1 193.4,107.8' fill='%23fff' opacity='.9'/><polygon points='95.0,95.0 96.3,98.2 99.8,98.5 97.1,100.7 97.9,104.0 95.0,102.2 92.1,104.0 92.9,100.7 90.2,98.5 93.7,98.2' fill='%23ffe27a' opacity='.9'/></svg>") 0 0/220px 220px!important;animation:gpan 50s linear infinite}
+@keyframes gpan{from{background-position:0 0}to{background-position:-220px 220px}}
+/* 파스텔 3: 하트·꽃 */
+html[data-gbg=pflower] body:has(#quizView .gbox){background:#e2f8ec fixed!important}
+html[data-gbg=pflower] body:has(#quizView .gbox)::after{display:block!important;animation:none!important;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><path transform='translate(30 40) scale(1.6)' d='M0 4 C-10 -6 -4 -14 0 -8 C4 -14 10 -6 0 4Z' fill='%23ff9ebd' opacity='.85'/><g transform='translate(110 40)' fill='%23ffd27a' opacity='0.8'><ellipse rx='4.0' ry='7.2' cy='-6.4' transform='rotate(0)'/><ellipse rx='4.0' ry='7.2' cy='-6.4' transform='rotate(72)'/><ellipse rx='4.0' ry='7.2' cy='-6.4' transform='rotate(144)'/><ellipse rx='4.0' ry='7.2' cy='-6.4' transform='rotate(216)'/><ellipse rx='4.0' ry='7.2' cy='-6.4' transform='rotate(288)'/><circle r='2.4000000000000004' fill='%23fff6a8'/></g><path transform='translate(115 115) scale(1.2)' d='M0 4 C-10 -6 -4 -14 0 -8 C4 -14 10 -6 0 4Z' fill='%23ffb8cc' opacity='.85'/><g transform='translate(40 120)' fill='%23a9d8ff' opacity='0.8'><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(0)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(72)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(144)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(216)'/><ellipse rx='3.5' ry='6.3' cy='-5.6' transform='rotate(288)'/><circle r='2.0999999999999996' fill='%23fff6a8'/></g></svg>") 0 0/160px 160px!important}
+html[data-gbg=pastel] body:has(#quizView .gbox) #quizView .gbox,html[data-gbg=pcloud] body:has(#quizView .gbox) #quizView .gbox,html[data-gbg=pflower] body:has(#quizView .gbox) #quizView .gbox{box-shadow:0 6px 0 rgba(150,140,210,.35),0 14px 30px rgba(110,100,190,.18)!important}
+@media(prefers-reduced-motion:reduce){html[data-gbg] body:has(#quizView .gbox)::after{animation:none!important}}
+/* 밤하늘: 어두운 남색 + 반짝이는 별 */
+.gbgsw[data-sw=night] i{background:linear-gradient(180deg,#0b1240,#2c2468)}
+html[data-gbg=night] body:has(#quizView .gbox){background:linear-gradient(180deg,#070c2e 0,#141a55 55%,#2d2268 100%) fixed!important}
+html[data-gbg=night] body:has(#quizView .gbox)::after{display:block!important;background:radial-gradient(circle,#fff 0 1.5px,transparent 2.2px) 0 0/90px 90px,radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 1.7px) 35px 50px/60px 60px,radial-gradient(circle,#ffe9a6 0 2.2px,transparent 3.2px) 60px 20px/150px 150px,radial-gradient(circle,rgba(190,200,255,.7) 0 1.2px,transparent 2px) 15px 75px/110px 110px!important;animation:gtwk 3.5s ease-in-out infinite alternate}
+@keyframes gtwk{from{opacity:.5}to{opacity:1}}
+html[data-gbg=night] body:has(#quizView .gbox) #quizView .gbox{box-shadow:0 7px 0 rgba(8,8,45,.6),0 20px 40px rgba(0,0,0,.45)!important}
+@media(prefers-reduced-motion:reduce){html[data-gbg=night] body:has(#quizView .gbox)::after{animation:none!important}}
+
+/* 홈: 연속 학습일 배지 — 불꽃 + "N일 / 연속 학습" */
+.h2flame{gap:6px!important;padding:7px 14px 7px 10px!important}
+.h2flame svg{width:26px!important;height:26px!important}
+.h2flame .h2ft{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.h2flame .h2ft b{font-size:17px;font-weight:800}
+.h2flame .h2ft small{font-size:10.5px;font-weight:700;opacity:.85}
+.h2flame.on{background:linear-gradient(135deg,#ffb23d,#ff6a3a)!important;border-color:transparent!important;color:#fff!important;box-shadow:0 4px 14px rgba(255,106,58,.4)!important}
+.h2flame.on svg{filter:drop-shadow(0 1px 0 rgba(160,50,0,.35))}
+:root[data-theme=dark] .h2flame.on{background:linear-gradient(135deg,#e8902a,#d9512a)!important}
