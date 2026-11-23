@@ -37,7 +37,7 @@ const shine=(id,clip,x0,x1,y0,h,dur,w)=>`<clipPath id="${id}c">${clip}</clipPath
 const dotsAt=(arr,f,rr)=>arr.map(([x,y,r],i)=>`<circle cx="${x}" cy="${y}" r="${r||rr||2}" fill="${f}"><animate attributeName="opacity" values=".2;.95;.2" dur="${2+(i%4)*.5}s" begin="-${i*.37}s" repeatCount="indefinite"/></circle>`).join("");
 const WINGPTS=[[84,196],[104,186],[126,176],[148,164],[168,146],[184,128],[116,206],[142,190],[164,170],[96,176],[132,156],[156,140],[176,118],[110,166],[150,182]];
 const rubyG=(x,y,r)=>`<path d="M${x} ${y-r}L${x+r*.8} ${y-r*.1}L${x} ${y+r}L${x-r*.8} ${y-r*.1}Z" fill="#e23a5a" stroke="${INK}" stroke-width="1.3" stroke-linejoin="round"/><path d="M${x-r*.4} ${y-r*.2}L${x} ${y-r*.75}L${x+r*.2} ${y-r*.2}Z" fill="#ff9db0"/>`;
-const SLOTS=[["head","머리"],["face","얼굴"],["neck","목"],["wing","날개빛"],["special","특별아이템"]];
+const SLOTS=[["head","머리"],["face","얼굴"],["neck","목"],["wing","날개빛"],["frame","프레임"],["special","특별아이템"]];
 const WC='filter="url(#fWc)"', INK="#5e4b42";
 /* 벚꽃 한 송이(꽃잎 5장·꽃술·옅은 번짐) */
 const sakura=(x,y,s,rot)=>{ const pet=`<path d="M0 0C-13-5-16-23-7-30L0-24L7-30C16-23 13-5 0 0Z" fill="#fde8ef" stroke="${INK}" stroke-width="1.2" stroke-linejoin="round"/><path d="M0 -2C-6-6-8-15-4-20C0-16 4-16 6-20C9-14 6-6 0 -2Z" fill="#f4a8bf" opacity=".55"/><path d="M0 -3V-19" stroke="#e58aa6" stroke-width=".8" opacity=".8"/>`;
@@ -102,12 +102,44 @@ const ITEMS=[
  {id:"w_galaxy",slot:"wing",name:"은하수 날개",price:250,svg:`<g><path d="M70 204C112 196 156 160 190 112C150 150 112 170 70 204Z" fill="#6a5acd" opacity=".35"/><path d="M92 200C130 186 166 154 196 118" stroke="#9fd8f7" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>${dotsAt(WINGPTS,"#d8e6ff",3)}${spark(120,174,15,"#cfe8ff",0,2.4)}${spark(158,142,12,"#e8dcff",1,2.8)}${spark(98,192,10,"#fff",.7,2.5)}</g>`},
  {id:"sp_n1",slot:"head",name:"봉황관",special:true,level:"N1",svg:`<g ${WC}>${phoenixFeathers()}<path d="M200 42C198 22 224 12 238 12C252 12 278 22 276 42Z" fill="#b8404f" stroke="${INK}" stroke-width="1.6"/><path d="M198 44L202 18L220 30L238 4L256 30L274 18L278 44Z" fill="#ebc86e" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><path d="M198 44Q238 56 278 44L277 33Q238 45 199 33Z" fill="#e2b04e" stroke="${INK}" stroke-width="1.8" stroke-linejoin="round"/><circle cx="238" cy="33" r="6.4" fill="#d94a5a" stroke="${INK}" stroke-width="1.5"/><circle cx="236" cy="31" r="1.8" fill="#fff"/><path d="M216 36L220 31L224 36L220 41Z" fill="#6cc29a" stroke="${INK}" stroke-width="1.2"/><path d="M252 36L256 31L260 36L256 41Z" fill="#6aa8e0" stroke="${INK}" stroke-width="1.2"/><circle cx="238" cy="2" r="5" fill="#fffaf2" stroke="${INK}" stroke-width="1.3"/><g fill="#fffaf2" stroke="${INK}" stroke-width="1">${[[200,52],[199,62],[200,72],[201,82],[276,52],[277,62],[276,72]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.4"/>`).join("")}</g><path d="M200 46V82M276 46V74" stroke="#d9a63a" stroke-width="1" opacity=".7"/></g>`}
 ];
+/* 프로필 프레임(참새 뒤 네모 배경): fv = CSS 변수 (--fbg 안쪽 배경, --fbr 테두리, --fsh 그림자, --fx* 이펙트) */
+const STAR=(c,five)=>{ const d=five?"M10 0.8L12.5 7L19.2 7.4L14 11.7L15.8 18.3L10 14.6L4.2 18.3L6 11.7L0.8 7.4L7.5 7Z":"M10 0L12.3 7.7L20 10L12.3 12.3L10 20L7.7 12.3L0 10L7.7 7.7Z"; return "url(data:image/svg+xml,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='"+c+"' d='"+d+"'/></svg>").replace(/'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29")+")"; };
+/* 별 모양 배경 층: [가로%, 세로%, 크기%, 색, 오각별 여부] */
+const SL=a=>a.map(([x,y,z,c,f])=>STAR(c,f)+" "+x+"% "+y+"%/"+z+"% "+z+"% no-repeat").join(",");
+/* 별빛(약한 네온): 은은한 빛무리 + 가느다란 4갈래 빛줄기 + 밝은 중심 */
+const GLOW=c=>"url(data:image/svg+xml,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><radialGradient id='g'><stop offset='0' stop-color='"+c+"' stop-opacity='.85'/><stop offset='.35' stop-color='"+c+"' stop-opacity='.28'/><stop offset='1' stop-color='"+c+"' stop-opacity='0'/></radialGradient></defs><circle cx='20' cy='20' r='19' fill='url(#g)'/><path fill='#fff' fill-opacity='.95' d='M20 1L21.3 18.7L39 20L21.3 21.3L20 39L18.7 21.3L1 20L18.7 18.7Z'/><circle cx='20' cy='20' r='2.6' fill='#fff'/></svg>").replace(/'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29")+")";
+const GL=a=>a.map(([x,y,z,c])=>GLOW(c||"#ffe9a0")+" "+x+"% "+y+"%/"+z+"% "+z+"% no-repeat").join(",");
+/* 별 하나하나가 제자리에서 따로 반짝이는 층: [가로%, 세로%, 최대크기%, 색, 번호(1~8)] — 크기는 --t번호(0~1)가 정해요 */
+const GT=a=>a.map(([x,y,m,c,t])=>GLOW(c)+" "+x+"% "+y+"%/calc(var(--t"+t+")*"+m+"%) calc(var(--t"+t+")*"+m+"%) no-repeat").join(",");
+const DT=a=>a.map(([x,y,c])=>"radial-gradient(circle at "+x+"% "+y+"%,"+c+" 0 1.5px,transparent 2.4px)").join(",");
+const RING="inset 0 0 0 1.5px rgba(255,255,255,.6)";
+const FR=(id,name,price,bg,br,sh,more)=>({id:"fr_"+id,slot:"frame",name,price,svg:"",fv:"--fbg:"+bg+";--fbr:"+br+";"+(sh?"--fsh:"+sh+";":"")+(more||"")});
+ITEMS.push(
+ FR("sky","하늘 구름",25,"linear-gradient(180deg,#bfe3ff,#eaf6ff)","linear-gradient(#7db8ee,#7db8ee)"),
+ FR("sakura","벚꽃 분홍",25,"linear-gradient(160deg,#ffdce8,#fff2f6)","linear-gradient(#f29bb7,#f29bb7)"),
+ FR("forest","초록 숲",30,"linear-gradient(160deg,#c8efcf,#eaf9ec)","linear-gradient(#5bb779,#5bb779)"),
+ FR("sunset","노을",35,"linear-gradient(180deg,#ffd29a,#ff9fb0 70%,#c9a0ff)","linear-gradient(135deg,#ff9a5a,#ff6f91)"),
+ FR("night","밤하늘 별",95,SL([[16,18,9,"#ffffff"],[84,14,7,"#ffe9a0",1],[72,72,8,"#ffffff"],[14,78,6,"#ffe9a0",1],[88,52,5,"#ffffff"]])+","+DT([[40,12,"#fff"],[62,34,"#fff"],[30,48,"#cfd6ff"],[52,84,"#fff"],[92,80,"#cfd6ff"],[8,40,"#fff"],[76,46,"#fff"]])+",linear-gradient(160deg,#1b2557,#3b3f8f)","conic-gradient(from 20deg,#8a93ff,#5fd4ff,#c28bff,#8a93ff)",RING+",0 0 8px rgba(138,147,255,.5)"),
+ FR("gold","황금",130,"linear-gradient(160deg,#fff6d8,#ffe9a8)","linear-gradient(135deg,#fff0a0,#e5a623 45%,#b9791a 70%,#ffe27a)",RING+",0 0 8px rgba(229,166,35,.45)"),
+ FR("rainbow","무지개",150,"linear-gradient(#fff,#fff)","conic-gradient(from 0deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#c77dff,#ff6b6b)",RING+",0 0 8px rgba(120,120,255,.35)"),
+ FR("aurora","오로라",170,"linear-gradient(160deg,#0f2b3d,#1f6f6b 55%,#7d4fb5)","linear-gradient(135deg,#7df2d1,#9d7dff,#7df2d1)",RING+",0 0 10px rgba(125,242,209,.5)")
+);
+/* 특별 프레임: 7일 연속 출석 선물을 처음 받으면 / N5~N1을 모두 클리어하면 받아요 */
+ITEMS.push(
+ Object.assign(FR("streak","7일 출석 불꽃",0,"radial-gradient(circle at 50% 115%,#ff7a2f 0,#ffb15c 32%,transparent 66%),linear-gradient(180deg,#fff4e0,#ffe1b8)","conic-gradient(from var(--fang,0deg),#ff3d54,#ff8a3d,#ffd23d,#ff8a3d,#ff3d54)",RING+",0 0 10px rgba(255,120,60,.45)","--fxo:'';--fxb1:radial-gradient(circle at 20% 92%,#ffd23d 0 1.6px,transparent 2.6px),radial-gradient(circle at 50% 100%,#ff9a3d 0 1.9px,transparent 2.9px),radial-gradient(circle at 78% 96%,#ffe27a 0 1.5px,transparent 2.5px);--fxa1:fember 2.4s ease-in infinite;--fxa:fspin 3s linear infinite,fglowo 1.8s ease-in-out infinite;"),{special:true,level:"STREAK7"}),
+ Object.assign(FR("master","JLPT 정복자",0,DT([[12,34,"#fff"],[44,16,"#ffe9a0"],[64,30,"#fff"],[34,66,"#ffe9a0"],[58,88,"#fff"],[90,36,"#ffe9a0"],[84,86,"#fff"],[10,70,"#ffe9a0"]])+",radial-gradient(circle at 50% 45%,rgba(255,214,102,.4) 0,transparent 62%),linear-gradient(160deg,#241a52,#4b2a86 60%,#1a1240)","conic-gradient(from 30deg,#fff6bf,#f0b429,#fff6bf,#b9791a,#ffe27a,#f0b429,#fff6bf)",RING+",0 0 14px rgba(255,200,80,.65)","--fxo:'';--fxb1:"+GL([[20,24,7,"#ffffff"],[78,20,9,"#ffe27a"],[70,72,6,"#ffffff"],[24,76,8,"#ffe27a"],[50,10,6,"#ffffff"],[90,50,6,"#ffe27a"]])+";--fxb2:"+GL([[5,5,14,"#fff2a8"],[95,5,14,"#fff2a8"],[5,95,14,"#fff2a8"],[95,95,14,"#fff2a8"],[34,40,6,"#ffffff"],[64,58,7,"#ffe27a"]])+";"),{special:true,level:"ALL"})
+);
+/* 정복자 프레임의 별빛: 별 하나하나가 차례로 번쩍였다가 천천히 흐려져요 */
+const FX_STARS=[[8,8,20,"#fff2a8"],[50,9,13,"#ffffff"],[92,8,20,"#fff2a8"],[91,50,14,"#ffe27a"],[92,92,20,"#fff2a8"],[50,91,13,"#ffffff"],[8,92,20,"#fff2a8"],[9,50,14,"#ffe27a"]];
+const frameFx=eq=>false&&eq&&eq.frame==="fr_master"?`<span class="fxs" aria-hidden="true">${FX_STARS.map(([x,y,z,c],i)=>`<i style="left:${x}%;top:${y}%;width:${z}%;background-image:${GLOW(c)};animation-delay:${(i*0.8).toFixed(1)}s"></i>`).join("")}</span>`:"";
+const frameStyle=eq=>{ const it=eq&&eq.frame?ITEMS.find(x=>x.id===eq.frame&&x.slot==="frame"):null; return it?it.fv:""; };
 const charState=()=>{ const s=get("jp-char",null)||{seeds:30,owned:[],equip:{}}; s.equip=s.equip||{}; Object.keys(s.equip).forEach(k=>{ const it=ITEMS.find(x=>x.id===s.equip[k]); if(!it||it.slot!==k) delete s.equip[k]; }); return s; };
 /* 급수를 전부 끝낸 사람에게만 열리는 특별 아이템(건너뛰기로는 안 열려요) */
 function levelProgress(L){ const st=get("jp-path",{done:{}}); let all=0, real=0; build().forEach(u=>{ if(L==="ALL"?["N5","N4","N3","N2","N1"].includes(u.tag):u.tag===L) u.nodes.forEach(n=>{ all++; if(st.done&&st.done[n.id]===1) real++; }); }); return {all,real}; }
 const levelCleared=L=>{ const p=levelProgress(L); return p.all>0&&p.real>=p.all; };
 function checkSpecial(){ try{ const s=charState(); let changed=false;
   ITEMS.filter(x=>x.special&&x.level!=="ALL").forEach(it=>{ if(!s.owned.includes(it.id)&&levelCleared(it.level)){ s.owned.push(it.id); changed=true; A().toast(it.level+" 클리어! 특별 아이템 「"+it.name+"」을(를) 받았어요"); } });
+  if((giftState().items||[]).length&&!s.owned.includes("fr_streak")){ s.owned.push("fr_streak"); changed=true; }
   if(changed) saveChar(s);
   /* N5부터 N1까지 모든 단계를 직접 끝내면 특별 칭호 */
   if(["N5","N4","N3","N2","N1"].every(levelCleared)){ const gs=giftState(); gs.extra=gs.extra||[]; if(!gs.extra.some(x=>x.title===MASTER_TITLE)){ gs.extra.push({title:MASTER_TITLE,at:Date.now()}); set("jp-gift",gs); addSeeds(500); addXp(300); A().toast("N5~N1 전부 클리어! 「"+MASTER_TITLE+"」 칭호 + 씨앗 500개 + 300 XP"); } }
@@ -117,25 +149,25 @@ const saveChar=s=>{ set("jp-char",s); try{ if(window.COMMUNITY) COMMUNITY.touch(
 function addSeeds(n){ const s=charState(); s.seeds=(s.seeds||0)+n; saveChar(s); }
 const DEFS=`<defs><linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f0a824"/></linearGradient><linearGradient id="gPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd3e0"/><stop offset="1" stop-color="#ff93b4"/></linearGradient><linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a7e"/><stop offset="1" stop-color="#e0483f"/></linearGradient><linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9ebb2"/><stop offset="1" stop-color="#52b870"/></linearGradient><linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8f7"/><stop offset="1" stop-color="#4294d4"/></linearGradient><linearGradient id="gStraw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeab9"/><stop offset="1" stop-color="#ebc67c"/></linearGradient><linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5552"/><stop offset="1" stop-color="#211e1d"/></linearGradient><filter id="fWc" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".018 .026" numOctaves="3" seed="7" result="warp"/><feDisplacementMap in="SourceGraphic" in2="warp" scale="6" result="d"/><feGaussianBlur in="d" stdDeviation="1.6" result="b"/><feComposite in="d" in2="b" operator="arithmetic" k1="0" k2="1.55" k3="-.55" k4="0" result="edge"/><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="gr"/><feColorMatrix in="gr" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.55 1.05" result="ga"/><feComposite in="edge" in2="ga" operator="in"/></filter></defs>`;
 function birdSvg(equip,cls){
-  const eq=equip||charState().equip||{}, order=["wing","body","belly","neck","face","head"];
-  return `<svg class="${cls||""}" viewBox="0 -44 375 376" aria-hidden="true">${DEFS}<image href="mascot.png" x="0" y="0" width="375" height="332"/>${order.map(sl=>{ const it=ITEMS.find(x=>x.id===eq[sl]); return it?`<g>${it.svg}</g>`:""; }).join("")}</svg>`;
+  const eq=equip||charState().equip||{}, order=["wing","body","belly","neck","face","head"], flat=!!window.FLATBIRD&&localStorage.getItem("jp-mascot")==="flat";
+  return `<svg class="${cls||""}" viewBox="0 -44 375 376" aria-hidden="true">${DEFS}${flat?window.FLATBIRD:`<image href="mascot.png" x="0" y="0" width="375" height="332"/>`}${order.map(sl=>{ const it=ITEMS.find(x=>x.id===eq[sl]); return it?`<g>${flat?it.svg.split(WC).join(""):it.svg}</g>`:""; }).join("")}</svg>`;
 }
 function birdHtml(){
   const s=charState(), cheapest=Math.min(...ITEMS.filter(x=>!s.owned.includes(x.id)).map(x=>x.price),Infinity), can=cheapest<=(s.seeds||0);
-  return `<div class="hbw"><button class="hbird" data-shop="1" aria-label="${E(birdTitle())} 꾸미기">${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">현재 씨앗 ${s.seeds||0} ›</button></div>`;
+  return `<div class="hbw"><button class="hbird frm" style="${frameStyle(charState().equip)}" data-shop="1" aria-label="${E(birdTitle())} 꾸미기">${frameFx(charState().equip)}${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">현재 씨앗 ${s.seeds||0} ›</button></div>`;
 }
 const birdTitle=()=>{ try{ const p=A().curProfile(); return p&&p.cloud?p.name+"님의 참새":"내 참새"; }catch(e){ return "내 참새"; } };
 let shopSlot="head", shopPrev={};
 function shopRender(){
   const d=document.getElementById("shopDlg"), s=charState(), pv=Object.keys(shopPrev).filter(k=>shopPrev[k]&&shopPrev[k]!==s.equip[k]);
   const eq=Object.assign({},s.equip,shopPrev), pvItems=pv.map(k=>ITEMS.find(x=>x.id===shopPrev[k])).filter(Boolean);
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(birdTitle())}</h2><button class="x" data-sclose aria-label="닫기">×</button></div>
-  <div class="db"><div class="shopbird">${birdSvg(eq,"big")}</div>
+  d.innerHTML=`<div class="dh"><h2 style="margin:0;font-size:17px">${E(birdTitle())}</h2><button class="x" data-sclose aria-label="닫기">×</button></div>
+  <div class="db"><div class="shopbird"><div class="frm shopfrm" style="${frameStyle(eq)}">${frameFx(eq)}${birdSvg(eq,"big")}</div></div>
   <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px;font-size:.85em">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:""}</p>
   <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개<br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있어요.</p>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
-  ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 돼요). N5~N1을 모두 끝내면 정복자 전용 금관·메달·날개빛까지!</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?x.special:(!x.special&&x.slot===shopSlot)).sort((a,b)=>(a.level==="ALL")-(b.level==="ALL")).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special?levelProgress(it.level):null;
-    return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level==="ALL"?"N5~N1":it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?`${it.level==="ALL"?"N5~N1":it.level} 전체 클리어 · ${lp.real} / ${lp.all} 단계`:it.price+" 씨앗")}</small></div>
+  ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 돼요). N5~N1을 모두 끝내면 정복자 전용 금관·메달·날개빛까지!</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?(x.special&&x.slot!=="frame"):(shopSlot==="frame"?x.slot==="frame":(!x.special&&x.slot===shopSlot))).sort((a,b)=>((a.special?1:0)-(b.special?1:0))||((a.level==="ALL")-(b.level==="ALL"))).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special&&it.level!=="STREAK7"?levelProgress(it.level):null;
+    return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${it.slot==="frame"?`<div class="frm shpf" style="${it.fv}">${frameFx({frame:it.id})}${birdSvg({},"mini")}</div>`:birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level==="ALL"?"N5~N1":it.level==="STREAK7"?"출석":it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?(it.level==="STREAK7"?"7일 연속 출석 선물을 받으면 얻어요":`${it.level==="ALL"?"N5~N1":it.level} 전체 클리어 · ${lp.real} / ${lp.all} 단계`):it.price+" 씨앗")}</small></div>
      ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"벗기":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"} style="line-height:1.15">購入<small style="display:block;font-size:10px;font-weight:400">구입</small></button>`)}</div>`; }).join("")}</div></div>`;
 }
 function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
@@ -182,7 +214,7 @@ function statusHtml(){
 /* 내 계정 화면: 내 참새 + 레벨·연속 출석·씨앗 */
 function profileHtml(){
   const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
-  return `<div class="pfbird">${birdSvg(null,"big")}</div>
+  return `<div class="pfbird frm" style="${frameStyle(charState().equip)}">${frameFx(charState().equip)}${birdSvg(null,"big")}</div>
    <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>씨앗 <b>${charState().seeds||0}</b></span></div>
    ${earnedTitles().length?`<div class="pftt"><small>대표 칭호</small><select data-reptitle aria-label="대표 칭호">${["",...earnedTitles()].map(t=>`<option value="${E(t)}" ${t===repTitle()?"selected":""}>${t?"「"+E(t)+"」":"없음"}</option>`).join("")}</select></div>`:""}
    <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
@@ -313,7 +345,7 @@ function journeyHtml(){
   const msg=J.pending?"일곱 걸음을 다 걸었어요! 선물 상자가 기다려요":J.pos<7?DAYMSG[J.pos]:"도착했어요! 내일부터 새 여정이 시작돼요";
   setTimeout(()=>{ const b=document.querySelector(".jrb"); if(b){ b.style.left=(tx/3.2)+"%"; b.style.top=((ty-40)/JH*100)+"%"; } try{ localStorage.setItem("jp-jpos",String(J.pos)); }catch(e){} },80);
   return `<div class="jr" data-season="${sn}"><div class="jrh"><b>7일 연속 출석</b><span>${J.pos} / 7일</span></div>
-   <div class="jrroad"><svg viewBox="0 0 320 ${JH}" aria-hidden="true">${DEFS}${forestBg(sn)}<path class="jl2" filter="url(#fWc)" d="${line}"/><path class="jl" d="${line}"/>${stops}${particles(sn)}</svg><div class="jrb" style="left:${fx/3.2}%;top:${(fy-40)/JH*100}%">${birdSvg(null)}</div></div>
+   <div class="jrsteps" style="--p:${(Math.max(0,J.pos-1)/6*86).toFixed(1)}%">${[0,1,2,3,4,5,6].map(i=>{ const dn=i<J.pos, cu=i===J.pos-1; return `<div class="jst ${dn?"done":""} ${cu?"cur":""} ${i===6?"gift":""}"><i>${i===6?'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="10" width="17" height="10" rx="2"/><path d="M3 7h18v3H3zM12 7v13M12 7c-1-3-4.5-3.5-4.5-1.5S10 7 12 7zM12 7c1-3 4.5-3.5 4.5-1.5S14 7 12 7z"/></svg>':dn?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':i+1}</i><span>${i===6?"선물":(i+1)+"일"}</span></div>`; }).join("")}</div>
    <div class="jrf"><span>${msg}</span>${J.pending?`<button class="cta" data-gift="open" style="width:auto;padding:10px 18px;font-size:15px">선물 받기</button>`:""}</div>
    ${(J.items.length||(giftState().extra||[]).length)?`<div class="jrx"><button class="jrc" data-gift="box">내 칭호 모음 · ${earnedTitles().length}개 ›</button></div>`:""}</div>`;
 }
@@ -324,8 +356,8 @@ function giftAct(a){
   if(a==="open"){ const J=journey(); if(!J.pending) return;
     d.innerHTML=`<div class="db" style="text-align:center;padding:28px 20px"><p class="sub">${J.pending*7}일 연속 달성!</p><svg class="giftbox" viewBox="0 0 120 110" aria-hidden="true"><rect x="20" y="46" width="80" height="54" rx="6"/><rect x="14" y="32" width="92" height="20" rx="5"/><path d="M60 32v68M60 32q-16 -22 -26 -10q-6 12 26 10zM60 32q16 -22 26 -10q6 12 -26 10z"/></svg><div><button class="cta" data-gift="reveal" data-j="${J.pending}" style="max-width:220px;margin:14px auto 0">상자 열기</button></div></div>`;
     if(!d.open) d.showModal(); return; }
-  if(a==="reveal"){ const J=journey(), j=J.pending; if(!j) return; const gs=giftState(); gs.claimed[J.run+":"+j]=1; gs.items.push({j,n:j*7,title:giftTitle(j),at:Date.now()}); set("jp-gift",gs); addXp(100); addSeeds(70);
-    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했어요</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 씨앗 70개 · 칭호 모음에 보관돼요</p><button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋아요</button></div>`; return; }
+  if(a==="reveal"){ const J=journey(), j=J.pending; if(!j) return; const gs=giftState(); gs.claimed[J.run+":"+j]=1; gs.items.push({j,n:j*7,title:giftTitle(j),at:Date.now()}); set("jp-gift",gs); addXp(100); addSeeds(70); let gotFr=false; try{ const c=charState(); if(!c.owned.includes("fr_streak")){ c.owned.push("fr_streak"); saveChar(c); gotFr=true; } }catch(e){}
+    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했어요</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 씨앗 70개 · 칭호 모음에 보관돼요</p>${gotFr?`<p class="sub" style="margin:8px 0 0"><b>새 프레임 「7일 출석 불꽃」</b>도 받았어요!<br>상점의 프레임 탭에서 입혀 보세요</p>`:""}<button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋아요</button></div>`; return; }
   if(a==="box"){ const gs=giftState(), cur=repTitle();
     const cards=[...(gs.extra||[]).map(x=>({title:x.title,at:x.at,master:1})),...(gs.items||[]).slice().reverse().map(x=>({title:x.title,at:x.at,n:x.n}))];
     d.innerHTML=`<div class="dh"><h2 style="margin:0">내 칭호 모음</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db">
@@ -337,6 +369,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
+    frameStyle,frameFx,
   equip:()=>charState().equip||{},gift:{
     seeds:()=>charState().seeds||0,
     items:()=>{ const c=charState(); return ITEMS.filter(i=>!i.special&&c.owned.includes(i.id)).map(i=>({id:i.id,name:i.name,slot:i.slot,price:i.price})); },
@@ -442,6 +475,8 @@ ST.textContent=`.pstat{border:0!important;background:none!important;padding:0!im
 .spb{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:linear-gradient(90deg,#d9a63a,#e0746a);border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:middle}.shlock{font-size:12px;color:var(--sub);font-weight:700;padding:6px 10px}
 .shi{cursor:pointer}.shi.pv{background:var(--accent-soft);border-radius:12px}.shreset{background:none;border:0;font:inherit;font-size:inherit;color:var(--sub);text-decoration:underline;cursor:pointer;padding:0}
 .shp{width:52px;height:52px;flex:none;background:var(--chip);border-radius:12px;display:flex;align-items:center;justify-content:center}.shp svg{width:48px;height:auto}
+.frm{box-shadow:var(--fsh,none);border:3px solid transparent;border-radius:18px;background:var(--fbg,linear-gradient(160deg,var(--accent-soft),var(--chip))) padding-box,var(--fbr,linear-gradient(var(--line),var(--line))) border-box;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.shopfrm{width:224px;height:224px;border-radius:32px;border-width:4px}.shopfrm svg.big{width:100%;height:auto}.shpf{width:44px;height:44px;border-radius:12px;border-width:2.5px}.shpf svg{width:100%;height:auto}
 .shn{flex:1;display:flex;flex-direction:column}.shn small{color:var(--sub);font-size:12px}
 .ptools{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:10px}.ptools button{background:none;border:0;font:inherit;font-size:13px;color:var(--sub);text-decoration:underline;cursor:pointer}
 #shopDlg{border:0;border-radius:18px;padding:0;max-width:420px;width:calc(100% - 28px);max-height:88vh;overflow:auto;background:var(--card);color:var(--text)}#shopDlg::backdrop{background:rgba(0,0,0,.45)}

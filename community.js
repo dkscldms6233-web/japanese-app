@@ -2,7 +2,7 @@
  * - 주간 리그: 이번 주 경험치 순위(참여를 켠 사람만 이름·경험치·연속 출석일·참새 모습이 보여요)
  * - 함께 공부 중: 오늘 공부한 사람 수 / 지금 공부 중인 사람 수(리그 참가자 기준)
  * - 친구: 친구 코드로 추가하고(서로 추가하면 맞친구) 이번 주 경험치를 봐요
- * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막혀요
+ * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막혀요  ※ 현재 CHAT_ON=false 로 꺼져 있어요
  * - 응원: 정해진 이모티콘 10개만 보낼 수 있어요(자유 글 없음). 한 사람에게 하루 한 번
  * - 신고: 이상한 닉네임은 신고할 수 있어요
  * 저장 위치(Firestore): leagues/{주 시작일}/members/{uid}, codes/{코드}, cheers/{id}, reports/{id}
@@ -14,6 +14,9 @@ const $=id=>document.getElementById(id);
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const STICKERS=[["👍","최고예요"],["🔥","불타오르네"],["💪","힘내요"],["🎉","축하해요"],["👏","박수!"],["🌸","예뻐요"],["😊","반가워요"],["⭐","대단해요"],["🐥","같이 해요"],["💖","고마워요"]];
 const REWARD=[50,30,20];
+/* 1:1 자유 글 대화 스위치. 출시 전에는 꺼 둠 (치은 결정 2026-11-22). 다시 켜려면 true로 바꾸세요.
+   꺼져 있으면: 대화 버튼·대화 창·새 메시지 알림이 없어요. 리그·함께 공부·친구·이모티콘 응원·신고는 그대로예요. */
+const CHAT_ON=false;
 const lg=()=>A().LS.get("jp-league",{joined:false,code:"",claimed:{}});
 const saveLg=v=>A().LS.set("jp-league",v);
 const friends=()=>A().LS.get("jp-friends",[]);
@@ -97,7 +100,7 @@ async function startWatch(){
   watchers.push(db().collection("gifts").where("to","==",me).where("claimed","==",false).limit(30).onSnapshot(s=>{ const was=UN.gifts||0; UN.gifts=s.size; badge();
     if(wInit.gifts&&UN.gifts>was&&!(window.APP.view&&APP.view()==="community")){ const g=s.docs[0].data(); notify((g.fromName||"친구")+" 님이 선물을 보냈어요",g.kind==="seed"?"씨앗 "+g.amount+"개":(g.itemName||"아이템")); }
     wInit.gifts=true; },()=>{}));
-  mutual.forEach(f=>{
+  if(CHAT_ON) mutual.forEach(f=>{
     watchers.push(db().collection("chats").doc(pairId(f.uid)).collection("msgs").orderBy("at").limitToLast(1).onSnapshot(s=>{
       const m=s.docs[0]&&s.docs[0].data(); if(!m){ wInit[f.uid]=true; return; }
       const dlg=$("chatDlg"), open=dlg&&dlg.open&&dlg.dataset.o===f.uid;
@@ -117,9 +120,9 @@ let busy=false;
 function row(x,rank,me,isFr,mutual){
   ROWS[x.uid]=Object.assign({mutual:!!mutual,isFr:!!isFr},x);
   const mine=x.uid===(signedIn()?uid():"");
-  return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><button class="cmbw" data-bird="${x.uid}" aria-label="${E(x.name||"")}님의 참새 보기">${bird(x.eq)}</button>
+  return `<div class="cmr ${mine?"me":""}"><span class="cmk">${rank||""}</span><button class="cmbw frm" style="${window.PATH?PATH.frameStyle(x.eq):""}" data-bird="${x.uid}" aria-label="${E(x.name||"")}님의 참새 보기">${window.PATH?PATH.frameFx(x.eq):""}${bird(x.eq)}</button>
    <span class="cmn"><b>${E(x.name||"")}</b>${x.title?` <i class="cmtt ${x.title==="JLPT 정복자"?"gold":""}">${E(x.title)}</i>`:""}${isFr&&!mine?` <em>친구</em>`:""}<small>${x.none?"이번 주 기록 없음":(x.streak?x.streak+"일 연속":"")}</small></span><span class="cmx">${x.xp||0}<small>XP</small></span>
-   ${mine?"":`${isFr?(mutual?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<span class="cmwait">대기 중</span>`):""}${isDevOn()?`<button class="cmb2" data-gift="${x.uid}" data-n="${E(x.name||"")}">선물</button>`:""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
+   ${mine?"":`${isFr?(mutual?(CHAT_ON?`<button class="cmb2 chat ${UN.chats[x.uid]?"dotb":""}" data-chat="${x.uid}" data-n="${E(x.name||"")}">대화</button>`:`<button class="cmb2" data-frdel="${x.uid}" data-n="${E(x.name||"")}">친구 삭제</button>`):`<span class="cmwait">대기 중</span>`):""}${isDevOn()?`<button class="cmb2" data-gift="${x.uid}" data-n="${E(x.name||"")}">선물</button>`:""}<button class="cmb2" data-cheer="${x.uid}" data-n="${E(x.name||"")}">응원</button><button class="cmrep" data-rep="${x.uid}" aria-label="신고">신고</button>`}</div>`;
 }
 async function render(){
   const v=$("communityView"); if(!v||busy) return;
@@ -149,7 +152,7 @@ async function render(){
    <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
    <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><span class="cmfb"><button class="pill" data-cm="invite">앱 초대하기</button><button class="pill on" data-cm="addfriend">친구 추가</button></span></div>
    <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 「친구 추가」에서 친구 코드를 입력해 보세요.</p>`}</div>
-   <p class="sub" style="margin-top:6px">서로 친구로 추가하면 「대화」 버튼이 생겨요.</p>
+   <p class="sub" style="margin-top:6px">${CHAT_ON?"서로 친구로 추가하면 「대화」 버튼이 생겨요.":"서로 친구로 추가하면 이번 주 경험치를 보고 응원을 보낼 수 있어요."}</p>
    ${d.gifts&&d.gifts.length?`<h3 class="cmh3">받은 선물 <em class="cmnew">${d.gifts.length}</em></h3><div class="cml">${d.gifts.map(g=>`<div class="cmc cmg"><span><b>${E(g.fromName||"친구")}</b> 님이 ${g.kind==="seed"?"씨앗 "+(+g.amount||0)+"개":"「"+E(g.itemName||"아이템")+"」"}를 보냈어요<small>${new Date(g.at).toLocaleDateString("ko-KR")}</small></span><button class="pill on sm" data-claim="${E(g.id)}">받기</button></div>`).join("")}</div>`:""}
    <h3 class="cmh3">받은 응원${unread?` <em class="cmnew">새 ${unread}</em>`:""}</h3>
    <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 <span class="stkv">${E(c.sticker)}</span> 응원을 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
@@ -166,7 +169,7 @@ function birdDlg(u){
       const ch=ev.target.closest("[data-bcheer]"), ct=ev.target.closest("[data-bchat]"), gf=ev.target.closest("[data-bgift]");
       if(gf){ d.close(); giftDlg(gf.dataset.bgift,gf.dataset.n); } else if(ch){ d.close(); cheerDlg(ch.dataset.bcheer,ch.dataset.n); } else if(ct){ d.close(); chatDlg(ct.dataset.bchat,ct.dataset.n); } }); }
   const me=signedIn()&&u===uid();
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv">${bird(x.eq,"big")}<div class="bn">${x.title?"「"+E(x.title)+"」 · ":""}${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button>`:""}${isDevOn()?`<button class="pill" data-bgift="${x.uid}" data-n="${E(x.name||"")}">선물하기</button>`:""}</div>`}</div>`;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(x.name||"")}님의 참새</h2><button class="x" data-bclose aria-label="닫기">×</button></div><div class="birdv"><div class="frm bfrm" style="${window.PATH?PATH.frameStyle(x.eq):""}">${window.PATH?PATH.frameFx(x.eq):""}${bird(x.eq,"big")}</div><div class="bn">${x.title?"「"+E(x.title)+"」 · ":""}${x.streak?x.streak+"일 연속 · ":""}이번 주 ${x.xp||0} XP</div>${me?"":`<div class="qbtns" style="margin-top:12px"><button class="pill on" data-bcheer="${x.uid}" data-n="${E(x.name||"")}">응원 보내기</button>${CHAT_ON&&x.isFr&&x.mutual?`<button class="pill" data-bchat="${x.uid}" data-n="${E(x.name||"")}">대화하기</button>`:""}${isDevOn()?`<button class="pill" data-bgift="${x.uid}" data-n="${E(x.name||"")}">선물하기</button>`:""}</div>`}</div>`;
   if(!d.open) d.showModal();
 }
 /* ---------- 응원 · 신고 · 친구 추가 ---------- */
@@ -199,7 +202,7 @@ function addDlg(){
       if(ev.target.closest("[data-fcopy]")){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } });
     d.addEventListener("submit",async ev=>{ ev.preventDefault(); const code=new FormData(ev.target).get("c"); await addFriend(code); d.close(); }); }
   d.innerHTML=`<div class="dh"><h2 style="margin:0">친구 추가</h2><button class="x" data-fclose aria-label="닫기">×</button></div><div class="db">
-   <p class="sub">친구의 6자리 코드를 입력하세요. 친구도 내 코드를 입력하면 서로 대화할 수 있어요.</p>
+   <p class="sub">친구의 6자리 코드를 입력하세요. 친구도 내 코드를 입력하면 ${CHAT_ON?"서로 대화할 수 있어요.":"서로 응원을 주고받을 수 있어요."}</p>
    <form class="cmadd"><input name="c" maxlength="6" placeholder="친구 코드 6자리" autocomplete="off" autocapitalize="characters" autofocus><button class="pill on" type="submit">추가</button></form>
    <div class="cmcode"><span>내 친구 코드 <b>${E(lg().code)}</b></span><button class="pill sm" data-fcopy="1">복사</button></div></div>`;
   if(!d.open) d.showModal();
@@ -207,6 +210,7 @@ function addDlg(){
 /* ---------- 1:1 대화 (맞친구끼리만) ---------- */
 let chatUnsub=null;
 function chatDlg(other,name){
+  if(!CHAT_ON) return;
   let d=$("chatDlg"); if(!d){ d=document.createElement("dialog"); d.id="chatDlg"; document.body.appendChild(d);
     d.addEventListener("close",()=>{ if(chatUnsub){ chatUnsub(); chatUnsub=null; } });
     d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-chclose]")){ d.close(); return; }
@@ -261,7 +265,8 @@ function giftDlg(to,name){
 }
 document.addEventListener("click",async e=>{
   const v=$("communityView"); if(!v||!v.contains(e.target)) return;
-  const bd=e.target.closest("[data-bird]"), cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]"), gf=e.target.closest("[data-gift]"), cl=e.target.closest("[data-claim]");
+  const bd=e.target.closest("[data-bird]"), cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]"), gf=e.target.closest("[data-gift]"), cl=e.target.closest("[data-claim]"), fd=e.target.closest("[data-frdel]");
+  if(fd){ if(!confirm("정말 「"+(fd.dataset.n||"이 친구")+"」님을 친구에서 삭제할까요?\n다시 서로 추가해야 친구가 돼요.")) return; const o=fd.dataset.frdel; try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(err){} saveFr(friends().filter(f=>f.uid!==o)); wKey=""; startWatch(); render(); return; }
   if(bd){ birdDlg(bd.dataset.bird); return; }
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
@@ -286,7 +291,7 @@ ST.textContent=`.cm{max-width:640px;margin:0 auto;padding-bottom:20px}.cm h2{mar
 .cml{border-top:1px solid var(--line)}.cml>.sub{padding:12px 2px}
 .cmr{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line)}.cmr.me{background:var(--accent-soft);border-radius:10px;padding-left:8px;padding-right:8px}
 .cmk{width:22px;text-align:center;font-weight:800;color:var(--sub);font-size:14px;flex:none}
-.cmbw{width:48px;height:48px;flex:none;border:0;background:none;padding:0;cursor:pointer}.birdv{text-align:center;padding:6px 16px 18px}.birdv .big{width:230px;height:auto}.birdv .bn{font-size:12px;color:var(--sub)}.cmbw svg{width:100%;height:100%;display:block}
+.cmbw{width:48px;height:48px;flex:none;border:0;background:none;padding:0;cursor:pointer}.birdv{text-align:center;padding:6px 16px 18px}.birdv .bfrm{width:220px;height:220px;margin:0 auto 10px;border-radius:32px;border-width:4px}.birdv .bfrm .big{width:100%;height:auto}.cmbw.frm{border-radius:14px;border-width:2px}.birdv .bn{font-size:12px;color:var(--sub)}.cmbw svg{width:100%;height:100%;display:block}
 .cmn{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}.cmn b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cmn small{color:var(--sub);font-size:11px}.cmn em{font-style:normal;font-size:10px;font-weight:800;color:var(--blue-dk);background:var(--blue-soft);border-radius:999px;padding:1px 6px;margin-left:4px}
 .cmx{font-weight:800;font-size:15px;text-align:right}.cmx small{font-size:10px;color:var(--sub);margin-left:2px}
 .cmb2{border:1px solid var(--line);background:none;border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:4px 10px;color:var(--accent-text);cursor:pointer}
