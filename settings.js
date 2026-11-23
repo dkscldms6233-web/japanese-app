@@ -75,7 +75,7 @@ function inqDlg(){ let d=$("inqDlg"); if(!d){ d=document.createElement("dialog")
       if(!ok) throw 0; A().toast("문의를 보냈어요. 고마워요"); d.close(); }
     catch(e){ err.textContent="보내지 못했어요. 하루에 3번까지 보낼 수 있고, 잠시 뒤 다시 해 주세요"; btn.disabled=false; } }); }
   return d; }
-function inquiry(){
+function inquiry(pre){
   const d=inqDlg(), p=A().curProfile(), c=A().cloud;
   const ok=p&&p.cloud&&c&&c.ok&&c.auth.currentUser;
   d.innerHTML=`<div class="dh"><h2 style="margin:0">문의하기</h2><button class="x" data-iqx aria-label="닫기">×</button></div><div class="db iqdb">
@@ -87,6 +87,7 @@ function inquiry(){
    :`<p class="sub" style="margin:8px 0 14px">문의는 로그인한 뒤에 보낼 수 있어요.</p><button type="button" class="cta" data-iqlogin>로그인</button>`}
   </div>`;
   if(!d.open) d.showModal();
+  if(pre&&ok&&$("iqText")){ $("iqKind").value=pre.kind||"bug"; const t=$("iqText"); t.value=String(pre.text||"").slice(0,450); t.focus(); t.setSelectionRange(t.value.length,t.value.length); }
 }
 function addBtn(){ const tools=document.querySelector(".tools"); if(!tools||$("setBtn")) return;
   const b=document.createElement("button"); b.id="setBtn"; b.type="button"; b.className="pill sm"; b.setAttribute("aria-label","설정"); b.title="설정"; b.innerHTML=A().ic("gear"); b.addEventListener("click",render); tools.appendChild(b); }
