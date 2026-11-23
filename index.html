@@ -965,7 +965,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
-<link rel="stylesheet" href="design-v2.css?v=94">
+<link rel="stylesheet" href="design-v2.css?v=96">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=4"></script>
@@ -1812,18 +1812,22 @@ function examSetup(){
 const GINK="#3b342f";
 const gStar=(x,y,r,f="#fff")=>`<path d="M${x} ${y-r}L${x+r*.28} ${y-r*.28}L${x+r} ${y}L${x+r*.28} ${y+r*.28}L${x} ${y+r}L${x-r*.28} ${y+r*.28}L${x-r} ${y}L${x-r*.28} ${y-r*.28}Z" fill="${f}" stroke="${GINK}" stroke-width="1.6" stroke-linejoin="round"/>`;
 const gTile=(x,y,w,h,fill,txt,fs,tc="#3b342f")=>`<rect x="${x+1.6}" y="${y+2.4}" width="${w}" height="${h}" rx="6" fill="${GINK}" opacity=".22"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${fill}" stroke="${GINK}" stroke-width="2.6"/>${txt?`<text x="${x+w/2}" y="${y+h/2+fs*.36}" font-size="${fs}" font-weight="800" text-anchor="middle" fill="${tc}">${txt}</text>`:""}`;
+/* 게임 홈 카드 그림(파스텔): 흰 글자 타일 + 부드러운 색 */
+const pF='font-family="YuKyokasho,Hiragino Maru Gothic ProN,sans-serif" font-weight="700"';
+const pT=(x,y,w,h,ch,fill,tc,r=9,fs=26,rot=0)=>`<g transform="rotate(${rot} ${x+w/2} ${y+h/2})"><rect x="${x}" y="${y+2.5}" width="${w}" height="${h}" rx="${r}" fill="#000" opacity=".12"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}"/><text x="${x+w/2}" y="${y+h/2+fs*.34}" text-anchor="middle" font-size="${fs}" fill="${tc}" ${pF}>${ch}</text></g>`;
+const pS=(x,y,c,k=1)=>`<path transform="translate(${x} ${y}) scale(${k})" d="M0 -8l2.2 5.8 5.8 2.2-5.8 2.2L0 8l-2.2-5.8-5.8-2.2 5.8-2.2z" fill="${c}"/>`;
 const GART={
- match:`<svg viewBox="0 0 120 80" aria-hidden="true"><g transform="rotate(-9 34 42)">${gTile(11,12,46,56,"#fffdf6","犬",30)}</g><g transform="rotate(9 86 42)">${gTile(63,12,46,56,"#ffe9ad","いぬ",20)}</g><circle cx="60" cy="67" r="10" fill="#e9573f" stroke="${GINK}" stroke-width="2.6"/><path d="M55 67.5l3.6 3.6 6.6-7.2" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${gStar(12,10,6)}${gStar(110,12,5)}${gStar(104,72,4)}</svg>`,
- wordle:`<svg viewBox="0 0 120 80" aria-hidden="true">${[["し","#9a9183"],["く","#e8b83a"],["ら","#9a9183"]].map((t,i)=>gTile(19+i*29,7,24,25,t[1],t[0],16,"#fff")).join("")}${[["さ"],["く"],["ら"]].map((t,i)=>gTile(19+i*29,38,24,25,"#4f9d69",t[0],16,"#fff")).join("")}${[0,1,2,3,4,5].map(i=>`<circle cx="${33+i*11}" cy="72" r="3.2" fill="${i<2?"#3b342f":"none"}" stroke="${GINK}" stroke-width="1.8"/>`).join("")}${gStar(108,16,6,"#ffe9ad")}</svg>`,
- shiri:`<svg viewBox="0 0 120 80" aria-hidden="true">${[[5,6,"りんご","#fffdf6"],[63,30,"ごりら","#ffe9ad"],[5,54,"らっぱ","#fffdf6"]].map(([x,y,t,f])=>`<rect x="${x+1.6}" y="${y+2.4}" width="52" height="20" rx="10" fill="${GINK}" opacity=".22"/><rect x="${x}" y="${y}" width="52" height="20" rx="10" fill="${f}" stroke="${GINK}" stroke-width="2.6"/><text x="${x+26}" y="${y+14.5}" font-size="12" font-weight="800" text-anchor="middle" fill="${GINK}">${t}</text>`).join("")}<path d="M36 28q2 12 24 12" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M54 36l7 4-6 5" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 52q-2 12-24 12" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M74 60l-7 4 6 5" stroke="#e9573f" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${gStar(108,10,5)}</svg>`,
- fall:`<svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="${GINK}" stroke-width="2" stroke-linecap="round" opacity=".45"><path d="M30 2v8M44 0v6M82 6v8M96 2v6"/></g><g transform="rotate(-8 36 24)">${gTile(18,10,36,26,"#fffdf6","雨",18)}</g><g transform="rotate(7 86 38)">${gTile(68,24,36,26,"#ffe9ad","花",18)}</g><path d="M36 42v10M30 49l6 7 6-7" stroke="#e9573f" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="0" y="62" width="120" height="18" fill="#7fbf86" stroke="${GINK}" stroke-width="2.6"/></svg>`
+ match:`<svg viewBox="0 0 160 104" aria-hidden="true">${pT(26,24,50,58,"犬","#fff","#3d8f66",10,34,-8)}${pT(84,28,50,58,"いぬ","#fff","#3d8f66",10,22,7)}<circle cx="80" cy="82" r="11" fill="#22b573" stroke="#fff" stroke-width="3"/><path d="M75 82l3.5 3.5 6-7" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${pS(18,20,"#22b573",.9)}${pS(144,24,"#22b573",.7)}</svg>`,
+ wordle:`<svg viewBox="0 0 160 104" aria-hidden="true">${[["し","#9a9a9f"],["く","#e3b341"],["ら","#9a9a9f"]].map(([ch,f],n)=>pT(33+n*34,12,30,30,ch,f,"#fff",8,20)).join("")}${["さ","く","ら"].map((ch,n)=>pT(33+n*34,48,30,30,ch,"#5aaa6a","#fff",8,20)).join("")}${[0,1,2,3,4].map(n=>`<circle cx="${52+n*14}" cy="94" r="3.5" fill="${n<2?"#c68a00":"#fff"}" ${n<2?"":'stroke="#c68a00" stroke-width="1.6" opacity=".6"'}/>`).join("")}</svg>`,
+ shiri:`<svg viewBox="0 0 120 80" aria-hidden="true">${[[5,6,"りんご","#ffffff"],[63,30,"ごりら","#ffe9ad"],[5,54,"らっぱ","#ffffff"]].map(([x,y,t,f])=>`<rect x="${x}" y="${y+2.5}" width="52" height="20" rx="10" fill="#4646e0" opacity=".16"/><rect x="${x}" y="${y}" width="52" height="20" rx="10" fill="${f}"/><text x="${x+26}" y="${y+14.5}" font-size="12" font-weight="800" text-anchor="middle" fill="#4646e0">${t}</text>`).join("")}<path d="M36 28q2 12 24 12" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M54 36l7 4-6 5" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 52q-2 12-24 12" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M74 60l-7 4 6 5" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${pS(108,12,"#7c5cff",.8)}</svg>`,
+ fall:`<svg viewBox="0 0 160 104" aria-hidden="true">${[[34,6],[46,0],[126,4]].map(([x,y])=>`<path d="M${x} ${y+8}v24" stroke="#e0507a" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>`).join("")}${pT(14,14,44,34,"ねこ","#fff","#e0507a",10,18,-6)}${pT(96,8,44,34,"さくら","#fff","#4646e0",10,15,7)}<rect x="10" y="84" width="140" height="10" rx="5" fill="#e0507a" opacity=".3"/>${pT(58,52,44,34,"海","#fff","#e0507a",10,24,2)}</svg>`
 };
 const GBGS=[["pcloud","구름별"],["sakura","벚꽃"],["night","밤하늘"]];
 const gbg=()=>GBGS.some(x=>x[0]===prefs.gbg)?prefs.gbg:"pcloud";
 document.documentElement.dataset.gbg=gbg();
 function gameSetup(){
-  const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">내 최고 ${v}점</span>`:""; };
-  const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">내 최고 ${v}점</span>`; };
+  const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">최고 기록 ${v}점</span>`:""; };
+  const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">최고 기록 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>게임</h2></div>
    ${lvRow(jl,"급수",true)}
@@ -1963,7 +1967,7 @@ function renderResult(){
 let G=null, gTimer=null, gFlash=null;
 const getBest = k => (LS.get("jp-best",{}))[k];
 function setBest(k,v){ const b=LS.get("jp-best",{}); b[k]=v; LS.set("jp-best",b); }
-function bestTxt(k){ const v=getBest(k); return v==null?"":`<br><b>내 최고 기록: ${v}점</b>`; }
+function bestTxt(k){ const v=getBest(k); return v==null?"":`<br><b>최고 기록: ${v}점</b>`; }
 /* 시간이 다 되면 "삐빅! 게임 종료!" 연출을 잠깐 보여 주고 결과 화면으로 가요 */
 function gOver(fn){
   if(!G||G.over) return; G.over=true; const g=G;

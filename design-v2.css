@@ -688,3 +688,16 @@ html[data-gbg=night] body:has(#quizView .gbox) #quizView .gbox{box-shadow:0 7px 
 .h2hero .h2lvpop div button{border:1.5px solid #dfe1f7;background:#fff;color:#4646e0;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
 .h2hero .h2lvpop div button.on{background:#5b5bf0;border-color:#5b5bf0;color:#fff}
 .h2hero .h2lvpop small{display:block;margin-top:8px;font-size:11.5px;color:#7b7fa3}
+/* 게임 홈 카드: 파스텔 */
+html body .gcards{display:grid!important;grid-template-columns:1fr 1fr;gap:12px!important;border-top:0!important}
+html body .gc{display:flex!important;flex-direction:column;align-items:stretch!important;gap:0!important;padding:0!important;border:1px solid var(--line)!important;border-bottom-width:1px!important;border-radius:22px!important;overflow:hidden;background:var(--card)!important;box-shadow:0 6px 18px rgba(91,91,240,.14)!important;text-align:left;transition:transform .12s}
+html body .gc:active{transform:scale(.97)!important;border-bottom-width:1px!important}
+html body .gc .gi{display:grid!important;place-items:center;width:100%!important;height:auto!important;border-radius:0!important;padding:10px 6px 8px;box-sizing:border-box;border-bottom:0!important}
+html body .gc .gi svg{width:100%!important;height:auto!important;max-height:108px}
+html body .g-match .gi{background:linear-gradient(160deg,#e6f6ee,#cfeedd)}
+html body .g-wordle .gi{background:linear-gradient(160deg,#fff3d6,#ffe3a6)}
+html body .g-shiri .gi{background:linear-gradient(160deg,#e8e9ff,#d3d5ff)}
+html body .g-fall .gi{background:linear-gradient(160deg,#ffe6ec,#ffd0dc)}
+html body .gc .gt{padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+html body .gc .gt b{font-size:16px;font-weight:800}
+html body .gc .best{margin-top:0;font-size:12px;font-weight:700;color:var(--accent-text,#4646e0);background:var(--accent-soft,#eef0ff);border-radius:999px;padding:3px 10px}
