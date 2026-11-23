@@ -959,13 +959,13 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
-<script src="kana.js?v=17"></script>
+<script src="kana.js?v=33"></script>
 <script src="games2.js?v=30"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
-<link rel="stylesheet" href="design-v2.css?v=93">
+<link rel="stylesheet" href="design-v2.css?v=94">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=4"></script>
@@ -2838,6 +2838,7 @@ function quotePick(off){
   return Q[(((dn+off)%Q.length)+Q.length)%Q.length];
 }
 function goalN(){ return [10,20,30].includes(prefs.goal)?prefs.goal:10; }
+let lvPop=false;
 function renderHome(){
   if(window.PATH&&PATH.page()){ $("homeView").innerHTML=PATH.pageHtml(); return; }
   const my=myLv(), qt=quotePick(0), p=qt?null:todayPick(0), tl=log[today()]||{n:0,c:0}, nw=Object.keys(wrong).length, st=streakDays(), h=new Date().getHours(), g=goalN();
@@ -2863,7 +2864,7 @@ function renderHome(){
    <div class="h2top"><div class="h2bird">${window.PATH?PATH.birdHtml():""}${window.PATH?PATH.statusHtml():""}</div><div class="h2hello"><h2>${nick?`<span class="h2nm">${E(nick)}님</span>`:""}<span class="h2gm">${greet}</span></h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div><div class="h2flame ${st?"on":""}" title="${st}일 연속 학습" aria-label="${st}일 연속 학습"><svg class="fl3" viewBox="0 0 48 56" aria-hidden="true"><defs><linearGradient id="flg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffc83a"/></linearGradient></defs><circle cx="24" cy="30" r="22" fill="url(#flg)"/><path d="M24 12c1 6 9 10 9 20a9 9 0 0 1-18 0c0-4 2-6 4-8 0 2 1 3 3 3-1-5-1-10 2-15z" fill="#fff"/></svg><b class="fln">${st}</b></div></div>
    ${window.DEV?DEV.bannerHtml():""}
    ${beginnerHtml()}
-   <section class="h2hero"><div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
+   <section class="h2hero"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있어요</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
    ${window.PATH?`<div class="h2card h2act">${PATH.continueHtml()+PATH.reviewHtml()}</div>`:""}
    ${jr}
@@ -2873,16 +2874,16 @@ function renderHome(){
 /* 완전 처음 시작한 사람(가입 때 "히라가나부터")에게 홈 맨 위에 보여 주는 차근차근 안내 */
 function beginnerHtml(){
   if(!prefs.beginner) return "";
-  const d=(LS.get("jp-kana",{done:{}}).done)||{}, cnt=ch=>Object.keys(d).filter(k=>k[0]===ch&&d[k]).length, h=Math.min(19,cnt("h")), k=Math.min(19,cnt("k"));
-  if(h>=19&&k>=19){ return `<section class="h2begin done"><b>🎉 글자 배우기를 모두 마쳤어요!</b><p>이제 N5 단어와 퀴즈로 이어 가요.</p><button type="button" class="pill sm" data-bgn="hide">이 안내 닫기</button></section>`; }
+  const d=(LS.get("jp-kana",{done:{}}).done)||{}, cnt=ch=>Object.keys(d).filter(k=>k[0]===ch&&d[k]&&+k.slice(1)<15).length, h=Math.min(15,cnt("h")), k=Math.min(15,cnt("k"));
+  if(h>=15&&k>=15){ return `<section class="h2begin done"><b>🎉 글자 배우기를 모두 마쳤어요!</b><p>이제 N5 단어와 퀴즈로 이어 가요.</p><button type="button" class="pill sm" data-bgn="hide">이 안내 닫기</button></section>`; }
   const steps=[
-    {t:"히라가나 익히기",s:"あ い う え お … 글자 읽기부터",p:h+" / 19",done:h>=19,go:'data-ppage="basic"'},
-    {t:"가타카나 익히기",s:"ア イ ウ エ オ … 외래어에 많이 써요",p:k+" / 19",done:k>=19,go:'data-ppage="basic"'},
+    {t:"히라가나 익히기",s:"あ い う え お … 글자 읽기부터",p:h+" / 15",done:h>=15,go:'data-kana="learn" data-k="h"'},
+    {t:"가타카나 익히기",s:"ア イ ウ エ オ … 외래어에 많이 써요",p:k+" / 15",done:k>=15,go:'data-kana="learn" data-k="k"'},
     {t:"쉬운 N5 단어 시작",s:"하루 몇 개씩, 예문과 함께",p:"",done:false,go:'data-ppage="path"'},
     {t:"퀴즈로 확인하기",s:"배운 걸 가볍게 풀어 봐요",p:"",done:false,go:'data-go="quiz"'}];
   const now=steps.findIndex(x=>!x.done);
   return `<section class="h2begin"><div class="hbh"><b>일본어 첫걸음</b><small>이 순서대로 한 칸씩만 해 보세요. 어렵지 않아요!</small></div>
-   <ol>${steps.map((x,i)=>`<li class="${x.done?"dn":i===now?"now":""}"><i>${x.done?"✓":i+1}</i><span><b>${x.t}</b><small>${x.s}${x.p?" · "+x.p:""}</small></span>${i===now?`<button type="button" class="pill on sm" ${x.go}>시작</button>`:""}</li>`).join("")}</ol>
+   <ol>${steps.map((x,i)=>`<li class="${x.done?"dn":i===now?"now":""}"><i>${x.done?"✓":i+1}</i><span><b>${x.t}</b><small>${x.s}${x.p?" · "+x.p:""}</small></span>${i===now?`<button type="button" class="pill on sm" ${x.go}>${(()=>{ const c0=LS.get("jp-kana",{}).cur, cu=c0&&typeof c0.k!=="number"?c0[i===0?"h":"k"]:null; return cu&&(cu.c>0||cu.i>0)?"이어서":"시작"; })()}</button>`:""}</li>`).join("")}</ol>
    <button type="button" class="hbx" data-bgn="hide">나중에 볼게요</button></section>`;
 }
 function renderToday(){
@@ -3034,6 +3035,8 @@ $("homeView").addEventListener("click",e=>{
     } else { setView("quiz"); quizFrom="home"; startQuiz("meaning",null,goalN()); }
     return;
   }
+  if(e.target.closest("[data-lvpop]")){ lvPop=!lvPop; renderHome(); return; }
+  if(lvPop&&!e.target.closest(".h2lvpop")&&!e.target.closest("[data-mylv]")){ lvPop=false; renderHome(); }
   const b=e.target.closest("[data-mylv]"); if(!b) return;
   const l=b.dataset.mylv; let cur=myLv().slice();
   if(l==="전체") cur=[]; else cur = cur.includes(l) ? cur.filter(x=>x!==l) : cur.concat(l);
@@ -3044,9 +3047,9 @@ $("homeView").addEventListener("click",e=>{
 
 /* ---------- 첫 실행 안내 (3단계) ---------- */
 const needOnb = () => !prefs.onboarded && !Object.keys(log).length && !(prefs.myLevels&&prefs.myLevels.length);
-const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아요",["N5","N4"],"N5~N4"],["중급이에요",["N3","N2"],"N3~N2"],["상급이에요",["N1"],"N1"],["잘 모르겠어요",[],"전체"]];
+const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아요",["N5","N4"],"N5~N4"],["중급이에요",["N3","N2"],"N3~N2"],["상급이에요",["N1"],"N1"],["잘 모르겠어요",["N5"],"N5부터"]];
 const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
-let obStep=0, obLv=null, obKana=false, obAuth="main", obMsg="", obFrom=false;
+let obStep=0, obLv=null, obKana=false, obBeg=false, obAuth="main", obMsg="", obFrom=false;
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
@@ -3074,7 +3077,7 @@ function renderOnb(){
   o.scrollTop=0;
 }
 const authErr=e=>{ const c=(e&&e.code)||""; return /email-already/.test(c)?"이미 가입된 이메일이에요. 로그인해 주세요.":/invalid-email/.test(c)?"이메일 형식이 올바르지 않아요.":/weak-password/.test(c)?"비밀번호는 6자 이상으로 해 주세요.":/user-not-found|wrong-password|invalid-credential|invalid-login/.test(c)?"이메일 또는 비밀번호가 맞지 않아요.":/network/.test(c)?"네트워크를 확인해 주세요.":/too-many/.test(c)?"시도가 너무 많아요. 잠시 후 다시 해 주세요.":"처리하지 못했어요. ("+c+")"; };
-document.addEventListener("click",e=>{ const b=e.target.closest("[data-bgn]"); if(!b) return; if(b.dataset.bgn==="hide"){ prefs.beginner=false; LS.set("jp-prefs",prefs); renderHome(); } });
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-bgn]"); if(!b) return; if(b.dataset.bgn==="hide"){ prefs.beginner=false; LS.set("jp-prefs",prefs); renderHome(); toast("'일본어 글자' 화면 맨 위에서 다시 켤 수 있어요"); } });
 function openOnb(){ obStep=RAW.get("jp-auth-done",0)?0:"auth"; obAuth="main"; obMsg=""; renderOnb(); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-ob]"); if(!b) return;
@@ -3108,11 +3111,11 @@ document.addEventListener("click",e=>{
   if(a==="skip"){ closeOnb(); return; }
   if(a==="next"){ obStep=1; renderOnb(); return; }
   if(a==="prev"){ obStep=Math.max(0,obStep-1); renderOnb(); return; }
-  if(a==="lv"){ obLv=OB_LV[+b.dataset.i][1]; obKana=+b.dataset.i===0; obStep=2; renderOnb(); return; }
+  if(a==="lv"){ obLv=OB_LV[+b.dataset.i][1]; obKana=+b.dataset.i===0; obBeg=+b.dataset.i===0||+b.dataset.i===4; obStep=2; renderOnb(); return; }
   if(a==="goal"){
-    prefs.goal=+b.dataset.n; prefs.showKana=!!obKana; prefs.beginner=!!obKana; prefs.myLevels=obLv||[]; delete prefs.myLevel;
+    prefs.goal=+b.dataset.n; prefs.showKana=!!obKana; prefs.beginner=!!obBeg; prefs.myLevels=obLv||[]; delete prefs.myLevel;
     lvSel=new Set(prefs.myLevels); level="전체"; todayOff=0; renderLevels();
-    closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
+    closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
   }
 });
 window.APP={view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
@@ -3183,7 +3186,7 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=123"></script>
+<script src="path.js?v=125"></script>
 <script src="community.js?v=19"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=6"></script>

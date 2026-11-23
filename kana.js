@@ -55,6 +55,7 @@ const LESSONS=[
   ktip:"작은 ッ는 뒤 소리를 짧게 막는 받침이에요: サッカー(삭카-), ネット(넷토). 장음은 ー로 써요: コーヒー(코-히-), ケーキ(케-키)."}
 ];
 LESSONS.forEach((L,i)=>L.i=i);
+const CORE=15;   /* 기본 글자(10)+탁음·반탁음(5)까지가 필수 코스. 요음·작은 っ·장음은 선택(더 배우기)이에요 */
 /* 단어(표기, 뜻). 어느 레슨에서 읽을 수 있는지는 글자로 자동 계산해요 */
 const WH=[["あい","사랑"],["いえ","집"],["うえ","위"],["あお","파랑"],["あう","만나다"],["いい","좋다"],["おおい","많다"],
 ["かお","얼굴"],["いけ","연못"],["くち","입"],["こえ","목소리"],["あき","가을"],["えき","역"],["かく","쓰다"],["きく","듣다"],["かい","조개"],["ここ","여기"],["あかい","빨갛다"],["いか","오징어"],
@@ -124,6 +125,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 0 6px;text-align:center;cursor:pointer;font:inherit;color:var(--text);min-height:62px}
 .kc b{display:block;font-size:26px;line-height:1.2}.kc small{display:block;font-size:11px;color:var(--sub)}.kc.empty{visibility:hidden;border:0}
 .kc:active{background:var(--accent-soft)}
+.kc small.bs{font-size:11px;color:var(--accent);font-weight:700}
 .kdet{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:10px 0;padding:0 12px}.kdet summary{padding:12px 2px;font-weight:700;cursor:pointer}
 .kcta{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--accent);color:#fff;border:0;border-radius:18px;padding:14px 16px;margin:14px 0 4px;font:inherit;cursor:pointer}
 .kcta .kg{font-size:34px;line-height:1}.kcta b{display:block;font-size:17px}.kcta small{opacity:.85}
@@ -150,6 +152,22 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kwbar button{border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 2px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;line-height:1.3}
 .kwbar button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .kwnav{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kchead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px}
+.kstars{display:flex;gap:2px;font-size:22px;line-height:1}.kstars i{font-style:normal;color:var(--line)}.kstars i.on{color:#ffb800;text-shadow:0 1px 0 rgba(180,110,0,.35)}
+.kbird{display:flex;align-items:center;gap:8px;margin:2px 0 6px}.kbird img{width:54px;height:auto;flex:none}
+.kbub{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:9px 14px;font-weight:700;font-size:15px;line-height:1.35}
+.kbub:before{content:"";position:absolute;left:-7px;top:50%;margin-top:-6px;width:12px;height:12px;background:var(--card);border-left:1.5px solid var(--line);border-bottom:1.5px solid var(--line);transform:rotate(45deg)}
+.kcard{text-align:center;background:linear-gradient(150deg,var(--k1),var(--k2));border-radius:30px;padding:14px 16px 14px;margin:4px 0 12px;box-shadow:0 10px 24px color-mix(in srgb,var(--k2) 45%,transparent);color:#fff}
+.kcard .kch{display:block;margin:0 auto;border:0;background:rgba(255,255,255,.2);color:#fff;font:inherit;font-size:92px;line-height:1.15;font-weight:700;width:170px;border-radius:44px;padding:4px 0 6px;text-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer;animation:kpop .5s ease both}
+.kcard .kch:active{transform:scale(.92)}
+@keyframes kpop{0%{transform:scale(.6) rotate(-8deg);opacity:0}70%{transform:scale(1.08) rotate(2deg)}100%{transform:none;opacity:1}}
+.kcard .kro{font-size:34px;font-weight:800;margin-top:6px;text-shadow:0 2px 0 rgba(0,0,0,.15)}.kcard .kro small{font-size:17px;font-weight:700;opacity:.9;margin-left:4px}
+.kcard .kexl{margin-top:10px;font-size:12px;font-weight:800;opacity:.92;letter-spacing:.02em}
+.kcard .kex{display:inline-flex;align-items:center;gap:10px;margin-top:4px;background:#fff;color:#2b2f55;border:0;font:inherit;border-radius:18px;padding:6px 18px 6px 10px;cursor:pointer;text-align:left}
+.kcard .kex img{display:block;flex:none}.kcard .kexw b{font-size:22px;margin-right:8px}.kcard .kexw span{font-size:15px;color:#6b6f93;font-weight:700}
+.kcard .kex:active{transform:scale(.97)}
+.kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.9}
+html body .kana .kcb .kgo{background:linear-gradient(150deg,var(--k1),var(--k2))!important;color:#fff!important;box-shadow:none!important;border-bottom-color:color-mix(in srgb,var(--k2) 60%,#000)!important}
 @media(max-width:380px){.klesson .kp{font-size:16px}.kc b{font-size:23px}}`;
 document.head.appendChild(ST);
 let K={tab:"h"};
@@ -160,24 +178,32 @@ function chartHTML(k){
   const th=["あ단","い단","う단","え단","お단"].map(x=>`<span class="hd">${k?toK(x):x}</span>`).join("");
   return `<div class="kchart"><span></span>${th}${rows.map(([l,a])=>`<span class="rl">${k?toK(l):l}</span>${a.map(cellBtn).join("")}`).join("")}</div>`;
 }
-function nextLesson(k){ const d=done().done; return LESSONS.find(L=>!d[key(L,k)]); }
+const curOf=(d,k)=>{ const c=d.cur; return c&&typeof c.k!=="number"?c[k?"k":"h"]:null; };
+function nextLesson(k){ const d=done().done; return LESSONS.slice(0,CORE).find(L=>!d[key(L,k)]); }
 function renderHome(){
-  inq(false); const k=K.tab==="k", d=done().done, doneN=LESSONS.filter(L=>d[key(L,k)]).length, nx=nextLesson(k);
-  let groups=""; let lastG="";
-  LESSONS.forEach(L=>{ if(L.g!==lastG){ lastG=L.g; const gl=LESSONS.filter(x=>x.g===L.g), gd=gl.filter(x=>d[key(x,k)]).length; groups+=`<div class="kgh"><span>${L.g}</span><span>${gd} / ${gl.length}</span></div>`; }
+  inq(false); const k=K.tab==="k", T0=s=>k?toK(s):s, d=done().done, doneN=LESSONS.slice(0,CORE).filter(L=>d[key(L,k)]).length, nx=nextLesson(k);
+  let groups="", opt="", lastG="";
+  LESSONS.forEach(L=>{ const isOpt=L.i>=CORE; let head="";
+    if([11,12,13,14,16,17].includes(L.i)) return;
+    if(L.i===10||L.i===15){ const ids=L.i===10?[10,11,12,13,14]:[15,16,17], ok=ids.every(i=>d[key(LESSONS[i],k)]);
+      if(L.i===10&&L.g!==lastG){ lastG=L.g; const gd=ids.filter(i=>d[key(LESSONS[i],k)]).length; head=`<div class="kgh"><span>${L.g}</span><span>${gd} / ${ids.length}</span></div>`; }
+      const row=`${head}<button class="klesson ${ok?"ok":""}" data-kana="${L.i===10?"dk":"yo"}"><span class="kn">${ok?"✓":L.i+1}</span><span class="kt"><b>${L.i===10?"탁음 · 반탁음 한눈에 보기":"요음 한눈에 보기"}</b><small>${L.i===10?"か→が, は→ば·ぱ 규칙":"큰 글자 + 작은 ゃ ゅ ょ"}</small></span><span class="kp">${L.i===10?T0("が ざ だ ば ぱ"):T0("きゃ しゅ ちょ")}</span></button>`;
+      if(isOpt) opt+=row; else groups+=row; return; }
+    if(!isOpt&&L.g!==lastG){ lastG=L.g; const gl=LESSONS.slice(0,CORE).filter(x=>x.g===L.g), gd=gl.filter(x=>d[key(x,k)]).length; head=`<div class="kgh"><span>${L.g}</span><span>${gd} / ${gl.length}</span></div>`; }
     const ch=lessonChars(L,k).slice(0,5).map(c=>c[0]).join(" ")||(k?"ッ ー":"っ ー");
-    groups+=`<button class="klesson ${d[key(L,k)]?"ok":""}" data-kana="lesson" data-i="${L.i}"><span class="kn">${d[key(L,k)]?"✓":L.i+1}</span><span class="kt"><b>${lessonLabel(L,k)}</b><small>${L.chars.length?L.chars.length+"글자":"촉음·장음"} · 소리 듣기 · 문제 풀이</small></span><span class="kp">${ch}</span></button>`; });
-  root().innerHTML=`<div class="kana"><h2>일본어 글자 입문</h2>
-  <div class="sub">일본어 글자를 처음부터 배워요. <b>① 글자표로 훑어보고 → ② 행별 레슨으로 하나씩 → ③ 전체 시험</b> 순서로 진행해 보세요. 글자를 누르면 소리가 나요.</div>
-  <div class="kseg"><button class="${k?"":"on"}" data-kana="tab" data-t="h">히라가나<small>ひらがな · 기본 글자</small></button><button class="${k?"on":""}" data-kana="tab" data-t="k">가타카나<small>カタカナ · 외래어</small></button></div>
-  <div class="ktip">${k?"가타카나는 외래어·외국 이름·강조에 써요(예: コーヒー, ソウル). 각진 글자예요. 히라가나를 먼저 익히면 훨씬 쉬워요.":"히라가나는 일본 고유의 단어와 문법에 써요(예: ありがとう). 둥글둥글한 글자예요. 먼저 이것부터 익혀요."}</div>
-  <h3>① 글자표 <small style="font-weight:400;color:var(--sub)">· 눌러서 소리 듣기</small></h3>${chartHTML(k)}
-  <details class="kdet"><summary>탁음·반탁음 글자표 (점 ゛ ゜ 이 붙은 글자)</summary><div class="kgrid">${D.map(([c,r,ko])=>cellBtn([k?toK(c):c,r,ko])).join("")}</div></details>
-  <details class="kdet"><summary>요음 글자표 (작은 ゃ ゅ ょ)</summary><div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${Y.map(([c,r,ko])=>cellBtn([k?toK(c):c,r,ko])).join("")}</div></details>
-  <h3>② 행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${LESSONS.length} 완료</small></h3>
-  ${nx?`<button class="kcta" data-kana="lesson" data-i="${nx.i}"><span class="kg">${(lessonChars(nx,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${doneN?"이어서 하기":"여기서 시작하기"}: ${lessonLabel(nx,k)}</b><small>${nx.i+1}번째 레슨</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래 전체 시험에 도전해 보세요.</div>`}
+    const row=`${head}<button class="klesson ${d[key(L,k)]?"ok":""}" data-kana="lesson" data-i="${L.i}"><span class="kn">${d[key(L,k)]?"✓":L.i+1}</span><span class="kt"><b>${lessonLabel(L,k)}</b><small>${L.chars.length?L.chars.length+"글자":"촉음·장음"}</small></span><span class="kp">${ch}</span></button>`;
+    if(isOpt) opt+=row; else groups+=row; });
+  const cu=curOf(done(),k), cuL=cu&&LESSONS[cu.i]&&!d[key(LESSONS[cu.i],k)]?LESSONS[cu.i]:null, tgt=cuL||nx;
+  root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div><h2 style="margin-bottom:8px">일본어 글자</h2>
+  <div class="kseg"><button class="${k?"":"on"}" data-kana="tab" data-t="h">히라가나<small>ひらがな</small></button><button class="${k?"on":""}" data-kana="tab" data-t="k">가타카나<small>カタカナ</small></button></div>
+  ${tgt?`<button class="kcta" data-kana="learn" data-k="${k?"k":"h"}"><span class="kg">${tgt.i===10?T0("が"):(lessonChars(tgt,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${tgt.i===10?"탁음 · 반탁음 알아보기":(doneN||cuL?"이어서 배우기":"카드로 배우기 시작")+": "+lessonLabel(tgt,k)}</b><small>${tgt.i===10?"점 하나로 소리가 바뀌는 규칙":cuL&&cu.c>0?(cu.c+1)+"번째 글자부터":"한 글자씩 소리와 그림으로"}</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래에서 전체 시험에 도전해 보세요.</div>`}
+  <h3>글자표 <small style="font-weight:400;color:var(--sub)">· 눌러서 소리 듣기</small></h3>${chartHTML(k)}
+  <details class="kdet"><summary>탁음·반탁음 (점 ゛ ゜ 이 붙은 글자)</summary><div class="kgrid">${D.map(([c,r,ko])=>cellBtn([k?toK(c):c,r,ko])).join("")}</div></details>
+  <details class="kdet"><summary>요음 (작은 ゃ ゅ ょ)</summary><div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${Y.map(([c,r,ko])=>cellBtn([k?toK(c):c,r,ko])).join("")}</div></details>
+  <h3>행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${CORE} 완료</small></h3>
   ${groups}
-  <h3>③ 마무리</h3><div class="kbtns"><button class="cta sec" data-kana="writeall">${k?"가타카나":"히라가나"} 따라 쓰기 (전체 글자)</button><button class="cta" data-kana="final">${k?"가타카나":"히라가나"} 전체 시험 (20문제)</button><button class="cta sec" data-kana="confuse">헷갈리는 글자 구분하기</button><button class="cta sec" data-kana="exit">퀴즈 메뉴로</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:玄野武宏</div>`:""}</div>`;
+  <details class="kdet"><summary>더 배우기 (선택) · 요음, 작은 っ · 장음</summary><div style="padding-bottom:6px">${opt}</div></details>
+  <div class="kbtns" style="grid-template-columns:repeat(3,1fr);margin-top:18px"><button class="cta sec" data-kana="writeall">따라 쓰기</button><button class="cta sec" data-kana="confuse">헷갈리는 글자</button><button class="cta" data-kana="final">전체 시험</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:玄野武宏</div>`:""}</div>`;
 }
 function renderConfuse(){
   inq(false);
@@ -193,7 +219,7 @@ function renderLesson(L,k){
   <div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>
   ${ch.length?`<div class="kgrid" style="grid-template-columns:repeat(${ch.length%3===0&&ch.length>5?3:5},minmax(0,1fr))">${ch.map(cellBtn).join("")}</div>`:""}
   <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b><small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서는 아직 읽을 수 있는 단어가 없어요.</div>`}
-  <div class="kbtns">${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">단어 따라 쓰기</button>`:""}<button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
+  <div class="kbtns">${ch.length?`<button class="cta" data-kana="cards" data-i="${L.i}">카드로 한 글자씩 배우기</button>`:""}${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">단어 따라 쓰기</button>`:""}<button class="cta" data-kana="start" data-i="${L.i}">연습 문제 풀기 (10문제)</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="cta sec" data-kana="lesson" data-i="${prv?prv.i:L.i}" ${prv?"":"disabled"}>‹ 이전 레슨</button><button class="cta sec" data-kana="lesson" data-i="${nxt?nxt.i:L.i}" ${nxt?"":"disabled"}>다음 레슨 ›</button></div></div></div>`;
 }
 /* 문제 만들기 */
@@ -217,7 +243,7 @@ function startLesson(L,k){
   K={...K,tab:k?"k":"h",lessonI:L.i,k,title:`레슨 ${L.i+1} · ${lessonLabel(L,k)}`,lessonKey:key(L,k),qs:mkQuestions(targets,optChars,words,wp.map(x=>({w:x.w,m:x.m})),10),i:0,score:0,sel:null}; renderQ();
 }
 function startFinal(k){
-  const all=LESSONS.flatMap(L=>lessonChars(L,k)), wp=pool(k).map(x=>({w:x.w,m:x.m}));
+  const all=LESSONS.slice(0,CORE).flatMap(L=>lessonChars(L,k)), wp=pool(k).map(x=>({w:x.w,m:x.m}));
   K={...K,tab:k?"k":"h",lessonI:null,k,title:(k?"가타카나":"히라가나")+" 전체 시험",lessonKey:null,qs:mkQuestions(all,all,wp,wp,20),i:0,score:0,sel:null}; renderQ();
 }
 function renderQ(){
@@ -285,14 +311,80 @@ async function wAnimate(){
 }
 function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
 function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLesson(LESSONS[b.i],b.k); } else renderHome(); window.scrollTo(0,0); }
+/* 글자별 관련 단어와 그림. 그림은 Google Noto Emoji(Apache License 2.0, img/emoji/LICENSE.txt) */
+const KW={"h":{"あ":["あめ","비","1f327"],"い":["いぬ","개","1f436"],"う":["うさぎ","토끼","1f430"],"え":["えんぴつ","연필","270f"],"お":["おにぎり","주먹밥","1f359"],"か":["かさ","우산","2602"],"き":["きのこ","버섯","1f344"],"く":["くるま","자동차","1f697"],"け":["けいたい","휴대폰","1f4f1"],"こ":["こおり","얼음","1f9ca"],"さ":["さかな","물고기","1f41f"],"し":["しか","사슴","1f98c"],"す":["すし","초밥","1f363"],"せ":["せかい","세계","1f30d"],"そ":["そら","하늘","2601"],"た":["たまご","달걀","1f95a"],"ち":["ちず","지도","1f5fa"],"つ":["つき","달","1f319"],"て":["て","손","270b"],"と":["とり","새","1f426"],"な":["なす","가지","1f346"],"に":["にじ","무지개","1f308"],"ぬ":["ぬいぐるみ","인형","1f9f8"],"ね":["ねこ","고양이","1f431"],"の":["のみもの","음료","1f964"],"は":["はな","꽃","1f338"],"ひ":["ひこうき","비행기","2708"],"ふ":["ふね","배","1f6a2"],"へ":["へび","뱀","1f40d"],"ほ":["ほし","별","2b50"],"ま":["まど","창문","1fa9f"],"み":["みかん","귤","1f34a"],"む":["むし","벌레","1f41b"],"め":["め","눈","1f441"],"も":["もも","복숭아","1f351"],"や":["やま","산","26f0"],"ゆ":["ゆき","눈","2744"],"よ":["よる","밤","1f303"],"ら":["らいおん","사자","1f981"],"り":["りんご","사과","1f34e"],"る":["さる","원숭이","1f412"],"れ":["れもん","레몬","1f34b"],"ろ":["ろうそく","양초","1f56f"],"わ":["わに","악어","1f40a"],"を":["ほんを","책을","1f4d6"],"ん":["ぱん","빵","1f35e"],"が":["がっこう","학교","1f3eb"],"ぎ":["ぎんこう","은행","1f3e6"],"ぐ":["ぐんて","장갑","1f9e4"],"げ":["げんかん","현관","1f6aa"],"ご":["ごはん","밥","1f35a"],"ざ":["ざっし","잡지","1f4f0"],"じ":["じてんしゃ","자전거","1f6b2"],"ず":["ずぼん","바지","1f456"],"ぜ":["かぜ","바람","1f4a8"],"ぞ":["ぞう","코끼리","1f418"],"だ":["だんご","경단","1f361"],"で":["でんしゃ","전철","1f683"],"ど":["どうぶつ","동물","1f43e"],"ば":["ばなな","바나나","1f34c"],"び":["びょういん","병원","1f3e5"],"ぶ":["ぶた","돼지","1f437"],"べ":["べんとう","도시락","1f371"],"ぼ":["ぼうし","모자","1f9e2"],"ぱ":["ぱん","빵","1f35e"],"ぴ":["ぴあの","피아노","1f3b9"],"ぷ":["ぷりん","푸딩","1f36e"],"ぺ":["ぺん","펜","1f58a"],"ぽ":["ぽすと","우체통","1f4ee"]},"k":{"ア":["アイス","아이스크림","1f366"],"イ":["イルカ","돌고래","1f42c"],"ウ":["ウマ","말","1f434"],"エ":["エビ","새우","1f990"],"オ":["オレンジ","오렌지","1f34a"],"カ":["カメラ","카메라","1f4f7"],"キ":["キウイ","키위","1f95d"],"ク":["クッキー","쿠키","1f36a"],"ケ":["ケーキ","케이크","1f370"],"コ":["コーヒー","커피","2615"],"サ":["サッカー","축구","26bd"],"シ":["シャツ","셔츠","1f455"],"ス":["スイカ","수박","1f349"],"セ":["セーター","스웨터","1f9e5"],"ソ":["ソファ","소파","1f6cb"],"タ":["タクシー","택시","1f695"],"チ":["チーズ","치즈","1f9c0"],"ツ":["ツリー","트리","1f384"],"テ":["テレビ","텔레비전","1f4fa"],"ト":["トマト","토마토","1f345"],"ナ":["ナッツ","견과류","1f95c"],"ニ":["ニンジン","당근","1f955"],"ヌ":["ヌードル","국수","1f35c"],"ネ":["ネクタイ","넥타이","1f454"],"ノ":["ノート","공책","1f4d3"],"ハ":["ハート","하트","2764"],"ヒ":["ヒヨコ","병아리","1f425"],"フ":["フルーツ","과일","1f353"],"ヘ":["ヘリコプター","헬리콥터","1f681"],"ホ":["ホテル","호텔","1f3e8"],"マ":["マスク","마스크","1f637"],"ミ":["ミルク","우유","1f95b"],"ム":["ムービー","영화","1f3ac"],"メ":["メロン","멜론","1f348"],"モ":["モモ","복숭아","1f351"],"ヤ":["ヤギ","염소","1f410"],"ユ":["ユニコーン","유니콘","1f984"],"ヨ":["ヨット","요트","26f5"],"ラ":["ラーメン","라면","1f35c"],"リ":["リス","다람쥐","1f43f"],"ル":["ルビー","루비","1f48e"],"レ":["レモン","레몬","1f34b"],"ロ":["ロケット","로켓","1f680"],"ワ":["ワイン","와인","1f377"],"ン":["ペンギン","펭귄","1f427"],"ガ":["ガソリン","휘발유","26fd"],"ギ":["ギター","기타","1f3b8"],"グ":["グラス","유리잔","1f943"],"ゲ":["ゲーム","게임","1f3ae"],"ゴ":["ゴリラ","고릴라","1f98d"],"ザ":["ピザ","피자","1f355"],"ジ":["ジュース","주스","1f9c3"],"ズ":["ズボン","바지","1f456"],"ゾ":["ゾウ","코끼리","1f418"],"ダ":["ダンス","춤","1f483"],"デ":["デザート","디저트","1f368"],"ド":["ドア","문","1f6aa"],"バ":["バナナ","바나나","1f34c"],"ビ":["ビール","맥주","1f37a"],"ブ":["ブドウ","포도","1f347"],"ベ":["ベッド","침대","1f6cf"],"ボ":["ボール","공","1f3c0"],"パ":["パン","빵","1f35e"],"ピ":["ピアノ","피아노","1f3b9"],"プ":["プリン","푸딩","1f36e"],"ペ":["ペン","펜","1f58a"],"ポ":["ポスト","우체통","1f4ee"]}};
+/* 글자 하나씩 카드로 배우기: 큰 글자 + 소리 + 읽는 법 + 예시 단어 → 다 보면 확인 퀴즈 */
+let C=null;
+function startCards(L,k,at){ const chars=lessonChars(L,k); if(!chars.length){ renderLesson(L,k); return; } C={L,k,i:Math.min(Math.max(+at||0,0),chars.length-1),chars,words:lessonWords(L,k)}; renderCard(); }
+const KC=[["#ff8a5c","#ff5a7a"],["#ffb02e","#ff7a2e"],["#4cc9a0","#2a9d8f"],["#5bb6ff","#4a7bff"],["#a07cff","#6c4ff0"],["#ff7eb6","#e0508f"],["#7bd36a","#3fae5a"],["#ffc93c","#ff9a1f"]];
+const CHEER=["따라 해 봐요!","잘하고 있어요!","소리 내서 읽어 봐요","좋아요, 한 번 더!","멋져요!"];
+function renderCard(){
+  inq(false); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
+  const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
+  const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
+  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
+  <div class="kbird"><img src="mascot.png" alt=""><div class="kbub">${say1}</div></div>
+  <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
+   <div class="kro">${c[2]} <small>${c[1]}</small></div>
+   ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span></span></button>`:""}
+   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div></div>
+  <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
+   <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
+   ${last?`<button class="cta kgo" data-kana="cdone">${L.i+1===10?"다 배웠어요! 탁음·반탁음 알아보기 ›":L.i+1<CORE?"다 배웠어요! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
+  ${i===0?`<div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>`;
+  try{ const d=done(); d.cur=(d.cur&&typeof d.cur.k!=="number")?d.cur:{}; d.cur[k?"k":"h"]={i:L.i,c:i}; save(d); }catch(e){}
+  window.scrollTo(0,0); setTimeout(()=>say(c[0]),150);
+}
+/* 탁음·반탁음 / 요음은 글자 하나씩이 아니라 규칙과 표로 한눈에 알려줘요 */
+const DKROWS=[["か","が",5,0],["さ","ざ",10,5],["た","だ",15,10],["は","ば",25,15],["は","ぱ",25,20]];
+function renderDakuten(k){
+  inq(false); const T=c=>k?toK(c):c;
+  const rows=DKROWS.map(([bl,dl,hi,di],r)=>{ const cs=D.slice(di,di+5), bs=H.slice(hi,hi+5);
+    return `<div class="kgh"><span>${T(bl)}행 + ${r===4?"゜(동그라미)":"゛(점 두 개)"} → ${T(dl)}행</span><span>${r===4?"ㅍ 소리":r===3?"ㅂ 소리":r===0?"ㄱ 소리":r===1?"ㅈ 소리":"ㄷ 소리"}</span></div>
+    <div class="kgrid">${cs.map((c,i)=>`<button class="kc" data-kana="say" data-t="${T(c[0])}"><small class="bs">${T(bs[i][0])} →</small><b>${T(c[0])}</b><small>${c[2]} · ${c[1]}</small></button>`).join("")}</div>`; }).join("");
+  root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
+  <h2>${k?"가타카나":"히라가나"} · 탁음 · 반탁음</h2><div class="sub">글자를 새로 외우는 게 아니라, <b>점 하나로 소리가 바뀌는 규칙</b>만 알면 돼요.</div>
+  <div class="ktip"><b>゛(점 두 개)</b>를 붙이면 소리가 부드럽게 탁해져요. か(카) → が(가), さ(사) → ざ(자), た(타) → だ(다), は(하) → ば(바).<br><b>゜(동그라미)</b>는 は행에만 붙어요. は(하) → ぱ(파), 소리가 ㅍ으로 바뀌어요.</div>
+  ${rows}
+  <div class="ktip">알아 두면 좋아요: じ와 ぢ, ず와 づ는 소리가 같아요. ぢ·づ는 거의 쓰지 않아서 じ·ず만 기억하면 돼요.</div>
+  <div class="kbtns"><button class="cta kgo" data-kana="dkdone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠어요! 다 봤어요</button></div></div>`;
+  window.scrollTo(0,0);
+}
+function renderYoon(k){
+  inq(false); const T=c=>k?toK(c):c; const rows=[]; for(let i=0;i<Y.length;i+=3) rows.push(Y.slice(i,i+3));
+  root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
+  <h2>${k?"가타카나":"히라가나"} · 요음</h2><div class="sub">큰 글자 뒤에 <b>작은 ゃ ゅ ょ</b>를 붙이면, 두 글자가 <b>한 소리</b>로 합쳐져요.</div>
+  <div class="ktip">き(키) + ゃ = きゃ(캬), し(시) + ゅ = しゅ(슈), ち(치) + ょ = ちょ(쵸). 작은 글자는 앞 글자와 붙여서 <b>한 박자</b>로 읽어요. 예) ひゃく(백), びょういん(병원)</div>
+  <div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${Y.map(([c,r,ko])=>cellBtn([T(c),r,ko])).join("")}</div>
+  <div class="kbtns"><button class="cta kgo" data-kana="yodone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠어요! 다 봤어요</button></div></div>`;
+  window.scrollTo(0,0);
+}
+const markDone=(ids,k)=>{ const d=done(); ids.forEach(i=>{ d.done[key(LESSONS[i],k)]=true; try{ if(window.PATH) PATH.kanaDone(key(LESSONS[i],k)); }catch(e){} }); save(d); };
+function learn(k){ k=!!k; K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode");
+  const d=done(), cu=curOf(d,k); /* 중간에 나갔으면 그 글자부터 이어서 */
+  if(cu&&LESSONS[cu.i]&&!d.done[key(LESSONS[cu.i],k)]&&(cu.c>0||cu.i>0)){ try{ toast("지난번에 하던 곳부터 이어서 해요"); }catch(e){} startCards(LESSONS[cu.i],k,cu.c); return; }
+  const nl=nextLesson(k)||LESSONS[0]; if(nl.i===10){ renderDakuten(k); return; } startCards(nl,k); }
 function open(tab){ K={tab:(typeof tab==="string"&&tab)||K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-kana]"); if(!b) return; const a=b.dataset.kana;
-  if(a!=="open"&&!root().contains(b)) return;
+  if(a!=="open"&&a!=="learn"&&!root().contains(b)) return;
   const L=LESSONS[+b.dataset.i];
   if(a==="open") open();
+  else if(a==="learn") learn(b.dataset.k==="k");
+  else if(a==="cards") startCards(L,K.tab==="k");
+  else if(a==="csay"&&C) say(C.chars[C.i][0]);
+  else if(a==="wsay1") say(b.dataset.t);
+  else if(a==="cnext"&&C){ C.i++; renderCard(); }
+  else if(a==="cprev"&&C&&C.i){ C.i--; renderCard(); }
+  else if(a==="cdone"&&C){ const {L,k}=C, d=done(); d.done[key(L,k)]=true; if(d.cur&&typeof d.cur.k!=="number") delete d.cur[k?"k":"h"]; save(d); try{ if(window.PATH) PATH.kanaDone(key(L,k)); }catch(e){}
+    toast(lessonLabel(L,k)+" 완료! 잘했어요"); const nx=L.i+1<CORE?LESSONS[L.i+1]:null; if(nx&&nx.i===10) renderDakuten(k); else if(nx) startCards(nx,k); else { C=null; K={tab:k?"k":"h"}; renderHome(); window.scrollTo(0,0); } }
   else if(a==="home"){ K={tab:K.tab||"h"}; renderHome(); window.scrollTo(0,0); }
   else if(a==="exit"){ inq(false); setView("quiz"); }
+  else if(a==="dk") renderDakuten(K.tab==="k");
+  else if(a==="yo") renderYoon(K.tab==="k");
+  else if(a==="dkdone"){ const kk=K.tab==="k"; markDone([10,11,12,13,14],kk); try{ toast("탁음·반탁음 완료! 잘했어요"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
+  else if(a==="yodone"){ const kk=K.tab==="k"; markDone([15,16,17],kk); try{ toast("요음 완료! 잘했어요"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
+  else if(a==="gohome"){ inq(false); setView("home"); window.scrollTo(0,0); }
   else if(a==="tab"){ K={tab:b.dataset.t}; renderHome(); }
   else if(a==="say") say(b.dataset.t);
   else if(a==="confuse"){ renderConfuse(); window.scrollTo(0,0); }
@@ -316,5 +408,5 @@ document.addEventListener("click",e=>{
   else if(a==="again"){ if(K.lessonI!=null) startLesson(LESSONS[K.lessonI],K.k); else startFinal(K.k); window.scrollTo(0,0); }
 });
 function openLesson(i,k){ K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderLesson(LESSONS[i],k); window.scrollTo(0,0); }
-window.KANA={open,openLesson};
+window.KANA={open,openLesson,learn};
 })();

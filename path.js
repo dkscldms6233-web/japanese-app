@@ -238,11 +238,13 @@ function continueHtml(){ const c=current(); if(!c) return ""; return `<div style
 /* 따로 분리한 화면: 전체 학습 경로 · 기초 */
 let page=null;
 const back=`<button class="back" data-ppage="home">‹ 홈으로</button>`;
+document.addEventListener("change",e=>{ const t=e.target.closest&&e.target.closest("[data-bgnt]"); if(t) A().setPref("beginner",t.checked); });
 function basicHtml(){
-  const d=get("jp-kana",{done:{}}).done||{}, cnt=k=>{ let n=0; for(let i=0;i<19;i++) if(d[k+i]) n++; return n; };
+  const d=get("jp-kana",{done:{}}).done||{}, cnt=k=>{ let n=0; for(let i=0;i<15;i++) if(d[k+i]) n++; return n; };
   return `<div class="home">${back}<h2 style="margin:6px 0 4px">기초</h2><div class="sub" style="margin-bottom:10px">일본어 글자와 기초 단어를 처음부터 배워요</div>
-   <div class="lrows"><button class="lrow" data-bkana="h"><span>히라가나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">글자표 · 행별 레슨 · 따라 쓰기</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("h")} / 19 ›</span></button>
-   <button class="lrow" data-bkana="k"><span>가타카나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">외래어에 쓰는 글자</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("k")} / 19 ›</span></button>
+   <label class="tg" style="margin:0 0 12px"><span>홈에 '일본어 첫걸음' 안내 보이기</span><input type="checkbox" data-bgnt ${A().prefs().beginner?"checked":""}></label>
+   <div class="lrows"><button class="lrow" data-bkana="h"><span>히라가나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">글자표 · 행별 레슨 · 따라 쓰기</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("h")} / 15 ›</span></button>
+   <button class="lrow" data-bkana="k"><span>가타카나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">외래어에 쓰는 글자</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("k")} / 15 ›</span></button>
    <button class="lrow" data-ppage="path"><span>N5 기초 단어<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">쉬운 단어부터 20개씩</small></span><i>›</i></button></div></div>`;
 }
 function pageHtml(){
