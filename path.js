@@ -164,6 +164,7 @@ function shopRender(){
   d.innerHTML=`<div class="dh"><h2 style="margin:0;font-size:17px">${E(birdTitle())}</h2><button class="x" data-sclose aria-label="닫기">×</button></div>
   <div class="db"><div class="shopbird"><div class="frm shopfrm" style="${frameStyle(eq)}">${frameFx(eq)}${birdSvg(eq,"big")}</div></div>
   <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px;font-size:.85em">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:""}</p>
+  ${(()=>{ const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l); return `<div class="shlv"><div class="shlt"><b>Lv.${l} ${titleOf(l)}</b><span>${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div><small>${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`; })()}
   <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em">현재 씨앗 <b style="color:var(--accent-text)">${s.seeds||0}</b>개<br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있어요.</p>
   <div style="text-align:center;margin:0 0 10px"><button class="pill" data-sunall="1" ${Object.keys(s.equip).length?"":"disabled"}>모두 해제</button></div>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
@@ -210,8 +211,8 @@ let showAllUnits=false;
 /* ---------- 홈 화면 조각 ---------- */
 let openUnits=new Set();
 function statusHtml(){
-  const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
-  return `<div class="pstat"><div class="prow1"><b>Lv.${l} ${titleOf(l)}</b><span>${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div></div>`;
+  const x=xpState(), l=lvOf(x.t);
+  return `<div class="lvring" title="Lv.${l} ${titleOf(l)} · ${x.t} XP"><b>${l}</b></div>`;
 }
 /* 내 계정 화면: 내 참새 + 레벨·연속 출석·씨앗 */
 function profileHtml(){
@@ -343,8 +344,8 @@ function journeyHtml(){
   const line=[0,1,2,3,4,5,6].map(i=>`${i?"L":"M"}${JX(i)} ${JY(i)}`).join(" ");
   const pxy=p=>p<=0?[6,JY(0)]:[JX(p-1),JY(p-1)];
   const [fx,fy]=pxy(prev), [tx,ty]=pxy(J.pos);
-  const DAYMSG=["오늘 첫걸음을 떼 볼까요? 참새가 기다리고 있어요","첫걸음 완료! 내일도 이어서 걸어요","이틀째! 좋은 출발이에요, 이 기세로 가요","사흘째! 벌써 절반 가까이 왔어요","나흘째! 절반을 넘었어요, 조금만 더요","닷새째! 선물 상자가 눈앞이에요","엿새째! 내일이면 선물 상자가 열려요"];
-  const msg=J.pending?"일곱 걸음을 다 걸었어요! 선물 상자가 기다려요":J.pos<7?DAYMSG[J.pos]:"도착했어요! 내일부터 새 여정이 시작돼요";
+  const DAYMSG=["오늘 출석하면 7일 여정이 시작돼요","첫 출석 완료! 내일 또 만나요","이틀 연속이에요! 좋은 시작이에요","사흘 연속이에요! 벌써 절반 가까이 왔어요","나흘 연속이에요! 절반을 넘었어요","닷새 연속이에요! 선물까지 이틀 남았어요","엿새 연속이에요! 내일이면 선물을 받아요"];
+  const msg=J.pending?"7일 연속 출석 달성! 선물을 받아 보세요":J.pos<7?DAYMSG[J.pos]:"완주했어요! 내일부터 새로 시작해요";
   setTimeout(()=>{ const b=document.querySelector(".jrb"); if(b){ b.style.left=(tx/3.2)+"%"; b.style.top=((ty-40)/JH*100)+"%"; } try{ localStorage.setItem("jp-jpos",String(J.pos)); }catch(e){} },80);
   return `<div class="jr" data-season="${sn}"><div class="jrh"><b>7일 연속 출석</b><span>${J.pos} / 7일</span></div>
    <div class="jrsteps" style="--p:${(Math.max(0,J.pos-1)/6*86).toFixed(1)}%">${[0,1,2,3,4,5,6].map(i=>{ const dn=i<J.pos, cu=i===J.pos-1; return `<div class="jst ${dn?"done":""} ${cu?"cur":""} ${i===6?"gift":""}"><i>${i===6?'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="10" width="17" height="10" rx="2"/><path d="M3 7h18v3H3zM12 7v13M12 7c-1-3-4.5-3.5-4.5-1.5S10 7 12 7zM12 7c1-3 4.5-3.5 4.5-1.5S14 7 12 7z"/></svg>':dn?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':i+1}</i><span>${i===6?"선물":(i+1)+"일"}</span></div>`; }).join("")}</div>
