@@ -13,8 +13,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="술술 일본어">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=M+PLUS+Rounded+1c:wght@500;800&family=Gaegu&family=Yusei+Magic&family=Gowun+Dodum&family=Zen+Maru+Gothic&family=Hi+Melody&family=Kiwi+Maru&family=Mochiy+Pop+One&family=Do+Hyeon&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=M+PLUS+Rounded+1c:wght@500;800&family=Gaegu&family=Yusei+Magic&family=Gowun+Dodum&family=Zen+Maru+Gothic&family=Hi+Melody&family=Kiwi+Maru&family=Mochiy+Pop+One&family=Do+Hyeon&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+/* 한자는 한국식 자형이 아니라 JLPT 시험지와 같은 일본식 자형으로 보이게: 기기의 일본어 글꼴을 먼저 쓰고, 없으면 Noto Sans JP */
+@font-face{font-family:"JP Kanji";src:local("HiraginoSans-W3"),local("Hiragino Sans W3"),local("HiraginoKakuGothicProN-W3"),local("Hiragino Kaku Gothic ProN W3"),local("YuGothic-Regular"),local("Yu Gothic Regular"),local("YuGothicUI-Regular"),local("Meiryo"),local("NotoSansJP-Regular"),local("Noto Sans JP Regular"),local("NotoSansCJKjp-Regular"),local("Noto Sans CJK JP Regular"),local("SourceHanSansJP-Regular");unicode-range:U+3040-30FF,U+31F0-31FF,U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+FF66-FF9F}
 :root{
   --bg:#f7f7f5; --card:#ffffff; --text:#1d2226; --sub:#636a72; --line:#e3e4e1;
   --accent:#2f4a73; --accent-dk:#1f3555; --accent-soft:#e7edf6; --chip:#eeefec; --onacc:#fff; --seal:#b0463a; --sakura:#d9879e; --kin:#b08d4f;
@@ -32,7 +34,7 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-size:16px;
-  font-family:-apple-system,"Hiragino Sans","Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.6}
+  font-family:"JP Kanji","Noto Sans JP",-apple-system,"Hiragino Sans","Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.6}
 button{font-family:inherit}
 [hidden]{display:none!important}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -131,7 +133,7 @@ main{max-width:960px;margin:0 auto;padding:12px 16px 40px}
 .hide .card:hover .m{filter:none}
 rt{font-size:.52em;color:var(--sub)}
 .nofuri rt{visibility:hidden}
-.nofuri ruby:hover rt{visibility:visible}
+.nofuri ruby:hover rt,.nofuri ruby.fshow rt{visibility:visible}.nofuri ruby.fshow rt{color:var(--accent)}
 
 /* ---- 상세 화면 ---- */
 dialog{width:min(680px,94vw);max-height:90vh;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--text);padding:0}
@@ -954,15 +956,16 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-reading.js?v=3"></script>
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=2"></script>
+<script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
 <script src="kana.js?v=17"></script>
-<script src="games2.js?v=20"></script>
+<script src="games2.js?v=28"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
-<link rel="stylesheet" href="design-v2.css?v=30">
+<link rel="stylesheet" href="design-v2.css?v=47">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=4"></script>
@@ -987,14 +990,14 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
     </div></div>
   </div>
   <div class="bar list-only">
-    <input type="search" id="q" placeholder="한자·히라가나·뜻으로 검색">
+    <input type="search" id="q" placeholder="단어 바로 찾기 (한자·히라가나·뜻)">
     <button class="pill add" id="addBtn">＋ 단어 추가</button>
   </div>
   <div class="levels" id="levels"></div>
   <div class="opts">
     <select id="posf" aria-label="품사 필터"><option value="">모든 품사</option></select>
     <label class="tg list-only"><input type="checkbox" id="hide"> 뜻 가리기</label>
-    <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기</label>
+    <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기 <small style="color:var(--sub)">(한자를 누르면 보여요)</small></label>
   </div>
 </div>
 </header>
@@ -1788,7 +1791,7 @@ function examSetup(){
   const jl=jlv();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>JLPT 모의시험</h2></div>
-   <p class="sub devonly" style="margin:0 0 10px">문자·어휘, 문법, 독해, 청해를 시험처럼 연습해요. 직접 만든 연습 문제예요.</p>
+   <p class="sub devonly" data-noln="1" style="margin:0 0 10px">문자·어휘, 문법, 독해, 청해를 시험처럼 연습해요. 직접 만든 연습 문제예요.</p>
    ${lvRow(jl,"급수")}
    <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 풀기</button>
    <div class="tiles2" style="margin-top:14px">
@@ -1856,11 +1859,24 @@ function startQuiz(mode,pool,n){
   setOpts(); renderQ();
 }
 const laterBtn=w=>w.sent?"":`<button class="pill ${w.key in wrong?"on":""}" data-act="later" data-key="${w.key}" aria-pressed="${w.key in wrong}">${w.key in wrong?"나중에 다시 풀기 ✓":"나중에 다시 풀기"}</button>`;
+const QCHECK='<svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#3ec16a"/><path class="dr" d="M12 23l7 7 14-15" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/></svg>';
+const QCROSS='<svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#ef5b6b"/><path class="dr" d="M14 14L30 30M30 14L14 30" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" pathLength="1"/></svg>';
+const qchip=w=>`<span class="qchip">${E(w.lv||"")}${w.key in wrong?" · 오답 복습중":""}</span>`;
+const qmark=ok=>`<span class="qmark">${ok?QCHECK:QCROSS}</span>`;
+/* 정답이면 카드에서 색종이가 터져요 */
+/* 퀴즈 정답 효과음: 공부에 방해되지 않게 아주 작고 짧은 두 음 (게임 소리 설정을 따라요) */
+function qChime(){ try{ if(!soundOn()||!sndInit()) return; const t=SND.ctx.currentTime; tone(81,t,.16,"sine",.2,SND.fx); tone(86,t+.09,.26,"sine",.17,SND.fx); }catch(e){} }
+/* 오답 효과음: 놀라지 않게 낮고 부드러운 두 음 (정답음과 비슷한 크기) */
+function qBuzz(){ try{ if(!soundOn()||!sndInit()) return; const t=SND.ctx.currentTime; tone(60,t,.2,"sine",.22,SND.fx); tone(55,t+.12,.3,"sine",.2,SND.fx); }catch(e){} }
+function qFx(ok){ if(ok) qChime(); else qBuzz(); const c=document.querySelector(".qcard"); if(!c||!ok||matchMedia("(prefers-reduced-motion: reduce)").matches) return; const cols=["#ffc53d","#5b5bf0","#3ec16a","#ff6b8b","#4fb3ff"];
+  for(let i=0;i<16;i++){ const e=document.createElement("i"); e.className="cf"; const a=Math.random()*Math.PI*2, d=60+Math.random()*70; e.style.cssText=`--dx:${(Math.cos(a)*d).toFixed(0)}px;--dy:${(Math.sin(a)*d-20).toFixed(0)}px;--r:${(Math.random()*540-270).toFixed(0)}deg;--c:${cols[i%cols.length]};animation-delay:${(Math.random()*.08).toFixed(2)}s`; c.appendChild(e); }
+  setTimeout(()=>c.querySelectorAll(".cf").forEach(x=>x.remove()),1100); }
 function renderQ(){
   if(Q.i>=Q.list.length) return renderResult();
   const w=Q.list[Q.i];
   document.body.classList.add("inq");
-  const head = `<div class="qtop"><button class="qx" data-act="qquit" aria-label="그만하기">×</button><div class="prog"><div style="width:${Math.round(Q.i/Q.list.length*100)}%"></div></div></div>
+  const pct=Math.round(Q.i/Q.list.length*100);
+  const head = `<div class="qtop"><button class="qx" data-act="qquit" aria-label="그만하기">×</button><div class="pgw"><div class="prog"><div style="width:${pct}%"></div></div><i class="pstar" aria-hidden="true">★</i></div></div>
     <div class="sub">${Q.i+1} / ${Q.list.length}</div>`;
   let body;
   if(Q.mode==="card"){
@@ -1875,8 +1891,8 @@ function renderQ(){
        :`<p class="sub" style="text-align:center;margin-top:12px">뒤집은 뒤 알면 오른쪽, 모르면 왼쪽으로 밀어도 돼요</p>`}`;
   } else if(Q.mode==="order"){
     const o=Q.ord;
-    body = `<div class="sub">알맞은 순서로 문장을 만들어 보세요</div><div class="qm" style="margin-top:14px">${E(w.ex[0].ko)}</div>
-     <div class="sub" style="margin-top:4px">조각 ${o.orig.length}개로 만들어요${o.ndec?` (안 쓰는 조각 ${o.ndec}개가 섞여 있어요)`:""}</div>
+    body = `<div class="qcard ${o.checked?(o.ok?"ok":"ng"):""}">${qchip(w)}${o.checked?qmark(o.ok):""}<div class="sub">알맞은 순서로 문장을 만들어 보세요</div><div class="qm" style="margin-top:12px">${E(w.ex[0].ko)}</div>
+     <div class="sub" style="margin-top:4px">조각 ${o.orig.length}개로 만들어요${o.ndec?` (안 쓰는 조각 ${o.ndec}개가 섞여 있어요)`:""}</div></div>
      <div class="ans ${o.checked?(o.ok?"ok":"ng"):""}" ${o.checked&&!o.ok?'data-soft="1"':""}>${o.used.length?o.used.map(id=>`<button class="ck ${o.checked&&o.dec[id]?"dec":""}" data-act="unput" data-id="${id}" ${o.checked?"disabled":""}>${E(o.chunks[id])}</button>`).join(""):`<span class="sub">아래 조각을 눌러 순서대로 놓으세요</span>`}</div>
      <div class="pool">${o.chunks.map((c,id)=>o.used.includes(id)?`<span class="ck ghost">${E(c)}</span>`:`<button class="ck ${o.checked&&o.dec[id]?"dec":""}" data-act="put" data-id="${id}" ${o.checked?"disabled":""}>${E(c)}</button>`).join("")}</div>
      ${o.checked?`<div class="reveal ${o.ok?"ok":"ng"}"><div class="rvt">${o.ok?CHEER.ok(Q.i):CHEER.ng(Q.i)+" 정답은 이 문장이에요"}</div><div class="qw s">${R(w.ex[0].ja)}</div>${w.sent?"":`<div class="sub">${R(w.f)} · ${E(w.ko)}</div>`}${o.ndec?`<div class="sub">빨간 점선 조각은 문장에 안 쓰는 조각이었어요</div>`:""}
@@ -1884,7 +1900,8 @@ function renderQ(){
        :`<div class="qbtns"><button class="pill" data-act="oreset">다시 놓기</button><button class="pill on" data-act="ocheck" ${o.used.length>=o.orig.length?"":"disabled"}>확인</button></div>`}`;
   } else {
     const key=Q.mode==="meaning"?"ko":"yomi", done=Q.sel!==null;
-    body = `<div class="sub">${Q.mode==="meaning"?"이 단어의 뜻은?":"이 단어의 읽기는?"}</div><div class="qw">${E(w.text)}</div><div style="text-align:center;margin:-4px 0 8px">${posTag(w.pos)}</div>
+    const okNow=done&&Q.opts[Q.sel]===w[key];
+    body = `<div class="qcard ${done?(okNow?"ok":"ng"):""}">${qchip(w)}${done?qmark(okNow):""}<div class="sub">${Q.mode==="meaning"?"이 단어의 뜻은?":"이 단어의 읽기는?"}</div><div class="qw">${E(w.text)}</div><div style="margin:-2px 0 2px">${posTag(w.pos)}</div></div>
      <div class="opts4">${Q.opts.map((o,i)=>{
        let c=""; if(done){ if(o===w[key]) c="correct"; else if(i===Q.sel) c="wrong"; }
        return `<button class="opt ${c}" data-act="pick" data-i="${i}" ${done?"disabled":""}><kbd>${i+1}</kbd>${E(o)}</button>`;
@@ -1901,12 +1918,12 @@ function grade(ok){
 function pick(i){
   if(Q.mode==="order"||Q.sel!==null||i>=Q.opts.length) return;
   const w=Q.list[Q.i], key=Q.mode==="meaning"?"ko":"yomi", ok=Q.opts[i]===w[key];
-  Q.sel=i; ok?Q.score++:Q.wrong.push(w); if(!ok) logWrong(w,Q.mode,Q.opts[i],w[key]); record(w,ok); renderQ();
+  Q.sel=i; ok?Q.score++:Q.wrong.push(w); if(!ok) logWrong(w,Q.mode,Q.opts[i],w[key]); record(w,ok); renderQ(); qFx(ok);
 }
 function orderCheck(){
   const o=Q.ord, w=Q.list[Q.i];
   o.ok = o.used.map(id=>o.chunks[id]).join("")===o.orig.join("");
-  o.checked=true; Q.sel=0; o.ok?Q.score++:Q.wrong.push(w); record(w,o.ok); renderQ();
+  o.checked=true; Q.sel=0; o.ok?Q.score++:Q.wrong.push(w); record(w,o.ok); renderQ(); qFx(o.ok);
 }
 function nextQ(){ Q.i++; Q.sel=null; setOpts(); renderQ(); }
 function sakura(n){
@@ -2257,8 +2274,8 @@ const jRate=(lv,news)=>news?1:({N5:.85,N4:.9,N3:.95}[lv]||1);
 const jAudioKey=(who,text,rate)=>{ let h=5381; const s=who+"|"+text+"|"+rate; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h.toString(36); };
 function jAudioList(lines,meta){ const A=window.LISTEN_AUDIO||{}; if(!meta) return null; const rate=jRate(meta.lv,meta.news);
   const ks=lines.map(([w,t])=>jAudioKey(w,plain(t),rate)); return ks.every(k=>A[k])?ks.map(k=>"audio/listen/"+k+".m4a"):null; }
-function jPlayFiles(urls){ const tok=jTok; let i=0;
-  const next=()=>{ if(tok!==jTok||i>=urls.length) return; const a=new Audio(urls[i++]); jAud=a;
+function jPlayFiles(urls,done){ const tok=jTok; let i=0;
+  const next=()=>{ if(tok!==jTok) return; if(i>=urls.length){ if(done) done(); return; } const a=new Audio(urls[i++]); jAud=a;
     a.onended=()=>{ if(tok===jTok) setTimeout(next,450); }; a.onerror=()=>{ if(tok===jTok) setTimeout(next,0); }; a.play().catch(()=>{}); };
   next(); }
 function jSpeak(s){
@@ -2537,12 +2554,16 @@ function renderNews(){
     const sig=[useLv?[...lvSel].sort().join():"",newsTopic,newsOnly,newsHideRead].join("|");
     if(sig!==newsSig){ newsSig=sig; newsLimit=NEWS_PAGE; }
     const total=list.length, shown=list.slice(0,newsLimit);
-    body = list.length ? `<div class="ngrid">${shown.map(x=>`<article class="ncard ${x.read?"read":""}" data-art="${x.a.id}" tabindex="0" role="button">
-       <div class="thumb">${illus(x.a.topic)}</div>
-       <div class="nb"><div class="nmeta">${lvb(x.a.lv)} <span class="tag">${catOf(x.a)}</span>${x.a.date?` <span class="sub">${E(x.a.date)}</span>`:""}${x.read?` <span class="sub">읽음</span>`:""}</div>
-       <h3 class="ntitle">${R(x.a.title)}</h3><div class="sub">${E(x.a.titleKo)}</div>
-       ${x.hit.size?`<div class="sub">내 단어 ${x.hit.size}개 포함</div>`:""}
-       <div class="src">${E(srcOf(x.a))}</div></div></article>`).join("")}</div>`
+    body = list.length ? (()=>{
+      const meta=x=>`<div class="nmeta">${lvb(x.a.lv)} <span class="tag">${catOf(x.a)}</span>${x.a.date?` <span class="sub">${E(x.a.date)}</span>`:""}${x.read?` <span class="sub">읽음</span>`:""}</div>`;
+      const h=shown[0], rest=shown.slice(1);
+      return `<div class="nhero ${h.read?"read":""}" data-art="${h.a.id}" tabindex="0" role="button">
+        <div class="nhimg">${illus(h.a.topic)}</div><div class="nhshade"></div>
+        <div class="nhc">${meta(h)}<h3>${R(h.a.title)}</h3><p>${E(h.a.titleKo)}</p>${h.hit.size?`<p class="nhw">내 단어 ${h.hit.size}개 포함</p>`:""}<span class="nhbtn">읽어 보기</span></div></div>
+       ${rest.length?`<h4 class="nfh">최신 뉴스</h4><div class="nfeed">${rest.map(x=>`<article class="nrow ${x.read?"read":""}" data-art="${x.a.id}" tabindex="0" role="button">
+         <div class="nrt">${illus(x.a.topic)}</div>
+         <div class="nrb">${meta(x)}<h3 class="ntitle">${R(x.a.title)}</h3><div class="sub">${E(x.a.titleKo)}</div>
+         ${x.hit.size?`<div class="sub">내 단어 ${x.hit.size}개 포함</div>`:""}<div class="src">${E(srcOf(x.a))}</div></div></article>`).join("")}</div>`:""}`; })()
       + (total>shown.length?`<div class="morewrap"><button class="pill" data-act="nmore">더 보기 (${shown.length}/${total})</button></div>`:`<div class="sub morewrap">전체 ${total}편</div>`)
       : `<div class="empty">조건에 맞는 글이 없어요. 급수나 필터를 바꿔 보세요.</div>`;
   } else {
@@ -2566,8 +2587,20 @@ function renderNews(){
 }
 
 /* ---- 앱 안 리더 ---- */
-function openArt(id){ readCur={kind:"art",id,open:new Set()}; markRead("art:"+id); setView("read"); }
+function openArt(id){ if(newsOn){ jStop(); newsOn=false; } readCur={kind:"art",id,open:new Set()}; markRead("art:"+id); setView("read"); }
 function openGov(i){ const g=(window.NEWS_DATA?window.NEWS_DATA.items:[])[i]; if(!g) return; readCur={kind:"gov",g}; markRead("gov:"+g.link); setView("read"); }
+/* 뉴스 읽어 주기: 미리 만든 사람 같은 음성(audio/news, tools/make-news-audio.js)이 있으면 그걸 쓰고, 없으면 문장마다 끊어서 읽어요 */
+let newsOn=false;   /* 뉴스 듣기 중인지 (다시 누르면 멈춰요) */
+const newsBtnHtml=()=>`${ic("sound")} ${newsOn?"멈춤":"듣기"}`;
+function newsBtnUpd(){ const b=document.querySelector('[data-act="rread"]'); if(b) b.innerHTML=newsBtnHtml(); }
+const newsVoice=a=>String(a.id).charCodeAt(String(a.id).length-1)%2===0?9:11;   /* tools/make-news-audio.js 와 같은 규칙 */
+function newsFiles(a){ const A=window.NEWS_AUDIO||{}; const sp=newsVoice(a); const ks=(a.body||[]).map(x=>jAudioKey("N"+sp,plain(x.ja),1)); return ks.length&&ks.every(k=>A[k])?ks.map(k=>"audio/news/"+k+".m4a"):null; }
+function speakNatural(paras,done){
+  if(!window.speechSynthesis) return; jStop(); const tok=jTok, q=[];
+  paras.forEach((p,i,arr)=>{ const ss=(String(p).match(/[^。！？]+[。！？]?/g)||[]).map(x=>x.trim()).filter(Boolean); ss.forEach((t,j)=>q.push([t,j===ss.length-1?(i===arr.length-1?0:650):300])); });
+  let k=0; const next=()=>{ if(tok!==jTok) return; if(k>=q.length){ if(done) done(); return; } const [t,gap]=q[k++], u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.92; u.pitch=1; const v=bestJa(); if(v) u.voice=v;
+    const go=()=>{ if(tok===jTok) setTimeout(next,gap); }; u.onend=go; u.onerror=go; try{ speechSynthesis.resume(); }catch(e){} speechSynthesis.speak(u); };
+  setTimeout(next,160); }   /* cancel 바로 뒤에 말하면 크롬이 소리를 삼키는 경우가 있어 잠깐 기다려요 */
 function renderReader(){
   if(!readCur){ setView("news"); return; }
   const ms=buildMatchers(), back=`<button class="back" data-act="rback">${ic("back")}목록으로</button>`;
@@ -2582,7 +2615,7 @@ function renderReader(){
      <h2 class="rtitle">${R(a.title)}</h2><div class="sub">${E(a.titleKo)}</div>
      <div class="rtools"><button class="pill sm" data-act="rfuri">후리가나 ${$("nofuri").checked?"보이기":"숨기기"}</button>
        <button class="pill sm" data-act="rko">번역 전체 ${rShowKo?"가리기":"보기"}</button>
-       ${speech(a.body.map(s=>plain(s.ja)).join(""))}</div>
+       ${"speechSynthesis" in window||newsFiles(a)?`<button class="pill sm" data-act="rread" data-id="${a.id}">${newsBtnHtml()}</button>`:""}</div>${newsFiles(a)&&(window.NEWS_VOICES||{})[newsVoice(a)]?`<div class="jcredit" style="text-align:left">음성: VOICEVOX:${E(window.NEWS_VOICES[newsVoice(a)])}</div>`:""}
      <div class="rbody">${a.body.map((s,i)=>{const op=rShowKo||(readCur.open&&readCur.open.has(i));return `<div class="rs" data-i="${i}"><p class="rja">${R(s.ja)}</p><button class="kobtn" data-act="rsent" data-i="${i}" aria-expanded="${op}">${op?"번역 닫기":"번역 보기"}</button>${op?`<p class="rko">${E(s.ko)}</p>`:""}</div>`}).join("")}</div>
      ${a.notes&&a.notes.length?`<details class="notes" open><summary>일본에서 실제로 쓰이는 뜻</summary>${a.notes.map(n=>`<div class="note"><b>${E(n.w)}</b> <span class="nko">${E(n.ko)}</span><p>${E(n.d)}</p></div>`).join("")}</details>`:""}
      ${hit.size?`<h3>이 글에 나온 내 단어</h3><div class="chips">${chips(hit)}</div>`:""}
@@ -2631,6 +2664,9 @@ $("readView").addEventListener("click",e=>{
   else if(a==="rko"){ rShowKo=!rShowKo; if(readCur&&readCur.open) readCur.open.clear(); renderReader(); }
   else if(a==="rsent"){ const i=+b.dataset.i, o=readCur.open||(readCur.open=new Set()); o.has(i)?o.delete(i):o.add(i); const y=scrollY; renderReader(); scrollTo(0,y); }
   else if(a==="rspeak") speakJa(b.dataset.t);
+  else if(a==="rread"){ if(newsOn){ jStop(); newsOn=false; newsBtnUpd(); return; }
+    const art=(window.ARTICLES||[]).find(x=>x.id===b.dataset.id); if(!art) return; jStop(); newsOn=true; newsBtnUpd(); const done=()=>{ newsOn=false; newsBtnUpd(); };
+    const f=newsFiles(art); if(f) jPlayFiles(f,done); else speakNatural(art.body.map(x=>plain(x.ja)),done); }
 });
 
 // 드래그한 단어 → 사전 링크 / 내 단어로 추가
@@ -2732,6 +2768,8 @@ const lastSub={study:"list"};
 function renderSub(eff){ const g=GROUP[eff], el=$("subtabs"); if(!g||eff==="read"){ el.hidden=true; return; } el.hidden=false;
   el.innerHTML=SUB[g].map(([k,l])=>`<button role="tab" data-sv="${k}" class="${k===eff?"on":""}" aria-selected="${k===eff}">${l}</button>`).join(""); }
 function setView(v,opt){
+  /* 뉴스·기사 읽기 화면을 벗어나면 듣기 소리를 바로 꺼요 */
+  if((view==="read"&&v!=="read")||(view==="news"&&v!=="news"&&v!=="read")){ try{ jStop(); }catch(e){} newsOn=false; }
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   if(!QV(v)) quizFrom=null;
@@ -2781,13 +2819,14 @@ function renderHome(){
   const qchips=QL.map(x=>x.n>=x.of?`<span class="h2qc dn"><i>✓</i>${E(x.t)}</span>`:`<button type="button" class="h2qc" data-qgo="${x.id}"><i>${x.n}/${x.of}</i>${E(x.t)}</button>`).join("");
   const CHK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', DN=["일","월","화","수","목","금","토"]; let wk=0;
   const week=[6,5,4,3,2,1,0].map(i=>{ const d=new Date(Date.now()-i*864e5), e=log[d.toLocaleDateString("sv-SE")], on=!!(e&&e.n>0); if(on) wk++; return `<div class="h2d ${on?"on":""} ${i===0?"now":""}"><i>${on?CHK:""}</i><span>${DN[d.getDay()]}</span></div>`; }).join("");
-  const TL=[["data-go=\"list\"","c1","語","단어장","N5~N1 단어"],["data-go=\"quiz\"","c2","問","퀴즈","카드·짝 맞추기"],["data-go=\"grammar\"","c3","文","문법","쉽게 정리"],["data-go=\"news\"","c4","新","뉴스 읽기","매일 새 기사"],["data-ppage=\"path\"","c5","道","단계별 학습","차근차근 따라가기"],["data-ppage=\"basic\"","c6","あ","기초 가나","히라가나·가타카나"],["data-hq=\"review\"","c8","復",nw?`오답 노트`:"오답 노트",nw?`${nw}개 다시 보기`:"틀린 문제 모음"],["data-go=\"stats\"","c7","表","학습 리포트","이번 주 기록"]];
+  const TL=[["data-go=\"list\"","c1","語","단어장","N5~N1 단어"],["data-go=\"quiz\"","c2","問","퀴즈","카드·짝 맞추기"],["data-go=\"grammar\"","c3","文","문법","쉽게 정리"],["data-go=\"news\"","c4","新","뉴스 읽기","매일 새 기사"],["data-ppage=\"path\"","c5","道","단계별 학습","차근차근 따라가기"],["data-ppage=\"basic\"","c6","あ","일본어 글자","히라가나·가타카나 배우기"],["data-hq=\"review\"","c8","復",nw?`오답 노트`:"오답 노트",nw?`${nw}개 다시 보기`:"틀린 문제 모음"],["data-go=\"stats\"","c7","表","학습 리포트","이번 주 기록"]];
   const tiles=TL.map(t=>`<button type="button" class="h2t" ${t[0]}><span class="h2ti ${t[1]}">${t[2]}</span><span><b>${t[3]}</b><small>${t[4]}</small></span></button>`).join("");
   const FLAME='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5s5.5 4 5.5 10a5.5 5.5 0 0 1-11 0c0-2.6 1.5-4.3 1.5-4.3s1.1 2.2 2.6 2.2C10.6 7.2 12 2.5 12 2.5z"/></svg>';
   $("homeView").innerHTML=`<div class="home h2">
    <div class="h2top"><div class="h2bird">${window.PATH?PATH.birdHtml():""}</div><div class="h2hello"><h2>${nick?`<span class="h2nm">${E(nick)}님</span>`:""}<span class="h2gm">${greet}</span></h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div><div class="h2flame ${st?"on":""}" title="${st}일 연속 학습" aria-label="${st}일 연속 학습">${FLAME}<b>${st}</b></div></div>
    ${window.PATH?PATH.statusHtml():""}
    ${window.DEV?DEV.bannerHtml():""}
+   ${beginnerHtml()}
    <section class="h2hero"><div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
    ${window.PATH?`<div class="h2card h2act">${PATH.continueHtml()+PATH.reviewHtml()}</div>`:""}
    ${jrPending?jr:""}
@@ -2795,6 +2834,21 @@ function renderHome(){
    <section><div class="h2sh"><b>탐색</b><small>골라서 공부해요</small></div><div class="h2grid">${tiles}</div></section>
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
    ${jrPending?"":jr}</div>`;
+}
+/* 완전 처음 시작한 사람(가입 때 "히라가나부터")에게 홈 맨 위에 보여 주는 차근차근 안내 */
+function beginnerHtml(){
+  if(!prefs.beginner) return "";
+  const d=(LS.get("jp-kana",{done:{}}).done)||{}, cnt=ch=>Object.keys(d).filter(k=>k[0]===ch&&d[k]).length, h=Math.min(19,cnt("h")), k=Math.min(19,cnt("k"));
+  if(h>=19&&k>=19){ return `<section class="h2begin done"><b>🎉 글자 배우기를 모두 마쳤어요!</b><p>이제 N5 단어와 퀴즈로 이어 가요.</p><button type="button" class="pill sm" data-bgn="hide">이 안내 닫기</button></section>`; }
+  const steps=[
+    {t:"히라가나 익히기",s:"あ い う え お … 글자 읽기부터",p:h+" / 19",done:h>=19,go:'data-ppage="basic"'},
+    {t:"가타카나 익히기",s:"ア イ ウ エ オ … 외래어에 많이 써요",p:k+" / 19",done:k>=19,go:'data-ppage="basic"'},
+    {t:"쉬운 N5 단어 시작",s:"하루 몇 개씩, 예문과 함께",p:"",done:false,go:'data-ppage="path"'},
+    {t:"퀴즈로 확인하기",s:"배운 걸 가볍게 풀어 봐요",p:"",done:false,go:'data-go="quiz"'}];
+  const now=steps.findIndex(x=>!x.done);
+  return `<section class="h2begin"><div class="hbh"><b>일본어 첫걸음</b><small>이 순서대로 한 칸씩만 해 보세요. 어렵지 않아요!</small></div>
+   <ol>${steps.map((x,i)=>`<li class="${x.done?"dn":i===now?"now":""}"><i>${x.done?"✓":i+1}</i><span><b>${x.t}</b><small>${x.s}${x.p?" · "+x.p:""}</small></span>${i===now?`<button type="button" class="pill on sm" ${x.go}>시작</button>`:""}</li>`).join("")}</ol>
+   <button type="button" class="hbx" data-bgn="hide">나중에 볼게요</button></section>`;
 }
 function renderToday(){
   const qt=quotePick(todayOff);
@@ -2852,7 +2906,8 @@ $("levels").addEventListener("click",e=>{
   renderLevels(); refresh();
 });
 $("posf").addEventListener("change",e=>{ posf=e.target.value; refresh(); });
-$("q").addEventListener("input",renderGrid);
+document.addEventListener("click",e=>{ if(!document.body.classList.contains("nofuri")) return; const r=e.target.closest&&e.target.closest("ruby"); if(r){ r.classList.toggle("fshow"); e.stopPropagation(); e.preventDefault(); } },true);   /* 후리가나를 숨긴 상태에서는 한자를 누르면 읽기가 보여요(핸드폰은 마우스를 올릴 수 없으니까) */
+$("q").addEventListener("input",()=>{ const q=$("q"), v=q.value; if(listStage==="pick"&&v.trim()){ openList("전체"); q.value=v; renderGrid(); q.focus(); } else renderGrid(); });   /* 급수를 고르기 전에 바로 검색하면 모든 급수에서 찾아요 */
 $("hide").addEventListener("change",renderGrid);
 function applyPrefs(){ document.body.classList.toggle("nofuri",$("nofuri").checked); }
 $("nofuri").addEventListener("change",()=>{ applyPrefs(); prefs.nofuri=$("nofuri").checked; LS.set("jp-prefs",prefs); });
@@ -2984,6 +3039,7 @@ function renderOnb(){
   o.scrollTop=0;
 }
 const authErr=e=>{ const c=(e&&e.code)||""; return /email-already/.test(c)?"이미 가입된 이메일이에요. 로그인해 주세요.":/invalid-email/.test(c)?"이메일 형식이 올바르지 않아요.":/weak-password/.test(c)?"비밀번호는 6자 이상으로 해 주세요.":/user-not-found|wrong-password|invalid-credential|invalid-login/.test(c)?"이메일 또는 비밀번호가 맞지 않아요.":/network/.test(c)?"네트워크를 확인해 주세요.":/too-many/.test(c)?"시도가 너무 많아요. 잠시 후 다시 해 주세요.":"처리하지 못했어요. ("+c+")"; };
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-bgn]"); if(!b) return; if(b.dataset.bgn==="hide"){ prefs.beginner=false; LS.set("jp-prefs",prefs); renderHome(); } });
 function openOnb(){ obStep=RAW.get("jp-auth-done",0)?0:"auth"; obAuth="main"; obMsg=""; renderOnb(); }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-ob]"); if(!b) return;
@@ -3019,7 +3075,7 @@ document.addEventListener("click",e=>{
   if(a==="prev"){ obStep=Math.max(0,obStep-1); renderOnb(); return; }
   if(a==="lv"){ obLv=OB_LV[+b.dataset.i][1]; obKana=+b.dataset.i===0; obStep=2; renderOnb(); return; }
   if(a==="goal"){
-    prefs.goal=+b.dataset.n; prefs.showKana=!!obKana; prefs.myLevels=obLv||[]; delete prefs.myLevel;
+    prefs.goal=+b.dataset.n; prefs.showKana=!!obKana; prefs.beginner=!!obKana; prefs.myLevels=obLv||[]; delete prefs.myLevel;
     lvSel=new Set(prefs.myLevels); level="전체"; todayOff=0; renderLevels();
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.open(),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
   }

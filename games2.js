@@ -6,7 +6,7 @@ const toHira=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x
 const ST=document.createElement("style");
 ST.textContent=`.wd-hint{text-align:center;margin:6px 0 10px}.wd-hint b{font-size:20px}.wd-hint small{display:block;color:var(--sub);margin-top:2px}
 .wd-grid{display:grid;gap:6px;justify-content:center;margin:10px auto}
-.wd-row{display:grid;gap:6px}.wd-c{width:46px;height:46px;border:2px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:var(--card)}
+.wd-row{display:grid;gap:6px}.wd-c{width:36px;height:36px;border:2px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:var(--card)}
 .wd-c.cur{border-color:var(--accent)}.wd-c.ok{background:#4c9a62;border-color:#4c9a62;color:#fff}.wd-c.pos{background:#d8a83c;border-color:#d8a83c;color:#fff}.wd-c.no{background:#8a8d93;border-color:#8a8d93;color:#fff}
 .wd-tabs{display:flex;gap:6px;justify-content:center;margin:8px 0}.wd-tabs .pill{padding:4px 12px}
 .wd-kb{display:grid;gap:4px;margin:6px auto;max-width:420px}.wd-k{border:1px solid var(--line);background:var(--card);border-radius:8px;height:38px;font:inherit;font-size:17px;font-weight:700;color:var(--text);cursor:pointer;padding:0}
@@ -16,7 +16,7 @@ ST.textContent=`.wd-hint{text-align:center;margin:6px 0 10px}.wd-hint b{font-siz
 .sh-w.com{background:var(--chip);align-self:flex-start}.sh-w.me{background:var(--accent-soft);align-self:flex-end;text-align:right}
 .sh-nat{display:block;width:100%;max-width:380px;margin:6px auto;padding:12px 14px;font-size:20px;border:2px solid var(--accent);border-radius:12px;background:var(--card);color:var(--text);text-align:center}
 .sh-need{text-align:center;font-size:15px;margin:8px 0}.sh-need b{display:inline-block;font-size:34px;color:var(--accent);margin:0 4px}
-.sh-in{display:flex;gap:6px;justify-content:center;align-items:center;margin:8px 0;min-height:56px;flex-wrap:wrap}.sh-in span{min-width:42px;height:48px;padding:0 6px;border:2px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:var(--card)}.sh-in span.lock{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}.sh-in .caret{min-width:3px;width:3px;padding:0;border:0;background:var(--accent);height:34px;animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
+.sh-in{display:flex;gap:6px;justify-content:center;align-items:center;margin:8px 0;min-height:56px;flex-wrap:wrap}.sh-in span{min-width:42px;height:48px;padding:0 6px;border:2px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:var(--card)}.sh-in span.lock{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}.sh-in .caret{min-width:3px;width:3px;padding:0;border:0;background:var(--accent);height:34px;animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
 .sh-msg{text-align:center;min-height:22px;font-size:14px;margin-bottom:4px}
 .sh-opt{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:1px}.sh-opt small{opacity:.7;font-size:12px}
 #fopts{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}#fopts .opt{font-size:15px;padding:10px 8px;min-height:54px}
@@ -36,6 +36,9 @@ const KB={
   etc:KBET0
 };
 
+/* 입력 방식: 기본은 내 핸드폰의 일본어 키보드. 일본어 키보드가 없으면 화면 키보드로 바꿀 수 있어요 (워들·しりとり 공통, 선택은 기억해요) */
+const natOn=()=>!(typeof prefs!=="undefined"&&prefs.gNative===false);
+const setNat=v=>{ prefs.gNative=!!v; LS.set("jp-prefs",prefs); };
 const toKata=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
 function kbHTML(tab,state,attr,kata){
   const rows=KB[tab]||[];
@@ -43,6 +46,10 @@ function kbHTML(tab,state,attr,kata){
   const keyBtn=c=>c?`<button class="wd-k ${state[c]||""}" ${attr}="key" data-c="${cv(c)}">${cv(c)}</button>`:`<span class="wd-k sp"></span>`;
   return rows.map(r=>`<div class="wd-row" style="grid-template-columns:repeat(${r.length},1fr)">${r.map(keyBtn).join("")}</div>`).join("");
 }
+/* 타자판을 화면 아래에 고정하고, 그만큼 위쪽 내용이 가리지 않게 여백을 줘요 */
+function dockPad(){ const d=document.querySelector(".wd-dock"); if(d&&d.parentElement) d.parentElement.style.paddingBottom=d.classList.contains("nat")?"":(d.offsetHeight+14)+"px";
+  /* 지금 쓰는 줄이 고정 타자판에 가려지면 위로 올려 줘요 */
+  if(d&&!d.classList.contains("nat")){ const c=document.querySelector(".wd-c.cur"), top=d.getBoundingClientRect().top; if(c){ const b=c.getBoundingClientRect().bottom; if(b>top-12) window.scrollBy(0,b-top+16); } } }
 const kbTabs=(tab,attr,kata)=>`<div class="wd-tabs">${[["basic",kata?"ア〜ワ":"あ〜わ"],["dak","゛ ゜"],["etc","ん·작은 글자"]].map(([k,l])=>`<button class="pill sm ${tab===k?"on":""}" ${attr}="tab" data-t="${k}">${l}</button>`).join("")}</div>`;
 let WDK=false; // 마지막에 고른 문자: false=히라가나, true=가타카나
 function wdPool(kata){
@@ -62,7 +69,7 @@ function wdIntro(){
    <div class="kseg" style="max-width:360px;margin:14px auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--chip);border-radius:14px;padding:4px">
      <button class="pill ${WDK?"":"on"}" style="justify-content:center;padding:10px" data-wd="script" data-k="0">히라가나 <small>ひらがな</small></button>
      <button class="pill ${WDK?"on":""}" style="justify-content:center;padding:10px" data-wd="script" data-k="1">가타카나 <small>カタカナ</small></button></div>
-   <div class="sub" style="text-align:center">${WDK?"외래어 단어를 가타카나로 입력해요 (ー, ッ, ァィゥェォ, ャュョ 포함)":"한자어·고유어 단어의 읽기를 히라가나로 입력해요 (っ, ゃゅょ, ぁぃぅぇぉ, ー 포함)"}</div>
+   <div class="sub" data-noln="1" style="text-align:center">${WDK?"외래어 단어를 가타카나로 입력해요 (ー, ッ, ァィゥェォ, ャュョ 포함)":"한자어·고유어 단어의 읽기를 히라가나로 입력해요 (っ, ゃゅょ, ぁぃぅぇぉ, ー 포함)"}</div>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:360px;margin:14px auto"><button class="cta" data-wd="new" data-m="daily">오늘의 문제 (${jlvQ()})</button><button class="cta sec" data-wd="new" data-m="free">연습 (무제한)</button></div>
    <div class="qbtns"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
@@ -80,19 +87,35 @@ function wdEval(guess,ans){
   for(let i=0;i<ans.length;i++){ if(res[i]!=="ok"&&rest[guess[i]]>0){ res[i]="pos"; rest[guess[i]]--; } }
   return res;
 }
+/* 빈칸 문장 힌트: 예문에서 정답 단어 자리를 （　　）로 비워서 보여 줘요 (동사·형용사는 어간 부분만 비워요) */
+function wdBlank(w){
+  const e=w.ex&&w.ex[0]; if(!e||!e.ja) return "";
+  const t=w.text, cand=[t]; if(/[ぁ-ゖ]$/.test(t)&&t.length>1) cand.push(t.slice(0,-1)); if(t.length>2&&/[ぁ-ゖ]$/.test(t)) cand.push(t.slice(0,-2));
+  for(const c of cand){ const re=new RegExp([...c].map(ch=>ch.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:\\[[^\\]]*\\])?").join("")); if(re.test(e.ja)) return `<div class="wd-sent"><div class="ja">${R(e.ja.replace(re,"（　　）"))}</div><div class="ko">${E(e.ko||"")}</div></div>`; }
+  return "";
+}
 function wdRender(){
   const g=G, w=g.w, show=g.showKanji&&w.text!==w.yomi?`<br><span style="font-size:26px">${E(w.text)}</span> <small style="color:var(--accent)">(3초만 보여요)</small>`:"";
   const rows=[]; for(let r=0;r<6;r++){
     const guess=g.guesses[r], isCur=r===g.guesses.length&&!g.over;
     const cells=[...Array(g.len)].map((_,i)=>{ if(guess) return `<div class="wd-c ${guess.res[i]}">${guess.s[i]}</div>`; if(isCur) return `<div class="wd-c cur">${g.cur[i]||""}</div>`; return `<div class="wd-c"></div>`; }).join("");
-    rows.push(`<div class="wd-row" style="grid-template-columns:repeat(${g.len},${g.len>5?40:46}px)">${cells}</div>`); }
+    rows.push(`<div class="wd-row" style="grid-template-columns:repeat(${g.len},${g.len>5?32:36}px)">${cells}</div>`); }
+  const nat=natOn(), oldNat=nat?$("wdNat"):null;
   $("quizView").innerHTML=`<div class="qbox gbox wdbox"><div class="gfx" id="gfx"></div>
    <div class="gstat"><span>${g.guesses.length} / 6번</span><button class="pill sm" data-act="gquit">그만하기</button></div>
    <div class="wd-hint"><b>${E(w.ko)}</b>${show}<small>${g.len}글자 · ${(POS[w.pos]||[w.pos])[0]}${w.text!==w.yomi?(g.hint?(g.showKanji?"":" · 한자 힌트 사용함"):` · <a href="#" data-wd="hint" style="color:var(--accent)">한자 힌트 3초 보기(-10점)</a>`):""}</small></div>
+   ${wdBlank(w)}
    <div class="wd-grid">${rows.join("")}</div>
-   <div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button></div>
+   ${nat?`<input id="wdNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${g.kata?"가타카나":"히라가나"}로 입력해요">
+   <div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button><button class="pill kbbtn" data-kbbtn="wdNat">⌨️ 키보드 닫기</button></div>
+   <p class="sub" style="text-align:center;font-size:12.5px;margin:2px 0">지금은 <b>핸드폰 키보드</b>로 입력해요. 일본어 키보드가 없다면 아래를 눌러요.</p>
+   <div class="qbtns"><button class="pill" data-wd="native">일본어 글자판 쓰기 (화면에 나와요)</button></div></div>`
+   :(g.kbHide?`<div class="qbtns" style="height:56px"></div><button type="button" class="pill on wd-show" data-wd="show">⌨️ 글자판 열기</button></div>`
+   :`<div class="wd-dock"><button type="button" class="wd-hide" data-wd="hide">▼ 글자판 접기</button><div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button><button class="pill" data-wd="native">📱 핸드폰 키보드</button></div>
    ${kbTabs(g.tab,"data-wd",g.kata)}
-   <div class="wd-kb">${kbHTML(g.tab,g.keys,"data-wd",g.kata)}</div></div>`;
+   <div class="wd-kb">${kbHTML(g.tab,g.keys,"data-wd",g.kata)}</div></div></div>`)}`;
+  if(nat){ const cur=$("wdNat"); if(cur){ if(oldNat&&oldNat.isConnected===false){ cur.replaceWith(oldNat); } const el=$("wdNat"); if(!el.dataset.comp&&el.value!==g.cur) el.value=g.cur; if(!g.over&&g.kbOpen!==false) el.focus(); kbBtnSync(); } }
+  else dockPad();
 }
 function wdEnter(){
   const g=G; if(!g||g.type!=="wordle"||g.over||g.cur.length!==g.len) return;
@@ -159,7 +182,7 @@ function shNatInput(el){
   g.cur=v; g.msg=""; if(el.value!==v) el.value=v; shNatSync();
 }
 function shRender(){
-  const g=G, chain=g.chain.slice(-2), nat=!!(typeof prefs!=="undefined"&&prefs.shNative);
+  const g=G, chain=g.chain.slice(-2), nat=natOn();
   const oldNat=nat?$("shNat"):null;
   $("quizView").innerHTML=`<div class="qbox gbox wdbox"><div class="gfx" id="gfx"></div>
    <div class="gstat"><span>점수 ${g.score}</span><span class="hp" role="img" aria-label="남은 기회 ${g.lives}번">${[0,1,2].map(i=>heart(i<g.lives,false)).join("")}</span></div>
@@ -167,11 +190,12 @@ function shRender(){
    <div class="sh-need"><b>${g.need}</b> 로 시작하는 단어를 입력하세요</div>
    <div class="sh-in">${[...g.cur].map((c,i)=>`<span class="${i===0?"lock":""}">${c}</span>`).join("")}<span class="caret"></span></div>
    <div class="sh-msg">${g.msg||(g.hintShown?`💡 힌트: <b>${E(g.hintShown.ko)}</b> (${g.hintShown.r.slice(0,2)}${"○".repeat(Math.max(0,g.hintShown.r.length-2))})`:"&nbsp;")}</div>
-   <div class="wd-act"><button class="pill" data-sk="del">지우기 ⌫</button><button class="pill on" data-sk="enter" ${g.cur.length>=2?"":"disabled"}>확인</button><button class="pill" data-sk="hint">💡 힌트 (${g.maxHints-g.hints})</button></div>
-   ${nat?`<input id="shNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="내 키보드(일본어)로 히라가나 입력">`:`${kbTabs(g.tab,"data-sk",false)}
-   <div class="wd-kb">${kbHTML(g.tab,{},"data-sk",false)}</div>`}
-   <div class="qbtns"><button class="pill ${nat?"on":""}" data-sk="native">⌨️ 내 키보드로 입력 ${nat?"켬":"끔"}</button><button class="pill" data-sk="giveup">포기하기</button><button class="pill" data-act="gquit">그만하기</button></div></div>`;
-  if(nat){ const cur=$("shNat"); if(cur){ if(oldNat&&oldNat.isConnected===false){ cur.replaceWith(oldNat); } const el=$("shNat"); el.value=g.cur; el.focus(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(_){} } }
+   <div class="wd-dock ${nat?"nat":""}"><div class="wd-act"><button class="pill" data-sk="del">지우기 ⌫</button><button class="pill on" data-sk="enter" ${g.cur.length>=2?"":"disabled"}>확인</button><button class="pill" data-sk="hint">💡 힌트 (${g.maxHints-g.hints})</button>${nat?`<button class="pill kbbtn" data-kbbtn="shNat">⌨️ 키보드 닫기</button>`:(g.kbHide?`<button class="pill on" data-sk="show">⌨️ 글자판 열기</button>`:`<button class="pill" data-sk="hide">▼ 글자판 접기</button>`)}</div>
+   ${nat?`<input id="shNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="내 키보드(일본어)로 히라가나 입력">`:`${g.kbHide?"":`${kbTabs(g.tab,"data-sk",false)}
+   <div class="wd-kb">${kbHTML(g.tab,{},"data-sk",false)}</div>`}`}</div>
+   <div class="qbtns"><button class="pill" data-sk="native">${nat?"일본어 글자판 쓰기":"📱 핸드폰 키보드로 입력"}</button><button class="pill" data-sk="giveup">포기하기</button><button class="pill" data-act="gquit">그만하기</button></div></div>`;
+  dockPad();
+  if(nat){ const cur=$("shNat"); if(cur){ if(oldNat&&oldNat.isConnected===false){ cur.replaceWith(oldNat); } const el=$("shNat"); el.value=g.cur; if(g.kbOpen!==false) el.focus(); kbBtnSync(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(_){} } }
 }
 function shHint(){
   const g=G; if(!g||g.type!=="shiri"||g.busy) return; if(g.hints>=g.maxHints){ g.msg="힌트를 모두 썼어요"; return shRender(); }
@@ -304,17 +328,22 @@ document.addEventListener("click",e=>{
     if(a==="script"){ WDK=wd.dataset.k==="1"; if(G&&G.type==="wordle"&&G.intro) wdIntro(); }
     else if(a==="new") wdBegin(wd.dataset.m);
     else if(G&&G.type==="wordle"&&!G.over){
-      if(a==="key"){ if(G.cur.length<G.len){ G.cur+=wd.dataset.c; wdRender(); } }
+      if(a==="key"){ try{ navigator.vibrate&&navigator.vibrate(6); }catch(e){} if(G.cur.length<G.len){ G.cur+=wd.dataset.c; wdRender(); } }
       else if(a==="del"){ G.cur=G.cur.slice(0,-1); wdRender(); }
+      else if(a==="native"){ setNat(!natOn()); wdRender(); }
+      else if(a==="hide"){ G.kbHide=true; wdRender(); }
+      else if(a==="show"){ G.kbHide=false; wdRender(); }
       else if(a==="enter") wdEnter();
       else if(a==="tab"){ G.tab=wd.dataset.t; wdRender(); }
       else if(a==="hint"){ if(!G.hint){ G.hint=true; G.showKanji=true; wdRender(); const gg=G; setTimeout(()=>{ if(G===gg&&!gg.over){ gg.showKanji=false; wdRender(); } },3000); } } }
     return; }
   const sd=e.target.closest("[data-sd]"); if(sd){ startShiriGo(+sd.dataset.sd); return; }
   const sk=e.target.closest("[data-sk]"); if(sk){ const a=sk.dataset.sk; if(!G||G.type!=="shiri"||G.over) return;
-    if(a==="key"){ if(G.cur.length<9){ G.cur+=sk.dataset.c; G.msg=""; shRender(); } }
+    if(a==="key"){ try{ navigator.vibrate&&navigator.vibrate(6); }catch(e){} if(G.cur.length<9){ G.cur+=sk.dataset.c; G.msg=""; shRender(); } }
     else if(a==="del"){ if(G.cur.length>1){ G.cur=G.cur.slice(0,-1); G.msg=""; shRender(); } }
-    else if(a==="native"){ prefs.shNative=!prefs.shNative; LS.set("jp-prefs",prefs); shRender(); }
+    else if(a==="native"){ setNat(!natOn()); shRender(); }
+    else if(a==="hide"){ G.kbHide=true; shRender(); }
+    else if(a==="show"){ G.kbHide=false; shRender(); }
     else if(a==="enter") shSubmit();
     else if(a==="tab"){ G.tab=sk.dataset.t; shRender(); }
     else if(a==="hint") shHint();
@@ -322,10 +351,23 @@ document.addEventListener("click",e=>{
     return; }
   const fo=e.target.closest("[data-fo]"); if(fo){ fPick(+fo.dataset.fo); return; }
 });
+function wdNatInput(el){
+  const g=G; if(!g||g.type!=="wordle"||g.over) return;
+  const toH=x=>x.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)), v0=[...el.value].map(c=>g.kata?(/[ぁ-ゖ]/.test(c)?toKata(c):c):toH(c)).filter(c=>g.kata?/[ァ-ヶー]/.test(c):/[ぁ-ゖー]/.test(c)).join("").slice(0,g.len);
+  g.cur=v0; if(el.value!==v0) el.value=v0; wdRender();
+}
+document.addEventListener("compositionstart",e=>{ if(e.target&&e.target.id==="wdNat") e.target.dataset.comp="1"; });
+/* 핸드폰 키보드가 열려 있을 때 눈에 띄는 "키보드 닫기" 버튼 (닫으면 "키보드 열기"로 바뀌어요) */
+function kbBtnSync(){ document.querySelectorAll("[data-kbbtn]").forEach(b=>{ const el=document.getElementById(b.dataset.kbbtn); const open=!!el&&document.activeElement===el; b.textContent=open?"⌨️ 키보드 닫기":"⌨️ 키보드 열기"; b.classList.toggle("on",!open); }); }
+document.addEventListener("focusin",e=>{ if(e.target&&(e.target.id==="wdNat"||e.target.id==="shNat")){ if(G) G.kbOpen=true; kbBtnSync(); } });
+document.addEventListener("focusout",e=>{ if(e.target&&(e.target.id==="wdNat"||e.target.id==="shNat")) setTimeout(kbBtnSync,0); });
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-kbbtn]"); if(!b) return; e.preventDefault(); const el=document.getElementById(b.dataset.kbbtn); if(!el) return; if(document.activeElement===el){ if(G) G.kbOpen=false; el.blur(); } else { if(G) G.kbOpen=true; el.focus(); } kbBtnSync(); });
+document.addEventListener("input",e=>{ if(e.target&&e.target.id==="wdNat"&&!e.isComposing) wdNatInput(e.target); });
 document.addEventListener("input",e=>{ if(e.target&&e.target.id==="shNat"&&!e.isComposing) shNatInput(e.target); });
-document.addEventListener("compositionend",e=>{ if(e.target&&e.target.id==="shNat") setTimeout(()=>shNatInput(e.target),0); });
+document.addEventListener("compositionend",e=>{ if(e.target&&e.target.id==="wdNat"){ delete e.target.dataset.comp; setTimeout(()=>wdNatInput(e.target),0); } if(e.target&&e.target.id==="shNat") setTimeout(()=>shNatInput(e.target),0); });
 document.addEventListener("keydown",e=>{
   if(!G||!QV(view)) return;
+  if(e.target&&e.target.id==="wdNat"){ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); wdNatInput(e.target); wdEnter(); } return; }
   if(e.target&&e.target.id==="shNat"){ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); shNatInput(e.target); shSubmit(); } return; }
   if(G.type==="fall"&&/^[1-4]$/.test(e.key)){ fPick(+e.key-1); }
   else if(G.type==="shiri"&&!G.over){ if(e.key==="Backspace"){ if(G.cur.length>1){ G.cur=G.cur.slice(0,-1); G.msg=""; shRender(); } } else if(e.key==="Enter") shSubmit(); else if(/^[ぁ-ゖー]$/.test(e.key)&&G.cur.length<9){ G.cur+=e.key; G.msg=""; shRender(); } }
