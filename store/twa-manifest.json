@@ -19,7 +19,7 @@
   "fallbackType": "customtabs",
   "appVersionName": "1.0.0",
   "appVersion": "1",
-  "minSdkVersion": 21,
+  "minSdkVersion": 24,
   "signingKey": { "path": "./android.keystore", "alias": "android" },
   "features": {},
   "isChromeOSOnly": false,

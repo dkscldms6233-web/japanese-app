@@ -1,1 +1,8 @@
-[]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.surasura.nihongo",
+        "sha256_cert_fingerprints": ["3C:87:D5:29:29:CE:41:FF:44:F2:C5:CE:69:F5:2A:A8:F3:36:3C:91:65:23:F7:F4:A9:A1:C5:C2:40:8B:C7:90"]
+      }
+    }]
