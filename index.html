@@ -962,6 +962,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
+<script src="word-audio.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
 <script src="kana.js?v=40"></script>
 <script src="games2.js?v=30"></script>
@@ -2592,6 +2593,14 @@ function whenVoices(cb){
 function speakJa(t,rate){ try{ const ss=speechSynthesis; ss.cancel();
   whenVoices(()=>setTimeout(()=>{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=rate||.9; const v=bestJa(); if(v) u.voice=v; ss.speak(u); },60)); }catch(e){} }
 /* 단어 발음: 한 글자짜리 읽기(は·て·き 등)는 히라가나만 주면 뭉개지거나 조사처럼(は→와) 읽혀서, 한자 표기를 같이 줘서 정확히 읽게 해요 */
+/* 단어 발음: 미리 만든 또렷한 음성(audio/word, VOICEVOX)이 있으면 그걸 틀고, 없으면 폰 음성으로 읽어요 */
+const wordKey=y=>{ let h=5381,g=7; const s="word1|"+y; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+let wAud=null;
+function sayWord(w){
+  const k=wordKey(w.yomi||""), A=window.WORD_AUDIO||{};
+  if(A[k]){ try{ speechSynthesis.cancel(); }catch(e){} if(wAud){ try{ wAud.pause(); }catch(e){} } wAud=new Audio("audio/word/"+k+".m4a"); wAud.play().catch(()=>speakJa(ttsOf(w),.8)); return; }
+  speakJa(ttsOf(w),.8);
+}
 const ttsOf=w=>{ const y=w.yomi||"", t=w.text||""; return (y.length<=2&&/[\u4e00-\u9fff]/.test(t)&&t.length<=2)?t:y; };
 const canSay=()=>"speechSynthesis" in window;
 const sayBtn=(attr,val,cls)=>canSay()?`<button type="button" class="say ${cls||""}" ${attr}="${E(val)}" title="발음 듣기" aria-label="발음 듣기">${ic("sound")}</button>`:"";
@@ -2999,7 +3008,7 @@ $("listView").addEventListener("change",e=>{
 });
 $("grid").addEventListener("click",e=>{
   const sy=e.target.closest("[data-say]");
-  if(sy){ const w=byKey(sy.dataset.say); if(w) speakJa(ttsOf(w),.8); return; }
+  if(sy){ const w=byKey(sy.dataset.say); if(w) sayWord(w); return; }
   const s=e.target.closest("[data-star]");
   if(s){ toggleStar(s.dataset.star); renderGrid(); return; }
   const c=e.target.closest(".card"); if(c) openWord(c.dataset.key);
@@ -3013,7 +3022,7 @@ $("dlg").addEventListener("click",e=>{
   if(a==="report"){ const w=byKey(b.dataset.key); if(w&&w.ex&&w.ex[0]) reportIssue(w,w.ex[0]); return; }
   if(a==="reportcur"){ if(curSent) reportIssue(curSent,curSent.ex[0]); return; }
   if(a==="prev") step(-1); else if(a==="next") step(1);
-  else if(a==="say"){ const w=byKey(nav[navI]); if(w) speakJa(ttsOf(w),.8); }
+  else if(a==="say"){ const w=byKey(nav[navI]); if(w) sayWord(w); }
   else if(a==="star"){ toggleStar(nav[navI]); showWord(); if(view==="list") renderGrid(); }
   else if(a==="del"){
     if(!confirm("이 단어를 삭제할까요?")) return;
