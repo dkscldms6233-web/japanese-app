@@ -7,7 +7,8 @@
 import asyncio,json,os,subprocess,sys,tempfile,array,math,audioop,wave
 import edge_tts
 ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
-J=json.load(open(sys.argv[1],encoding="utf-8")); TARGET=-19.0; CONC=6
+NEWS_MODE="--news-recent" in sys.argv   # 매일 뉴스 갱신: 이미 있는 파일은 건너뛰고, 목록(news-audio.js)을 다시 쓰고, 안 쓰는 옛 음성은 지워요
+J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=6
 NANAMI="ja-JP-NanamiNeural"; KEITA="ja-JP-KeitaNeural"
 KFIX={"を":"オ","は":"ハ","へ":"ヘ","ぢ":"ジ","づ":"ズ","ぢゃ":"ジャ","ぢゅ":"ジュ","ぢょ":"ジョ"}
 def norm(raw,pre,post):
@@ -37,7 +38,7 @@ def tasks():
         pct=round((j["rate"]-1)*100); yield ("listen",j["key"],j["text"],KEITA if j["who"]=="M" else NANAMI,f"{pct:+d}%",48000,6,12)
     for j in J["news"]:
         yield ("news",j["key"],j["text"],NANAMI,"-5%",32000,6,12)
-T=list(tasks()); print("만들 것",len(T),flush=True)
+T=[t for t in tasks() if not (NEWS_MODE and os.path.exists(os.path.join(ROOT,"audio",t[0],t[1]+".m4a")))]; print("만들 것",len(T),flush=True)
 async def main():
     sem=asyncio.Semaphore(CONC); loop=asyncio.get_running_loop(); tmpd=tempfile.mkdtemp(); fail=[]; done=0
     async def one(i,t):
@@ -56,4 +57,11 @@ async def main():
             if done%100==0: print(f"{done}/{len(T)}",flush=True)
     await asyncio.gather(*[one(i,t) for i,t in enumerate(T)])
     print(f"완료 {done}개, 실패 {len(fail)}개 {fail[:10]}",flush=True)
+    if NEWS_MODE:
+        keys=[j["key"] for j in J["news"]]; have=[k for k in keys if os.path.exists(os.path.join(ROOT,"audio","news",k+".m4a"))]
+        open(os.path.join(ROOT,"news-audio.js"),"w",encoding="utf-8").write('/* tools/make-voice-edge.py --news-recent 가 만든 목록이에요 (직접 고치지 마세요) */\nwindow.NEWS_VOICES={"9":"Nanami","11":"Nanami"};\nwindow.NEWS_AUDIO='+json.dumps({k:1 for k in have})+";\n")
+        want=set(keys); pr=0
+        for f in os.listdir(os.path.join(ROOT,"audio","news")):
+            if f.endswith(".m4a") and f[:-4] not in want: os.remove(os.path.join(ROOT,"audio","news",f)); pr+=1
+        print(f"뉴스 목록 {len(have)}개 갱신, 안 쓰는 옛 음성 {pr}개 삭제",flush=True)
 asyncio.run(main())

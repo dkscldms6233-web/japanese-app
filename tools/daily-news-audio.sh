@@ -1,22 +1,12 @@
 #!/bin/bash
-# 매일 새 기사의 음성 갱신 (예약 작업이 기사를 쓴 뒤에 불러요)
-#  1) VOICEVOX 엔진이 꺼져 있으면 잠깐 켜고
-#  2) tools/make-news-audio.js 로 새 문단의 음성만 만들고 (없어진 기사의 옛 음성은 지워요)
-#  3) 내가 켠 엔진이면 끕니다.
-# 엔진 위치를 바꿨다면: VOICEVOX_ENGINE=/경로/vv-engine/run bash tools/daily-news-audio.sh
+# 매일 새 기사의 음성 갱신 (예약 작업이 기사를 쓴 뒤에 불러요) — 단어장과 같은 Edge 일본어 여자 목소리(Nanami)
+#  1) tools/ev 에 edge-tts 가 없으면 설치(처음 한 번, 인터넷 필요)
+#  2) 최근 30일 기사의 새 문단 음성만 만들고, news-audio.js 목록을 갱신하고, 없어진 기사의 옛 음성은 지워요
+# 인터넷이 안 되면 음성만 건너뛰어요(기사는 폰 음성으로 읽혀요).
 cd "$(dirname "$0")/.." || exit 1
-ENGINE="${VOICEVOX_ENGINE:-$HOME/Applications/VOICEVOX/VOICEVOX.app/Contents/Resources/vv-engine/run}"
-URL="http://127.0.0.1:50021/version"
-started=0; ENGPID=""
-if ! curl -s -m 3 "$URL" >/dev/null 2>&1; then
-  if [ ! -x "$ENGINE" ]; then echo "VOICEVOX 엔진을 찾지 못했어요: $ENGINE (음성은 건너뛰어요. 기사는 기기 음성으로 읽혀요)"; exit 2; fi
-  nohup "$ENGINE" --host 127.0.0.1 --port 50021 >/tmp/voicevox-engine.log 2>&1 &
-  ENGPID=$!; started=1
-  for i in $(seq 1 90); do curl -s -m 2 "$URL" >/dev/null 2>&1 && break; sleep 2; done
-fi
-if ! curl -s -m 3 "$URL" >/dev/null 2>&1; then
-  echo "VOICEVOX 엔진이 응답하지 않아요 (음성은 건너뛰어요)"; [ "$started" = 1 ] && kill "$ENGPID" 2>/dev/null; exit 3
-fi
-node tools/make-news-audio.js; rc=$?
-if [ "$started" = 1 ]; then kill "$ENGPID" 2>/dev/null; sleep 1; pkill -f "vv-engine/run" 2>/dev/null; fi
-exit $rc
+EV=tools/ev
+if [ ! -x "$EV/bin/python" ]; then python3 -m venv "$EV" && "$EV/bin/pip" -q install edge-tts || { echo "edge-tts 설치 실패 (음성은 건너뛰어요)"; exit 2; }; fi
+JOBS=$(mktemp /tmp/news-jobs.XXXXXX)
+node tools/voice-jobs.js --news-recent "$JOBS" || { echo "문단 목록을 만들지 못했어요"; exit 3; }
+"$EV/bin/python" tools/make-voice-edge.py --news-recent "$JOBS"; rc=$?
+rm -f "$JOBS"; exit $rc
