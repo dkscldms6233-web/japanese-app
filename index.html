@@ -447,6 +447,9 @@ h1{letter-spacing:-.02em;cursor:pointer}
 #onb .obopts .mode b{font-size:17px}
 #onb .obin{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}
 #onb .gstwarn{display:grid;gap:10px;margin:12px 0}#onb .gstwarn div{background:#fff3e0;border:1px solid #f0b866;border-radius:12px;padding:10px 12px;color:#5b3300}#onb .gstwarn b{display:block;font-size:15px}#onb .gstwarn span{font-size:13px}html[data-theme=dark] #onb .gstwarn div{background:#3a2a10;border-color:#8a6420;color:#ffe2b0}
+.gstbar{margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#fff3e0;border:1.5px solid #f0b866;color:#5b3300;display:grid;gap:6px;font-size:13.5px;line-height:1.5}.gstbar b{font-size:15px}.gstbar .pill{justify-self:start}html[data-theme=dark] .gstbar{background:#3a2a10;border-color:#8a6420;color:#ffe2b0}
+.seedic{vertical-align:-3px;flex:none}.seedbal{display:inline-flex;align-items:center;gap:8px;font-size:30px;font-weight:800;color:var(--accent-text);line-height:1}.seedbal b{font-size:30px}.seedpr{display:inline-flex;align-items:center;gap:4px}.seedpr b{font-weight:800}
+.seedpay{margin:0 0 12px;padding:12px;border:1.5px solid var(--line);border-radius:14px;text-align:center}.seedpay b{display:block;margin-bottom:6px}.seedpay small{display:block;color:var(--sub);font-size:12px;margin-top:6px}.seedpacks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 #onb .obagree{display:flex;align-items:flex-start;gap:8px;margin:14px auto 0;max-width:340px;text-align:left;font-size:13.5px;line-height:1.45;color:var(--text)}#onb .obagree input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:#5b5bf0}#onb .obagree a{color:#4a2fe0;text-decoration:underline}
 #onb .obskip{background:none;border:0;color:var(--sub);font-size:14px;margin-top:14px;cursor:pointer;text-decoration:underline}
 
@@ -969,7 +972,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <link rel="stylesheet" href="design-v2.css?v=102">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
-<script src="warmup.js?v=4"></script>
+<script src="warmup.js?v=5"></script>
 </head>
 <body>
 <header>
@@ -1356,7 +1359,7 @@ function questList(){
 function questSeen(k,id){ const q=questState(); q[k]=q[k]||[]; if(q[k].includes(id)) return; q[k].push(id); LS.set("jp-quest",q); }
 function questCheck(){ try{ const L=questList(); let q=questState(); q.got=q.got||{}; let ch=false;
     L.forEach(x=>{ if(x.n>=x.of&&!q.got[x.id]){ q.got[x.id]=1; ch=true; if(window.PATH) PATH.addXp(10); toast("퀘스트 완료! +10 XP"); } });
-    if(L.length>=1&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; ch=true; if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 모두 완료! 씨앗 5개 · 20 XP"); }
+    if(L.length>=1&&!q.paid&&L.every(x=>x.n>=x.of)){ q.paid=true; ch=true; if(window.PATH){ PATH.addSeeds(5); PATH.addXp(20); } toast("오늘의 퀘스트 모두 완료! 🌱 씨앗 5개 · 20 XP"); }
     if(ch) LS.set("jp-quest",q); }catch(e){} }
 function nextQuestBtn(){
   const L=questList(), g=goalN(), x=L.find(q=>q.n<q.of);
@@ -1371,7 +1374,7 @@ function questHtml(extra){
   const open=prefs.questOpen!==false;
   return `<div class="quest ${open?"":"shut"}"><button type="button" class="qh" data-quest="toggle" aria-expanded="${open}"><b>오늘의 퀘스트</b><span class="qcnt">${done} / ${L.length}</span><i class="qchev" aria-hidden="true"></i></button>
    <div class="qbody"><div class="qlist">${L.map(x=>{ const dn=x.n>=x.of, inner=`${ring(x)}<div class="qm"><b>${E(x.t)}</b><small>${x.n} / ${x.of}${dn?"":" · 눌러서 하러 가기"}</small></div><span class="qxp">${dn?"받음":"+10 XP"}</span>`; return dn?`<div class="qrow dn">${inner}</div>`:`<button type="button" class="qrow go" data-qgo="${x.id}">${inner}</button>`; }).join("")}</div>
-   ${L.length>=1?`<div class="qchest ${q.paid?"dn":""}">${chest}<div class="qct"><b>${q.paid?"오늘의 보상을 받았어요":"모두 끝내면 보물상자!"}</b><small>${q.paid?"내일 또 만나요":"씨앗 5개 · 20 XP"}</small></div></div>`:""}</div>${extra?`<div class="qact">${extra}</div>`:""}</div>`;
+   ${L.length>=1?`<div class="qchest ${q.paid?"dn":""}">${chest}<div class="qct"><b>${q.paid?"오늘의 보상을 받았어요":"모두 끝내면 보물상자!"}</b><small>${q.paid?"내일 또 만나요":"🌱 씨앗 5개 · 20 XP"}</small></div></div>`:""}</div>${extra?`<div class="qact">${extra}</div>`:""}</div>`;
 }
 function logWrong(w,mode,picked,correct){ try{ if(!w||w.sent||!w.key) return; wlog.push({k:w.key,m:mode,p:String(picked||"").slice(0,60),c:String(correct||"").slice(0,60),t:Date.now()}); if(wlog.length>300) wlog=wlog.slice(-300); LS.set("jp-wlog",wlog); }catch(e){} }
 /* 복습 화면에서 스스로 매긴 기억 정도(again/hard/good/easy)를 기록 · 오답 노트 · 복습 일정에 반영 */
@@ -2317,7 +2320,7 @@ function jPlayFiles(urls,done){ const tok=jTok; let i=0;
 function jSpeak(s){
   if(!window.speechSynthesis) return;
   jStop(); const u=new SpeechSynthesisUtterance(s); u.lang="ja-JP"; u.rate=.9*lSpd();
-  const v=speechSynthesis.getVoices().find(v=>/^ja/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u);
+  const v=bestJa(); if(v) u.voice=v; speechSynthesis.speak(u);
 }
 function jVoices(){
   const ja=speechSynthesis.getVoices().filter(v=>/^ja/i.test(v.lang));
@@ -2569,10 +2572,27 @@ const fmtDate = s => { const d=new Date(s); return isNaN(d)?"":d.toLocaleDateStr
 const chips = hit => [...hit.values()].map(w=>`<button class="pill sm" data-key="${w.key}">${lvb(w.lv)} ${E(w.text)}</button>`).join("");
 function markRead(k){ readSet.add(k); LS.set("jp-read",[...readSet].slice(-800)); }
 /* 기기에 있는 일본어 음성 중 가장 자연스러운 것을 골라요(고음질·Siri·Google·Microsoft 계열을 먼저) */
-function bestJa(){ const vs=(window.speechSynthesis?speechSynthesis.getVoices():[]).filter(v=>/^ja/i.test(v.lang)); if(!vs.length) return null;
+/* 일본어 음성은 한 번 고르면 계속 같은 목소리를 써요 (처음엔 음성 목록이 비어 있어서 기본 목소리로 나왔다가, 나중에 다른 목소리로 바뀌는 문제를 막아요) */
+let JVOICE=null;
+function bestJa(){
+  const vs=(window.speechSynthesis?speechSynthesis.getVoices():[]).filter(v=>/^ja/i.test(v.lang)); if(!vs.length) return JVOICE;
+  if(JVOICE){ const same=vs.find(v=>v.voiceURI===JVOICE.voiceURI); if(same) return (JVOICE=same); }
+  let want=""; try{ want=localStorage.getItem("jp-voice")||""; }catch(e){}
+  const saved=want&&vs.find(v=>v.voiceURI===want); if(saved) return (JVOICE=saved);
   const score=v=>(/premium|enhanced|siri|neural|natural|online/i.test(v.name)?4:0)+(/google|microsoft|kyoko|o-ren|nanami|haruka/i.test(v.name)?2:0)+(v.localService?0:1);
-  return vs.sort((x,y)=>score(y)-score(x))[0]; }
-function speakJa(t,rate){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=rate||.9; const v=bestJa(); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+  JVOICE=vs.slice().sort((x,y)=>score(y)-score(x)||(x.name<y.name?-1:1))[0];
+  try{ localStorage.setItem("jp-voice",JVOICE.voiceURI); }catch(e){}
+  return JVOICE; }
+/* 음성 목록이 아직 안 올라왔으면 잠깐(최대 0.8초) 기다렸다가 읽어요 */
+function whenVoices(cb){
+  const ss=window.speechSynthesis; if(!ss||ss.getVoices().length){ cb(); return; }
+  let done=false; const f=()=>{ if(done) return; done=true; try{ ss.removeEventListener("voiceschanged",f); }catch(e){} cb(); };
+  try{ ss.addEventListener("voiceschanged",f); }catch(e){} setTimeout(f,800);
+}
+function speakJa(t,rate){ try{ const ss=speechSynthesis; ss.cancel();
+  whenVoices(()=>setTimeout(()=>{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=rate||.9; const v=bestJa(); if(v) u.voice=v; ss.speak(u); },60)); }catch(e){} }
+/* 단어 발음: 한 글자짜리 읽기(は·て·き 등)는 히라가나만 주면 뭉개지거나 조사처럼(は→와) 읽혀서, 한자 표기를 같이 줘서 정확히 읽게 해요 */
+const ttsOf=w=>{ const y=w.yomi||"", t=w.text||""; return (y.length<=2&&/[\u4e00-\u9fff]/.test(t)&&t.length<=2)?t:y; };
 const canSay=()=>"speechSynthesis" in window;
 const sayBtn=(attr,val,cls)=>canSay()?`<button type="button" class="say ${cls||""}" ${attr}="${E(val)}" title="발음 듣기" aria-label="발음 듣기">${ic("sound")}</button>`:"";
 
@@ -2869,6 +2889,7 @@ function renderHome(){
   $("homeView").innerHTML=`<div class="home h2">
    <div class="h2top"><div class="h2bird">${window.PATH?PATH.birdHtml():""}${window.PATH?PATH.statusHtml():""}</div><div class="h2hello"><h2>${nick?`<span class="h2nm">${E(nick)}님</span>`:""}<span class="h2gm">${greet}</span></h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div><div class="h2flame ${st?"on":""}" title="${st}일 연속 학습" aria-label="${st}일 연속 학습"><svg class="fl3" viewBox="0 0 48 56" aria-hidden="true"><defs><linearGradient id="flg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffc83a"/></linearGradient></defs><circle cx="24" cy="30" r="22" fill="url(#flg)"/><path d="M24 12c1 6 9 10 9 20a9 9 0 0 1-18 0c0-4 2-6 4-8 0 2 1 3 3 3-1-5-1-10 2-15z" fill="#fff"/></svg><b class="fln">${st}</b></div></div>
    ${window.DEV?DEV.bannerHtml():""}
+   ${curProfile().cloud?"":`<section class="gstbar" role="note"><b>게스트 모드예요</b><span>학습 기록이 <u>이 기기에만</u> 저장돼요. 다른 기기로 들어가면 이어지지 않고, 앱 데이터를 지우면 사라져요. 커뮤니티도 쓸 수 없어요.</span><button type="button" class="pill sm on" data-guestlogin="1">로그인·가입하고 기록 지키기</button></section>`}
    ${beginnerHtml()}
    <section class="h2hero"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있어요</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
@@ -2978,7 +2999,7 @@ $("listView").addEventListener("change",e=>{
 });
 $("grid").addEventListener("click",e=>{
   const sy=e.target.closest("[data-say]");
-  if(sy){ const w=byKey(sy.dataset.say); if(w) speakJa(w.yomi,.8); return; }
+  if(sy){ const w=byKey(sy.dataset.say); if(w) speakJa(ttsOf(w),.8); return; }
   const s=e.target.closest("[data-star]");
   if(s){ toggleStar(s.dataset.star); renderGrid(); return; }
   const c=e.target.closest(".card"); if(c) openWord(c.dataset.key);
@@ -2992,7 +3013,7 @@ $("dlg").addEventListener("click",e=>{
   if(a==="report"){ const w=byKey(b.dataset.key); if(w&&w.ex&&w.ex[0]) reportIssue(w,w.ex[0]); return; }
   if(a==="reportcur"){ if(curSent) reportIssue(curSent,curSent.ex[0]); return; }
   if(a==="prev") step(-1); else if(a==="next") step(1);
-  else if(a==="say"){ const w=byKey(nav[navI]); if(w) speakJa(w.yomi,.8); }
+  else if(a==="say"){ const w=byKey(nav[navI]); if(w) speakJa(ttsOf(w),.8); }
   else if(a==="star"){ toggleStar(nav[navI]); showWord(); if(view==="list") renderGrid(); }
   else if(a==="del"){
     if(!confirm("이 단어를 삭제할까요?")) return;
@@ -3087,6 +3108,7 @@ function renderOnb(){
   o.scrollTop=0;
 }
 const authErr=e=>{ const c=(e&&e.code)||""; return /email-already/.test(c)?"이미 가입된 이메일이에요. 로그인해 주세요.":/invalid-email/.test(c)?"이메일 형식이 올바르지 않아요.":/weak-password/.test(c)?"비밀번호는 6자 이상으로 해 주세요.":/user-not-found|wrong-password|invalid-credential|invalid-login/.test(c)?"이메일 또는 비밀번호가 맞지 않아요.":/network/.test(c)?"네트워크를 확인해 주세요.":/too-many/.test(c)?"시도가 너무 많아요. 잠시 후 다시 해 주세요.":"처리하지 못했어요. ("+c+")"; };
+document.addEventListener("click",e=>{ if(e.target.closest("[data-guestlogin]")){ APP.openAuth("signup"); return; } });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-bgn]"); if(!b) return; if(b.dataset.bgn==="hide"){ prefs.beginner=false; LS.set("jp-prefs",prefs); renderHome(); toast("'일본어 글자' 화면 맨 위에서 다시 켤 수 있어요"); } });
 function openOnb(){ obStep=RAW.get("jp-auth-done",0)?0:"auth"; obAuth="main"; obMsg=""; renderOnb(); }
 document.addEventListener("click",e=>{
@@ -3198,7 +3220,8 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="anime.js?v=14"></script>
-<script src="path.js?v=125"></script>
+<script src="billing.js?v=2"></script>
+<script src="path.js?v=130"></script>
 <script src="community.js?v=19"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=6"></script>
