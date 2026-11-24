@@ -446,6 +446,7 @@ h1{letter-spacing:-.02em;cursor:pointer}
 #onb .obopts{display:grid;gap:10px;margin:18px 0 6px;text-align:left}
 #onb .obopts .mode b{font-size:17px}
 #onb .obin{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}
+#onb .gstwarn{display:grid;gap:10px;margin:12px 0}#onb .gstwarn div{background:#fff3e0;border:1px solid #f0b866;border-radius:12px;padding:10px 12px;color:#5b3300}#onb .gstwarn b{display:block;font-size:15px}#onb .gstwarn span{font-size:13px}html[data-theme=dark] #onb .gstwarn div{background:#3a2a10;border-color:#8a6420;color:#ffe2b0}
 #onb .obagree{display:flex;align-items:flex-start;gap:8px;margin:14px auto 0;max-width:340px;text-align:left;font-size:13.5px;line-height:1.45;color:var(--text)}#onb .obagree input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:#5b5bf0}#onb .obagree a{color:#4a2fe0;text-decoration:underline}
 #onb .obskip{background:none;border:0;color:var(--sub);font-size:14px;margin-top:14px;cursor:pointer;text-decoration:underline}
 
@@ -959,7 +960,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
-<script src="kana.js?v=38"></script>
+<script src="kana.js?v=39"></script>
 <script src="games2.js?v=30"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
@@ -1408,6 +1409,7 @@ function inScope(w){
   else if(level==="오답 노트"){ if(!(w.key in wrong)) return false; }
   else if(level==="내 단어"){ if(w.key[0]!=="c") return false; }
   else if(lvSel.size && !lvSel.has(w.lv) && !lvSel.has(w.lv2)) return false;
+  if(view==="game"&&prefs.gkana&&!(prefs.gkana==="hira"?/^[ぁ-ゖー]+$/:/^[ァ-ヺー]+$/).test(w.text)) return false;
   if(posf&&w.pos!==posf) return false;
   return view!=="quiz"||posGroupOk(w);
 }
@@ -1773,7 +1775,7 @@ function quizTile(act,attr,cls,icon,title,sub){ return `<button class="t2 ${cls}
 function lvRow(jl,label,withAll){ return `<div class="lvrow"><span>${label}</span><div class="jlv">${(withAll?["전체","N5","N4","N3","N2","N1"]:["N5","N4","N3","N2","N1"]).map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div></div>`; }
 function quizSetup(){
   stopG(); document.body.classList.remove("inq","inr");
-  level=view==="quiz"&&qscope?qscope:"전체"; lvSel=(view==="quiz"||view==="game")&&jlvQ()==="전체"?new Set():new Set([jlv()]); posf=""; $("posf").value="";
+  level=view==="quiz"&&qscope?qscope:"전체"; lvSel=(view==="quiz"||view==="game")&&(jlvQ()==="전체"||(view==="game"&&prefs.gkana))?new Set():new Set([jlv()]); posf=""; $("posf").value="";
   if(view==="exam") return examSetup(); if(view==="game") return gameSetup();
   const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlvQ();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
@@ -1830,7 +1832,8 @@ function gameSetup(){
   const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">최고 기록 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>게임</h2></div>
-   ${lvRow(jl,"급수",true)}
+   ${lvRow(prefs.gkana?"":jl,"급수",true)}
+   <div class="lvrow"><span>글자만</span><div class="jlv"><button class="pill ${prefs.gkana==="hira"?"on":""}" data-act="gkana" data-k="hira">히라가나 단어</button><button class="pill ${prefs.gkana==="kata"?"on":""}" data-act="gkana" data-k="kata">가타카나 단어</button></div></div>
    <div class="gcards">
     <button class="gc g-match" data-act="gstart" data-g="match"><span class="gi">${GART.match}</span><span class="gt"><b>짝 맞추기</b>${bb("match2")}</span></button>
     <button class="gc g-wordle" data-act="gstart" data-g="wordle"><span class="gi">${GART.wordle}</span><span class="gt"><b>일본어 워들</b>${bb("wordle")}</span></button>
@@ -2124,17 +2127,17 @@ function startMatch(){
   const seen=new Set(), uniq=[];
   for(const w of wshuffle(ALL.filter(inScope))){ if(w.ko && !seen.has(w.ko)){ seen.add(w.ko); uniq.push(w); } }
   if(uniq.length<6){ toast("이 범위에는 단어가 부족해요 (6개 이상 필요)"); return; }
-  gCountdown("왼쪽 단어와 같은 뜻을 오른쪽에서 골라요<br>제한 시간 60초 · 틀리면 3초 줄어요",()=>beginMatch(uniq));
+  gCountdown("왼쪽 단어와 같은 뜻을 오른쪽에서 골라요<br>제한 시간 90초 · 틀리면 2초 줄어요",()=>beginMatch(uniq));
 }
 function beginMatch(uniq){
-  G={type:"match",seen:new Map(),marks:new Set(),uniq,ptr:0,round:0,total:60000,end:Date.now()+60000,score:0,combo:0,pairs:0,maxc:0,wrong:new Map(),busy:false,pop:""};
+  G={type:"match",seen:new Map(),marks:new Set(),uniq,ptr:0,round:0,total:90000,end:Date.now()+90000,score:0,combo:0,pairs:0,maxc:0,wrong:new Map(),busy:false,pop:""};
   matchRound(); gTimer=setInterval(gTick,100); bgmStart();
 }
 function matchWord(){ const n=G.uniq.length; const shown=new Set([...G.cur,...G.right,...G.qL,...G.qR].map(x=>x.key)); let w,t=0; do{ w=G.uniq[G.ptr++%n]; }while(shown.has(w.key)&&++t<n); return w; }
 function matchRound(){
   /* 처음 화면: 왼쪽 6개 · 오른쪽 6개. 짝이 없는 칸이 2개씩 있어서(w5·w6의 뜻은 나중에, w7·w8은 나중에 단어가 나와요) 새로 채워지는 칸이 서로의 짝이 되지 않아요 */
-  const ws=[], n=G.uniq.length; while(ws.length<8&&G.ptr<n*3){ const w=G.uniq[G.ptr++%n]; if(!ws.some(x=>x.key===w.key)) ws.push(w); }
-  G.cur=ws.slice(0,6); G.right=shuffle([ws[0],ws[1],ws[2],ws[3],ws[6],ws[7]]); G.qL=[ws[6],ws[7]]; G.qR=[ws[4],ws[5]];
+  const ws=[], n=G.uniq.length; while(ws.length<6&&G.ptr<n*3){ const w=G.uniq[G.ptr++%n]; if(!ws.some(x=>x.key===w.key)) ws.push(w); }
+  G.cur=ws.slice(0,4); G.right=shuffle([ws[0],ws[1],ws[4],ws[5]]); G.qL=[ws[4],ws[5]]; G.qR=[ws[2],ws[3]];
   ws.forEach(w=>{ if(!G.seen.has(w.key)) G.seen.set(w.key,{w,st:"no"}); });
   G.done=new Set(); G.missed=new Set(); G.sel=null; G.bad=null; G.busy=false; renderMatch();
 }
@@ -2160,7 +2163,7 @@ function matchPick(side,key){
     if(first){ G.score+=10+2*Math.min(G.combo,10); G.combo++; G.maxc=Math.max(G.maxc,G.combo); } else { G.score+=5; G.combo=0; }
     const pts=first?10+2*Math.min(G.combo-1,10):5;
     G.pairs++; G.done.add(lk); G.last=lk; G.sel=null; G.pop=""; sfx("ok");
-    if(G.pairs%6===0){ G.end+=12000; G.pop="+12초"; sfx("clear"); popFx("+12초","clr"); }
+    if(G.pairs%4===0){ G.end+=12000; G.pop="+12초"; sfx("clear"); popFx("+12초","clr"); }
     G.busy=true; renderMatch();
     /* 한 쌍을 맞히면 그 자리에 바로 새 단어가 채워져요 */
     const g=G, li=G.cur.findIndex(x=>x.key===lk), ri=G.right.findIndex(x=>x.key===lk);
@@ -2171,7 +2174,7 @@ function matchPick(side,key){
       if(li>=0) G.cur[li]=nl; if(ri>=0) G.right[ri]=nr; G.done.delete(lk); G.newL=nl.key; G.newR=nr.key; G.busy=false; G.pop=""; renderMatch(); },200);
     popFx("+"+pts,"pts"); if(first&&G.combo>=3) popFx(G.combo+" 콤보!",cmbCls(G.combo));
   } else {
-    G.combo=0; G.end-=3000; G.missed.add(lk); G.missed.add(rk); [lk,rk].forEach(k=>{ const r=G.seen.get(k); if(r) r.st="ng"; }); G.bad={l:lk,r:rk}; G.busy=true; G.pop="-3초"; sfx("ng"); renderMatch(); popFx("-3초","pts neg");
+    G.combo=0; G.end-=2000; G.missed.add(lk); G.missed.add(rk); [lk,rk].forEach(k=>{ const r=G.seen.get(k); if(r) r.st="ng"; }); G.bad={l:lk,r:rk}; G.busy=true; G.pop="-2초"; sfx("ng"); renderMatch(); popFx("-2초","pts neg");
     const g=G; gFlash=setTimeout(()=>{ if(G!==g) return; G.bad=null; G.sel=null; G.busy=false; G.pop=""; renderMatch(); },450);
   }
 }
@@ -2469,7 +2472,8 @@ $("quizView").addEventListener("click",e=>{
   if(a==="bgmnav"){ bgmNav(+b.dataset.d); return; }
   if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
-  if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
+  if(a==="gkana"){ prefs.gkana=prefs.gkana===b.dataset.k?"":b.dataset.k; LS.set("jp-prefs",prefs); quizSetup(); return; }
+  if(a==="jlv"){ if(view==="game") prefs.gkana=""; prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="jstart"){ jStart(b.dataset.s); return; }
   if(a==="jpick"){ jPick(+b.dataset.i); return; }
   if(a==="jnext"){ jNext(); return; }
@@ -3072,6 +3076,9 @@ function renderOnb(){
       <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="nickname" value="${E(obDraft.n)}"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username" value="${E(obDraft.e)}"><input id="obP" class="obin" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><label class="obagree"><input type="checkbox" id="obAg"> <span>닉네임·이메일 수집에 동의해요 (<a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>)</span></label><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>${bk}`;
     else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2><p class="sub">이 기기에서 쓴 계정을 고르거나 다른 계정으로 로그인해요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div><button class="obskip" data-ob="login">다른 계정으로 로그인</button>${bk}`;
     else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button></div><button class="obskip" data-ob="signup">회원가입</button>`;
+    if(obAuth==="guestinfo") body=`<h2>게스트로 시작할까요?</h2><p class="sub">가입 없이 바로 쓸 수 있지만, 아래 두 가지가 달라요.</p>
+      <div class="gstwarn"><div><b>커뮤니티를 쓸 수 없어요</b><span>친구와 함께 공부하기, 주간 리그는 로그인한 사람만 할 수 있어요.</span></div><div><b>학습 기록이 이 기기에만 저장돼요</b><span>다른 기기에서는 이어지지 않고, 앱이나 브라우저 데이터를 지우면 기록도 사라져요.</span></div></div>
+      <button class="cta" data-ob="guestok">이해했어요, 게스트로 시작</button><button class="cta sec" data-ob="signup">회원가입하고 시작</button><button class="obskip" data-ob="aback">뒤로</button>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
   }
   if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작해요.</p>
@@ -3087,7 +3094,8 @@ function openOnb(){ obStep=RAW.get("jp-auth-done",0)?0:"auth"; obAuth="main"; ob
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-ob]"); if(!b) return;
   const a=b.dataset.ob;
-  if(a==="guest"){ RAW.set("jp-auth-done","guest"); obStep=0; renderOnb(); return; }
+  if(a==="guest"){ obAuth="guestinfo"; obMsg=""; renderOnb(); return; }
+  if(a==="guestok"){ RAW.set("jp-auth-done","guest"); obAuth="main"; obStep=0; renderOnb(); return; }
   if(a==="login"||a==="has"||a==="signup"){ obAuth=a; obMsg=""; renderOnb(); return; }
   if(a==="aback"){ if(obFrom){ obFrom=false; const o=$("onb"); if(o) o.remove(); return; } obAuth="main"; obMsg=""; renderOnb(); return; }
   if(a==="pickacct"){ const p=profiles.find(x=>x.id===b.dataset.id); if(p&&cloud.ok&&cloud.auth.currentUser&&cloud.auth.currentUser.uid===p.cloud){ RAW.set("jp-auth-done","login"); switchTo(p.id); } else { obAuth="login"; obMsg="비밀번호를 다시 입력해 주세요."; renderOnb(); } return; }

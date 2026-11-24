@@ -195,7 +195,7 @@ function renderHome(){
     if(isOpt) opt+=row; else groups+=row; });
   const cu=curOf(done(),k), cuL=cu&&LESSONS[cu.i]&&!d[key(LESSONS[cu.i],k)]?LESSONS[cu.i]:null, tgt=cuL||nx;
   root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div><h2 style="margin-bottom:8px">일본어 글자</h2>
-  <div class="kseg"><button class="${k?"":"on"}" data-kana="tab" data-t="h">히라가나<small>ひらがな</small></button><button class="${k?"on":""}" data-kana="tab" data-t="k">가타카나<small>カタカナ</small></button></div>
+  <button class="pill sm" data-kana="intro" style="margin:0 0 10px">히라가나·가타카나가 뭐예요?</button><div class="kseg"><button class="${k?"":"on"}" data-kana="tab" data-t="h">히라가나<small>ひらがな</small></button><button class="${k?"on":""}" data-kana="tab" data-t="k">가타카나<small>カタカナ</small></button></div>
   ${tgt?`<button class="kcta" data-kana="learn" data-k="${k?"k":"h"}"><span class="kg">${tgt.i===10?T0("が"):(lessonChars(tgt,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${tgt.i===10?"탁음 · 반탁음 알아보기":(doneN||cuL?"이어서 배우기":"카드로 배우기 시작")+": "+lessonLabel(tgt,k)}</b><small>${tgt.i===10?"점 하나로 소리가 바뀌는 규칙":cuL&&cu.c>0?(cu.c+1)+"번째 글자부터":"한 글자씩 소리와 그림으로"}</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래에서 전체 시험에 도전해 보세요.</div>`}
   <h3>글자표 <small style="font-weight:400;color:var(--sub)">· 눌러서 소리 듣기</small></h3>${chartHTML(k)}
   <details class="kdet"><summary>탁음·반탁음 (점 ゛ ゜ 이 붙은 글자)</summary><div class="kgrid">${D.map(([c,r,ko])=>cellBtn([k?toK(c):c,r,ko])).join("")}</div></details>
@@ -360,7 +360,20 @@ function renderYoon(k){
   window.scrollTo(0,0);
 }
 const markDone=(ids,k)=>{ const d=done(); ids.forEach(i=>{ d.done[key(LESSONS[i],k)]=true; try{ if(window.PATH) PATH.kanaDone(key(LESSONS[i],k)); }catch(e){} }); save(d); };
+/* 처음 오는 왕초보용 설명: 히라가나·가타카나가 뭔지부터 알려 줘요 */
+function renderIntro(k){
+  const box=(t,b,s)=>`<div class="ktip" style="margin:10px 0"><b>${t}</b><br>${b}${s?`<br><span style="color:var(--sub)">${s}</span>`:""}</div>`;
+  root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
+  <h2>일본어 글자, 이것부터 알아요</h2><div class="sub">처음이어도 괜찮아요. 딱 3가지만 알고 시작해요.</div>
+  ${box("① 일본어에는 글자가 3종류 있어요","<b>히라가나</b> あ い う — 동글동글, 일본어의 기본 글자<br><b>가타카나</b> ア イ ウ — 각진 모양, 외국어·외래어를 적을 때<br><b>한자</b> 日 本 語 — 뜻을 가진 글자","한국어의 ㄱㄴㄷ처럼, 히라가나·가타카나가 일본어의 '소리 글자'예요. 먼저 히라가나부터 배워요.")}
+  ${box("② 글자 하나 = 소리 하나","あ는 '아', い는 '이'처럼 글자마다 소리가 하나씩 정해져 있어요.","あ い う え お(아 이 우 에 오)가 모음이고, か き く け こ(카 키 쿠 케 코)처럼 자음이 붙어서 한 줄씩 늘어나요. 총 46글자예요.")}
+  ${box("③ 카드로 이렇게 배워요","큰 글자 카드가 하나씩 나와요. 소리 듣기 버튼을 눌러 발음을 듣고, 예시 단어를 보고, 다음 카드로 넘겨요.","한 번에 다 외울 필요 없어요. 하루에 한 줄(5글자)씩만 해도 충분해요. 중간에 나가도 그 글자부터 이어서 할 수 있어요.")}
+  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:#5b5bf0;--k2:#8a63ff">알겠어요! 카드로 시작</button></div></div>`;
+  window.scrollTo(0,0);
+}
+const introSeen=()=>{ try{ return !!localStorage.getItem("jp-kana-intro"); }catch(e){ return true; } };
 function learn(k){ k=!!k; K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode");
+  if(!introSeen()&&!Object.keys(done().done||{}).length){ renderIntro(k); return; }
   const d=done(), cu=curOf(d,k); /* 중간에 나갔으면 그 글자부터 이어서 */
   if(cu&&LESSONS[cu.i]&&!d.done[key(LESSONS[cu.i],k)]&&(cu.c>0||cu.i>0)){ try{ toast("지난번에 하던 곳부터 이어서 해요"); }catch(e){} startCards(LESSONS[cu.i],k,cu.c); return; }
   const nl=nextLesson(k)||LESSONS[0]; if(nl.i===10){ renderDakuten(k); return; } startCards(nl,k); }
@@ -371,6 +384,8 @@ document.addEventListener("click",e=>{
   const L=LESSONS[+b.dataset.i];
   if(a==="open") open();
   else if(a==="learn") learn(b.dataset.k==="k");
+  else if(a==="intro") renderIntro(K.tab==="k");
+  else if(a==="introgo"){ try{ localStorage.setItem("jp-kana-intro","1"); }catch(e){} learn(b.dataset.k==="k"); }
   else if(a==="cards") startCards(L,K.tab==="k");
   else if(a==="csay"&&C) say(C.chars[C.i][0]);
   else if(a==="wsay1") say(b.dataset.t);
