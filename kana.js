@@ -203,7 +203,7 @@ function renderHome(){
   <h3>행별 레슨 <small style="font-weight:400;color:var(--sub)">· ${doneN} / ${CORE} 완료</small></h3>
   ${groups}
   <details class="kdet"><summary>더 배우기 (선택) · 요음, 작은 っ · 장음</summary><div style="padding-bottom:6px">${opt}</div></details>
-  <div class="kbtns" style="grid-template-columns:repeat(3,1fr);margin-top:18px"><button class="cta sec" data-kana="writeall">따라 쓰기</button><button class="cta sec" data-kana="confuse">헷갈리는 글자</button><button class="cta" data-kana="final">전체 시험</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">VOICEVOX:玄野武宏</div>`:""}</div>`;
+  <div class="kbtns" style="grid-template-columns:repeat(3,1fr);margin-top:18px"><button class="cta sec" data-kana="writeall">따라 쓰기</button><button class="cta sec" data-kana="confuse">헷갈리는 글자</button><button class="cta" data-kana="final">전체 시험</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">Microsoft Edge 일본어 음성 (Nanami)</div>`:""}</div>`;
 }
 function renderConfuse(){
   inq(false);

@@ -964,7 +964,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-strokes.js?v=1"></script>
 <script src="word-audio.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
-<script src="kana.js?v=40"></script>
+<script src="kana.js?v=41"></script>
 <script src="games2.js?v=30"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
@@ -2387,7 +2387,7 @@ function renderJ(){
   const rv=done?`<div class="reveal ${ok?"ok":"ng"}"><div class="rvt">${ok?CHEER.ok(Q.i):CHEER.ng(Q.i)}</div><div>${it.exp}</div>
     <div class="qbtns"><button class="cta" data-act="jnext">${Q.i+1>=Q.items.length?"결과 보기":"계속하기"}</button></div></div>`:"";
   const pr=`<div class="sub jprompt ${it.sec==="read"?"jq2":""}" style="margin-top:10px">${it.ph?it.prompt:E(it.prompt)}</div>`;
-  $("quizView").innerHTML=`<div class="qbox">${head}${it.sec==="read"?mid+pr:pr+mid}${opts}${rv}${it.dlg&&(window.LISTEN_AUDIO&&Object.keys(window.LISTEN_AUDIO).length)?`<div class="jcredit">VOICEVOX:春日部つむぎ / VOICEVOX:玄野武宏</div>`:""}</div>`;
+  $("quizView").innerHTML=`<div class="qbox">${head}${it.sec==="read"?mid+pr:pr+mid}${opts}${rv}${it.dlg&&(window.LISTEN_AUDIO&&Object.keys(window.LISTEN_AUDIO).length)?`<div class="jcredit">음성: Microsoft Edge 일본어 음성 (Nanami · Keita)</div>`:""}</div>`;
   if(it.dlg&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeakDlg(it.dlg,it.dmeta); },250);
   else if(it.listen&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeak(it.listen); },250);
 }
@@ -2685,7 +2685,7 @@ function renderReader(){
      <div class="nmeta" style="margin-top:12px">${lvb(a.lv)} <span class="tag">${catOf(a)}</span>${a.date?` <span class="sub">${E(a.date)}</span>`:""}</div>
      <h2 class="rtitle">${R(a.title)}</h2><div class="sub">${E(a.titleKo)}</div>
      <div class="rtools2"><div class="rtl"><button class="pill xs" data-act="rfuri">후리가나 ${$("nofuri").checked?"보이기":"숨기기"}</button><button class="pill xs" data-act="rko">번역 전체 ${rShowKo?"가리기":"보기"}</button></div>
-       ${"speechSynthesis" in window||newsFiles(a)?`<div class="rtr">${spdHtml()}<button class="rplay${newsOn?" on":""}" data-act="rread" data-id="${a.id}" aria-label="듣기">${newsBtnHtml()}</button></div>`:""}</div>${newsFiles(a)&&(window.NEWS_VOICES||{})[newsVoice(a)]?`<div class="jcredit" style="text-align:right;margin:4px 0 0">음성: VOICEVOX:${E(window.NEWS_VOICES[newsVoice(a)])}</div>`:""}
+       ${"speechSynthesis" in window||newsFiles(a)?`<div class="rtr">${spdHtml()}<button class="rplay${newsOn?" on":""}" data-act="rread" data-id="${a.id}" aria-label="듣기">${newsBtnHtml()}</button></div>`:""}</div>${newsFiles(a)&&(window.NEWS_VOICES||{})[newsVoice(a)]?`<div class="jcredit" style="text-align:right;margin:4px 0 0">음성: Microsoft Edge 일본어 음성 (Nanami)</div>`:""}
      <div class="rbody">${a.body.map((s,i)=>{const op=rShowKo||(readCur.open&&readCur.open.has(i));return `<div class="rs" data-i="${i}"><p class="rja">${R(s.ja)}</p><button class="kobtn" data-act="rsent" data-i="${i}" aria-expanded="${op}">${op?"번역 닫기":"번역 보기"}</button>${op?`<p class="rko">${E(s.ko)}</p>`:""}</div>`}).join("")}</div>
      ${a.notes&&a.notes.length?`<details class="notes" open><summary>일본에서 실제로 쓰이는 뜻</summary>${a.notes.map(n=>`<div class="note"><b>${E(n.w)}</b> <span class="nko">${E(n.ko)}</span><p>${E(n.d)}</p></div>`).join("")}</details>`:""}
      ${hit.size?`<h3>이 글에 나온 내 단어</h3><div class="chips">${chips(hit)}</div>`:""}

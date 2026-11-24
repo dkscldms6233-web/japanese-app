@@ -7,6 +7,7 @@ self.addEventListener("activate",e=>{
 self.addEventListener("fetch",e=>{
   const r=e.request;
   if(r.method!=="GET"||!r.url.startsWith("http")) return;
+  if(/\/audio\/word\//.test(r.url)) return;   /* 단어 음성(약 9천 개)은 폰 저장공간을 아끼려고 따로 쌓아 두지 않고 브라우저 기본 캐시에 맡겨요 */
   e.respondWith(
     fetch(r).then(res=>{
       if(res.status===200&&(res.type==="basic"||res.type==="cors")){
