@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
 <meta name="theme-color" content="#fbfaf7">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=5">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="술술 일본어">
@@ -446,6 +446,7 @@ h1{letter-spacing:-.02em;cursor:pointer}
 #onb .obopts{display:grid;gap:10px;margin:18px 0 6px;text-align:left}
 #onb .obopts .mode b{font-size:17px}
 #onb .obin{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}
+#onb .obagree{display:flex;align-items:flex-start;gap:8px;margin:14px auto 0;max-width:340px;text-align:left;font-size:13.5px;line-height:1.45;color:var(--text)}#onb .obagree input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:#5b5bf0}#onb .obagree a{color:#4a2fe0;text-decoration:underline}
 #onb .obskip{background:none;border:0;color:var(--sub);font-size:14px;margin-top:14px;cursor:pointer;text-decoration:underline}
 
 
@@ -964,7 +965,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
-<link rel="stylesheet" href="design-v2.css?v=96">
+<link rel="stylesheet" href="design-v2.css?v=102">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=4"></script>
@@ -3054,6 +3055,7 @@ const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 알아�
 const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
 let obStep=0, obLv=null, obKana=false, obBeg=false, obAuth="main", obMsg="", obFrom=false;
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
+let obDraft={n:"",e:""};
 function renderOnb(){
   let o=$("onb"); if(!o){ o=document.createElement("div"); o.id="onb"; o.setAttribute("role","dialog"); o.setAttribute("aria-label","시작 안내"); document.body.appendChild(o); }
   const dots=`<div class="obstep">${[0,1,2].map(i=>`<i class="${i<=obStep?"on":""}"></i>`).join("")}</div>`;
@@ -3067,7 +3069,7 @@ function renderOnb(){
     if(obAuth==="login"||(obAuth==="has"&&!accts.length)) body=`<h2>로그인</h2>${off}${msg}
       <div class="obopts"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username"><input id="obP" class="obin" type="password" placeholder="비밀번호" autocomplete="current-password"></div><button class="cta" data-ob="dologin">로그인</button><button class="obskip" data-ob="signup">회원가입</button><button class="obskip" data-ob="reset">비밀번호를 잊었어요</button>${bk}`;
     else if(obAuth==="signup") body=`<h2>회원가입</h2><p class="sub">계정을 만들면 다른 기기에서도 기록이 이어져요.</p>${off}${msg}
-      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="nickname"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username"><input id="obP" class="obin" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>${bk}`;
+      <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="nickname" value="${E(obDraft.n)}"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username" value="${E(obDraft.e)}"><input id="obP" class="obin" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><label class="obagree"><input type="checkbox" id="obAg"> <span>닉네임·이메일 수집에 동의해요 (<a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>)</span></label><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있어요, 로그인</button>${bk}`;
     else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2><p class="sub">이 기기에서 쓴 계정을 고르거나 다른 계정으로 로그인해요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div><button class="obskip" data-ob="login">다른 계정으로 로그인</button>${bk}`;
     else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button></div><button class="obskip" data-ob="signup">회원가입</button>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
@@ -3100,7 +3102,8 @@ document.addEventListener("click",e=>{
       await cloudPull(u.uid,pid,false); RAW.set("jp-auth-done","login"); switchTo(pid);
     }catch(e){ obMsg=authErr(e); renderOnb(); } })(); return; }
   if(a==="dosignup"){ (async()=>{ if(!cloud.ok){ obMsg="서버에 연결할 수 없어요."; return renderOnb(); }
-    const n=($("obN").value||"").trim(), em=($("obE").value||"").trim(), pw=$("obP").value||"", pw2=$("obP2").value||"";
+    const n=($("obN").value||"").trim(), em=($("obE").value||"").trim(), pw=$("obP").value||"", pw2=$("obP2").value||""; obDraft={n,e:em};
+    if(!$("obAg")||!$("obAg").checked){ obMsg="개인정보 수집에 동의해 주세요."; return renderOnb(); }
     if(!n){ obMsg="닉네임을 입력해 주세요."; return renderOnb(); } if(!em){ obMsg="이메일을 입력해 주세요."; return renderOnb(); }
     if(pw.length<6){ obMsg="비밀번호는 6자 이상으로 해 주세요."; return renderOnb(); } if(pw!==pw2){ obMsg="비밀번호 확인이 달라요."; return renderOnb(); }
     try{ const cr=await cloud.auth.createUserWithEmailAndPassword(em,pw), u=cr.user, pid="u"+u.uid;
