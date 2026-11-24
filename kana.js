@@ -360,6 +360,45 @@ function renderYoon(k){
   window.scrollTo(0,0);
 }
 const markDone=(ids,k)=>{ const d=done(); ids.forEach(i=>{ d.done[key(LESSONS[i],k)]=true; try{ if(window.PATH) PATH.kanaDone(key(LESSONS[i],k)); }catch(e){} }); save(d); };
+/* ---------- 글자 맞추기 (왕초보 게임): 글자 하나와 한글 소리를 짝지어요. 시간 제한·감점 없음 ---------- */
+let KG=null;
+function kgame(mode){
+  if(!mode){ stopG(); G={type:"km"};
+    root().innerHTML=`<div class="qbox gbox" style="max-width:480px"><div class="qm-h"><h2>글자 맞추기</h2></div>
+    <p class="sub" style="text-align:center">글자를 누르면 소리가 나요.<br>같은 소리를 오른쪽에서 골라 짝을 맞춰요.<br>시간 제한도, 감점도 없어요.</p>
+    <div class="qbtns" style="flex-direction:column;align-items:stretch"><button class="cta" data-kana="kgo" data-m="h">히라가나 (あ い う)</button><button class="cta" data-kana="kgo" data-m="k">가타카나 (ア イ ウ)</button><button class="cta sec" data-kana="kgo" data-m="m">히라가나·가타카나 섞어서</button><button class="pill" data-act="gquit">뒤로</button></div></div>`; return; }
+  const base=H.filter(r=>r[0]!=="を"); KG={m:mode,base,round:0,total:5,miss:0,pairs:0,seen:new Set()}; krRound();
+}
+function krRound(){
+  const k=KG, n=Math.min(base_n(k),k.base.length), pool=k.base.slice(0,n), pick=[], used=new Set();
+  shuffle(pool).forEach(r=>{ if(pick.length<4&&!used.has(r[2])){ used.add(r[2]); pick.push(r); } });
+  k.cur=pick.map(r=>({id:r[0],c:k.m==="k"?toK(r[0]):k.m==="m"&&Math.random()<.5?toK(r[0]):r[0],ko:r[2],h:r[0]}));
+  k.right=shuffle(k.cur); k.sel=null; k.done=new Set(); k.bad=null; k.busy=false; krRender();
+}
+const base_n=k=>14+k.round*8;   /* 처음엔 앞쪽(あ행~) 글자 위주, 갈수록 넓어져요 */
+function krRender(){
+  const k=KG; if(!k) return;
+  const L=k.cur.map(x=>`<button class="opt ${k.done.has(x.id)?"good":k.sel===x.id?"sel":""}" data-kana="kpick" data-side="l" data-id="${x.id}" style="font-size:30px;font-weight:800;min-height:64px">${x.c}</button>`).join("");
+  const R=k.right.map(x=>`<button class="opt ${k.done.has(x.id)?"good":k.bad===x.id?"bad":""}" data-kana="kpick" data-side="r" data-id="${x.id}" style="font-size:22px;font-weight:800;min-height:64px">${x.ko}</button>`).join("");
+  root().innerHTML=`<div class="qbox gbox" style="max-width:480px"><div class="gstat"><span>${k.round+1} / ${k.total} 판</span><span class="gsc"><small>맞힌 짝</small><b>${k.pairs}</b></span></div>
+  <p class="sub" style="text-align:center">${k.sel?"같은 소리를 오른쪽에서 골라요":"왼쪽 글자를 눌러 보세요 (소리가 나요)"}</p>
+  <div class="gcols"><div class="gcol">${L}</div><div class="gcol">${R}</div></div>
+  <div class="qbtns"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
+}
+function krPick(side,id){
+  const k=KG; if(!k||k.busy||k.done.has(id)) return;
+  if(side==="l"){ k.sel=id; try{ say(id); }catch(e){} krRender(); return; }
+  if(!k.sel){ toast("먼저 왼쪽 글자를 눌러 보세요"); return; }
+  if(k.sel===id){ k.done.add(id); k.pairs++; k.sel=null; try{ sfx("ok"); }catch(e){} krRender();
+    if(k.done.size===k.cur.length){ k.busy=true; const kk=k; setTimeout(()=>{ if(KG!==kk) return; kk.round++; kk.round>=kk.total?krEnd():krRound(); },700); } }
+  else { k.miss++; k.bad=id; k.busy=true; try{ sfx("ng"); }catch(e){} krRender(); const kk=k; setTimeout(()=>{ if(KG!==kk) return; kk.bad=null; kk.sel=null; kk.busy=false; krRender(); },600); }
+}
+function krEnd(){
+  const k=KG; KG=null; try{ stopG(); questInc("gm"); questCheck(); }catch(e){}
+  const msg=k.miss===0?"한 번도 안 틀렸어요! 대단해요":k.miss<=3?"아주 잘했어요":"괜찮아요, 한 번 더 하면 더 잘 맞춰요";
+  root().innerHTML=`<div class="qbox gbox gres" style="max-width:480px"><div class="gres-top"><div class="score">${k.pairs}쌍</div><div class="rank">${msg}</div><div class="sub gres-note">틀린 횟수 ${k.miss}번</div></div>
+  <div class="gres-acts"><button class="pill on" data-act="gstart" data-g="kmatch">한 번 더</button><button class="pill" data-act="again">처음으로</button></div></div>`;
+}
 /* 처음 오는 왕초보용 설명: 히라가나·가타카나가 뭔지부터 알려 줘요 */
 function renderIntro(k){
   const box=(t,b,s)=>`<div class="ktip" style="margin:10px 0"><b>${t}</b><br>${b}${s?`<br><span style="color:var(--sub)">${s}</span>`:""}</div>`;
@@ -384,6 +423,8 @@ document.addEventListener("click",e=>{
   const L=LESSONS[+b.dataset.i];
   if(a==="open") open();
   else if(a==="learn") learn(b.dataset.k==="k");
+  else if(a==="kgo") kgame(b.dataset.m);
+  else if(a==="kpick") krPick(b.dataset.side,b.dataset.id);
   else if(a==="intro") renderIntro(K.tab==="k");
   else if(a==="introgo"){ try{ localStorage.setItem("jp-kana-intro","1"); }catch(e){} learn(b.dataset.k==="k"); }
   else if(a==="cards") startCards(L,K.tab==="k");
@@ -423,5 +464,5 @@ document.addEventListener("click",e=>{
   else if(a==="again"){ if(K.lessonI!=null) startLesson(LESSONS[K.lessonI],K.k); else startFinal(K.k); window.scrollTo(0,0); }
 });
 function openLesson(i,k){ K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderLesson(LESSONS[i],k); window.scrollTo(0,0); }
-window.KANA={open,openLesson,learn};
+window.KANA={open,openLesson,learn,kgame};
 })();

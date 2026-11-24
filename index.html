@@ -960,7 +960,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="kana-audio.js?v=5"></script>
-<script src="kana.js?v=39"></script>
+<script src="kana.js?v=40"></script>
 <script src="games2.js?v=30"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
@@ -1409,7 +1409,6 @@ function inScope(w){
   else if(level==="오답 노트"){ if(!(w.key in wrong)) return false; }
   else if(level==="내 단어"){ if(w.key[0]!=="c") return false; }
   else if(lvSel.size && !lvSel.has(w.lv) && !lvSel.has(w.lv2)) return false;
-  if(view==="game"&&prefs.gkana&&!(prefs.gkana==="hira"?/^[ぁ-ゖー]+$/:/^[ァ-ヺー]+$/).test(w.text)) return false;
   if(posf&&w.pos!==posf) return false;
   return view!=="quiz"||posGroupOk(w);
 }
@@ -1775,7 +1774,7 @@ function quizTile(act,attr,cls,icon,title,sub){ return `<button class="t2 ${cls}
 function lvRow(jl,label,withAll){ return `<div class="lvrow"><span>${label}</span><div class="jlv">${(withAll?["전체","N5","N4","N3","N2","N1"]:["N5","N4","N3","N2","N1"]).map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div></div>`; }
 function quizSetup(){
   stopG(); document.body.classList.remove("inq","inr");
-  level=view==="quiz"&&qscope?qscope:"전체"; lvSel=(view==="quiz"||view==="game")&&(jlvQ()==="전체"||(view==="game"&&prefs.gkana))?new Set():new Set([jlv()]); posf=""; $("posf").value="";
+  level=view==="quiz"&&qscope?qscope:"전체"; lvSel=(view==="quiz"||view==="game")&&jlvQ()==="전체"?new Set():new Set([jlv()]); posf=""; $("posf").value="";
   if(view==="exam") return examSetup(); if(view==="game") return gameSetup();
   const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlvQ();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
@@ -1832,12 +1831,12 @@ function gameSetup(){
   const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">최고 기록 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>게임</h2></div>
-   ${lvRow(prefs.gkana?"":jl,"급수",true)}
-   <div class="lvrow"><span>글자만</span><div class="jlv"><button class="pill ${prefs.gkana==="hira"?"on":""}" data-act="gkana" data-k="hira">히라가나 단어</button><button class="pill ${prefs.gkana==="kata"?"on":""}" data-act="gkana" data-k="kata">가타카나 단어</button></div></div>
+   ${lvRow(jl,"급수",true)}
    <div class="gcards">
+    <button class="gc g-match" data-act="gstart" data-g="kmatch"><span class="gi"><svg viewBox="0 0 160 104" aria-hidden="true"><rect x="22" y="18" width="52" height="62" rx="12" fill="#fff" stroke="#3d8f66" stroke-width="3"/><text x="48" y="62" font-size="38" font-weight="800" text-anchor="middle" fill="#3d8f66">あ</text><rect x="88" y="26" width="52" height="62" rx="12" fill="#fff" stroke="#e0507a" stroke-width="3"/><text x="114" y="68" font-size="34" font-weight="800" text-anchor="middle" fill="#e0507a">아</text></svg></span><span class="gt"><b>글자 맞추기 <em style="font-style:normal;font-size:12px;background:#ff5a5f;color:#fff;border-radius:999px;padding:2px 8px;margin-left:4px;white-space:nowrap">왕초보 추천!</em></b><span class="best">글자 하나와 소리 짝 맞추기</span></span></button>
     <button class="gc g-match" data-act="gstart" data-g="match"><span class="gi">${GART.match}</span><span class="gt"><b>짝 맞추기</b>${bb("match2")}</span></button>
     <button class="gc g-wordle" data-act="gstart" data-g="wordle"><span class="gi">${GART.wordle}</span><span class="gt"><b>일본어 워들</b>${bb("wordle")}</span></button>
-    <button class="gc g-shiri" data-act="gstart" data-g="shiri"><span class="gi">${GART.shiri}</span><span class="gt"><b>しりとり</b>${bm(["shiri1","shiri2","shiri3"])}</span></button>
+    <button class="gc g-shiri" data-act="gstart" data-g="shiri"><span class="gi">${GART.shiri}</span><span class="gt"><b>しりとり (끝말잇기)</b>${bm(["shiri1","shiri2","shiri3"])}</span></button>
     <button class="gc g-fall" data-act="gstart" data-g="fall"><span class="gi">${GART.fall}</span><span class="gt"><b>떨어지는 단어</b>${bb("fall")}</span></button>
    </div>
    <div class="bgmbar"><span class="bgml">${ic("sound")}배경음악</span>
@@ -2455,7 +2454,7 @@ $("quizView").addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   const a=b.dataset.act;
   if(a==="mrank"){ if(window.MRANK) MRANK.open(); return; }
-  if(a==="gstart"){ ({match:startMatch,wordle:startWordle,shiri:startShiri,fall:startFall})[b.dataset.g](); return; }
+  if(a==="gstart"){ ({match:startMatch,wordle:startWordle,shiri:startShiri,fall:startFall,kmatch:()=>KANA.kgame()})[b.dataset.g](); return; }
   if(a==="gmark"||a==="gstar"){
     const k=b.dataset.key, on=!stars.has(k);
     on?stars.add(k):stars.delete(k); LS.set("jp-star",[...stars]);
@@ -2472,8 +2471,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="bgmnav"){ bgmNav(+b.dataset.d); return; }
   if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
-  if(a==="gkana"){ prefs.gkana=prefs.gkana===b.dataset.k?"":b.dataset.k; LS.set("jp-prefs",prefs); quizSetup(); return; }
-  if(a==="jlv"){ if(view==="game") prefs.gkana=""; prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
+  if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="jstart"){ jStart(b.dataset.s); return; }
   if(a==="jpick"){ jPick(+b.dataset.i); return; }
   if(a==="jnext"){ jNext(); return; }
