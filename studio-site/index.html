@@ -40,9 +40,7 @@ h1 em{font-style:normal;color:var(--y)}
 .ph{background:#000;border-radius:clamp(22px,2.6vw,38px);padding:clamp(5px,.6vw,9px);box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1.5px #3a3a44 inset;flex:none}
 .ph img{display:block;width:100%;border-radius:clamp(17px,2vw,30px)}
 /* 폰 화면이 차례로 바뀜 (잔잔하게) */
-.hphones .ph{display:grid;animation:bob 6s ease-in-out infinite}
-.hphones .ph:nth-child(2){animation-delay:-2s}.hphones .ph:nth-child(3){animation-delay:-4s}
-@keyframes bob{50%{transform:translateY(-14px)}}
+.hphones .ph{display:grid}
 .hphones .ph img{grid-area:1/1;opacity:0;transform:translateY(5%);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.2,.8,.2,1)}
 .hphones .ph img.on{opacity:1;transform:none}
 .hphones .ph img.out{opacity:0;transform:translateY(-4%)}
@@ -141,7 +139,7 @@ h1 .ln{display:block;padding-bottom:.08em}
  .nums{grid-template-columns:1fr 1fr}.nums div{border-bottom:1px solid var(--line)}.nums div:nth-child(2){border-right:0}
  .pr{grid-template-columns:1fr}.pr div{border-right:0;margin:0;border-bottom:1px solid rgba(10,10,15,.2)}
 }
-@media(prefers-reduced-motion:reduce){.rv,.sg>*{opacity:1;transform:none;transition:none}.hphones .ph{animation:none}}
+@media(prefers-reduced-motion:reduce){.rv,.sg>*{opacity:1;transform:none;transition:none}}
 </style></head><body>
 <nav><a class="logo" href="#top">CHIEUN STUDIO</a><div class="nl"><a href="#work">Work</a><a href="#numbers">Numbers</a><a href="#principles">Principles</a><a href="#next">Next</a><a class="nb" href="#contact">Contact ↗</a></div></nav>
 
