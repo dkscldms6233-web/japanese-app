@@ -237,12 +237,28 @@ h1 .ln{display:block;padding-bottom:.08em}
    setTimeout(function(){ setInterval(next,5400); },4000+delay);
   });
  })();
- /* 숫자가 올라가요 */
- function fmt(n){ return n.toLocaleString("en-US"); }
- var cio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting) return; var b=e.target, to=+b.dataset.to, t0=performance.now(), plus=to>=90&&to!==5;
-   function step(t){ var p=Math.min(1,(t-t0)/1200), v=Math.round(to*(1-Math.pow(1-p,3))); b.innerHTML=fmt(v)+(p>=1&&plus?"<sup>+</sup>":""); if(p<1) requestAnimationFrame(step); }
-   if(reduce){ b.innerHTML=fmt(to)+(plus?"<sup>+</sup>":""); } else requestAnimationFrame(step); cio.unobserve(b); }); },{threshold:.5});
- document.querySelectorAll("[data-to]").forEach(function(b){ cio.observe(b); });
+ /* 숫자가 올라가요: 숫자 줄이 화면 안에 완전히 들어왔을 때 시작하고, 화면을 벗어났다가 다시 오면 처음부터 또 올라가요 */
+ var nums=document.querySelector(".nums");
+ if(nums){
+  var bs=nums.querySelectorAll("[data-to]"), timers=[], raf=[];
+  function fmt(n){ return n.toLocaleString("en-US"); }
+  function show(b,v,done){ var to=+b.dataset.to, plus=to>=90&&to!==5; b.innerHTML=fmt(v)+(done&&plus?"<sup>+</sup>":""); }
+  function reset(){ timers.forEach(clearTimeout); raf.forEach(cancelAnimationFrame); timers=[]; raf=[]; bs.forEach(function(b){ show(b,0,false); }); }
+  function run(){
+   reset();
+   bs.forEach(function(b,k){
+    var to=+b.dataset.to;
+    if(reduce){ show(b,to,true); return; }
+    timers.push(setTimeout(function(){ var t0=performance.now(), dur=1900;
+     (function step(t){ var p=Math.min(1,(t-t0)/dur), v=Math.round(to*(1-Math.pow(1-p,4))); show(b,v,p>=1); if(p<1) raf.push(requestAnimationFrame(step)); })(t0);
+    },350+k*180));
+   });
+  }
+  show(bs[0],0,false); bs.forEach(function(b){ show(b,0,false); });
+  var nio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting&&e.intersectionRatio>=.9) run(); else if(!e.isIntersecting) reset(); }); },{threshold:[0,.9],rootMargin:"0px 0px -12% 0px"});
+  nio.observe(nums);
+ }
+ if(reduce) return;
 })();
 </script>
 </body></html>
