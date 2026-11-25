@@ -10,8 +10,10 @@ const PASSES=[{sku:"plus_30",days:30,price:3300,tag:"가볍게"},{sku:"plus_180"
 const won=n=>n.toLocaleString("ko-KR")+"원";
 const uid=()=>{ try{ const u=A().cloud&&A().cloud.auth&&A().cloud.auth.currentUser; return u?u.uid:""; }catch(e){ return ""; } };
 const KEY=()=>"jp-plus-until@"+uid();
-const until=()=>{ try{ return uid()?(+localStorage.getItem(KEY())||0):0; }catch(e){ return 0; } };
-const isPlus=()=>until()>Date.now();
+const until=()=>{ try{ if(DEMO()) return Date.now()+30*864e5; return uid()?(+localStorage.getItem(KEY())||0):0; }catch(e){ return 0; } };
+/* 내 컴퓨터(localhost)에서만: 주소 끝에 ?plusdemo=on 을 붙이면 플러스를 켠 화면을 시험해 볼 수 있어요 (?plusdemo=off 로 끔). 배포된 사이트에서는 동작하지 않아요. */
+const DEMO=()=>{ try{ if(!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return false; const q=new URLSearchParams(location.search).get("plusdemo"); if(q) sessionStorage.setItem("jp-plusdemo",q); return sessionStorage.getItem("jp-plusdemo")==="on"; }catch(e){ return false; } };
+const isPlus=()=>DEMO()||until()>Date.now();
 const setUntil=ms=>{ try{ if(uid()) localStorage.setItem(KEY(),String(ms||0)); }catch(e){} };
 const ymd=ms=>{ const d=new Date(ms); return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate(); };
 const daysLeft=()=>Math.max(0,Math.ceil((until()-Date.now())/864e5));
@@ -36,7 +38,6 @@ function startWeak(){
   if(rk.length<4){ A().toast("아직 틀린 단어가 적어요. 퀴즈를 조금 더 풀어 보세요."); return; }
   if(!isPlus()){ if(freeUsed()){ open("weak"); return; } try{ localStorage.setItem("jp-plus-free",today()); }catch(e){} }
   const pool=rk.slice(0,60).map(x=>x.w);
-  const dlg=document.getElementById("plusDlg"); if(dlg&&dlg.open) dlg.close();
   A().startQuiz("meaning",pool,10);
 }
 
@@ -59,27 +60,31 @@ function statsHtml(){
 }
 function shopHtml(){ return `<div class="seedpay plusrow"><b>술술 플러스</b><small>${isPlus()?`이용 중 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"내 약점을 찾아 주는 맞춤 복습·심화 분석"}</small><button class="pill on" data-plus="open">${isPlus()?"자세히":"알아보기"}</button></div>`; }
 
-/* ---- 안내·구매 창 ---- */
-function open(why){
-  let d=document.getElementById("plusDlg");
-  if(!d){ d=document.createElement("dialog"); d.id="plusDlg"; document.body.appendChild(d); d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-pclose]")){ d.close(); return; } const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,render); const w=ev.target.closest("[data-pweak]"); if(w) startWeak(); }); }
-  render(why); if(!d.open) d.showModal();
-}
-function render(why){
-  const d=document.getElementById("plusDlg"); if(!d) return;
+/* ---- 플러스 탭 (하단 메뉴) ---- */
+function open(why){ try{ document.querySelectorAll("dialog[open]").forEach(d=>d.close()); }catch(e){} try{ window.__plusWhy=why||""; }catch(e){} A().setView("plus"); }
+function passesHtml(){
   const SP=window.SEEDPAY, inPlay=(()=>{ try{ return sessionStorage.getItem("jp-twa")==="1"; }catch(e){ return false; } })();
-  const ready=SP&&SP.ready&&SP.ready();
-  const signed=!!uid();
-  const act=p=>inPlay?"":ready&&signed?`<button class="pill on" data-pbuy="${p.sku}">${won(p.price)}</button>`:`<button class="pill" disabled>${ready?"로그인 필요":"준비 중"}</button>`;
-  const head=isPlus()?`<div class="plusnow"><b>이용 중이에요</b><span>${ymd(until())}까지 · ${daysLeft()}일 남음</span></div>`:(why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼어요. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있어요.</p>`:"");
-  d.innerHTML=`<div class="dh"><h2 style="margin:0;font-size:17px">술술 플러스</h2><button class="x" data-pclose aria-label="닫기">×</button></div>
-  <div class="db plusdb"><p class="sub" style="margin:0 0 10px">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>예요. 플러스는 <b>내 약점을 찾아서 거기에 맞춰 연습</b>하게 도와줘요.</p>${head}
-  <ul class="plusben"><li><b>맞춤 복습 무제한</b><span>자주 틀리는 단어만 골라서 퀴즈로 풀어요 (무료는 하루 1번)</span></li><li><b>심화 약점 분석</b><span>약한 단어 TOP 10, 급수별·품사별 약점, 자주 헷갈리는 오답 짝</span></li><li><b>앞으로 더해질 기능</b><span>시험 직전 총정리 같은 기능도 플러스에 먼저 들어가요</span></li></ul>
-  ${isPlus()?`<div style="text-align:center;margin:8px 0"><button class="pill on" data-pweak="1">맞춤 복습 하러 가기</button></div>`:""}
-  ${inPlay?`<p class="sub">플레이스토어 앱에서는 구매를 지원하지 않아요. 웹(surasura-nihongo.web.app)에서 가능해요.</p>`:`<div class="plusps">${PASSES.map(p=>`<div class="pp${p.tag==="인기"?" hot":""}"><span class="tg">${p.tag}</span><b>${p.days}일</b><em>${won(p.price)}</em><small>${p.note||"부가세 포함"}</small>${act(p)}</div>`).join("")}</div>
-  <p class="sub" style="font-size:12px">기간제 이용권이라 <b>자동으로 갱신되지 않아요</b>. 끝나기 전에 또 사면 남은 기간 뒤에 이어져요 · 가격은 부가세 포함 · <a href="terms.html" target="_blank" rel="noopener">이용약관</a>${ready?"":" · 결제는 곧 열려요"}</p>`}</div>`;
+  const ready=SP&&SP.ready&&SP.ready(), signed=!!uid();
+  if(inPlay) return `<p class="sub">플레이스토어 앱에서는 구매를 지원하지 않아요. 웹(surasura-nihongo.web.app)에서 가능해요.</p>`;
+  const act=p=>ready&&signed?`<button class="pill on" data-pbuy="${p.sku}">${won(p.price)}</button>`:`<button class="pill" disabled>${ready?"로그인 필요":"준비 중"}</button>`;
+  return `<div class="plusps">${PASSES.map(p=>`<div class="pp${p.tag==="인기"?" hot":""}"><span class="tg">${p.tag}</span><b>${p.days}일</b><em>${won(p.price)}</em><small>${p.note||"부가세 포함"}</small>${act(p)}</div>`).join("")}</div>
+  <p class="sub" style="font-size:12px">기간제 이용권이라 <b>자동으로 갱신되지 않아요</b>. 끝나기 전에 또 사면 남은 기간 뒤에 이어져요. 가격은 부가세 포함이에요. <a href="terms.html" target="_blank" rel="noopener">이용약관</a>${ready?"":" 결제는 곧 열려요."}</p>`;
 }
+function renderTab(){
+  const el=document.getElementById("plusView"); if(!el) return;
+  const plus=isPlus(), rk=weakRank(), why=window.__plusWhy; window.__plusWhy="";
+  const ben=`<ul class="plusben"><li><b>맞춤 복습 무제한</b><span>자주 틀리는 단어만 골라서 퀴즈로 풀어요 (무료는 하루 1번)</span></li><li><b>심화 약점 분석</b><span>약한 단어 TOP 10, 급수별·품사별 약점, 자주 헷갈리는 오답 짝</span></li><li><b>앞으로 더해질 기능</b><span>시험 직전 총정리 같은 기능도 플러스에 먼저 들어가요</span></li></ul>`;
+  const free=!plus&&freeUsed();
+  el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>
+   <p>${plus?`이용 중이에요 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"내 약점을 찾아서, 거기에 맞춰 연습해요"}</p></div>
+   <p class="sub" style="margin:0 2px 12px">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>예요. 플러스는 공부를 더 깊게 도와주는 선택 기능이에요.</p>
+   ${why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼어요. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있어요.</p>`:""}
+   <div class="pluscta"><button class="pill on plusgo" data-plus="weak">${plus?"맞춤 복습 시작 · 약한 단어 10문제":free?"오늘 무료 체험은 끝났어요":"맞춤 복습 무료 체험 (하루 1번)"}</button>${rk.length<4?`<small>틀린 단어가 4개 이상 쌓이면 시작할 수 있어요</small>`:""}</div>
+   ${plus?(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없어요. 퀴즈를 풀면 여기에 약점이 쌓여요.</div></div>`):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
+   ${plus?`<h3 class="plusst">이용권 연장</h3>${passesHtml()}`:""}</div>`;
+}
+document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,renderTab); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-plus]"); if(!b) return; e.preventDefault(); const k=b.dataset.plus; if(k==="weak") startWeak(); else open(); });
 window.addEventListener("load",()=>{ setTimeout(sync,2500); });
-window.PLUS={isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,sync,setUntil,PASSES};
+window.PLUS={isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,sync,setUntil,PASSES};
 })();

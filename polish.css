@@ -80,3 +80,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 
 .panel[hidden]{display:none!important}
 .plusup{margin-top:0}
+
+/* 플러스 탭 */
+.vb.plus{color:#e8711f!important}.vb.plus.on{color:#e8711f!important}.vb.plus.on::before{background:#ff8a3d!important}.vb.plus .ic{fill:rgba(255,138,61,.18)}
+.plushero{position:relative;margin:4px 0 14px;padding:20px 18px;border-radius:var(--r-lg);color:#fff;background:linear-gradient(135deg,#ff9a3d,#ff6b3d 60%,#e8455c);box-shadow:var(--sh-2);overflow:hidden}
+.plushero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.14)}
+.plushero h2{margin:6px 0 4px;font-size:24px;color:#fff}.plushero p{margin:0;font-size:14px;opacity:.95}.plushero .plusbadge{background:rgba(255,255,255,.25);margin:0}
+.plushero.on{background:linear-gradient(135deg,#5b5bf0,#8a63ff)}
+.pluscta{margin:0 0 14px}.pluscta small{display:block;text-align:center;margin-top:6px;color:var(--sub)}
+.plusst{margin:18px 2px 8px;font-size:16px}
+.plustab .plusgo{margin-top:0}
+@media(min-width:700px){.vb.plus{color:#e8711f}}
