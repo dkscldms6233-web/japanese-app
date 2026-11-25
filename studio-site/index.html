@@ -39,6 +39,11 @@ h1 em{font-style:normal;color:var(--y)}
 /* phone frame */
 .ph{background:#000;border-radius:clamp(22px,2.6vw,38px);padding:clamp(5px,.6vw,9px);box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1.5px #3a3a44 inset;flex:none}
 .ph img{display:block;width:100%;border-radius:clamp(17px,2vw,30px)}
+/* 폰 화면이 차례로 바뀜 (잔잔하게) */
+.hphones .ph{display:grid}
+.hphones .ph img{grid-area:1/1;opacity:0;transform:translateY(5%);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.hphones .ph img.on{opacity:1;transform:none}
+.hphones .ph img.out{opacity:0;transform:translateY(-4%)}
 /* strip */
 .strip{border-block:1px solid var(--line);padding:18px 0;font-size:13px;letter-spacing:.2em;font-weight:700;color:var(--mute)}
 .strip .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
@@ -146,7 +151,7 @@ h1 .ln{display:block;padding-bottom:.08em}
  <div class="cta"><a class="btn f" href="https://surasura-nihongo.web.app" target="_blank" rel="noopener">앱 사용해 보기 ↗</a><a class="btn" href="#work">작품 살펴보기 ↓</a></div>
 </div>
 <div class="hphones" id="hph" aria-hidden="true">
- <div class="ph"><img src="img/words.jpg" alt=""></div><div class="ph"><img src="img/home.jpg" alt=""></div><div class="ph"><img src="img/quiz.jpg" alt=""></div>
+ <div class="ph" data-seq="words,keigo,grammar" data-d="0"><img src="img/words.jpg" alt=""></div><div class="ph" data-seq="home,game,kana" data-d="1200"><img src="img/home.jpg" alt=""></div><div class="ph" data-seq="quiz,keigo,game" data-d="2400"><img src="img/quiz.jpg" alt=""></div>
 </div></header>
 
 <div class="strip"><div class="wrap"><span>FIRST RELEASE</span><b>술술 일본어</b><span>일본어 학습 앱 · 2026</span></div></div>
@@ -220,6 +225,18 @@ h1 .ln{display:block;padding-bottom:.08em}
  var rv=document.querySelectorAll(".rv,.sg");
  document.querySelectorAll(".sg").forEach(function(g){ Array.prototype.slice.call(g.children).forEach(function(c,i){ c.style.setProperty("--i",i); }); });
  if("IntersectionObserver" in window){ var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("on"); io.unobserve(e.target); } }); },{threshold:.12}); rv.forEach(function(n){ io.observe(n); }); } else rv.forEach(function(n){ n.classList.add("on"); });
+/* 첫 화면 폰: 앱 화면이 하나씩 부드럽게 넘어감 */
+ (function(){
+  var phones=document.querySelectorAll(".hphones .ph[data-seq]"); if(!phones.length) return;
+  phones.forEach(function(p){
+   var names=p.dataset.seq.split(","), first=p.querySelector("img"); first.classList.add("on"); var imgs=[first];
+   names.slice(1).forEach(function(n){ var im=new Image(); im.src="img/"+n+".jpg"; im.alt=""; p.appendChild(im); imgs.push(im); });
+   if(reduce) return;
+   var i=0, delay=+p.dataset.d||0;
+   function next(){ if(document.hidden) return; var cur=imgs[i]; i=(i+1)%imgs.length; var nx=imgs[i]; cur.classList.remove("on"); cur.classList.add("out"); nx.classList.remove("out"); nx.classList.add("on"); setTimeout(function(){ cur.classList.remove("out"); },1000); }
+   setTimeout(function(){ setInterval(next,3800); },3000+delay);
+  });
+ })();
  /* 숫자가 올라가요 */
  function fmt(n){ return n.toLocaleString("en-US"); }
  var cio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting) return; var b=e.target, to=+b.dataset.to, t0=performance.now(), plus=to>=90&&to!==5;
