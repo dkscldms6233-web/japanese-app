@@ -129,7 +129,7 @@ async function render(){
   const head=`<div class="cm"><h2>커뮤니티</h2>`;
   if(!cloud()||!cloud().ok){ v.innerHTML=head+`<p class="sub">서버에 연결할 수 없어요. 인터넷을 확인해 주세요.</p></div>`; return; }
   if(!signedIn()){
-    v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>경험치는 일주일마다 초기화됩니다.</p>
+    v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>경험치는 일주일마다 초기화돼요.</p>
      <div class="lrows"><div class="cmrow3"><b>주간 리그</b><span>이번 주 경험치 순위</span></div><div class="cmrow3"><b>친구</b><span>친구 코드로 추가하고 서로 응원하기</span></div><div class="cmrow3"><b>함께 공부 중</b><span>오늘 몇 명이 함께 공부하고 있을까요?</span></div></div>
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="login" style="max-width:240px">로그인</button><button class="cta sec" data-cm="signup" style="max-width:240px">회원가입</button></div></div>`; return; }
   if(!verified()){
@@ -180,7 +180,7 @@ function cheerDlg(to,name){
       try{ await db().collection("cheers").doc(uid()+"_"+to+"_"+day).set({from:uid(),fromName:A().curProfile().name,to,sticker:s.dataset.sticker,day,at:Date.now()}); A().toast(nm+" 님에게 응원을 보냈어요"); }
       catch(e){ A().toast("오늘은 이미 응원했어요"); } d.close(); }); }
   d.dataset.to=to; d.dataset.n=name;
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(([e,l])=>`<button class="stkb" data-sticker="${e}"><span>${e}</span><small>${l}</small></button>`).join("")}</div><p class="sub" style="margin-top:10px">한 사람에게 하루에 한 번 보낼 수 있어요.</p></div>`;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(([e,l])=>`<button class="stkb" data-sticker="${e}"><span>${e}</span><small>${l}</small></button>`).join("")}</div><p class="sub" style="margin-top:10px">한 명에게는 하루에 한 번만 보낼 수 있어요.</p></div>`;
   if(!d.open) d.showModal();
 }
 async function report(target){

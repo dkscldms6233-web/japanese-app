@@ -1482,7 +1482,7 @@ const LV_DESC={N5:"입문 · 기초",N4:"초급",N3:"중급",N2:"중상급",N1:"
 function renderPick(){
   const nw=Object.keys(wrong).length, cnt=l=>ALL.filter(w=>w.lv===l||w.lv2===l).length, my=myLv();
   const SM=LS.get("jp-srs",{}), prog=l=>{ const ws=ALL.filter(w=>w.lv===l); let m=0,lr=0; ws.forEach(w=>{ const e=SM[w.key]; if(e){ if((e.b||0)>=3) m++; else lr++; } }); const n=ws.length||1; return `<span class="pgb"><i class="pm" style="width:${(m/n*100).toFixed(1)}%"></i><i class="pl" style="width:${(lr/n*100).toFixed(1)}%"></i></span><span class="pgt">암기 ${m} · 학습 중 ${lr}</span>`; };
-  const card=(id,name,sub,n,c,pr)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em>${pr||""}</button>`;
+  const card=(id,name,sub,n,c,pr)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n.toLocaleString()}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em>${pr||""}</button>`;
   const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`,prog(l))).join("");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
   $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
@@ -1849,7 +1849,7 @@ function quizSetup(){
   const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlvQ();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2></div>
-   <div class="lvrow"><span>범위</span><div class="jlv">${[["","급수별"],["저장함","저장한 단어"],["오답 노트","오답노트"]].map(([k,t])=>`<button class="pill ${k===qscope?"on":""}" data-act="qscope" data-s="${k}">${t}</button>`).join("")}</div></div>
+   <div class="lvrow"><span>범위</span><div class="jlv">${[["","급수별"],["저장함","저장한 단어"],["오답 노트","오답 노트"]].map(([k,t])=>`<button class="pill ${k===qscope?"on":""}" data-act="qscope" data-s="${k}">${t}</button>`).join("")}</div></div>
    ${qscope||qpos==="k"?"":lvRow(jl,"급수",true)}
    <div class="lvrow"><span>품사</span><div class="jlv">${QPOS.map(([k,n])=>`<button class="pill ${k===qpos?"on":""}" data-act="qpos" data-p="${k}">${n}</button>`).join("")}</div></div>
    <div class="qm-sec">${ic("pencil")}단어 연습<small>${qpos==="k"?"경어 (모든 급수)":qscope||(jl==="전체"?"전체 급수":jl)} 단어 ${n.toLocaleString()}개로 풀어요${qscope&&!n?" · 아직 없어요":""}</small></div>
@@ -3191,7 +3191,7 @@ function renderOnb(){
     else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2><p class="sub">이 기기에서 쓴 계정을 고르거나 다른 계정으로 로그인해요.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div><button class="obskip" data-ob="login">다른 계정으로 로그인</button>${bk}`;
     else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button></div><button class="obskip" data-ob="signup">회원가입</button>`;
     if(obAuth==="guestinfo") body=`<h2>게스트로 시작할까요?</h2><p class="sub">가입 없이 바로 쓸 수 있지만, 아래 두 가지가 달라요.</p>
-      <div class="gstwarn"><div><b>커뮤니티를 쓸 수 없어요</b><span>친구와 함께 공부하기, 주간 리그는 로그인한 사람만 할 수 있어요.</span></div><div><b>학습 기록이 이 기기에만 저장돼요</b><span>다른 기기에서는 이어지지 않고, 앱이나 브라우저 데이터를 지우면 기록도 사라져요.</span></div></div>
+      <div class="gstwarn"><div><b>커뮤니티를 쓸 수 없어요</b><span>친구와 함께 공부하기, 주간 리그는 로그인한 사용자만 할 수 있어요.</span></div><div><b>학습 기록이 이 기기에만 저장돼요</b><span>다른 기기에서는 이어지지 않고, 앱이나 브라우저 데이터를 지우면 기록도 사라져요.</span></div></div>
       <button class="cta" data-ob="guestok">이해했어요, 게스트로 시작</button><button class="cta sec" data-ob="signup">회원가입하고 시작</button><button class="obskip" data-ob="aback">뒤로</button>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
   }
@@ -3317,7 +3317,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="anime.js?v=14"></script>
 <script src="billing.js?v=5"></script>
 <script src="path.js?v=130"></script>
-<script src="community.js?v=19"></script>
+<script src="community.js?v=20"></script>
 <script src="review.js?v=7"></script>
 <script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
