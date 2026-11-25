@@ -1560,6 +1560,7 @@ function kgPairs(){
    <h3 class="kgsec">정중한 표현 · 비즈니스 말</h3>${g2}
    ${rest.length?`<h3 class="kgsec">그 밖의 경어</h3><div class="kgrest">${rest.map(w=>`<button type="button" class="kgw" data-act="open" data-key="${w.key}"><span>${R(w.f)} <span class="kgb" data-k="${w.kg}">${w.kg}</span></span><small>${E(String(w.ko).split("·")[0])}</small></button>`).join("")}</div>`:""}`;
 }
+$("kgBtn").addEventListener("click",()=>{ const on=posf!=="경어"; if(listStage==="pick") openList("전체"); posf=on?"경어":""; kgSel=""; kgMode="pair"; $("posf").value=posf; listSig=""; renderGrid(); window.scrollTo(0,0); });   /* 단어 목록 맨 위의 "경어" 버튼 */
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-kgmode]"); if(!b) return; kgMode=b.dataset.kgmode; kgSel=""; renderGrid(); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-kgsel]"); if(!b) return; kgSel=b.dataset.kgsel; listPart=0; renderGrid(); });
 function refresh(){
