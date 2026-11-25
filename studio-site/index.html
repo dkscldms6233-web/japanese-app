@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CHIEUN Studio</title>
-<meta name="description" content="CHIEUN Studio — 일상에 쓰이는 작은 앱을 만드는 독립 개발 스튜디오. 첫 번째 작품 「술술 일본어」.">
+<meta name="description" content="CHIEUN Studio — 재미있어서 계속하게 되는 앱을 만드는 독립 개발 스튜디오. 첫 번째 작품 「술술 일본어」.">
 <meta name="theme-color" content="#0a0a0f">
-<meta property="og:title" content="CHIEUN Studio"><meta property="og:description" content="일상에 쓰이는 작은 앱을 만드는 독립 스튜디오."><meta property="og:image" content="https://chieun-studio.web.app/icon-512.png">
+<meta property="og:title" content="CHIEUN Studio"><meta property="og:description" content="재미있어서 계속하게 되는 앱을 만드는 독립 스튜디오."><meta property="og:image" content="https://chieun-studio.web.app/icon-512.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -107,6 +107,22 @@ h1 em{font-style:normal;color:var(--y)}
 footer{border-top:1px solid var(--line);padding:34px 0 46px;font-size:14px;color:var(--mute)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
 footer a{margin-left:22px}footer a:hover{color:#fff}
+/* motion */
+h1 .ln{display:block;overflow:hidden;padding-bottom:.08em}
+.ch{display:inline-block;transform:translateY(112%);transition:transform .8s cubic-bezier(.2,.9,.2,1),color .25s;will-change:transform}
+h1.go .ch{transform:none}
+h1.go .ch:hover{transform:translateY(-.1em) rotate(-5deg) scale(1.06);transition:transform .3s cubic-bezier(.3,1.8,.5,1)}
+h1 em .ch:hover{color:#fff}
+@keyframes hop{0%,62%,100%{transform:none}70%{transform:translateY(-.14em)}78%{transform:none}84%{transform:translateY(-.05em)}90%{transform:none}}
+h1.go.done em .ch{animation:hop 4.2s ease-in-out infinite}h1.go.done em .ch:nth-child(2){animation-delay:.12s}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx,70%) var(--my,40%),rgba(255,194,26,.1),transparent 65%);opacity:var(--sp,0);transition:opacity .4s}
+.hero:hover{--sp:1}
+@keyframes bob{50%{transform:translateY(-12px)}}
+.hphones .ph{animation:bob 5.5s ease-in-out infinite}.hphones .ph:nth-child(2){animation-delay:-1.8s}.hphones .ph:nth-child(3){animation-delay:-3.4s}
+.btn{will-change:transform}
+.sg>*{opacity:0;transform:translateY(38px) scale(.985);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.9,.2,1)}
+.sg.on>*{opacity:1;transform:none;transition-delay:calc(var(--i,0)*90ms)}
+.nxc:hover{transform:translateY(-6px) rotate(-.4deg)}
 /* reveal */
 .rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}.rv.on{opacity:1;transform:none}
 @media(max-width:860px){
@@ -119,15 +135,15 @@ footer a{margin-left:22px}footer a:hover{color:#fff}
  .nums{grid-template-columns:1fr 1fr}.nums div{border-bottom:1px solid var(--line)}.nums div:nth-child(2){border-right:0}
  .pr{grid-template-columns:1fr}.pr div{border-right:0;margin:0;border-bottom:1px solid rgba(10,10,15,.2)}
 }
-@media(prefers-reduced-motion:reduce){.hero .ring,.mq div{animation:none}.rv{opacity:1;transform:none;transition:none}}
+@media(prefers-reduced-motion:reduce){.hero .ring,.mq div,.hphones .ph{animation:none}.rv,.sg>*{opacity:1;transform:none;transition:none}.ch{transform:none;transition:none}h1.go.done em .ch{animation:none}}
 </style></head><body>
 <nav><a class="logo" href="#top">CHIEUN STUDIO</a><div class="nl"><a href="#work">Work</a><a href="#numbers">Numbers</a><a href="#principles">Principles</a><a href="#next">Next</a><a class="nb" href="#contact">Contact ↗</a></div></nav>
 
 <header class="hero" id="top"><div class="ring" aria-hidden="true"></div>
 <div class="wrap" style="position:relative">
  <div class="tag">INDEPENDENT STUDIO · 2026</div>
- <h1>작은 앱으로<br>매일을 <em>조금 더</em><br>가볍게.</h1>
- <p class="lede">CHIEUN Studio는 일상에 쓰이는 작은 앱을 만드는 독립 스튜디오입니다. 첫 번째 작품은 일본어 학습 앱 「술술 일본어」입니다.</p>
+ <h1><span class="ln">재미있으면</span><span class="ln"><em>계속</em>하게</span><span class="ln">됩니다.</span></h1>
+ <p class="lede">CHIEUN Studio는 재미있어서 계속하게 되는 앱을 만듭니다. 첫 번째 작품 「술술 일본어」는 공부가 지루해서, 게임처럼 즐겁게 만들어 본 일본어 앱이에요.</p>
  <div class="cta"><a class="btn f" href="https://surasura-nihongo.web.app" target="_blank" rel="noopener">지금 열어 보기 ↗</a><a class="btn" href="#work">작품 살펴보기 ↓</a></div>
 </div>
 <div class="hphones" id="hph" aria-hidden="true">
@@ -141,13 +157,13 @@ footer a{margin-left:22px}footer a:hover{color:#fff}
  <div class="prod rv"><h2><small>일본어 학습 앱</small>술술<br>일본어</h2>
   <div class="txt"><p>단어, 한자, 청해, 문법, 경어까지. 시험 준비부터 처음 시작하는 글자 공부까지 하나의 앱에서 이어집니다. 광고 없이, 로그인 없이 바로 시작할 수 있어요.</p>
   <div class="btns"><a class="btn k f" href="https://surasura-nihongo.web.app" target="_blank" rel="noopener">웹에서 열기 ↗</a><a class="btn k" href="https://surasura-nihongo.web.app/privacy.html" target="_blank" rel="noopener">개인정보처리방침</a></div></div></div>
- <ul class="feat rv">
+ <ul class="feat sg">
   <li><span class="n">01</span><h3>단어장 N5–N1</h3><p>급수별 단어를 한자 읽기와 예문, 원어민 음성과 함께. 틀린 단어는 오답 노트로 모아 다시 풀어요.</p></li>
   <li><span class="n">02</span><h3>문법 · 경어</h3><p>문법 150여 개를 예문으로 정리했고, 존경어·겸양어는 같은 뜻끼리 나란히 놓고 비교하며 외워요.</p></li>
   <li><span class="n">03</span><h3>퀴즈 · 게임</h3><p>뜻 고르기, 짝 맞추기, 워들, 끝말잇기. 지루해지기 전에 한 판 더 하게 만드는 공부.</p></li>
   <li><span class="n">04</span><h3>처음 시작하는 사람을 위해</h3><p>히라가나·가타카나 입문과 글자 맞추기. 아무것도 몰라도 바로 따라올 수 있게.</p></li>
  </ul>
- <div class="rail rv">
+ <div class="rail sg">
   <figure><div class="ph"><img src="img/home.jpg" alt="홈 화면" loading="lazy"></div><figcaption><span>01</span>오늘의 학습</figcaption></figure>
   <figure><div class="ph"><img src="img/words.jpg" alt="단어장" loading="lazy"></div><figcaption><span>02</span>단어장</figcaption></figure>
   <figure><div class="ph"><img src="img/keigo.jpg" alt="경어 비교" loading="lazy"></div><figcaption><span>03</span>경어 비교</figcaption></figure>
@@ -164,7 +180,7 @@ footer a{margin-left:22px}footer a:hover{color:#fff}
 <section class="sec" id="numbers"><div class="wrap">
  <div class="lab" style="color:#fff"><b>02</b> NUMBERS</div>
  <h2 class="big rv"><span style="font-size:.32em;letter-spacing:.02em;color:var(--y);display:block;margin-bottom:.5em">술술 일본어</span>숫자로 보면.</h2>
- <div class="nums rv">
+ <div class="nums sg">
   <div><b data-to="10000">0</b><span>단어 · 예문 · 읽기</span></div>
   <div><b data-to="150">0</b><span>문법 항목</span></div>
   <div><b data-to="90">0</b><span>경어 단어</span></div>
@@ -174,16 +190,16 @@ footer a{margin-left:22px}footer a:hover{color:#fff}
 <section class="sec paper" id="principles"><div class="wrap">
  <div class="lab"><b>03</b> PRINCIPLES</div>
  <h2 class="big rv" style="color:var(--ink)">CHIEUN이<br>지키는 세 가지.</h2>
- <div class="pr rv">
+ <div class="pr sg">
   <div><b>01</b><h3>재미있게</h3><p>지루하면 계속할 수 없어요. 끝내고 나서 한 판 더 하고 싶은 앱을 만듭니다.</p></div>
   <div><b>02</b><h3>정직하게</h3><p>없는 것을 있다고 하지 않아요. 과장 없이, 쓰는 분을 존중하는 말로 이야기합니다.</p></div>
-  <div><b>03</b><h3>겪고, 듣고, 고친다</h3><p>제가 직접 겪은 불편에서 시작하고, 쓰는 분의 말을 듣고 앱에 반영합니다.</p></div>
+  <div><b>03</b><h3>써 보고, 듣고, 고친다</h3><p>제가 먼저 써 보고 싶은 앱을 만들고, 쓰는 분의 말을 듣고 앱에 반영합니다.</p></div>
  </div>
 </div></section>
 <section class="sec nx" id="next"><div class="wrap">
  <div class="lab" style="color:#fff"><b style="color:var(--y)">04</b> COMING NEXT</div>
  <h2 class="big rv">다음 작품은<br>구상 중입니다.</h2>
- <div class="nxg rv">
+ <div class="nxg sg">
   <div class="nxc"><span class="nxn">02</span><div class="sk"><i></i><i></i><i></i></div><b>다음 작품</b><small>COMING SOON</small></div>
   <div class="nxc"><span class="nxn">03</span><div class="sk"><i></i><i></i><i></i></div><b>다음 작품</b><small>COMING SOON</small></div>
   <div class="nxc"><span class="nxn">04</span><div class="sk"><i></i><i></i><i></i></div><b>?</b><small>YOUR IDEA</small></div>
@@ -200,18 +216,33 @@ footer a{margin-left:22px}footer a:hover{color:#fff}
 
 <script>
 (function(){
- var rv=document.querySelectorAll(".rv");
+ var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches, fine=window.matchMedia("(hover:hover)").matches;
+ /* 제목을 글자 단위로 쪼개서 아래에서 튀어 오르게 */
+ var h1=document.querySelector("h1");
+ function split(n){ Array.prototype.slice.call(n.childNodes).forEach(function(c){ if(c.nodeType===3){ var f=document.createDocumentFragment(); c.textContent.split("").forEach(function(ch){ var sp=document.createElement("span"); sp.className="ch"; sp.textContent=ch; f.appendChild(sp); }); n.replaceChild(f,c); } else if(c.nodeType===1) split(c); }); }
+ split(h1); var chs=h1.querySelectorAll(".ch"); chs.forEach(function(c,i){ c.style.transitionDelay=(120+i*38)+"ms"; });
+ requestAnimationFrame(function(){ requestAnimationFrame(function(){ h1.classList.add("go"); setTimeout(function(){ chs.forEach(function(c){ c.style.transitionDelay="0ms"; }); h1.classList.add("done"); },120+chs.length*38+900); }); });
+ /* 스크롤하면 나타남 (묶음은 하나씩 차례로) */
+ var rv=document.querySelectorAll(".rv,.sg");
+ document.querySelectorAll(".sg").forEach(function(g){ Array.prototype.slice.call(g.children).forEach(function(c,i){ c.style.setProperty("--i",i); }); });
  if("IntersectionObserver" in window){ var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("on"); io.unobserve(e.target); } }); },{threshold:.12}); rv.forEach(function(n){ io.observe(n); }); } else rv.forEach(function(n){ n.classList.add("on"); });
  /* 숫자가 올라가요 */
- var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
- function fmt(n,to){ return n.toLocaleString("en-US"); }
+ function fmt(n){ return n.toLocaleString("en-US"); }
  var cio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting) return; var b=e.target, to=+b.dataset.to, t0=performance.now(), plus=to>=90&&to!==5;
    function step(t){ var p=Math.min(1,(t-t0)/1400), v=Math.round(to*(1-Math.pow(1-p,3))); b.innerHTML=fmt(v)+(p>=1&&plus?"<sup>+</sup>":""); if(p<1) requestAnimationFrame(step); }
    if(reduce){ b.innerHTML=fmt(to)+(plus?"<sup>+</sup>":""); } else requestAnimationFrame(step); cio.unobserve(b); }); },{threshold:.5});
  document.querySelectorAll("[data-to]").forEach(function(b){ cio.observe(b); });
- /* 첫 화면 폰이 마우스를 따라 살짝 기울어요 */
- var h=document.getElementById("hph"); if(h&&!reduce&&window.matchMedia("(hover:hover)").matches){ var ph=h.querySelectorAll(".ph");
-  window.addEventListener("mousemove",function(e){ var x=(e.clientX/innerWidth-.5), y=(e.clientY/innerHeight-.5); ph.forEach(function(p,i){ var d=(i+1)*6; p.style.transform="translate("+(x*d*-2).toFixed(1)+"px,"+(y*d*-2).toFixed(1)+"px) rotate("+(x*d*.5).toFixed(2)+"deg)"; }); }); }
+ if(reduce||!fine) return;
+ /* 마우스를 따라 빛이 움직이고, 폰이 살짝 기울고, 버튼이 자석처럼 끌려와요 */
+ var hero=document.querySelector(".hero"), ph=document.querySelectorAll("#hph .ph");
+ window.addEventListener("mousemove",function(e){
+  var r=hero.getBoundingClientRect(); hero.style.setProperty("--mx",(e.clientX-r.left)+"px"); hero.style.setProperty("--my",(e.clientY-r.top)+"px");
+  var x=e.clientX/innerWidth-.5, y=e.clientY/innerHeight-.5; ph.forEach(function(p,i){ var d=(i+1)*6; p.style.translate=(x*d*-2).toFixed(1)+"px "+(y*d*-2).toFixed(1)+"px"; p.style.rotate=(x*d*.5).toFixed(2)+"deg"; });
+  document.querySelectorAll(".btn").forEach(function(b){ var q=b.getBoundingClientRect(), cx=q.left+q.width/2, cy=q.top+q.height/2, dx=e.clientX-cx, dy=e.clientY-cy, dist=Math.hypot(dx,dy);
+   if(dist<110){ b.style.transform="translate("+(dx*.22).toFixed(1)+"px,"+(dy*.3).toFixed(1)+"px)"; } else if(b.style.transform){ b.style.transform=""; } });
+ });
+ /* 스크롤하면 폰이 서로 다른 속도로 위로 올라가요 */
+ var sy=0; window.addEventListener("scroll",function(){ sy=window.scrollY; if(sy>innerHeight*1.2) return; ph.forEach(function(p,i){ p.style.marginBottom=(sy*(.05+i*.04)).toFixed(1)+"px"; }); },{passive:true});
 })();
 </script>
 </body></html>
