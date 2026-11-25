@@ -50,7 +50,7 @@ function statsHtml(){
   let more="";
   if(plus){
     const lv={}, pg={}; rk.forEach(x=>{ lv[x.w.lv]=(lv[x.w.lv]||0)+x.v; const g=grp(x.w.pos); pg[g]=(pg[g]||0)+x.v; });
-    const bar=(o,names)=>{ const t=Object.values(o).reduce((a,b)=>a+b,0)||1; return Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="pbar"><span>${names?names[k]:k}</span><div><i style="width:${Math.round(v/t*100)}%"></i></div><b>${Math.round(v/t*100)}%</b></div>`).join(""); };
+    const bar=(o,names)=>{ const t=Object.values(o).reduce((a,b)=>a+b,0)||1; return Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="wkbar"><span>${names?names[k]:k}</span><div><i style="width:${Math.round(v/t*100)}%"></i></div><b>${Math.round(v/t*100)}%</b></div>`).join(""); };
     const conf={}; A().wlog().slice(-120).forEach(x=>{ if(!x.p||!x.c||x.p===x.c) return; const k=x.p+"→"+x.c; conf[k]=(conf[k]||0)+1; });
     const cf=Object.entries(conf).sort((a,b)=>b[1]-a[1]).slice(0,4);
     more=`<h4 class="ph">급수별 약점</h4>${bar(lv)}<h4 class="ph">품사별 약점</h4>${bar(pg,GRP)}`+(cf.length?`<h4 class="ph">자주 헷갈린 짝 <small>(내가 고른 답 → 정답)</small></h4>${cf.map(([k,n])=>`<div class="pconf">${E(k.split("→")[0])} <b>→</b> ${E(k.split("→")[1])}<small>${n}번</small></div>`).join("")}`:"");
@@ -84,7 +84,7 @@ function coachHtml(){
   const rows=Object.keys(SECN).filter(k=>sec[k]).map(k=>({k,r:Math.round(sec[k].c/sec[k].n*100)})).sort((a,b)=>a.r-b.r);
   const avg=hs.length?Math.round(hs.reduce((a,x)=>a+x.c,0)/Math.max(1,hs.reduce((a,x)=>a+x.n,0))*100):null;
   const weak=rows[0], pass=PASS[lv];
-  const exam=hs.length?`<h4 class="ph">최근 모의시험 ${hs.length}회 <small>· 평균 정답률 ${avg}%</small></h4>${rows.map(r=>`<div class="pbar"><span>${SECN[r.k]}</span><div><i style="width:${r.r}%"></i></div><b>${r.r}%</b></div>`).join("")}
+  const exam=hs.length?`<h4 class="ph">최근 모의시험 ${hs.length}회 <small>· 평균 정답률 ${avg}%</small></h4>${rows.map(r=>`<div class="wkbar"><span>${SECN[r.k]}</span><div><i style="width:${r.r}%"></i></div><b>${r.r}%</b></div>`).join("")}
     ${weak?`<button class="pill on plusgo" data-pcoach="sec" data-lv="${lv}" data-s="${weak.k}">가장 약한 「${SECN[weak.k]}」 집중 연습</button>`:""}`
     :`<p class="sub">${lv} 모의시험을 풀면 영역별 정답률이 여기에 쌓여요.</p>`;
   return `<div class="panel plusp coach"><h3>JLPT 합격 코치 <em class="plusbadge">PLUS</em></h3>
