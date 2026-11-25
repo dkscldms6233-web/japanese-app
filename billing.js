@@ -17,7 +17,9 @@ let busy=false, sdkP=null;
 const A=()=>window.APP;
 const won=n=>n.toLocaleString("ko-KR")+"원";
 const signedIn=()=>{ try{ const c=A().cloud, p=A().curProfile(); return !!(c&&c.ok&&p&&p.cloud&&c.auth.currentUser&&c.auth.currentUser.uid===p.cloud); }catch(e){ return false; } };
-const ready=()=>CFG.on&&!!CFG.clientKey;
+/* 구글 플레이 앱(TWA)으로 열었을 때는 웹 결제를 보여 주지 않아요 (플레이 정책: 앱 안 디지털 상품은 구글 결제만). TWA는 처음 열릴 때 referrer가 android-app:// 로 시작해요 */
+const inPlayApp=()=>{ try{ if(document.referrer&&document.referrer.indexOf("android-app://")===0) sessionStorage.setItem("jp-twa","1"); return sessionStorage.getItem("jp-twa")==="1"; }catch(e){ return false; } };
+const ready=()=>CFG.on&&!!CFG.clientKey&&!inPlayApp();
 const ic=px=>window.PATH&&PATH.seedIc?PATH.seedIc(px):"";
 function loadSdk(){ return sdkP||(sdkP=new Promise((res,rej)=>{ if(window.TossPayments) return res(); const s=document.createElement("script"); s.src=SDK; s.onload=res; s.onerror=()=>{ sdkP=null; rej(new Error("sdk")); }; document.head.appendChild(s); })); }
 /* 서버 함수 호출 (callable 규약: POST {data} + 로그인 토큰) */
@@ -30,6 +32,7 @@ async function call(name,data){
 }
 /* 상점 화면에 끼워 넣는 조각 — 꺼져 있고 soon도 꺼져 있으면 빈 문자열 */
 function html(){
+  if(inPlayApp()) return "";
   if(!ready()){
     if(!CFG.soon) return "";
     return `<div class="seedpay soon"><b>씨앗 사기</b><div class="seedpacks">${CFG.packs.map(p=>`<button type="button" class="pill" disabled>${ic(24)}<b style="display:block">${p.seeds}개</b><small style="display:block;font-size:11px;font-weight:600">준비 중</small>${p.tag?`<em class="seedtag">${p.tag}</em>`:""}</button>`).join("")}</div><small>씨앗 구매는 준비 중이에요. 곧 만나요! 지금은 공부하면서 모을 수 있어요.</small></div>`;
@@ -80,5 +83,5 @@ function init(){
   setTimeout(()=>{ handleReturn().then(()=>{ try{ const p=JSON.parse(sessionStorage.getItem("jp-pay-pending")||"null"); if(p&&!new URLSearchParams(location.search).get("pay")) finish(p); }catch(e){} }); },1200);
 }
 window.SEEDPAY={CFG,html,buy,ready,init};
-window.addEventListener("load",init);
+window.addEventListener("load",()=>{ inPlayApp(); init(); });
 })();
