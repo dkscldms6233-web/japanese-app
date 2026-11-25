@@ -1,17 +1,77 @@
 {
-  "functions": [{ "source": "functions", "codebase": "default" }],
-  "hosting": {
-    "public": ".",
-    "ignore": [
-      "firebase.json", "**/.*", "!.well-known/**", "**/node_modules/**",
-      "tools/**", "store/**", "notes-organizer/**", "functions/**", "*.py", "*.md", "firestore.rules"
-    ],
-    "cleanUrls": false,
-    "headers": [
-      { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-      { "source": "/manifest.json", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-      { "source": "/index.html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-      { "source": "/.well-known/assetlinks.json", "headers": [{ "key": "Content-Type", "value": "application/json" }] }
-    ]
-  }
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default"
+    }
+  ],
+  "hosting": [
+    {
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "!.well-known/**",
+        "**/node_modules/**",
+        "tools/**",
+        "store/**",
+        "notes-organizer/**",
+        "functions/**",
+        "*.py",
+        "*.md",
+        "firestore.rules",
+        "studio-site/**"
+      ],
+      "cleanUrls": false,
+      "headers": [
+        {
+          "source": "/sw.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        },
+        {
+          "source": "/manifest.json",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        },
+        {
+          "source": "/index.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        },
+        {
+          "source": "/.well-known/assetlinks.json",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ],
+      "target": "app"
+    },
+    {
+      "target": "studio",
+      "public": "studio-site",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": false
+    }
+  ]
 }

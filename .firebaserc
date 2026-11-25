@@ -1,1 +1,17 @@
-{ "projects": { "default": "surasura-nihongo" } }
+{
+  "projects": {
+    "default": "surasura-nihongo"
+  },
+  "targets": {
+    "surasura-nihongo": {
+      "hosting": {
+        "app": [
+          "surasura-nihongo"
+        ],
+        "studio": [
+          "chieun-studio"
+        ]
+      }
+    }
+  }
+}
