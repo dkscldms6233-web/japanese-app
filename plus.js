@@ -1,6 +1,7 @@
 /* 술술 플러스 — 공부를 더 깊게 도와주는 유료 이용권(기간제, 자동 갱신 없음).
  * 기본 공부(단어·퀴즈·게임·문법·뉴스·모의시험)는 계속 무료예요. 플러스는 "내 약점을 알려 주고 거기에 맞춰 연습"하는 기능이에요.
  *  - 맞춤 복습: 자주 틀리는 단어만 골라서 퀴즈 (무료는 하루 1번 체험)
+ *  - JLPT 합격 코치: 시험일 D-day · 하루 권장량 · 영역별 약점 · 시험 직전 총정리
  *  - 심화 분석: 약한 단어 TOP 10 · 급수별/품사별 약점 · 자주 헷갈리는 오답 짝
  * 이용 기간(plusUntil)은 서버(functions)만 쓸 수 있는 wallets/{uid} 문서에 있고, 앱은 읽기만 해요.
  * 결제는 billing.js(토스 웹 결제)가 열릴 때까지 "준비 중"으로 보여요. 플레이 앱 안에서는 구매 구역을 숨겨요. */
@@ -60,6 +61,47 @@ function statsHtml(){
 }
 function shopHtml(){ return `<div class="seedpay plusrow"><b>술술 플러스</b><small>${isPlus()?`이용 중 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"내 약점을 찾아 주는 맞춤 복습·심화 분석"}</small><button class="pill on" data-plus="open">${isPlus()?"자세히":"알아보기"}</button></div>`; }
 
+
+/* ---- JLPT 합격 코치 (플러스) ---- */
+const LVS=["N5","N4","N3","N2","N1"];
+const SECN={vocab:"문자·어휘",pair:"유의 표현",gram:"문법",read:"독해",listen:"청해"};
+const PASS={N5:[80,180],N4:[90,180],N3:[95,180],N2:[90,180],N1:[100,180]};
+const LSg=()=>A().LS;
+const plan=()=>{ try{ return LSg().get("jp-jplan",{})||{}; }catch(e){ return {}; } };
+const savePlan=o=>{ try{ LSg().set("jp-jplan",o); }catch(e){} };
+const hist=()=>{ try{ return LSg().get("jp-jhist",[])||[]; }catch(e){ return []; } };
+function recordExam(Q){ try{ if(!Q||!Q.by) return; const h=hist(); h.push({t:Date.now(),lv:Q.lv,by:Q.by,n:Q.items.length,c:Q.score}); LSg().set("jp-jhist",h.slice(-40)); }catch(e){} }
+function coachHtml(){
+  const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), words=A().ALL.filter(w=>w.lv===lv);
+  const srs=LSg().get("jp-srs",{}); const learned=words.filter(w=>srs[w.key]).length, strong=words.filter(w=>(srs[w.key]&&srs[w.key].b||0)>=3).length;
+  const pct=words.length?Math.round(strong/words.length*100):0;
+  let dd="";
+  if(pl.date){ const d=Math.ceil((new Date(pl.date+"T00:00:00")-new Date(new Date().toDateString()))/864e5);
+    if(d<0) dd=`<div class="cdd"><b>시험일이 지났어요</b><span>새 시험 날짜를 골라 주세요</span></div>`;
+    else { const left=Math.max(0,words.length-strong), per=d>0?Math.ceil(left/d):left; dd=`<div class="cdd"><b>${d===0?"오늘이 시험일!":"D-"+d}</b><span>${pl.date.replace(/-/g,".")} · ${lv}</span></div><p class="sub cplan">${left?`아직 익히지 못한 단어가 <b>${left}개</b> 남았어요. 하루 <b>${per}개</b>씩이면 시험일까지 다 익힐 수 있어요.`:"이 급수 단어를 모두 익혔어요! 모의시험으로 실전 감각을 올려 보세요."}</p>`; } }
+  const hs=hist().filter(x=>x.lv===lv).slice(-5), sec={};
+  hs.forEach(x=>Object.entries(x.by||{}).forEach(([k,v])=>{ const o=sec[k]||(sec[k]={n:0,c:0}); o.n+=v.n; o.c+=v.c; }));
+  const rows=Object.keys(SECN).filter(k=>sec[k]).map(k=>({k,r:Math.round(sec[k].c/sec[k].n*100)})).sort((a,b)=>a.r-b.r);
+  const avg=hs.length?Math.round(hs.reduce((a,x)=>a+x.c,0)/Math.max(1,hs.reduce((a,x)=>a+x.n,0))*100):null;
+  const weak=rows[0], pass=PASS[lv];
+  const exam=hs.length?`<h4 class="ph">최근 모의시험 ${hs.length}회 <small>· 평균 정답률 ${avg}%</small></h4>${rows.map(r=>`<div class="pbar"><span>${SECN[r.k]}</span><div><i style="width:${r.r}%"></i></div><b>${r.r}%</b></div>`).join("")}
+    ${weak?`<button class="pill on plusgo" data-pcoach="sec" data-lv="${lv}" data-s="${weak.k}">가장 약한 「${SECN[weak.k]}」 집중 연습</button>`:""}`
+    :`<p class="sub">${lv} 모의시험을 풀면 영역별 정답률이 여기에 쌓여요.</p>`;
+  return `<div class="panel plusp coach"><h3>JLPT 합격 코치 <em class="plusbadge">PLUS</em></h3>
+   <div class="cset"><span>목표 급수</span><div class="clv">${LVS.map(l=>`<button class="pill${l===lv?" on":""}" data-pcoach="lv" data-lv="${l}">${l}</button>`).join("")}</div></div>
+   <div class="cset"><span>시험 날짜</span><input type="date" id="pcDate" value="${pl.date||""}" aria-label="시험 날짜"></div>
+   ${dd}
+   <h4 class="ph">${lv} 단어 진행률 <small>· 오래 기억한 단어 ${strong} / ${words.length}개 (${pct}%) · 공부한 단어 ${learned}개</small></h4><div class="prog"><div style="width:${pct}%"></div></div>
+   ${exam}
+   <h4 class="ph">시험 직전 총정리</h4><p class="sub" style="margin:0 0 8px">${lv} 단어 중 내가 자주 틀린 것만 모아 20문제로 마지막 점검을 해요.</p><button class="pill on plusgo" data-pcoach="final" data-lv="${lv}">${lv} 총정리 20문제</button>
+   <p class="sub cnote">참고: 실제 ${lv} 합격은 총점 ${pass[1]}점 중 ${pass[0]}점 이상이고, 영역별로 19점(60점 만점) 미만이면 과락이에요. 이 앱 모의시험은 직접 만든 연습 문제라 정답률이 계속 60% 이상이면 안정권으로 보세요.</p></div>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-pcoach]"); if(!b) return; const k=b.dataset.pcoach, lv=b.dataset.lv;
+  if(k==="lv"){ const p=plan(); p.lv=lv; savePlan(p); A().setJl(lv); renderTab(); }
+  else if(k==="sec"){ A().setJl(lv); A().setView("exam"); A().jStart(b.dataset.s); }
+  else if(k==="final"){ const pool=weakRank().filter(x=>x.w.lv===lv).map(x=>x.w); if(pool.length<4){ A().toast(lv+" 단어 중 틀린 기록이 아직 적어요. 퀴즈를 더 풀어 보세요."); return; } A().startQuiz("meaning",pool.slice(0,40),20); } });
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="pcDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); renderTab(); } });
+
 /* ---- 플러스 탭 (하단 메뉴) ---- */
 function open(why){ try{ document.querySelectorAll("dialog[open]").forEach(d=>d.close()); }catch(e){} try{ window.__plusWhy=why||""; }catch(e){} A().setView("plus"); }
 function passesHtml(){
@@ -73,18 +115,18 @@ function passesHtml(){
 function renderTab(){
   const el=document.getElementById("plusView"); if(!el) return;
   const plus=isPlus(), rk=weakRank(), why=window.__plusWhy; window.__plusWhy="";
-  const ben=`<ul class="plusben"><li><b>맞춤 복습 무제한</b><span>자주 틀리는 단어만 골라서 퀴즈로 풀어요 (무료는 하루 1번)</span></li><li><b>심화 약점 분석</b><span>약한 단어 TOP 10, 급수별·품사별 약점, 자주 헷갈리는 오답 짝</span></li><li><b>앞으로 더해질 기능</b><span>시험 직전 총정리 같은 기능도 플러스에 먼저 들어가요</span></li></ul>`;
+  const ben=`<ul class="plusben"><li><b>JLPT 합격 코치</b><span>시험 날짜(D-day)를 정하면 하루에 몇 개씩 익히면 되는지 계산해 줘요. 단어 진행률과 합격 참고선도 보여요</span></li><li><b>모의시험 영역별 분석</b><span>문자·어휘·문법·독해·청해 중 어디가 약한지 알려 주고, 약한 영역만 집중 연습해요 (기록은 지금부터 쌓여요)</span></li><li><b>시험 직전 총정리</b><span>내가 자주 틀린 단어만 모아 20문제로 마지막 점검</span></li><li><b>맞춤 복습 무제한 · 심화 약점 분석</b><span>자주 틀리는 단어 연습(무료는 하루 1번), 급수별·품사별 약점, 헷갈린 오답 짝</span></li></ul>`;
   const free=!plus&&freeUsed();
   el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>
-   <p>${plus?`이용 중이에요 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"내 약점을 찾아서, 거기에 맞춰 연습해요"}</p></div>
-   <p class="sub" style="margin:0 2px 12px">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>예요. 플러스는 공부를 더 깊게 도와주는 선택 기능이에요.</p>
+   <p>${plus?`이용 중이에요 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"JLPT 합격까지, 내 약점에 맞춰 연습해요"}</p></div>
+   <p class="sub" style="margin:0 2px 12px">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>예요. 플러스는 JLPT 합격 준비를 더 깊게 도와주는 선택 기능이에요.</p>
    ${why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼어요. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있어요.</p>`:""}
    <div class="pluscta"><button class="pill on plusgo" data-plus="weak">${plus?"맞춤 복습 시작 · 약한 단어 10문제":free?"오늘 무료 체험은 끝났어요":"맞춤 복습 무료 체험 (하루 1번)"}</button>${rk.length<4?`<small>틀린 단어가 4개 이상 쌓이면 시작할 수 있어요</small>`:""}</div>
-   ${plus?(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없어요. 퀴즈를 풀면 여기에 약점이 쌓여요.</div></div>`):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
+   ${plus?(coachHtml()+(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없어요. 퀴즈를 풀면 여기에 약점이 쌓여요.</div></div>`)):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
    ${plus?`<h3 class="plusst">이용권 연장</h3>${passesHtml()}`:""}</div>`;
 }
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,renderTab); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-plus]"); if(!b) return; e.preventDefault(); const k=b.dataset.plus; if(k==="weak") startWeak(); else open(); });
 window.addEventListener("load",()=>{ setTimeout(sync,2500); });
-window.PLUS={isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,sync,setUntil,PASSES};
+window.PLUS={isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
 })();

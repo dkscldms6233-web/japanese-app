@@ -996,7 +996,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=6">
+<link rel="stylesheet" href="polish.css?v=7">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -1236,7 +1236,7 @@ const RAW = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 // 프로필: 이 기기 안에서만 저장돼요. 아래 키들은 프로필별로 따로 보관해요.
-const PER = ["jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs","jp-wlog","jp-quest","jp-gift","jp-char","jp-friends","jp-league"];
+const PER = ["jp-jhist","jp-jplan","jp-kana","jp-custom","jp-star","jp-prefs","jp-wrong","jp-miss","jp-log","jp-read","jp-best","jp-path","jp-xp","jp-srs","jp-wlog","jp-quest","jp-gift","jp-char","jp-friends","jp-league"];
 let profiles = RAW.get("jp-profiles",null), activeId = RAW.get("jp-active",null);
 if(!Array.isArray(profiles)||!profiles.length){
   profiles=[{id:"p1",name:"기본"}]; activeId="p1";
@@ -2492,6 +2492,7 @@ function jPick(i){
 }
 function jNext(){ if(!Q||Q.mode!=="jlpt") return; jStop(); Q.i++; Q.sel=null; renderJ(); }
 function jResult(){
+  try{ if(window.PLUS) PLUS.recordExam(Q); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.items.length, pct=Math.round(Q.score/t*100);
   $("quizView").innerHTML=`<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.lv} ${Q.sec==="all"?"모의시험":JSEC[Q.sec]} 결과</h2>
@@ -3255,7 +3256,7 @@ document.addEventListener("click",e=>{
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
   }
 });
-window.APP={view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
+window.APP={jStart:s=>jStart(s),setJl:v=>{ prefs.jl=v; LS.set("jp-prefs",prefs); },view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
   applyMyLevels:cur=>{ prefs.myLevels=cur; delete prefs.myLevel; LS.set("jp-prefs",prefs); lvSel=new Set(cur); level="전체"; todayOff=0; renderLevels(); renderHome(); },
   applyFuri:v=>{ prefs.nofuri=v; LS.set("jp-prefs",prefs); $("nofuri").checked=v; applyPrefs(); },
   resetLearning:()=>{ log={}; miss={}; wrong={}; wlog=[]; LS.set("jp-log",log); LS.set("jp-miss",miss); LS.set("jp-wrong",wrong); LS.set("jp-wlog",wlog); renderLevels(); }};
@@ -3330,7 +3331,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
-<script src="plus.js?v=4"></script>
+<script src="plus.js?v=6"></script>
 <script src="dev.js?v=8"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

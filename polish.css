@@ -91,3 +91,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 .plusst{margin:18px 2px 8px;font-size:16px}
 .plustab .plusgo{margin-top:0}
 @media(min-width:700px){.vb.plus{color:#e8711f}}
+
+.coach .cset{display:flex;align-items:center;gap:10px;margin:8px 0;flex-wrap:wrap}.coach .cset>span{min-width:64px;font-size:13px;font-weight:700}
+.coach .clv{display:flex;gap:6px;flex-wrap:wrap}.coach input[type=date]{padding:8px 10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14px}
+.cdd{display:grid;margin:10px 0 4px;padding:12px 14px;border-radius:var(--r-md);background:var(--accent-soft)}.cdd b{font-size:22px;color:var(--accent-text)}.cdd span{font-size:13px;color:var(--sub)}
+.cplan{margin:4px 0 8px}.cnote{font-size:12px;margin:12px 0 0}.coach .plusgo{margin-top:10px}
