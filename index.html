@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
 <meta name="theme-color" content="#fbfaf7">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=5">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=6">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="술술 일본어">
@@ -78,7 +78,7 @@ select,textarea,.af input{padding:8px 10px;border:1px solid var(--line);border-r
 .pick{max-width:820px;margin:10px auto}
 .pick h2{margin:6px 0 2px}
 .pkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:14px 0}
-@media(min-width:700px){.pkgrid.five{grid-template-columns:repeat(5,1fr)}.pkgrid.four{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:700px){.pkgrid.five{grid-template-columns:repeat(5,1fr)}.pkgrid.four{grid-template-columns:repeat(5,1fr)}}
 .pk{position:relative;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:16px;padding:18px 14px 14px;text-align:left;cursor:pointer;font:inherit;transition:transform .12s,border-color .12s}
 .pk::before{content:"";position:absolute;left:14px;top:0;width:34px;height:5px;border-radius:0 0 4px 4px;background:var(--lvc,var(--accent))}
 .pk:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -448,6 +448,27 @@ h1{letter-spacing:-.02em;cursor:pointer}
 #onb .obin{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-size:16px}
 #onb .gstwarn{display:grid;gap:10px;margin:12px 0}#onb .gstwarn div{background:#fff3e0;border:1px solid #f0b866;border-radius:12px;padding:10px 12px;color:#5b3300}#onb .gstwarn b{display:block;font-size:15px}#onb .gstwarn span{font-size:13px}html[data-theme=dark] #onb .gstwarn div{background:#3a2a10;border-color:#8a6420;color:#ffe2b0}
 .gstbar{margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#fff3e0;border:1.5px solid #f0b866;color:#5b3300;display:grid;gap:6px;font-size:13.5px;line-height:1.5}.gstbar b{font-size:15px}.gstbar .pill{justify-self:start}html[data-theme=dark] .gstbar{background:#3a2a10;border-color:#8a6420;color:#ffe2b0}
+.kgb{display:inline-block;white-space:nowrap;flex:none;font-size:11px;font-weight:800;line-height:1;padding:3px 7px;border-radius:999px;background:#ffe9ef;color:#b0285a;margin-left:4px;vertical-align:middle}html[data-theme=dark] .kgb{background:#4a1f33;color:#ffc2d6}
+.kgtog{white-space:nowrap;flex:none;font-weight:800;border-color:#e0507a;color:#c2255c;background:#fff0f4}.kgtog small{font-weight:600;font-size:11px;opacity:.8}.kgtog.on{background:#e0507a;color:#fff;border-color:#e0507a}html[data-theme=dark] .kgtog:not(.on){background:#3a1c28;color:#ffb3cc;border-color:#8a3a58}
+.kgp{grid-column:1/-1;border:1.5px solid var(--line);border-radius:16px;padding:12px;margin:0 0 6px;background:var(--card)}
+.kgchips{display:flex;gap:6px;flex-wrap:wrap}.kgc{font:inherit;font-weight:700;font-size:14px;border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 12px;cursor:pointer}.kgc em{font-style:normal;font-weight:600;font-size:12px;color:var(--sub);margin-left:5px}
+.kgc.on{background:var(--accent);border-color:var(--accent);color:var(--onacc,#fff)}.kgc.on em{color:inherit;opacity:.85}
+.kgc[data-k="존경어"]:not(.on){border-color:#2563eb;color:#2563eb}.kgc[data-k="겸양어"]:not(.on){border-color:#d9730d;color:#b85a00}.kgc[data-k="정중어"]:not(.on){border-color:#15935a;color:#0f7a4a}
+.kgd{margin:10px 2px 6px;font-size:13px;line-height:1.7;color:var(--sub)}
+.kgtbl summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--accent-text);padding:6px 2px}.kgtbl table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}.kgtbl th,.kgtbl td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;line-height:1.9}.kgtbl th{font-size:12px;color:var(--sub)}
+.kgtbl th:nth-child(2){color:#2563eb}.kgtbl th:nth-child(3){color:#b85a00}
+.grid.kgwrap{display:block}.kgmodes{display:flex;gap:6px;margin-bottom:8px}.kgsec{margin:18px 2px 6px;font-size:17px}.kgsec small{font-size:12px;font-weight:600;color:var(--sub);margin-left:6px}
+.kgr{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0;background:var(--card)}.kgbase{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}.kgbase b{font-size:21px}.kgbase small{color:var(--sub);font-size:13px}
+.kgcols{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kgcols.one{grid-template-columns:1fr}.kgcol{border-radius:10px;padding:8px;min-width:0}.kgcol em{display:block;font-style:normal;font-size:11px;font-weight:800;margin-bottom:4px}
+.kgcol.son{background:#e8f0ff}.kgcol.son em{color:#1d4ed8}.kgcol.ken{background:#fff0df}.kgcol.ken em{color:#b85a00}.kgcol.jung{background:#e1f6ea}.kgcol.jung em{color:#0f7a4a}
+html[data-theme=dark] .kgcol.son{background:#1b2a4d}html[data-theme=dark] .kgcol.ken{background:#40290f}html[data-theme=dark] .kgcol.jung{background:#14392a}
+.kgw{display:flex;flex-direction:column;align-items:flex-start;gap:1px;font:inherit;font-size:17px;font-weight:700;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:3px 0;cursor:pointer;width:100%;text-align:left}.kgw small{font-size:12px;font-weight:500;color:var(--sub)}.kgno{color:var(--sub);font-size:14px}
+.kgrest{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.kgh{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;margin:14px 2px 2px;padding-bottom:6px;border-bottom:2.5px solid var(--line)}.kgh b{font-size:18px}.kgh small{color:var(--sub);font-size:13px}
+.kgh[data-k="존경어"]{border-color:#2563eb}.kgh[data-k="존경어"] b{color:#2563eb}.kgh[data-k="겸양어"]{border-color:#d9730d}.kgh[data-k="겸양어"] b{color:#b85a00}.kgh[data-k="정중어"]{border-color:#15935a}.kgh[data-k="정중어"] b{color:#0f7a4a}
+.card[data-kg="존경어"]{box-shadow:inset 4px 0 0 #2563eb}.card[data-kg="겸양어"]{box-shadow:inset 4px 0 0 #d9730d}.card[data-kg="정중어"]{box-shadow:inset 4px 0 0 #15935a}
+.kgb[data-k="존경어"]{background:#e3edff;color:#1d4ed8}.kgb[data-k="겸양어"]{background:#ffeedb;color:#b85a00}.kgb[data-k="정중어"]{background:#dff6ea;color:#0f7a4a}
+html[data-theme=dark] .kgb[data-k="존경어"]{background:#1d2e57;color:#9ec0ff}html[data-theme=dark] .kgb[data-k="겸양어"]{background:#4a2f12;color:#ffc88a}html[data-theme=dark] .kgb[data-k="정중어"]{background:#16402c;color:#8fe0b5}
 .seedic{vertical-align:-3px;flex:none}.seedbal{display:inline-flex;align-items:center;gap:8px;font-size:30px;font-weight:800;color:var(--accent-text);line-height:1}.seedbal b{font-size:30px}.seedpr{display:inline-flex;align-items:center;gap:4px}.seedpr b{font-weight:800}
 .seedpay{margin:0 0 12px;padding:12px;border:1.5px solid var(--line);border-radius:14px;text-align:center}.seedpay b{display:block;margin-bottom:6px}.seedpay small{display:block;color:var(--sub);font-size:12px;margin-top:6px}.seedpacks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 #onb .obagree{display:flex;align-items:flex-start;gap:8px;margin:14px auto 0;max-width:340px;text-align:left;font-size:13.5px;line-height:1.45;color:var(--text)}#onb .obagree input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:#5b5bf0}#onb .obagree a{color:#4a2fe0;text-decoration:underline}
@@ -952,6 +973,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-fix3.js?v=3"></script>
 <script src="words-levels.js?v=5"></script>
 <script src="words-mynotes.js?v=4"></script>
+<script src="words-keigo.js?v=2"></script>
 <script src="words-freq.js?v=1"></script>
 <script src="daily.js?v=3"></script>
 <script src="jlpt-bank.js"></script>
@@ -962,7 +984,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="listen-audio.js?v=2"></script>
 <script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
-<script src="word-audio.js?v=1"></script>
+<script src="word-audio.js?v=3"></script>
 <script src="kana-audio.js?v=5"></script>
 <script src="kana.js?v=41"></script>
 <script src="games2.js?v=30"></script>
@@ -1000,6 +1022,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
   </div>
   <div class="levels" id="levels"></div>
   <div class="opts">
+    <button type="button" class="pill kgtog" id="kgBtn" aria-pressed="false" title="존경어·겸양어·정중어만 모아 보기">경어</button>
     <select id="posf" aria-label="품사 필터"><option value="">모든 품사</option></select>
     <label class="tg list-only"><input type="checkbox" id="hide"> 뜻 가리기</label>
     <label class="tg list-only"><input type="checkbox" id="nofuri"> 후리가나 숨기기 <small style="color:var(--sub)">(한자를 누르면 보여요)</small></label>
@@ -1323,6 +1346,12 @@ applyNoteGroups(WORDS);
       if(w.lv!=="N3") w.lv2="N3"; }
     else { const nw={lv:"N3",f,ko,pos:PC[p[2].trim()]}; WORDS.push(nw); idx.set(k,nw); } }); })();
 applyDetail(); /* 내 노트로 새로 들어온 단어에도 상세정보를 붙여요 */
+/* 경어(words-keigo.js): 새 단어는 맨 뒤에 덧붙여요(기존 단어의 번호가 바뀌면 저장한 별·오답 기록이 어긋나요). 있는 단어는 종류 꼬리표만 달아요 */
+(()=>{ const idx=new Map(WORDS.map(w=>[plain(w.f),w]));
+  (window.WORDS_KEIGO||[]).forEach(r=>{ const t=plain(r[1]); let w=idx.get(t);
+    if(!w){ w={lv:r[0],f:r[1],ko:r[2],pos:r[3],...(r[6]?{note:r[6]}:{}),...(r[4]?{ex:[{ja:r[4],ko:r[5]}]}:{})}; WORDS.push(w); idx.set(t,w); }
+    w.kg=r[7]; });
+  Object.entries(window.KEIGO_TAG||{}).forEach(([k,v])=>{ const w=idx.get(k); if(w) w.kg=v; }); })();
 /* 형용사 풀이를 사전형으로 통일: 조용함 → 조용하다 */
 WORDS.forEach(w=>{ if(!/形容詞/.test(w.pos)) return;
   const FIX2={"편함":"편하다","잘함":"잘하다","딱함":"딱하다","분함":"분하다","멍함":"멍하다","기운참":"기운차다","예쁨":"예쁘다","힘듦":"힘들다","좋음":"좋다","나쁨":"나쁘다","싫음":"싫다","없음":"없다","있음":"있다"};
@@ -1400,7 +1429,7 @@ function rebuild(){ ALL = BASE.concat(custom); ALL.forEach(w=>{
   if(w.pos==="な形容詞"&&w.key[0]==="b"&&w.stem===undefined){ w.stem=w.f; if(!/だ$/.test(w.f)) w.f+="だ"; }
   const sf=w.stem||w.f; w.text=plain(sf); w.yomi=reading(sf); }); applyNoteGroups(ALL); applyKoFix3(ALL); }
 const byKey = k => ALL.find(w=>w.key===k);
-let level="전체", posf="", view="list", Q=null;
+let level="전체", posf="", view="list", Q=null, kgSel="", kgMode="pair";   /* kgMode: pair=원래 말 기준(기본) · list=종류별 목록 */   /* kgSel: 경어에서 고른 종류(존경어·겸양어·정중어, ""=전체) */
 let lvSel=new Set();   // 선택한 급수들 (여러 개 가능). level이 "전체"일 때만 적용돼요
 function myLv(){ return prefs.myLevels || (prefs.myLevel&&prefs.myLevel!=="전체"?[prefs.myLevel]:[]); }
 const lvText = a => [...a].sort().reverse().join("·");   // N5·N4·N3 순서
@@ -1412,17 +1441,19 @@ function inScope(w){
   if(level==="저장함"){ if(!stars.has(w.key)) return false; }
   else if(level==="오답 노트"){ if(!(w.key in wrong)) return false; }
   else if(level==="내 단어"){ if(w.key[0]!=="c") return false; }
-  else if(lvSel.size && !lvSel.has(w.lv) && !lvSel.has(w.lv2)) return false;
-  if(posf&&w.pos!==posf) return false;
+  else if(posf!=="경어" && !(view==="quiz"&&qpos==="k") && lvSel.size && !lvSel.has(w.lv) && !lvSel.has(w.lv2)) return false;   /* 경어는 급수로 나누지 않고 한꺼번에 보여 줘요 */
+  if(posf){ if(posf==="경어"){ if(!w.kg||(kgSel&&w.kg!==kgSel)) return false; } else if(w.pos!==posf) return false; }   /* 경어는 품사 필터에서 골라요 (존경어·겸양어·정중어) */
   return view!=="quiz"||posGroupOk(w);
 }
 /* 퀴즈 품사 구분: 전체 / 명사 / 동사 / 형용사 / 부사 */
 let qpos="", qscope="";   /* qscope: ""=급수로, 아니면 "저장함"·"내 단어"·"오답 노트" */
-const QPOS=[["","전체"],["n","명사"],["v","동사"],["a","형용사"],["d","부사"]];
-const posGroupOk=w=>!qpos||(qpos==="n"?w.pos.startsWith("名詞"):qpos==="v"?w.pos.includes("動詞"):qpos==="a"?w.pos.includes("形容詞"):w.pos==="副詞");
+const QPOS=[["","전체"],["n","명사"],["v","동사"],["a","형용사"],["d","부사"],["k","경어"]];
+const posGroupOk=w=>!qpos||(qpos==="k"?!!w.kg:qpos==="n"?w.pos.startsWith("名詞"):qpos==="v"?w.pos.includes("動詞"):qpos==="a"?w.pos.includes("形容詞"):w.pos==="副詞");
 function filtered(){
   const q=$("q").value.trim().toLowerCase();
-  return ALL.filter(w=>inScope(w) && (!q || w.text.includes(q) || w.yomi.includes(q) || toKata(w.yomi).includes(toKata(q)) || w.ko.includes(q)));
+  const r=ALL.filter(w=>inScope(w) && (!q || w.text.includes(q) || w.yomi.includes(q) || toKata(w.yomi).includes(toKata(q)) || w.ko.includes(q)));
+  if(posf==="경어"){ const K={"존경어":0,"겸양어":1,"정중어":2}, L={N5:0,N4:1,N3:2,N2:3,N1:4}; r.sort((a,b)=>(K[a.kg]-K[b.kg])||((L[a.lv]??9)-(L[b.lv]??9))); }   /* 종류별로 묶고, 안에서는 쉬운 급수부터 */
+  return r;
 }
 function toggleStar(key){ stars.has(key)?stars.delete(key):stars.add(key); LS.set("jp-star",[...stars]); }
 function record(w,ok){
@@ -1455,7 +1486,7 @@ function renderPick(){
   $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
    <div class="sub"><span class="devonly">단어를 ${PART}개씩 파트로 나눠 보여 줘요${my.length?" · ":""}</span>${my.length?`내 급수: <b>${lvText(my)}</b>`:""}</div>
    <div class="pkgrid five">${lv}</div>
-   <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}</div>
+   <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}${card("경어","경어","존경어·겸양어·정중어",ALL.filter(w=>w.kg).length,"#e0507a")}</div>
    <div class="pkrow"><label class="tg"><input type="checkbox" id="pkMulti" ${pickMulti?"checked":""}> 여러 급수를 함께 보기</label>
      <span>${my.length?`<button class="pill sm" data-pk="my">내 급수로 바로 보기</button> `:""}<button class="pill add sm" data-act="pkadd">＋ 단어 추가</button></span></div>
    ${pickMulti?`<div class="qbtns" style="justify-content:flex-start;margin-top:10px"><button class="pill on" data-act="pkopen" ${pickSel.size?"":"disabled"}>${pickSel.size?"선택한 급수 열기 ("+lvText(pickSel)+")":"위에서 급수를 골라 주세요"}</button></div>`:""}</div>`;
@@ -1463,10 +1494,11 @@ function renderPick(){
 function openList(l){
   if(l==="my"){ level="전체"; lvSel=new Set(myLv()); }
   else if(l==="multi"){ level="전체"; lvSel=new Set(pickSel); }
-  else if(l==="전체"){ level="전체"; lvSel.clear(); }
+  else if(l==="전체"||l==="경어"){ level="전체"; lvSel.clear(); }   /* 경어는 품사 필터(posf)로 걸러요 — 급수 상관없이 전부 */
   else if(LVNUM[l]){ level="전체"; lvSel=new Set([l]); }
   else { level=l; lvSel.clear(); }
-  posf=""; $("posf").value=""; $("q").value="";
+  posf=""; kgSel=""; kgMode="pair"; $("posf").value=""; $("q").value="";
+  if(l==="경어"){ posf="경어"; $("posf").value="경어"; }
   setStage("words"); listPart=0; listSig=""; renderLevels(); renderGrid(); window.scrollTo(0,0);
 }
 function renderGrid(){
@@ -1474,6 +1506,7 @@ function renderGrid(){
   ["partTop","count","grid","partBot"].forEach(id=>$(id).style.display=pick?"none":"");
   $("pickBox").style.display=pick?"":"none";
   if(pick){ renderPick(); return; }
+  { const kb=$("kgBtn"); if(kb){ kb.classList.toggle("on",posf==="경어"); kb.setAttribute("aria-pressed",posf==="경어"); } $("posf").value=posf; }
   const list=filtered();
   const sig=[level,[...lvSel].sort().join(),posf,$("q").value.trim()].join("|");
   if(sig!==listSig){ listSig=sig; listPart=0; }
@@ -1482,21 +1515,51 @@ function renderGrid(){
   const pager = withSel => np>1 ? `<div class="pbar pg"><button class="pill sm" data-pp="-1" ${listPart?"":"disabled"}>‹ 이전 파트</button>${withSel
       ? `<select id="partSel" aria-label="파트 선택">${Array.from({length:np},(_,i)=>`<option value="${i}" ${i===listPart?"selected":""}>파트 ${i+1} · ${i*PART+1}~${Math.min(list.length,(i+1)*PART)}번 · ${E(list[i*PART].text)}…</option>`).join("")}</select>`
       : `<span class="sub">파트 ${listPart+1} / ${np}</span>`}<button class="pill sm" data-pp="1" ${listPart<np-1?"":"disabled"}>다음 파트 →</button></div>` : "";
-  $("partTop").innerHTML=`<div class="pbar"><button class="back" data-act="pkback">${ic("back")}급수 선택</button><b>${E(scopeLabel())}${posf?" · "+POS[posf][0]:""}</b></div>`+pager(true);
+  $("partTop").innerHTML=`<div class="pbar"><button class="back" data-act="pkback">${ic("back")}급수 선택</button><b>${posf==="경어"?"경어 · 모든 급수":E(scopeLabel())+(posf?" · "+POS[posf][0]:"")}</b></div>`+pager(true);
   $("partBot").innerHTML=pager(false);
   $("count").textContent = list.length + "개 단어" + (np>1?` · 파트 ${listPart+1} / ${np} (${a+1}~${a+shown.length}번)`:"");
   $("grid").className = "grid" + ($("hide").checked ? " hide" : "") + (level==="전체"&&lvSel.size===1 ? " one" : "");
   const empty = level==="내 단어" ? "아직 추가한 단어가 없어요. 위의 「＋ 단어 추가」를 눌러 보세요."
               : level==="저장함" ? "저장한 단어가 없어요. 단어 카드의 별을 누르면 여기에 모여요."
               : level==="오답 노트" ? "오답 노트가 비어 있어요. 퀴즈에서 틀린 단어가 자동으로 모여요." : "검색 결과가 없어요. 철자나 뜻을 바꿔 다시 찾아 보세요.";
-  $("grid").innerHTML = shown.length ? shown.map(w=>`
-    <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" data-key="${w.key}">
-      <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}<i class="wst s${SMG[w.key]?((SMG[w.key].b||0)>=3?2:1):0}" title="${SMG[w.key]?((SMG[w.key].b||0)>=3?"암기 완료":"학습 중"):"아직 안 외웠어요"}"></i><span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
+  const kgInfo={"존경어":"상대·윗사람을 높여요","겸양어":"나를 낮춰서 상대를 높여요","정중어":"말투를 정중하게 해요"};
+  let lastKg="";
+  const kgHead=w=>{ if(posf!=="경어"||kgSel||w.kg===lastKg) return ""; lastKg=w.kg; return `<div class="kgh" data-k="${w.kg}"><b>${w.kg}</b><small>${kgInfo[w.kg]}</small></div>`; };
+  if(posf==="경어"&&kgMode==="pair"){ $("count").textContent=ALL.filter(w=>w.kg).length+"개 경어 단어"; $("grid").className="grid kgwrap"; $("grid").innerHTML=kgPanel()+kgPairs(); return; }
+  $("grid").innerHTML = (posf==="경어"?kgPanel():"") + (shown.length ? shown.map(w=>kgHead(w)+`
+    <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" ${w.kg?`data-kg="${w.kg}"`:""} data-key="${w.key}">
+      <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}${w.kg?`<span class="kgb" data-k="${w.kg}">${w.kg}</span>`:""}<i class="wst s${SMG[w.key]?((SMG[w.key].b||0)>=3?2:1):0}" title="${SMG[w.key]?((SMG[w.key].b||0)>=3?"암기 완료":"학습 중"):"아직 안 외웠어요"}"></i><span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
       <div class="w${w.text.length>=6?" wl":""}">${R(w.f)}</div>
       <div class="m">${E(w.ko)}</div>
       ${posTag(w.pos)}
-    </div>`).join("") : `<div class="empty" style="grid-column:1/-1">${empty}</div>`;
+    </div>`).join("") : `<div class="empty" style="grid-column:1/-1">${empty}</div>`);
 }
+/* 경어 화면 맨 위: 종류 고르기 + 같은 뜻의 존경어·겸양어 한눈에 보기 */
+function kgPanel(){
+  const all=ALL.filter(w=>w.kg), n=k=>k?all.filter(w=>w.kg===k).length:all.length;
+  const modes=`<div class="kgmodes"><button type="button" class="kgc ${kgMode==="pair"?"on":""}" data-kgmode="pair">같은 뜻끼리 보기</button><button type="button" class="kgc ${kgMode==="list"?"on":""}" data-kgmode="list">종류별로 보기</button></div>`;
+  const chips=kgMode==="list"?`<div class="kgchips">${[["","전체"],["존경어","존경어"],["겸양어","겸양어"],["정중어","정중어"]].map(([k,t])=>`<button type="button" class="kgc ${kgSel===k?"on":""}" data-kgsel="${k}" ${k?`data-k="${k}"`:""}>${t}<em>${n(k)}</em></button>`).join("")}</div>`:"";
+  return `<div class="kgp">${modes}${chips}
+   <p class="kgd"><b style="color:#2563eb">존경어</b> 상대의 동작을 높여요 · <b style="color:#d9730d">겸양어</b> 내 동작을 낮춰서 상대를 높여요 · <b style="color:#15935a">정중어</b> 말투를 정중하게 해요</p></div>`;
+}
+/* 경어 기본 보기(같은 뜻끼리 보기): 보통 말 하나마다 존경어·겸양어를 나란히 보여 줘서 비교하며 외우기 쉬워요 */
+function kgPairs(){
+  const K=ALL.filter(w=>w.kg), mt=new Map(); K.forEach(w=>mt.set(w.text,w)); K.forEach(w=>{ if(!mt.has(w.yomi)) mt.set(w.yomi,w); });
+  const used=new Set();
+  const chip=t=>{ const w=mt.get(t); if(!w) return ""; used.add(w.key); const m=String(w.ko).replace(/\s*\(.*?\)/g,"").split("·")[0].trim(); return `<button type="button" class="kgw" data-act="open" data-key="${w.key}"><span>${R(w.f)}</span><small>${E(m)}</small></button>`; };
+  const col=(cls,label,items)=>`<div class="kgcol ${cls}"><em>${label}</em>${items||`<span class="kgno">—</span>`}</div>`;
+  const row=p=>{ const son=(p.son||[]).map(chip).join(""), ken=(p.ken||[]).map(chip).join(""), jung=(p.jung||[]).map(chip).join("");
+    if(!son&&!ken&&!jung) return "";
+    const cols=(p.g===1?col("son","존경어 · 상대를 높임",son)+col("ken","겸양어 · 나를 낮춤",ken):(son?col("son","존경어 · 상대를 높임",son):"")+(ken?col("ken","겸양어 · 나를 낮춤",ken):""))+(jung?col("jung","정중어",jung):"");
+    return `<div class="kgr"><div class="kgbase"><b>${R(p.base)}</b><small>${E(p.ko)}</small></div><div class="kgcols${(p.g!==1&&((son?1:0)+(ken?1:0)+(jung?1:0))===1)?" one":""}">${cols}</div></div>`; };
+  const P=window.KEIGO_PAIRS||[], g1=P.filter(p=>p.g===1).map(row).join(""), g2=P.filter(p=>p.g===2).map(row).join("");
+  const rest=K.filter(w=>!used.has(w.key));
+  return `<h3 class="kgsec">자주 쓰는 동사 <small>보통 말 → 존경어 · 겸양어</small></h3>${g1}
+   <h3 class="kgsec">정중한 표현 · 비즈니스 말</h3>${g2}
+   ${rest.length?`<h3 class="kgsec">그 밖의 경어</h3><div class="kgrest">${rest.map(w=>`<button type="button" class="kgw" data-act="open" data-key="${w.key}"><span>${R(w.f)} <span class="kgb" data-k="${w.kg}">${w.kg}</span></span><small>${E(String(w.ko).split("·")[0])}</small></button>`).join("")}</div>`:""}`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-kgmode]"); if(!b) return; kgMode=b.dataset.kgmode; kgSel=""; renderGrid(); });
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-kgsel]"); if(!b) return; kgSel=b.dataset.kgsel; listPart=0; renderGrid(); });
 function refresh(){
   if(view==="read") renderReader();
   else if(view==="home") renderHome();
@@ -1556,7 +1619,7 @@ function showWord(){
   <div class="dh"><div class="big">${R(w.f)}</div>
     <div class="dtools">${sayBtn("data-act","say","x")}<button class="x starb ${stars.has(w.key)?"on":""}" data-act="star" title="저장" aria-label="저장">${ic("star")}</button><button class="x" data-close aria-label="닫기">×</button></div></div>
   <div class="db">
-    <div class="mean">${E(w.ko)} ${lvb(w.lv)}${w.lv2?lvb(w.lv2):""} ${posTag(w.pos)}</div>
+    <div class="mean">${E(w.ko)} ${lvb(w.lv)}${w.lv2?lvb(w.lv2):""} ${posTag(w.pos)}${w.kg?` <span class="kgb" data-k="${w.kg}">${w.kg}</span>`:""}</div>
     <div class="posbox"><b>${p[0]}</b> — ${p[1]}</div>
     ${missN?`<div class="sub">퀴즈에서 ${missN}번 틀렸어요${w.key in wrong?" · 오답 노트에 있어요":""}</div>`:""}
     ${w.note?`<h3>헷갈리는 포인트</h3><div class="note">${R(autoRuby(w.note,w)).replace(/\n/g,"<br>")}</div>`:""}
@@ -1784,10 +1847,11 @@ function quizSetup(){
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2></div>
    <div class="lvrow"><span>범위</span><div class="jlv">${[["","급수별"],["저장함","저장한 단어"],["오답 노트","오답노트"]].map(([k,t])=>`<button class="pill ${k===qscope?"on":""}" data-act="qscope" data-s="${k}">${t}</button>`).join("")}</div></div>
-   ${qscope?"":lvRow(jl,"급수",true)}
+   ${qscope||qpos==="k"?"":lvRow(jl,"급수",true)}
    <div class="lvrow"><span>품사</span><div class="jlv">${QPOS.map(([k,n])=>`<button class="pill ${k===qpos?"on":""}" data-act="qpos" data-p="${k}">${n}</button>`).join("")}</div></div>
-   <div class="qm-sec">${ic("pencil")}단어 연습<small>${qscope||(jl==="전체"?"전체 급수":jl)} 단어 ${n.toLocaleString()}개로 풀어요${qscope&&!n?" · 아직 없어요":""}</small></div>
+   <div class="qm-sec">${ic("pencil")}단어 연습<small>${qpos==="k"?"경어 (모든 급수)":qscope||(jl==="전체"?"전체 급수":jl)} 단어 ${n.toLocaleString()}개로 풀어요${qscope&&!n?" · 아직 없어요":""}</small></div>
    <div class="tiles2">
+    ${qpos==="k"?quizTile("start",'data-mode="pairq"',"c4","order","경어 짝 맞추기","「言う」의 존경어는?"):""}
     ${quizTile("start",'data-mode="card"',"c1","cards","단어 카드","보고 떠올린 뒤 뒤집어서 확인")}
     ${quizTile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
     ${quizTile("start",'data-mode="reading"',"c3","abc","읽기 고르기","후리가나 없는 한자의 읽기")}
@@ -1864,14 +1928,29 @@ function choices(w,key){
   const uniq=[]; for(const x of others){ if(!uniq.includes(x[key])) uniq.push(x[key]); if(uniq.length===3) break; }
   return shuffle([w[key],...uniq]);
 }
+/* 경어 퀴즈 보조: 원래 말 → 존경어·겸양어 짝(KEIGO_PAIRS)에서 문제를 만들어요. 같은 짝의 다른 정답은 보기에 넣지 않아요 */
+let KGIX=null;
+function kgPairIdx(){
+  if(KGIX) return KGIX; KGIX=new Map(); const K=ALL.filter(w=>w.kg), mt=new Map(); K.forEach(w=>mt.set(w.text,w)); K.forEach(w=>{ if(!mt.has(w.yomi)) mt.set(w.yomi,w); });
+  (window.KEIGO_PAIRS||[]).forEach(p=>{ if(p.g!==1) return; [["son","존경어"],["ken","겸양어"]].forEach(([k,label])=>{ const ws=(p[k]||[]).map(t=>mt.get(t)).filter(Boolean); ws.forEach(w=>{ if(!KGIX.has(w.key)) KGIX.set(w.key,{base:p.base,ko:p.ko,kind:label,same:ws.map(x=>x.key)}); }); }); });
+  return KGIX;
+}
+function kgChoices(w){
+  const info=kgPairIdx().get(w.key); const ban=new Set(info?info.same:[w.key]);
+  const pool=ALL.filter(x=>x.kg&&x.key!==w.key&&!ban.has(x.key)&&x.pos&&posGrp(x.pos)===posGrp(w.pos)), same=pool.filter(x=>x.kg===w.kg);
+  const src=shuffle(same.length>=3?same:pool), uniq=[]; for(const x of src){ if(!uniq.includes(x.text)&&x.text!==w.text) uniq.push(x.text); if(uniq.length===3) break; }
+  return shuffle([w.text,...uniq]);
+}
 function setOpts(){
   if(Q.i>=Q.list.length||Q.mode==="card") return;
   const w=Q.list[Q.i];
-  if(Q.mode==="order") Q.ord=mkOrd(w); else Q.opts=choices(w,Q.mode==="meaning"?"ko":"yomi");
+  if(Q.mode==="order") Q.ord=mkOrd(w); else if(Q.mode==="kind") Q.opts=["존경어","겸양어","정중어"]; else if(Q.mode==="pairq") Q.opts=kgChoices(w); else Q.opts=choices(w,Q.mode==="meaning"?"ko":"yomi");
 }
 function startQuiz(mode,pool,n){
   const given=pool; pool = pool || ALL.filter(inScope);
   if(mode==="reading") pool = pool.filter(w=>w.text!==w.yomi);
+  if(mode==="kind") pool = pool.filter(w=>w.kg);
+  if(mode==="pairq"){ const ix=kgPairIdx(); pool = pool.filter(w=>w.kg&&ix.has(w.key)); }
   if(mode==="order"){ pool=pool.filter(w=>w.sent||(!["N3","N2","N1"].includes(w.lv)&&canOrder(w))); if(!given) pool=pool.concat(sentPool()); }
   if(!pool.length){ toast("이 범위에는 출제할 단어가 없어요"); return; }
   let list=wshuffle(pool); if(n>0) list=list.slice(0,n);
@@ -1919,14 +1998,17 @@ function renderQ(){
         <div class="qbtns rvsub"><button class="pill" data-act="sent">문장 풀이</button>${laterBtn(w)}</div><div class="qbtns"><button class="cta" data-act="next">계속하기</button></div></div>`
        :`<div class="qbtns"><button class="pill" data-act="oreset">다시 놓기</button><button class="pill on" data-act="ocheck" ${o.used.length>=o.orig.length?"":"disabled"}>확인</button></div>`}`;
   } else {
-    const key=Q.mode==="meaning"?"ko":"yomi", done=Q.sel!==null;
+    const key=Q.mode==="meaning"?"ko":Q.mode==="kind"?"kg":Q.mode==="pairq"?"text":"yomi", done=Q.sel!==null;
     const okNow=done&&Q.opts[Q.sel]===w[key];
-    body = `<div class="qcard ${done?(okNow?"ok":"ng"):""}">${qchip(w)}${done?qmark(okNow):""}<div class="sub">${Q.mode==="meaning"?"이 단어의 뜻은?":"이 단어의 읽기는?"}</div><div class="qw">${E(w.text)}</div><div style="margin:-2px 0 2px">${posTag(w.pos)}</div></div>
+    const kgi=Q.mode==="pairq"?kgPairIdx().get(w.key):null;
+    const ask=Q.mode==="meaning"?"이 단어의 뜻은?":Q.mode==="kind"?"이 말은 어떤 경어일까요?":kgi?`「${plain(kgi.base)}」(${kgi.ko})의 <b>${kgi.kind}</b>는?`:"이 단어의 읽기는?";
+    const big=Q.mode==="kind"?R(w.f):Q.mode==="pairq"?"":E(w.text);
+    body = `<div class="qcard ${done?(okNow?"ok":"ng"):""}">${qchip(w)}${done?qmark(okNow):""}<div class="${Q.mode==="pairq"?"":"sub"}" ${Q.mode==="pairq"?'style="font-size:22px;font-weight:700;line-height:1.6;margin:14px 6px;color:var(--text)"':""}>${ask}</div>${big?`<div class="qw">${big}</div>`:""}<div style="margin:-2px 0 2px">${Q.mode==="pairq"?"":posTag(w.pos)}</div></div>
      <div class="opts4">${Q.opts.map((o,i)=>{
        let c=""; if(done){ if(o===w[key]) c="correct"; else if(i===Q.sel) c="wrong"; }
        return `<button class="opt ${c}" data-act="pick" data-i="${i}" ${done?"disabled":""}><kbd>${i+1}</kbd>${E(o)}</button>`;
      }).join("")}</div>
-     ${done?`<div class="reveal ${Q.opts[Q.sel]===w[key]?"ok":"ng"}"><div class="rvt">${Q.opts[Q.sel]===w[key]?CHEER.ok(Q.i):CHEER.ng(Q.i)+" 정답은 이거예요"}</div><div class="qw s">${R(w.f)}</div><div>${E(w.ko)} · ${POSS[w.pos]}</div>
+     ${done?`<div class="reveal ${Q.opts[Q.sel]===w[key]?"ok":"ng"}"><div class="rvt">${Q.opts[Q.sel]===w[key]?CHEER.ok(Q.i):CHEER.ng(Q.i)+" 정답은 이거예요"}</div><div class="qw s">${R(w.f)}</div><div>${E(w.ko)} · ${POSS[w.pos]}${w.kg?` · <span class="kgb" data-k="${w.kg}">${w.kg}</span>`:""}</div>
        <div class="qbtns rvsub"><button class="pill" data-act="open" data-key="${w.key}">자세히</button>${laterBtn(w)}</div><div class="qbtns"><button class="cta" data-act="next">계속하기</button></div></div>`:""}`;
   }
   $("quizView").innerHTML = `<div class="qbox">${head}${body}</div>`;
@@ -1937,7 +2019,7 @@ function grade(ok){
 }
 function pick(i){
   if(Q.mode==="order"||Q.sel!==null||i>=Q.opts.length) return;
-  const w=Q.list[Q.i], key=Q.mode==="meaning"?"ko":"yomi", ok=Q.opts[i]===w[key];
+  const w=Q.list[Q.i], key=Q.mode==="meaning"?"ko":Q.mode==="kind"?"kg":Q.mode==="pairq"?"text":"yomi", ok=Q.opts[i]===w[key];
   Q.sel=i; ok?Q.score++:Q.wrong.push(w); if(!ok) logWrong(w,Q.mode,Q.opts[i],w[key]); record(w,ok); renderQ(); qFx(ok);
 }
 function orderCheck(){
@@ -2977,7 +3059,7 @@ $("levels").addEventListener("click",e=>{
   else { level=l; lvSel.clear(); }
   renderLevels(); refresh();
 });
-$("posf").addEventListener("change",e=>{ posf=e.target.value; refresh(); });
+$("posf").addEventListener("change",e=>{ posf=e.target.value; kgSel=""; kgMode="pair"; refresh(); });
 document.addEventListener("click",e=>{ if(!document.body.classList.contains("nofuri")) return; const r=e.target.closest&&e.target.closest("ruby"); if(r){ r.classList.toggle("fshow"); e.stopPropagation(); e.preventDefault(); } },true);   /* 후리가나를 숨긴 상태에서는 한자를 누르면 읽기가 보여요(핸드폰은 마우스를 올릴 수 없으니까) */
 $("q").addEventListener("input",()=>{ const q=$("q"), v=q.value; if(listStage==="pick"&&v.trim()){ openList("전체"); q.value=v; renderGrid(); q.focus(); } else renderGrid(); });   /* 급수를 고르기 전에 바로 검색하면 모든 급수에서 찾아요 */
 $("hide").addEventListener("change",renderGrid);
@@ -3011,6 +3093,7 @@ $("grid").addEventListener("click",e=>{
   if(sy){ const w=byKey(sy.dataset.say); if(w) sayWord(w); return; }
   const s=e.target.closest("[data-star]");
   if(s){ toggleStar(s.dataset.star); renderGrid(); return; }
+  const kw=e.target.closest(".kgw"); if(kw){ openWord(kw.dataset.key); return; }   /* 경어 비교 화면의 단어 */
   const c=e.target.closest(".card"); if(c) openWord(c.dataset.key);
 });
 $("dlg").addEventListener("click",e=>{
@@ -3054,7 +3137,7 @@ document.addEventListener("keydown",e=>{
 
 /* ---------- 시작 ---------- */
 rebuild();
-$("posf").innerHTML += POSLIST.map(p=>`<option value="${p}">${POS[p][0]}</option>`).join("");
+$("posf").innerHTML += POSLIST.map(p=>`<option value="${p}">${POS[p][0]}</option>`).join("")+`<option value="경어">경어 (존경어·겸양어·정중어)</option>`;
 $("nofuri").checked = !!prefs.nofuri; applyPrefs();
 // 내 급수 선택: 홈 · 오늘의 문장 · 단어장 · 퀴즈의 기본 범위가 돼요
 $("homeView").addEventListener("click",e=>{
@@ -3233,7 +3316,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="path.js?v=130"></script>
 <script src="community.js?v=19"></script>
 <script src="review.js?v=7"></script>
-<script src="grammar.js?v=6"></script>
+<script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
 <script src="dev.js?v=8"></script>
