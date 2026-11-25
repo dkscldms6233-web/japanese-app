@@ -7,3 +7,4 @@ news-data.js
 .firebase/
 store/apk/
 tools/ev/
+functions/node_modules/
