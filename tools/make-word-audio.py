@@ -9,7 +9,7 @@
 - 한자는 오독 위험이 있어서 읽기(히라가나)로 읽혀요. 단, 한 글자 は·へ·を 는 조사처럼(와·에·오) 읽히지 않게 가타카나로 줘요.
 - 주의: Edge 음성은 마이크로소프트가 공식으로 연 방법이 아니에요. 배포 약관은 확인 필요."""
 import asyncio,json,os,subprocess,sys,tempfile,array,math,audioop,wave
-import edge_tts
+import sys as _sys; _sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import tts_backend
 ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
 DIR=os.path.join(ROOT,"audio","word"); os.makedirs(DIR,exist_ok=True)
 VOICE="ja-JP-NanamiNeural"; RATE="-10%"; TARGET=-19.0; CONC=6
@@ -47,7 +47,7 @@ def write_list():
     have={key(y):1 for y,_,_ in L if os.path.exists(os.path.join(DIR,key(y)+".m4a"))}
     open(os.path.join(ROOT,"word-audio.js"),"w",encoding="utf-8").write("/* tools/make-word-audio.py 가 만든 목록이에요 (직접 고치지 마세요) */\nwindow.WORD_AUDIO="+json.dumps(have)+";\n"); return len(have)
 todo=[x for x in L if not os.path.exists(os.path.join(DIR,key(x[0])+".m4a"))]
-print(f"단어 {len(L)}개 중 새로 만들 것 {len(todo)}개",flush=True)
+print(f"단어 {len(L)}개 중 새로 만들 것 {len(todo)}개 · 음성: {tts_backend.backend_name()}",flush=True)
 if "--dry" in sys.argv: sys.exit(0)
 async def main():
     sem=asyncio.Semaphore(CONC); done=0; fail=[]; loop=asyncio.get_running_loop(); tmpd=tempfile.mkdtemp()
@@ -57,7 +57,7 @@ async def main():
             mp3=os.path.join(tmpd,f"{i}.mp3")
             for t in range(4):
                 try:
-                    await edge_tts.Communicate(say_text(y),VOICE,rate=RATE).save(mp3); break
+                    await tts_backend.save_mp3(say_text(y),VOICE,RATE,mp3); break
                 except Exception as e:
                     if t==3: fail.append(y); return
                     await asyncio.sleep(1.5*(t+1))

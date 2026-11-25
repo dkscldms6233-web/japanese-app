@@ -5,7 +5,7 @@
 - 파일 이름(키)은 그대로 두고 내용만 바꿔요. 만든 뒤 목록(listen-audio.js 등)은 그대로 써요.
 - 주의: Edge 음성은 마이크로소프트가 공식으로 연 방법이 아니에요. 배포 약관은 확인 필요."""
 import asyncio,json,os,subprocess,sys,tempfile,array,math,audioop,wave
-import edge_tts
+import sys as _sys; _sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import tts_backend
 ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
 NEWS_MODE="--news-recent" in sys.argv   # 매일 뉴스 갱신: 이미 있는 파일은 건너뛰고, 목록(news-audio.js)을 다시 쓰고, 안 쓰는 옛 음성은 지워요
 J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=6
@@ -38,6 +38,7 @@ def tasks():
         pct=round((j["rate"]-1)*100); yield ("listen",j["key"],j["text"],KEITA if j["who"]=="M" else NANAMI,f"{pct:+d}%",48000,6,12)
     for j in J["news"]:
         yield ("news",j["key"],j["text"],NANAMI,"-5%",32000,6,12)
+print("음성:",tts_backend.backend_name(),flush=True)
 T=[t for t in tasks() if not (NEWS_MODE and os.path.exists(os.path.join(ROOT,"audio",t[0],t[1]+".m4a")))]; print("만들 것",len(T),flush=True)
 async def main():
     sem=asyncio.Semaphore(CONC); loop=asyncio.get_running_loop(); tmpd=tempfile.mkdtemp(); fail=[]; done=0
@@ -47,7 +48,7 @@ async def main():
         async with sem:
             mp3=os.path.join(tmpd,f"{i}.mp3")
             for k in range(4):
-                try: await edge_tts.Communicate(text,voice,rate=rate).save(mp3); break
+                try: await tts_backend.save_mp3(text,voice,rate,mp3); break
                 except Exception as e:
                     if k==3: fail.append((d,key,text[:20])); return
                     await asyncio.sleep(1.5*(k+1))
