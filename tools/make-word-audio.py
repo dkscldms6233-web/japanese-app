@@ -12,7 +12,7 @@ import asyncio,json,os,subprocess,sys,tempfile,array,math,audioop,wave
 import sys as _sys; _sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import tts_backend
 ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
 DIR=os.path.join(ROOT,"audio","word"); os.makedirs(DIR,exist_ok=True)
-VOICE="ja-JP-NanamiNeural"; RATE="-10%"; TARGET=-19.0; CONC=6
+VOICE="ja-JP-NanamiNeural"; RATE="-10%"; TARGET=-19.0; CONC=3
 L=json.load(open(os.path.join(ROOT,"tools","words-yomi.json"),encoding="utf-8"))
 def key(y):
     h=5381;g=7

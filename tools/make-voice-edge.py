@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""글자·청해·뉴스 음성을 단어장과 같은 Edge 일본어 목소리(여자 Nanami, 청해 남자 대사는 Keita)로 다시 만들어요. 무료·키 없음.
+"""글자·청해·뉴스 음성을 단어장과 같은 일본어 목소리(여자 Nanami, 청해 남자 대사는 Keita)로 다시 만들어요. 무료·키 없음.
 준비:  python3 -m venv ev && ev/bin/pip install edge-tts
 사용:  node tools/voice-jobs.js /tmp/jobs.json && ev/bin/python tools/make-voice-edge.py /tmp/jobs.json
 - 파일 이름(키)은 그대로 두고 내용만 바꿔요. 만든 뒤 목록(listen-audio.js 등)은 그대로 써요.
@@ -8,7 +8,7 @@ import asyncio,json,os,subprocess,sys,tempfile,array,math,audioop,wave
 import sys as _sys; _sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import tts_backend
 ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
 NEWS_MODE="--news-recent" in sys.argv   # 매일 뉴스 갱신: 이미 있는 파일은 건너뛰고, 목록(news-audio.js)을 다시 쓰고, 안 쓰는 옛 음성은 지워요
-J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=6
+J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=3
 NANAMI="ja-JP-NanamiNeural"; KEITA="ja-JP-KeitaNeural"
 KFIX={"を":"オ","は":"ハ","へ":"ヘ","ぢ":"ジ","づ":"ズ","ぢゃ":"ジャ","ぢゅ":"ジュ","ぢょ":"ジョ"}
 def norm(raw,pre,post):
