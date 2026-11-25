@@ -16,12 +16,16 @@ const PACKS = {
   seeds_300: { seeds: 300, price: 2750 },
   seeds_700: { seeds: 700, price: 5500 },
   seeds_1500: { seeds: 1500, price: 11000 },
+  /* 술술 플러스 이용권: 기간제(자동 갱신 없음). 끝나기 전에 또 사면 남은 기간 뒤에 이어 붙어요 */
+  plus_30: { days: 30, price: 3300 },
+  plus_180: { days: 180, price: 15400 },
+  plus_365: { days: 365, price: 27500 },
 };
 const FIRST_BONUS_RATE = 0.5;   // 첫 구매 보너스: 구매한 개수의 50%
 const REGION = "asia-northeast3";   // 서울
 const opts = { region: REGION, secrets: [TOSS_SECRET], cors: true };
 
-const orderName = p => `씨앗 ${p.seeds}개`;
+const orderName = p => p.days ? `술술 플러스 ${p.days}일 이용권` : `씨앗 ${p.seeds}개`;
 const newOrderId = uid => "ord_" + uid.slice(0, 8) + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);   // 6~64자, 영문·숫자·_·-
 
 function needUser(req) {
@@ -38,7 +42,7 @@ exports.createOrder = onCall(opts, async (req) => {
   if (!p) throw new HttpsError("invalid-argument", "알 수 없는 상품이에요.");
   const orderId = newOrderId(uid);
   await db.collection("orders").doc(orderId).set({
-    uid, sku, seeds: p.seeds, amount: p.price, status: "pending", delivered: false,
+    uid, sku, seeds: p.seeds || 0, days: p.days || 0, amount: p.price, status: "pending", delivered: false,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   });
   return { orderId, amount: p.price, orderName: orderName(p) };
@@ -84,8 +88,16 @@ exports.confirmOrder = onCall(opts, async (req) => {
   const result = await db.runTransaction(async (tx) => {
     const [os, ws] = await Promise.all([tx.get(ref), tx.get(wref)]);
     const od = os.data();
-    if (od.delivered) return { repeat: true, seeds: 0, bonus: 0 };
+    if (od.delivered) return { repeat: true, seeds: 0, bonus: 0, plusUntil: null };
     const w = ws.exists ? ws.data() : {};
+    if (od.days) {   // 플러스 이용권: 남은 기간이 있으면 그 뒤에 이어 붙여요
+      const nowMs = Date.now();
+      const base = Math.max(nowMs, (w.plusUntil && w.plusUntil.toMillis) ? w.plusUntil.toMillis() : 0);
+      const until = admin.firestore.Timestamp.fromMillis(base + od.days * 864e5);
+      tx.update(ref, { delivered: true, bonus: 0, deliveredAt: admin.firestore.FieldValue.serverTimestamp() });
+      tx.set(wref, { plusUntil: until, totalPaid: (w.totalPaid || 0) + od.amount, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+      return { repeat: false, seeds: 0, bonus: 0, plusUntil: until.toMillis() };
+    }
     const bonus = w.firstBonusUsed ? 0 : Math.floor(od.seeds * FIRST_BONUS_RATE);
     tx.update(ref, { delivered: true, bonus, deliveredAt: admin.firestore.FieldValue.serverTimestamp() });
     tx.set(wref, {
@@ -94,7 +106,7 @@ exports.confirmOrder = onCall(opts, async (req) => {
       totalPaid: (w.totalPaid || 0) + od.amount,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
-    return { repeat: false, seeds: od.seeds + bonus, bonus };
+    return { repeat: false, seeds: od.seeds + bonus, bonus, plusUntil: null };
   });
   return { ok: true, ...result };
 });

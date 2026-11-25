@@ -996,7 +996,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=3">
+<link rel="stylesheet" href="polish.css?v=5">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -1859,6 +1859,7 @@ function quizSetup(){
     ${qpos==="k"?quizTile("start",'data-mode="pairq"',"c4","order","경어 짝 맞추기","「言う」의 존경어는?"):""}
     ${quizTile("start",'data-mode="card"',"c1","cards","단어 카드","보고 떠올린 뒤 뒤집어서 확인")}
     ${quizTile("start",'data-mode="meaning"',"c2","choose","뜻 고르기","단어의 뜻을 4지선다로")}
+    ${window.PLUS?PLUS.tileHtml():""}
     ${quizTile("start",'data-mode="reading"',"c3","abc","읽기 고르기","후리가나 없는 한자의 읽기")}
     ${quizTile("start",'data-mode="order"',"c4","order","문장 순서",`조각을 맞춰 문장 만들기 · ${no+sentPool().length}문제`)}
    </div>
@@ -2894,13 +2895,14 @@ function renderStats(){
      <div class="kpi k4"><div class="ki">${ic("mark")}</div><b>${nw}<small>개</small></b><span>오답 노트 단어</span></div>
    </div>
    ${rpt}
+   ${window.PLUS?PLUS.statsHtml():""}
    <div class="wk"><h3>최근 7일 학습량<em>하루 목표 ${g}문제</em></h3>
      <div class="sum">이번 주 <b>${weekN}문제</b>${weekN?` · 정답률 ${Math.round(weekC/weekN*100)}%`:""} · ${active}일 학습</div>
      <div class="wchart"><div class="goal" style="bottom:calc((100% - 16px) * ${Math.min(1,g/scale).toFixed(3)})"><span>목표</span></div>
        ${days.map(x=>`<div class="wcol ${x.i===0?"today":""}"><span class="n">${x.n||""}</span><div class="tr" title="${x.d}: ${x.n}문제 중 ${x.c}개 정답"><div class="fl" style="height:${Math.round(x.n/scale*100)}%;--miss:${x.n?Math.round((x.n-x.c)/x.n*100):0}%"></div></div></div>`).join("")}</div>
      <div class="wlab">${days.map(x=>`<div class="${x.i===0?"today":""}"><b>${x.i===0?"오늘":x.w}</b>${x.d.slice(5).replace("-",".")}</div>`).join("")}</div>
      <div class="lg"><span><i></i>맞힌 문제</span><span><i class="m"></i>틀린 문제</span></div></div>
-   <div class="panel"><h3>자주 틀리는 단어 TOP 5</h3>
+   <div class="panel" ${window.PLUS&&PLUS.isPlus()&&top.length?"hidden":""}><h3>자주 틀리는 단어 TOP 5</h3>
      ${top.length?`<div class="top5">${top.map(([k,n])=>{const w=byKey(k);return `<div class="row" data-key="${k}"><span>${R(w.f)} <span class="sub">${E(w.ko)}</span></span><span class="sub">${n}번 틀림</span></div>`;}).join("")}</div>`
        :`<div class="sub">아직 틀린 단어가 없어요. 퀴즈를 풀어 보세요!</div>`}
      <div class="qbtns" style="justify-content:flex-start">${nw?`<button class="pill on" data-act="quizWrong">오답 노트로 퀴즈 풀기</button>`:""}</div></div>
@@ -3325,6 +3327,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
+<script src="plus.js?v=2"></script>
 <script src="dev.js?v=8"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

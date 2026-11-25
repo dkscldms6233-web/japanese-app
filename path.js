@@ -170,6 +170,7 @@ function shopRender(){
   <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px;font-size:.85em">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:""}</p>
   ${(()=>{ const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l); return `<div class="shlv"><div class="shlt"><b>Lv.${l} ${titleOf(l)}</b><span>${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div><small>${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`; })()}
   <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em"><span class="seedbal">${seedIc(34)}<b>${s.seeds||0}</b></span><br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있어요.</p>
+  ${window.PLUS?PLUS.shopHtml():""}
   ${window.SEEDPAY?SEEDPAY.html(shopRender):""}
   <div style="text-align:center;margin:0 0 10px"><button class="pill" data-sunall="1" ${Object.keys(s.equip).length?"":"disabled"}>모두 해제</button></div>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
@@ -180,7 +181,7 @@ function shopRender(){
 function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
   if(!d){ d=document.createElement("dialog"); d.id="shopDlg"; document.body.appendChild(d);
     d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-sclose]")){ shopPrev={}; d.close(); A().renderHome(); return; }
-      const sb=ev.target.closest("[data-sseedbuy]"); if(sb){ SEEDPAY.buy(sb.dataset.sseedbuy,shopRender); return; }
+      if(ev.target.closest("[data-plus]")) return; const sb=ev.target.closest("[data-sseedbuy]"); if(sb){ SEEDPAY.buy(sb.dataset.sseedbuy,shopRender); return; }
       const sl=ev.target.closest("[data-sslot]"), by=ev.target.closest("[data-sbuy]"), eq=ev.target.closest("[data-sequip]"), rs=ev.target.closest("[data-sreset]"), pv=ev.target.closest("[data-spv]");
       if(sl){ shopSlot=sl.dataset.sslot; shopRender(); }
       else if(rs){ shopPrev={}; shopRender(); }

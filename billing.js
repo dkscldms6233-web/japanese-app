@@ -42,7 +42,7 @@ function html(){
   return `<div class="seedpay"><b>씨앗 사기</b><div class="seedpacks">${items}</div><small>${CFG.firstBonus} 보너스 · 가격은 부가세 포함이에요 · <a href="terms.html" target="_blank" rel="noopener">이용약관·환불</a></small></div>`;
 }
 async function buy(sku,redraw){
-  if(busy||!ready()||!signedIn()) return; const pack=CFG.packs.find(p=>p.sku===sku); if(!pack) return;
+  if(busy||!ready()||!signedIn()) return; const pack=CFG.packs.find(p=>p.sku===sku)||(window.PLUS&&PLUS.PASSES.find(p=>p.sku===sku)); if(!pack) return;
   busy=true; redraw&&redraw();
   try{
     await loadSdk();
@@ -73,7 +73,8 @@ async function finish(data){
   try{
     const r=await call("confirmOrder",{paymentKey:data.paymentKey,orderId:data.orderId,amount:Number(data.amount)});
     try{ sessionStorage.removeItem("jp-pay-pending"); }catch(e){}
-    if(r&&r.seeds>0){ PATH.addSeeds(r.seeds); A().toast("씨앗 "+r.seeds+"개가 들어왔어요!"+(r.bonus?" (첫 구매 보너스 "+r.bonus+"개 포함)":"")); try{ A().renderHome(); }catch(e){} }
+    if(r&&r.plusUntil){ PLUS.setUntil(r.plusUntil); A().toast("술술 플러스가 시작됐어요!"); try{ A().renderHome(); }catch(e){} }
+    else if(r&&r.seeds>0){ PATH.addSeeds(r.seeds); A().toast("씨앗 "+r.seeds+"개가 들어왔어요!"+(r.bonus?" (첫 구매 보너스 "+r.bonus+"개 포함)":"")); try{ A().renderHome(); }catch(e){} }
     else A().toast("이미 지급된 구매예요.");
   }catch(e){ A().toast(String(e.message||"구매를 확인하지 못했어요.")+" 문제가 계속되면 문의해 주세요."); }
 }
