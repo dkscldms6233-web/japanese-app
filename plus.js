@@ -14,7 +14,8 @@ const KEY=()=>"jp-plus-until@"+uid();
 const until=()=>{ try{ if(DEMO()) return Date.now()+30*864e5; return uid()?(+localStorage.getItem(KEY())||0):0; }catch(e){ return 0; } };
 /* 내 컴퓨터(localhost)에서만: 주소 끝에 ?plusdemo=on 을 붙이면 플러스를 켠 화면을 시험해 볼 수 있어요 (?plusdemo=off 로 끔). 배포된 사이트에서는 동작하지 않아요. */
 const DEMO=()=>{ try{ if(!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return false; const q=new URLSearchParams(location.search).get("plusdemo"); if(q) sessionStorage.setItem("jp-plusdemo",q); return sessionStorage.getItem("jp-plusdemo")==="on"; }catch(e){ return false; } };
-const isPlus=()=>DEMO()||until()>Date.now();
+const devForce=()=>{ try{ return document.body.classList.contains("dev-on")&&localStorage.getItem("jp-plusdev")==="on"; }catch(e){ return false; } }; /* 개발자 모드에서만 화면 시험용으로 켤 수 있어요 */
+const isPlus=()=>DEMO()||devForce()||until()>Date.now();
 const setUntil=ms=>{ try{ if(uid()) localStorage.setItem(KEY(),String(ms||0)); }catch(e){} };
 const ymd=ms=>{ const d=new Date(ms); return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate(); };
 const daysLeft=()=>Math.max(0,Math.ceil((until()-Date.now())/864e5));
