@@ -98,5 +98,8 @@
       ],
       "cleanUrls": false
     }
-  ]
+  ],
+  "firestore": {
+    "rules": "firestore.rules"
+  }
 }
