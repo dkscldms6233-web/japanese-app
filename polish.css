@@ -161,3 +161,13 @@ body.kcardmode{padding-bottom:0!important}
 .pcell p{margin:10px 4px 0;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);max-width:150px}
 @keyframes pfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 @media(prefers-reduced-motion:reduce){.plusstage .psp,.pbub{animation:none}}
+
+/* 단정한 모서리: 둥근 상자를 덜 둥글게(10~14px), 그림자는 가볍게 */
+html:root{--rad:10px;--r-sm:8px;--r-md:10px;--r-lg:12px;--shadow:0 1px 2px rgba(20,26,51,.05),0 4px 14px rgba(20,26,51,.045);--sh-1:0 1px 2px rgba(20,26,51,.04);--sh-2:var(--shadow)}
+.h2hero{border-radius:14px}
+.h2card,.h2sent,.h2 .pstat,.h2cul .culb{border-radius:12px!important}
+.h2t{border-radius:12px}.h2ti{border-radius:10px}
+.panel,.fcard,.jr,.qbox,.tbox,.cardx{border-radius:12px}
+.h2flame{border-radius:12px}
+.h2bird .hbird{border-radius:14px!important}
+.plusstage{border-radius:16px}
