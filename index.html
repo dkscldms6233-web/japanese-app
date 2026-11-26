@@ -1000,7 +1000,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=39">
+<link rel="stylesheet" href="polish.css?v=41">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2342,12 +2342,29 @@ function jBank(bank,lv){
   return L;
 }
 function jReading(lv,n){
-  return wshuffle(jWords(lv).filter(w=>w.text!==w.yomi)).slice(0,n).map(w=>{ const o=choices(w,"yomi");
-    return {sec:"vocab",kind:"한자 읽기",prompt:"이 한자의 읽기는?",stem:`<div class="qw">${E(w.text)}</div>`,opts:o.map(E),a:o.indexOf(w.yomi),exp:`${R(w.f)} · ${E(w.ko)}`,w}; });
+  /* 실제 시험처럼: 문장 속 밑줄 친 한자어의 읽기를 고르는 문제. 예문이 없는 단어만 낱말 형식으로 */
+  const kw=jWords(lv).filter(w=>w.text!==w.yomi), withSent=kw.filter(w=>w.ex&&w.ex[0]&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=8&&plain(w.ex[0].ja).length<=40);
+  const pick=wshuffle(withSent).slice(0,n); if(pick.length<n){ const have=new Set(pick.map(w=>w.key)); pick.push(...wshuffle(kw.filter(w=>!have.has(w.key))).slice(0,n-pick.length)); }
+  return pick.map(w=>{ const o=choices(w,"yomi"), hasS=w.ex&&w.ex[0]&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=8&&plain(w.ex[0].ja).length<=40;
+    const stem=hasS?`<div class="jq">${E(plain(w.ex[0].ja.replace(jRe(w),"§"))).replace("§",`<u>${E(w.text)}</u>`)}</div>`:`<div class="qw">${E(w.text)}</div>`;
+    return {sec:"vocab",kind:"한자 읽기",prompt:"밑줄 친 말의 읽는 법은?",stem,opts:o.map(E),a:o.indexOf(w.yomi),exp:`${R(w.f)} · ${E(w.ko)}${hasS?`<br>${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)}`:""}`,w}; });
 }
 const jRe=w=>new RegExp([...w.text].map(c=>c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:\\[[^\\]]*\\])?").join(""));
 /* 문맥 규정: 직접 만든 문제 은행(jlpt-ctx.js)을 먼저 쓰고, 모자라면 단어 예문으로 자동 생성해요.
  * 자동 생성은 문장이 충분히 길어서(단서가 있어서) 정답이 하나로 정해지는 예문만 써요. */
+/* 표기: 밑줄 친 히라가나를 한자로 쓰면? (단어 예문을 써서 문장 속에서 물어봐요) */
+function jWrite(lv,n){
+  if(!n) return [];
+  const pool=jWords(lv).filter(w=>w.text!==w.yomi&&w.text.length>=2&&w.ex&&w.ex[0]&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=10&&plain(w.ex[0].ja).length<=40);
+  return wshuffle(pool).slice(0,n).map(w=>{
+    const chars=new Set([...w.text]);
+    const sim=shuffle(jWords(lv).filter(x=>x.key!==w.key&&x.text!==w.text&&x.text.length===w.text.length&&[...x.text].some(c=>chars.has(c)&&/[\u4e00-\u9fff]/.test(c)))).slice(0,3).map(x=>x.text);
+    let o=[w.text,...sim]; if(o.length<4){ for(const x of choices(w,"text")){ if(!o.includes(x)) o.push(x); if(o.length>=4) break; } }
+    if(o.length<4) return null;
+    const m=jShuf(o.slice(0,4),0), sent=R(w.ex[0].ja.replace(jRe(w),"§")).replace("§",`<u>${E(w.yomi)}</u>`);
+    return {sec:"vocab",kind:"표기",prompt:"밑줄 친 말을 한자로 쓰면?",stem:`<div class="jq">${sent}</div>`,opts:m.o.map(E),a:m.a,exp:`${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)} · ${E(w.yomi)} = ${E(w.text)} (${E(w.ko)})`,w};
+  }).filter(Boolean);
+}
 function jContextAuto(lv,n){
   const pool=jWords(lv).filter(w=>w.ex&&w.ex[0]&&["名詞","副詞","い形容詞","な形容詞"].includes(w.pos)&&w.text.length>=2&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=16);
   return wshuffle(pool).slice(0,n).map(w=>{
@@ -2457,6 +2474,8 @@ function jListen(lv,n){
     return {sec:"listen",kind:news?"뉴스 듣기":"대화 듣기",prompt:R(q.q),ph:1,dlg:d.lines,dmeta:{lv:d.lv,news},script,opts:m.o.map(R),a:m.a,exp:E(q.e||"")};
   });
 }
+/* 전체 풀기 문항 수: 실제 JLPT 구성(한자 읽기·표기·문맥·유의·문법)을 따르되, 문제 은행이 있는 만큼만 내요 */
+const FULLPLAN={N5:{rd:12,wr:8,cx:10,sy:5,pr:3,gm:20},N4:{rd:9,wr:6,cx:10,sy:5,pr:3,gm:20},N3:{rd:8,wr:6,cx:11,sy:5,pr:3,gm:20},N2:{rd:5,wr:5,cx:7,sy:5,pr:3,gm:20},N1:{rd:6,wr:0,cx:7,sy:5,pr:3,gm:15}};
 function jStart(sec,opt){
   stopG(); const lv=jlv(); let items=[];
   if(sec==="vocab") items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2)];
@@ -2466,7 +2485,7 @@ function jStart(sec,opt){
   else if(sec==="rnews") items=jRead(lv,5);
   else if(/^r(short|mid|long|integ|search)$/.test(sec)){ const k=sec.slice(1); if(!(RDG_PLAN[lv]||{})[k]){ toast(lv+" 시험에는 "+RDG_NAME[k]+" 유형이 없어요"); return; } items=jRdg(lv,k); }
   else if(sec==="listen") items=jListen(lv,8);
-  else items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2),...jPair(lv,3),...jGram(lv,12),...jRdg(lv,"all"),...jListen(lv,8)];
+  else { const P=FULLPLAN[lv]||FULLPLAN.N4; items=[...jReading(lv,P.rd),...jWrite(lv,P.wr),...jContext(lv,P.cx),...jSyn(lv,P.sy),...jPair(lv,P.pr),...jGram(lv,P.gm),...jRdg(lv,"all",true),...jListen(lv,20)]; }
   if(!items.length){ toast("이 급수에는 아직 이 문제가 없어요"); return; }
   if(opt&&opt.paper&&sec==="all"){ paperStart(lv,items); return; }
   Q={mode:"jlpt",lv,sec,items,i:0,score:0,sel:null,done:false,by:{},wrong:[]};
@@ -2532,7 +2551,8 @@ const PSCHED={
   N4:{s:[["문자·어휘",25,["vocab","pair"]],["문법·독해",55,["gram","read"]],["청해",40,["listen"]]],brk:{2:20}},
   N5:{s:[["문자·어휘",20,["vocab","pair"]],["문법·독해",40,["gram","read"]],["청해",35,["listen"]]],brk:{2:20}}
 };
-const PSHORT=.4;   /* '문제 수에 맞춘 시간': 이 모의시험은 문제가 실제의 약 40%라서 시간도 그만큼 줄여요 */
+/* 실제 시험의 교시별 대략적인 문항 수(참고치). '문제 수에 맞춘 시간'은 이 모의시험 문항 수와의 비율로 시간을 줄여요 */
+const PREAL={N5:[33,32,24],N4:[30,33,28],N3:[35,37,28],N2:[74,29],N1:[73,31]};
 let paperTm=null;
 function paperStop(){ if(paperTm){ clearInterval(paperTm); paperTm=null; } }
 function jModeChoose(){
@@ -2543,23 +2563,27 @@ function jModeChoose(){
    <button type="button" class="jmbtn paper" data-jm="paper"><b>시험지 모드</b><span>진짜 시험처럼 표지와 시험 안내가 있고, 교시마다 제한 시간이 흘러요. 쪽을 넘기며 풀고 다 푼 뒤에 한꺼번에 채점해요</span></button>`;
   d.showModal();
 }
+const KINDHEAD={"한자 읽기":"밑줄 친 말의 읽는 법으로 가장 알맞은 것을 1·2·3·4에서 하나 고르세요.","표기":"밑줄 친 말을 한자로 쓴 것 중 가장 알맞은 것을 고르세요.","문맥 규정":"（　）에 들어갈 가장 알맞은 것을 고르세요.","유의 표현":"밑줄 친 말과 뜻이 가장 가까운 것을 고르세요.","유의 표현 찾기":"밑줄 친 말과 뜻이 가장 가까운 것을 고르세요.","문법 형식":"（　）에 들어갈 가장 알맞은 것을 고르세요."};
 function paperPages(items){
   const pages=[]; let cur=null;
   items.forEach((it,i)=>{
     const solo=it.sec==="read"||it.sec==="listen"||it.dlg||it.listen;
-    if(solo){ pages.push({sec:it.sec,idx:[i]}); cur=null; return; }
-    if(cur&&cur.sec===it.sec&&cur.idx.length<4) cur.idx.push(i); else { cur={sec:it.sec,idx:[i]}; pages.push(cur); }
+    if(solo){ pages.push({sec:it.sec,kind:it.kind,idx:[i]}); cur=null; return; }
+    if(cur&&cur.sec===it.sec&&cur.kind===it.kind&&cur.idx.length<5) cur.idx.push(i); else { cur={sec:it.sec,kind:it.kind,idx:[i]}; pages.push(cur); }
   });
+  /* 問題 번호: 같은 유형이 쪽을 넘어 이어지면 '(계속)'으로 */
+  let gn=0, prev=null; pages.forEach(p=>{ if(prev&&prev.kind===p.kind&&prev.sec===p.sec&&KINDHEAD[p.kind]){ p.gno=gn; p.cont=true; } else { p.gno=++gn; p.cont=false; } prev=p; });
   return pages;
 }
 function paperStart(lv,items){
   stopG(); jStop(); paperStop();
   const pages=paperPages(items), sch=PSCHED[lv]||PSCHED.N4;
   const sess=sch.s.map(([name,min,secs],si)=>({name,min,secs,brk:(sch.brk||{})[si]||0,pg:pages.map((p,i)=>secs.includes(p.sec)?i:-1).filter(i=>i>=0)})).filter(s=>s.pg.length);
+  const rl=(PREAL[lv]||PREAL.N4); sess.forEach((s,i)=>{ s.nq=s.pg.reduce((n,pi)=>n+pages[pi].idx.length,0); s.real=rl[i]||s.nq; });
   Q={mode:"jlpt",paper:true,lv,sec:"all",items,i:0,score:0,sel:null,done:false,by:{},wrong:[],pg:0,ans:{},pages,sess,si:0,stage:"cover",opt:{time:"real",once:true},played:{},tEnd:0};
   document.body.classList.add("inq","inpaper"); renderPaperCover();
 }
-const paperMin=s=>Q.opt.time==="off"?0:Q.opt.time==="short"?Math.max(5,Math.round(s.min*PSHORT)):s.min;
+const paperMin=s=>Q.opt.time==="off"?0:Q.opt.time==="short"?Math.max(5,Math.round(s.min*Math.min(1,Math.max(.3,s.nq/s.real)))):s.min;
 function renderPaperCover(){
   const lv=Q.lv, sch=PSCHED[lv]||PSCHED.N4, o=Q.opt;
   const seg=(k,v,l)=>`<button type="button" class="epseg${o[k]===v?" on":""}" data-act="popt" data-k="${k}" data-v="${v}">${l}</button>`;
@@ -2605,12 +2629,14 @@ function paperQ(i){
     mid=jListenOk()?`<button type="button" class="cta sec epplay" data-act="jplay" data-idx="${i}">${Q.played[i]&&Q.opt.once?"이미 들었어요":"소리 듣기 ▶"}</button>`
       :`<div class="warn">이 기기에서는 일본어 음성을 쓸 수 없어서 문장을 보여 드려요.</div>`+(it.dlg?it.script:`<div class="jq">${it.jaR}</div>`);
   }
-  const pr=`<div class="eprompt">${it.ph?it.prompt:E(it.prompt)}</div>`;
+  const pr=KINDHEAD[it.kind]?"":`<div class="eprompt">${it.ph?it.prompt:E(it.prompt)}</div>`;
   const opts=it.opts.map((o,k)=>`<button type="button" class="eopt${sel===k?" on":""}" data-act="ppick" data-q="${i}" data-i="${k}"><kbd>${k+1}</kbd><span>${o}</span></button>`).join("");
   return `<div class="eq" data-q="${i}"><div class="eqn">${i+1}</div><div class="eqb">${it.sec==="read"?mid+pr:pr+mid}<div class="eopts">${opts}</div></div></div>`;
 }
 function paperSheetHtml(){
-  const p=Q.pages[Q.pg]; return `<h4 class="eph">${JSEC[p.sec]}<small>${Q.lv}</small></h4>${p.idx.map(paperQ).join("")}`;
+  const p=Q.pages[Q.pg], h=KINDHEAD[p.kind];
+  const head=h?`<h4 class="eph">問題 ${p.gno}${p.cont?" (계속)":""}<small>${E(p.kind)}</small></h4><p class="epins">${E(h)}</p>`:`<h4 class="eph">${JSEC[p.sec]}<small>${Q.lv}</small></h4>`;
+  return head+p.idx.map(paperQ).join("");
 }
 function paperPageInfo(){ const s=Q.sess[Q.si], pos=s.pg.indexOf(Q.pg), ans=s.pg.reduce((n,pi)=>n+Q.pages[pi].idx.filter(i=>Q.ans[i]!=null).length,0), all=s.pg.reduce((n,pi)=>n+Q.pages[pi].idx.length,0); return {s,pos,n:s.pg.length,ans,all}; }
 function renderPaper(dir){
@@ -2674,11 +2700,11 @@ function rdgItems(p){
   return p.qs.map(q=>{ const m=jShuf(q.o,0);
     return {sec:"read",kind,prompt:R(q.q),ph:1,stem,opts:m.o.map(R),a:m.a,exp:E(q.e||"")}; });
 }
-function jRdg(lv,type){
+function jRdg(lv,type,full){
   const bank=(window.JLPT_RDG||[]).filter(p=>p.lv===lv), pl=RDG_PLAN[lv]||RDG_PLAN.N5;
   const order=["short","mid","long","integ","search"], out=[];
   const types=type==="all"?order.filter(k=>pl[k]):[type];
-  types.forEach(k=>{ const n=type==="all"?pl[k]:(k==="short"?2:1);
+  types.forEach(k=>{ const n=full?99:type==="all"?pl[k]:(k==="short"?2:1);
     shuffle(bank.filter(p=>p.type===k)).slice(0,n).forEach(p=>out.push(...rdgItems(p))); });
   return out;
 }

@@ -249,3 +249,5 @@ body.inq.inpaper{background:#d7dbe6!important}
 .epseg{padding:7px 11px;border:1.5px solid #bdb8a5;background:#fff;color:#25263a;font:inherit;font-size:13px;font-weight:700;cursor:pointer;border-radius:3px}
 .epseg.on{background:#25263a;color:#fff;border-color:#25263a}
 .epbm{font-size:18px;margin:16px 0 8px}.epcover .sub{color:#4a4f66;line-height:1.6}
+.epins{margin:6px 0 2px;font-size:13px;font-weight:700;color:#4a4f66;line-height:1.55}
+.epsheet .jq u{text-decoration-thickness:2px;text-underline-offset:4px}
