@@ -288,7 +288,8 @@ header #profBtn{padding:0 8px!important}
 .plic .pic{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .plrow b{display:block;font-size:15px}.plrow p{margin:2px 0 0;font-size:13px;line-height:1.5;color:var(--sub)}
 
-/* 내 학습 기록: 붙어 있던 칸들을 간격 있는 깔끔한 칸으로 (그림자가 옆 칸을 가리던 것 수정) */
-#statsView .kpis,#statsView .rpt{gap:8px!important;border:0!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important;background:transparent}
-#statsView .kpis .kpi,#statsView .rpt>div{border:1px solid var(--line)!important;border-radius:12px!important;box-shadow:none!important;background:var(--card)!important;padding:12px 14px!important}
-#statsView .kpis{margin:8px 0 14px}
+/* 내 학습 기록: 칸을 붙여 둔 채로, 칸마다 있던 그림자·둥근 모서리를 없애 한 덩어리 표처럼 깔끔하게 */
+#statsView .kpis,#statsView .rpt{gap:0!important;border:1px solid var(--line)!important;border-radius:12px!important;overflow:hidden!important;box-shadow:none!important;background:var(--card)}
+#statsView .kpis .kpi,#statsView .rpt>div{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;padding:12px 14px!important}
+#statsView .kpis .kpi:nth-child(2n),#statsView .rpt>div:nth-child(2n){border-right:0!important}
+#statsView .kpis .kpi:nth-last-child(-n+2),#statsView .rpt>div:nth-last-child(-n+2){border-bottom:0!important}
