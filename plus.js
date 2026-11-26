@@ -81,9 +81,10 @@ function ddayHtml(){
   if(pl.date){ const d=Math.ceil((new Date(pl.date+"T00:00:00")-new Date(new Date().toDateString()))/864e5), md=(+pl.date.slice(5,7))+"월 "+(+pl.date.slice(8,10))+"일";
     if(d<0){ big="끝"; top="시험일이 지났어요"; sub="눌러서 새 시험 날짜 정하기"; cls=" past"; }
     else { big=d===0?"D-DAY":"D-"+d; top="JLPT "+lv+" 시험까지"; sub=md+(off?" · 공식 시험일":"")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":""; pct=Math.max(4,Math.min(100,Math.round((1-d/100)*100))); } }
-  else { big="날짜 정하기"; top=""; sub="눌러서 날짜 고르기"; cls=" none"; }
-  return `<label class="ddpill${cls}"><span class="ddsm">JLPT 시험</span><span class="ddbig">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
+  else { big="날짜 설정"; top=""; sub="눌러서 날짜 고르기"; cls=" none"; }
+  return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT</span><span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
+function renderDday(){ try{ const el=document.getElementById("hdDday"); if(el) el.innerHTML=ddayHtml(); }catch(e){} }
 function coachHtml(){
   const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), words=A().ALL.filter(w=>w.lv===lv);
   const srs=LSg().get("jp-srs",{}); const learned=words.filter(w=>srs[w.key]).length, strong=words.filter(w=>(srs[w.key]&&srs[w.key].b||0)>=3).length;
@@ -113,7 +114,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest("[data-pcoach]")
   if(k==="lv"){ const p=plan(); p.lv=lv; savePlan(p); A().setJl(lv); renderTab(); }
   else if(k==="sec"){ A().setJl(lv); A().setView("exam"); A().jStart(b.dataset.s); }
   else if(k==="final"){ const pool=weakRank().filter(x=>x.w.lv===lv).map(x=>x.w); if(pool.length<4){ A().toast(lv+" 단어 중 틀린 기록이 아직 적어요. 퀴즈를 더 풀어 보세요."); return; } A().setView("quiz"); A().startQuiz("meaning",pool.slice(0,40),20); } });
-document.addEventListener("change",e=>{ if(e.target&&e.target.id==="hmDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); try{ A().renderHome(); }catch(x){} return; } if(e.target&&e.target.id==="pcDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); renderTab(); } });
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="hmDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); try{ A().renderHome(); }catch(x){} renderDday(); return; } if(e.target&&e.target.id==="pcDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); renderTab(); } });
 
 /* ---- 플러스 탭 (하단 메뉴) ---- */
 function open(why){ try{ document.querySelectorAll("dialog[open]").forEach(d=>d.close()); }catch(e){} try{ window.__plusWhy=why||""; }catch(e){} A().setView("plus"); }
@@ -141,5 +142,5 @@ function renderTab(){
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,renderTab); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-plus]"); if(!b) return; e.preventDefault(); const k=b.dataset.plus; if(k==="weak") startWeak(); else open(); });
 window.addEventListener("load",()=>{ setTimeout(sync,2500); });
-window.PLUS={ddayHtml,isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
+window.PLUS={ddayHtml,renderDday,isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
 })();

@@ -97,10 +97,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 .cdd{display:grid;margin:10px 0 4px;padding:12px 14px;border-radius:var(--r-md);background:var(--accent-soft)}.cdd b{font-size:22px;color:var(--accent-text)}.cdd span{font-size:13px;color:var(--sub)}
 .cplan{margin:4px 0 8px}.cnote{font-size:12px;margin:12px 0 0}.coach .plusgo{margin-top:10px}
 
-/* 홈 D-day: 보라색 학습 카드 오른쪽, 급수 버튼 바로 아래 — 따뜻한 노랑~주황 알약 (위에 "JLPT 시험", 아래에 큰 D-숫자) */
-.ddpill{position:absolute;top:46px;right:12px;z-index:2;display:inline-flex;flex-direction:column;align-items:center;gap:0;border-radius:16px;padding:5px 11px 6px;color:#fff;background:linear-gradient(145deg,#ffc83a,#ff8a3d);box-shadow:0 4px 12px rgba(120,50,0,.3);cursor:pointer;overflow:hidden;line-height:1.1;text-shadow:0 1px 0 rgba(150,60,0,.25)}
-.ddpill .ddsm{font-size:10px;font-weight:800;color:rgba(255,255,255,.92);letter-spacing:-.01em;white-space:nowrap}
-.ddpill .ddbig{font-size:19px;font-weight:900;letter-spacing:-.02em}
-.ddpill.near{background:linear-gradient(145deg,#ff7a3d,#e0245e)}
-.ddpill.none,.ddpill.past{background:rgba(255,255,255,.9);color:#6b6f93;text-shadow:none}.ddpill.none .ddsm,.ddpill.past .ddsm{color:#8b8fb0}.ddpill.none .ddbig,.ddpill.past .ddbig{font-size:13px;font-weight:800}
-.ddpill input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
+/* D-day: 로고 바로 옆의 작은 칩 — 얇은 테두리, 작은 회색 "JLPT" + 굵은 D-숫자 (누르면 시험 날짜 변경) */
+.hbrand{flex:1 1 150px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;min-width:0}
+body:not([data-view=home]) #hdDday{display:none}
+.hdd{position:relative;display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px 0 10px;border:1px solid var(--line,#e3e5ef);border-radius:999px;background:var(--card,#fff);cursor:pointer;white-space:nowrap;flex:none}
+.hdd::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent,#5b5bf0);flex:none}
+.hdd .hdl{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--sub,#6b6f93)}
+.hdd .hdn{font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--accent-text,var(--accent,#5b5bf0));font-variant-numeric:tabular-nums}
+.hdd.near{border-color:#ffd2b0;background:#fff7ef}.hdd.near::before{background:#e8590c}.hdd.near .hdn{color:#e8590c}
+.hdd.none .hdn,.hdd.past .hdn{font-size:12px;font-weight:700;color:var(--sub,#6b6f93)}.hdd.none::before,.hdd.past::before{background:#b9bdd6}.hdd.none .hdl,.hdd.past .hdl{display:none}
+.hdd input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
