@@ -996,7 +996,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=20">
+<link rel="stylesheet" href="polish.css?v=21">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -3266,7 +3266,7 @@ if(needOnb()) openOnb();
 const saveProfiles = () => RAW.set("jp-profiles",profiles);
 const switchTo = id => { RAW.set("jp-active",id); location.reload(); };
 function profName(p){ return p.cloud?p.name:(p.name==="기본"?"게스트":p.name); }
-function profBtn(){ $("profBtn").innerHTML=ic("user")+" "+E(profName(curProfile())); }
+function profBtn(){ const nm=profName(curProfile()), b=$("profBtn"); b.innerHTML=ic("user")+(nm==="게스트"?"":" "+E(nm)); b.setAttribute("aria-label","프로필 전환 · "+nm); b.title=nm; }
 function openProf(){
   const p=curProfile(), cu=cloud.ok&&cloud.auth.currentUser, others=profiles.filter(x=>!x.cloud&&x.id!==activeId);
   const acct=p.cloud
