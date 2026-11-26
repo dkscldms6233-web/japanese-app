@@ -293,3 +293,14 @@ header #profBtn{padding:0 8px!important}
 #statsView .kpis .kpi,#statsView .rpt>div{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;padding:12px 14px!important}
 #statsView .kpis .kpi:nth-child(2n),#statsView .rpt>div:nth-child(2n){border-right:0!important}
 #statsView .kpis .kpi:nth-last-child(-n+2),#statsView .rpt>div:nth-last-child(-n+2){border-bottom:0!important}
+
+/* 아주 좁은 폰(≈350px 이하): 위쪽 배너가 한 줄에 들어가도록 로고·칩·버튼을 조금 줄임 */
+@media(max-width:350px){
+  #logo .lgm{font-size:19px}
+  header .hbrand{gap:6px}
+  header .hdd{height:34px;padding:0 10px}header .hdd .hdl{display:none}
+  header .tools{gap:6px}
+  header #profBtn,header #setBtn{height:34px!important;min-width:34px}
+  header #setBtn{width:34px!important}
+  header #profBtn{padding:0 6px!important}
+}

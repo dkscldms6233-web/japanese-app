@@ -179,7 +179,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
 .kfull .kcb{margin-top:auto}
 .kfull .ktipin{margin-top:10px;font-size:13px;line-height:1.5;font-weight:600;color:var(--text);text-align:left;background:rgba(255,255,255,.7);border-radius:14px;padding:9px 12px;max-width:100%}
-.kfull.kt .kcard .kch{font-size:clamp(70px,calc((100dvh - 640px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 640px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 640px)*.42),72px)}
+.kfull.kfirst .kcard .kch{font-size:clamp(70px,calc((100dvh - 640px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 640px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 640px)*.42),72px)}
 /* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 차요 (화면 높이 780 부근에서는 기존 크기) */
 .kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 520px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 520px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 520px)*.42),76px)}
 .kfull .kcard .kro{font-size:clamp(26px,calc(100dvh*.05),46px)}
@@ -333,7 +333,7 @@ function renderCard(){
   inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
   const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
-  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull${i===0?" kt":""}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
+  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull${i===0?" kfirst":""}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
