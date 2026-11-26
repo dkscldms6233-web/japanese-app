@@ -114,7 +114,7 @@ body.kcardmode{padding-bottom:0!important}
 
 /* 일본 문화 한 줄: 노트에 적어 둔 이야기처럼 (줄 노트 + 테이프 + 손글씨 느낌의 글꼴) */
 .h2cul{margin:22px 0 10px}
-.h2cul .cnote{position:relative;padding:22px 18px 14px 34px;border-radius:6px 14px 14px 6px;background:
+.h2cul .cnote{position:relative;padding:22px 18px 16px 34px;border-radius:6px 14px 14px 6px;background:
   linear-gradient(90deg,transparent 26px,rgba(224,90,90,.35) 26px,rgba(224,90,90,.35) 27.5px,transparent 27.5px),
   repeating-linear-gradient(180deg,transparent 0,transparent 27px,rgba(110,140,190,.22) 27px,rgba(110,140,190,.22) 28px),#fffdf4;
   border:1px solid #ece4cc;box-shadow:0 6px 16px rgba(80,60,20,.10);transform:rotate(-.4deg);color:#3b3a33;font-family:"Gowun Dodum","Jua","Apple SD Gothic Neo",sans-serif}
