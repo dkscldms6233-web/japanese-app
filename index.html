@@ -1004,7 +1004,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=47">
+<link rel="stylesheet" href="polish.css?v=48">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2585,7 +2585,7 @@ function jResume(){
 function jResumeHtml(){
   const s=jSaveGet(); if(!s) return "";
   const nm=s.sec==="all"?"전체":(JSEC[s.sec]||s.sec);
-  return `<div class="jresume"><div><b>풀던 시험이 있어요</b><small>${E(s.lv)} ${E(nm)} · ${s.i}/${s.items.length}문제까지 풀었어요</small></div><div class="jrb"><button type="button" class="pill on" data-act="jresume">이어서 풀기</button><button type="button" class="pill" data-act="jresumedel">지우기</button></div></div>`;
+  return `<div class="jresume"><div><b>풀던 시험이 있어요</b><small>${E(s.lv)} ${E(nm)} · ${s.i}/${s.items.length}문제까지 풀었어요</small></div><div class="jrsb"><button type="button" class="pill on" data-act="jresume">이어서 풀기</button><button type="button" class="pill" data-act="jresumedel">지우기</button></div></div>`;
 }
 function jQuitMenu(){
   let d=$("jQuitDlg"); if(!d){ d=document.createElement("dialog"); d.id="jQuitDlg"; document.body.appendChild(d);

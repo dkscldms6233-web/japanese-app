@@ -269,7 +269,7 @@ header #profBtn{padding:0 8px!important}
 /* 모의시험: 이어서 풀기 안내 · 그만두기 메뉴 */
 .jresume{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent)}
 .jresume b{display:block;font-size:15px}.jresume small{display:block;font-size:12px;color:var(--sub);margin-top:2px}
-.jresume .jrb{display:flex;gap:6px;flex:none}
+.jresume .jrsb{display:flex;gap:6px;flex:none}
 #jQuitDlg{border:0;border-radius:16px;padding:20px 18px 18px;max-width:380px;width:calc(100% - 32px);background:var(--card);color:var(--text);box-shadow:0 18px 50px rgba(0,0,0,.35)}
 #jQuitDlg::backdrop{background:rgba(10,12,30,.5)}
 #jQuitDlg h3{margin:0 0 2px;font-size:19px}#jQuitDlg .sub{margin:0 0 14px}
