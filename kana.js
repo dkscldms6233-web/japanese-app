@@ -102,10 +102,12 @@ const done=()=>LS.get("jp-kana",{done:{}});
 const save=d=>LS.set("jp-kana",d);
 const canVoice=()=>Object.keys(window.KANA_AUDIO||{}).length>0 || "speechSynthesis" in window && speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang));
 /* 미리 만든 자연스러운 음성(audio/kana, 청해와 같은 VOICEVOX 목소리)이 있으면 그걸 틀고, 없으면 기기 음성으로 읽어요 */
-const kanaKey=t=>{ let h=5381,g=7; const s="kana4|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+const kanaKey=(t,pre)=>{ let h=5381,g=7; const s=(pre||"kana4|")+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 let kAud=null;
 const say=(t,r)=>{ try{
-  const k=kanaKey(toH(t)), A=window.KANA_AUDIO||{};
+  const A=window.KANA_AUDIO||{}; let k=kanaKey(toH(t));
+  /* 가타카나는 가타카나 글자 그대로 만든 전용 음성(kana5)이 있으면 그걸 써요. 외래어 억양이 더 자연스러워요 */
+  if(/[ァ-ヶー]/.test(t)){ const kk=kanaKey(t,"kana5|"); if(A[kk]) k=kk; }
   if(A[k]){ try{ speechSynthesis.cancel(); }catch(e){} if(kAud){ try{ kAud.pause(); }catch(e){} } kAud=new Audio("audio/kana/"+k+".m4a"); kAud.play().catch(()=>speakJa(t,r||.8)); return; }
   speakJa(t,r||.8); }catch(e){} };
 const inq=on=>{ document.body.classList.toggle("inq",!!on); document.body.classList.remove("kcardmode"); };   /* 다른 글자 화면으로 가면 카드 전체 화면 모드도 풀려요 */
@@ -168,7 +170,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kcard .kex:active{transform:scale(.97)}
 .kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.6}
 /* 글자 카드: 화면을 가득 채워요 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
-.kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 40px - env(safe-area-inset-bottom,0px))}
+.kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 56px - env(safe-area-inset-bottom,0px))}
 .kfull .kcard{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;margin:4px 0 10px;padding:12px 16px 14px}
 .kfull .kcard .kch{font-size:clamp(84px,12.5dvh,150px);width:clamp(150px,20dvh,236px);border-radius:clamp(36px,6dvh,52px);padding:4px 0 8px}
 .kfull .kcard .kro{font-size:clamp(26px,4.4dvh,40px);margin-top:6px}
@@ -176,6 +178,8 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcard .kex{margin-top:6px;padding:7px 18px 7px 10px;border-radius:20px}.kfull .kcard .kex img{width:clamp(44px,7dvh,64px);height:clamp(44px,7dvh,64px)}.kfull .kcard .kexw b{font-size:clamp(20px,3.3dvh,26px)}.kfull .kcard .kexw span{font-size:15px}
 .kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
 .kfull .kcb{margin-top:auto}
+.kfull .ktipin{margin-top:10px;font-size:13px;line-height:1.5;font-weight:600;color:var(--text);text-align:left;background:rgba(255,255,255,.7);border-radius:14px;padding:9px 12px;max-width:100%}
+.kfull.kt .kcard .kch{font-size:clamp(70px,calc((100dvh - 640px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 640px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 640px)*.42),72px)}
 /* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 차요 (화면 높이 780 부근에서는 기존 크기) */
 .kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 520px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 520px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 520px)*.42),76px)}
 .kfull .kcard .kro{font-size:clamp(26px,calc(100dvh*.05),46px)}
@@ -329,16 +333,16 @@ function renderCard(){
   inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
   const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
-  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
+  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull${i===0?" kt":""}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
    ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span></span></button>`:""}
-   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div></div>
+   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
    <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
    ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠어요! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
-  </div>${i===0?`<div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>`;
+  </div></div>`;
   try{ const d=done(); d.cur=(d.cur&&typeof d.cur.k!=="number")?d.cur:{}; d.cur[k?"k":"h"]={i:L.i,c:i}; save(d); }catch(e){}
   window.scrollTo(0,0); setTimeout(()=>say(c[0]),150);
 }

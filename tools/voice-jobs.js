@@ -19,5 +19,10 @@ if(!RECENT){ const src=fs.readFileSync(path.join(root,"kana.js"),"utf8"); const 
   const toH=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
   const keyOf=t=>{ let h=5381,g=7; const s="kana4|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
   const texts=new Set(), chars=new Set(); ["H","D","Y"].forEach(n=>grab(n).forEach(r=>{ texts.add(toH(r[0])); chars.add(toH(r[0])); })); ["WH","WK"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0])))); { const km=src.match(/const KW=(\{[\s\S]*?\});\n/); if(km){ const KW=eval("("+km[1]+")"); for(const k in KW) for(const c in KW[k]) texts.add(toH(KW[k][c][0])); } } /* 글자 카드의 관련 단어(KW) */
-  texts.forEach(t=>out.kana.push({key:keyOf(t),text:t,isChar:chars.has(t)})); }
+  texts.forEach(t=>out.kana.push({key:keyOf(t),text:t,isChar:chars.has(t)}));
+  /* 가타카나 전용 음성(kana5): 가타카나 글자·관련 단어를 가타카나 그대로 읽어요 */
+  { const toKat=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60)), key5=t=>{ let h=5381,g=7; const s="kana5|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+    const kt=new Set(), kc=new Set(); ["H","D","Y"].forEach(n=>grab(n).forEach(r=>{ const t=toKat(r[0]); kt.add(t); kc.add(t); })); grab("WK").forEach(r=>kt.add(r[0]));
+    const km=src.match(/const KW=(\{[\s\S]*?\});\n/); if(km){ const KW=eval("("+km[1]+")"); for(const c in KW.k) kt.add(KW.k[c][0]); }
+    kt.forEach(t=>out.kana.push({key:key5(t),text:t,isChar:kc.has(t)})); } }
 fs.writeFileSync(process.argv.find((a,i)=>i>=2&&!a.startsWith("--")),JSON.stringify(out)); console.log(Object.fromEntries(Object.entries(out).map(([k,v])=>[k,v.length])));

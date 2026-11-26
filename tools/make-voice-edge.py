@@ -10,7 +10,7 @@ ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
 NEWS_MODE="--news-recent" in sys.argv   # 매일 뉴스 갱신: 이미 있는 파일은 건너뛰고, 목록(news-audio.js)을 다시 쓰고, 안 쓰는 옛 음성은 지워요
 J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=3
 NANAMI="ja-JP-NanamiNeural"; KEITA="ja-JP-KeitaNeural"
-KFIX={"を":"オ","は":"ハ","へ":"ヘ","ぢ":"ジ","づ":"ズ","ぢゃ":"ジャ","ぢゅ":"ジュ","ぢょ":"ジョ"}
+KFIX={"を":"オ","は":"ハ","へ":"ヘ","ぢ":"ジ","づ":"ズ","ぢゃ":"ジャ","ぢゅ":"ジュ","ぢょ":"ジョ","ヲ":"オ","ハ":"ハ","ヘ":"ヘ","ヂ":"ジ","ヅ":"ズ","ヂャ":"ジャ","ヂュ":"ジュ","ヂョ":"ジョ"}
 def norm(raw,pre,post):
     i=raw.find(b'data'); b=raw[i+8:]; b=b[:len(b)//2*2]; n=480*2
     env=[audioop.rms(b[k:k+n],2) for k in range(0,len(b)-n,n)]
