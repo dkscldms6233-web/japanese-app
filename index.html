@@ -2672,7 +2672,7 @@ $("quizView").addEventListener("click",e=>{
   else if(a==="next") nextQ();
   else if(a==="retry") startQuiz(Q.mode,Q.wrong.slice(),0);
   else if(a==="saveWrong"){ Q.wrong.filter(w=>!w.sent).forEach(w=>stars.add(w.key)); LS.set("jp-star",[...stars]); toast(Q.wrong.length+"개를 저장함에 담았어요"); }
-  else if(a==="again"||a==="qquit"){ jStop(); document.body.classList.remove("inpaper"); Q=null; if(a==="qquit"&&quizFrom){ const v=quizFrom; quizFrom=null; setView(v); return; } quizSetup(); }
+  else if(a==="again"||a==="qquit"){ jStop(); document.body.classList.remove("inpaper"); Q=null; if(quizFrom&&(a==="qquit"||quizFrom==="plus")){ const v=quizFrom; quizFrom=null; setView(v); return; } quizSetup(); }
   else if(a==="open"){ if(byKey(b.dataset.key)) openWord(b.dataset.key); }
   else if(a==="later"){ const k=b.dataset.key; if(!k) return; if(k in wrong){ delete wrong[k]; b.textContent="나중에 다시 풀기"; b.classList.remove("on"); b.setAttribute("aria-pressed","false"); toast("나중에 다시 풀기를 취소했어요"); } else { wrong[k]=0; b.textContent="나중에 다시 풀기 ✓"; b.classList.add("on"); b.setAttribute("aria-pressed","true"); toast("나중에 다시 풀 수 있게 담았어요"); } LS.set("jp-wrong",wrong); renderLevels(); }
   else if(a==="sent"){ const w=Q&&Q.list&&Q.list[Q.i]; if(w&&w.ex&&w.ex[0]) showSentence(w); }
@@ -3365,7 +3365,7 @@ document.addEventListener("click",e=>{
     closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
   }
 });
-window.APP={jStart:s=>jStart(s),setJl:v=>{ prefs.jl=v; LS.set("jp-prefs",prefs); },view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
+window.APP={setFrom:v=>{ quizFrom=v; },jStart:s=>jStart(s),setJl:v=>{ prefs.jl=v; LS.set("jp-prefs",prefs); },view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
   applyMyLevels:cur=>{ prefs.myLevels=cur; delete prefs.myLevel; LS.set("jp-prefs",prefs); lvSel=new Set(cur); level="전체"; todayOff=0; renderLevels(); renderHome(); },
   applyFuri:v=>{ prefs.nofuri=v; LS.set("jp-prefs",prefs); $("nofuri").checked=v; applyPrefs(); },
   resetLearning:()=>{ log={}; miss={}; wrong={}; wlog=[]; LS.set("jp-log",log); LS.set("jp-miss",miss); LS.set("jp-wrong",wrong); LS.set("jp-wlog",wlog); renderLevels(); }};
@@ -3440,7 +3440,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
-<script src="plus.js?v=25"></script>
+<script src="plus.js?v=26"></script>
 <script src="dev.js?v=9"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

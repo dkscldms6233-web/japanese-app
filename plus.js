@@ -40,7 +40,7 @@ function startWeak(){
   if(rk.length<4){ A().toast("아직 틀린 단어가 적어요. 퀴즈를 조금 더 풀어 보세요."); return; }
   if(!isPlus()){ if(freeUsed()){ open("weak"); return; } try{ localStorage.setItem("jp-plus-free",today()); }catch(e){} }
   const pool=rk.slice(0,60).map(x=>x.w);
-  A().setView("quiz"); A().startQuiz("meaning",pool,10);
+  A().setView("quiz"); A().setFrom("plus"); A().startQuiz("meaning",pool,10);
 }
 
 /* ---- 화면 조각 ---- */
@@ -107,7 +107,7 @@ function planHtml(){
 }
 function startPlan(){
   const b=buildPlan(); if(b.pool.length<4){ A().toast("단어가 부족해서 플랜을 만들 수 없어요"); return; }
-  A().setView("quiz"); A().startQuiz("meaning",shuf(b.pool),Math.min(b.pool.length,20));
+  A().setView("quiz"); A().setFrom("plus"); A().startQuiz("meaning",shuf(b.pool),Math.min(b.pool.length,20));
 }
 /* ---- 주간 학습 리포트: 이번 주 vs 지난주 ---- */
 function weeklyHtml(){
@@ -152,8 +152,8 @@ function coachHtml(){
 }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-pcoach]"); if(!b) return; const k=b.dataset.pcoach, lv=b.dataset.lv;
   if(k==="lv"){ const p=plan(); p.lv=lv; savePlan(p); A().setJl(lv); renderTab(); }
-  else if(k==="sec"){ A().setJl(lv); A().setView("exam"); A().jStart(b.dataset.s); }
-  else if(k==="final"){ const pool=weakRank().filter(x=>x.w.lv===lv).map(x=>x.w); if(pool.length<4){ A().toast(lv+" 단어 중 틀린 기록이 아직 적어요. 퀴즈를 더 풀어 보세요."); return; } A().setView("quiz"); A().startQuiz("meaning",pool.slice(0,40),20); } });
+  else if(k==="sec"){ A().setJl(lv); A().setView("exam"); A().setFrom("plus"); A().jStart(b.dataset.s); }
+  else if(k==="final"){ const pool=weakRank().filter(x=>x.w.lv===lv).map(x=>x.w); if(pool.length<4){ A().toast(lv+" 단어 중 틀린 기록이 아직 적어요. 퀴즈를 더 풀어 보세요."); return; } A().setView("quiz"); A().setFrom("plus"); A().startQuiz("meaning",pool.slice(0,40),20); } });
 document.addEventListener("change",e=>{ if(e.target&&e.target.id==="hmDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); try{ A().renderHome(); }catch(x){} renderDday(); return; } if(e.target&&e.target.id==="pcDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); renderTab(); } });
 
 /* ---- 플러스 탭 (하단 메뉴) ---- */
