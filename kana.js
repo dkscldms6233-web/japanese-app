@@ -167,6 +167,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kcard .kexl{margin-top:10px;font-size:12px;font-weight:800;opacity:.82;letter-spacing:.02em}
 .kcard .kex{display:inline-flex;align-items:center;gap:10px;margin-top:4px;background:#fff;color:#2b2f55;border:1.5px solid color-mix(in srgb,var(--k2) 18%,#fff);font:inherit;border-radius:18px;padding:6px 18px 6px 10px;cursor:pointer;text-align:left}
 .kcard .kex img{display:block;flex:none}.kcard .kexw b{font-size:22px;margin-right:8px}.kcard .kexw span{font-size:15px;color:#555a82;font-weight:700}
+.kcard .kexp{font-style:normal;display:block;font-size:13px;font-weight:700;color:#4b5075;margin:1px 0 1px}
 .kcard .kex:active{transform:scale(.97)}
 .kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.78}
 /* 글자 카드: 화면을 가득 채워요 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
@@ -178,13 +179,11 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcard .kex{margin-top:6px;padding:7px 18px 7px 10px;border-radius:20px}.kfull .kcard .kex img{width:clamp(44px,7dvh,64px);height:clamp(44px,7dvh,64px)}.kfull .kcard .kexw b{font-size:clamp(20px,3.3dvh,26px)}.kfull .kcard .kexw span{font-size:15px}
 .kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
 .kfull .kcb{margin-top:auto}
-@media(max-height:660px){.kfull .kcard{padding-top:8px;padding-bottom:8px}.kfull .kcard .kch,.kfull.kfirst .kcard .kch{font-size:54px;width:96px;border-radius:28px;padding:2px 0 4px}.kfull .kcard .kro{font-size:24px;margin-top:2px}.kfull .kcard .kexl,.kfull .kcard .khint{display:none}.kfull .kcard .kex{margin-top:4px;padding:4px 14px 4px 8px}.kfull .kcard .kex img{width:36px;height:36px}.kfull .kcard .kexw b{font-size:18px}.kfull .kchn,.kfull .ktipin{font-size:12px;line-height:1.4;padding:6px 10px;margin-top:6px}.kbird img{width:40px}.kbub{padding:5px 12px;font-size:13px}}
-.kfull .kchn{margin-top:8px;font-size:13.5px;line-height:1.5;font-weight:700;color:#2b2f55;text-align:left;background:rgba(255,255,255,.78);border-radius:14px;padding:9px 12px;max-width:100%}
-.kfull .ktipin b{display:block;font-size:12px;opacity:.7;margin-bottom:2px}
+@media(max-height:660px){.kfull .kcard{padding-top:8px;padding-bottom:8px}.kfull .kcard .kch,.kfull.kfirst .kcard .kch{font-size:54px;width:96px;border-radius:28px;padding:2px 0 4px}.kfull .kcard .kro{font-size:24px;margin-top:2px}.kfull .kcard .kexl,.kfull .kcard .khint{display:none}.kfull .kcard .kex{margin-top:4px;padding:4px 14px 4px 8px}.kfull .kcard .kex img{width:36px;height:36px}.kfull .kcard .kexw b{font-size:18px}.kfull .ktipin{font-size:12px;line-height:1.4;padding:6px 10px;margin-top:6px}.kbird img{width:40px}.kbub{padding:5px 12px;font-size:13px}}
 .kfull .ktipin{margin-top:10px;font-size:13px;line-height:1.5;font-weight:600;color:#2b2f55;text-align:left;background:rgba(255,255,255,.7);border-radius:14px;padding:9px 12px;max-width:100%}
-.kfull.kfirst .kcard .kch{font-size:clamp(70px,calc((100dvh - 700px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 700px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 700px)*.42),72px)}
+.kfull.kfirst .kcard .kch{font-size:clamp(70px,calc((100dvh - 640px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 640px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 640px)*.42),72px)}
 /* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 차요 (화면 높이 780 부근에서는 기존 크기) */
-.kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 600px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 600px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 600px)*.42),76px)}
+.kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 520px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 520px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 520px)*.42),76px)}
 .kfull .kcard .kro{font-size:clamp(26px,calc(100dvh*.05),46px)}
 .kfull .kcard .kexl{margin-top:clamp(8px,calc(100dvh*.025),30px)}
 .kfull .kcard .kex img{width:clamp(44px,calc(100dvh*.075),84px);height:clamp(44px,calc(100dvh*.075),84px)}
@@ -232,7 +231,7 @@ function renderLesson(L,k){
   root().innerHTML=`<div class="kana"><button class="back" data-kana="home">${ic("back")}글자표·레슨 목록</button><h2>레슨 ${L.i+1}. ${lessonLabel(L,k)}</h2><div class="sub">${k?"가타카나":"히라가나"} · ${L.g}</div>
   <div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>
   ${ch.length?`<div class="kgrid" style="grid-template-columns:repeat(${ch.length%3===0&&ch.length>5?3:5},minmax(0,1fr))">${ch.map(cellBtn).join("")}</div>`:""}
-  <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b><small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서는 아직 읽을 수 있는 단어가 없어요.</div>`}
+  <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b>${koRead(x.w)?`<small>${koRead(x.w)}</small>`:""}<small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서는 아직 읽을 수 있는 단어가 없어요.</div>`}
   <div class="kbtns">${ch.length?`<button class="cta" data-kana="cards" data-i="${L.i}">카드로 한 글자씩 배우기</button>`:""}${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">단어 따라 쓰기</button>`:""}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="cta sec" data-kana="lesson" data-i="${prv?prv.i:L.i}" ${prv?"":"disabled"}>‹ 이전 레슨</button><button class="cta sec" data-kana="lesson" data-i="${nxt?nxt.i:L.i}" ${nxt?"":"disabled"}>다음 레슨 ›</button></div></div></div>`;
 }
@@ -328,27 +327,30 @@ function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLes
 /* 글자별 관련 단어와 그림. 그림은 Google Noto Emoji(Apache License 2.0, img/emoji/LICENSE.txt) */
 const KW={"h":{"あ":["あめ","비","1f327"],"い":["いぬ","개","1f436"],"う":["うさぎ","토끼","1f430"],"え":["えんぴつ","연필","270f"],"お":["おにぎり","주먹밥","1f359"],"か":["かさ","우산","2602"],"き":["きのこ","버섯","1f344"],"く":["くるま","자동차","1f697"],"け":["けいたい","휴대폰","1f4f1"],"こ":["こおり","얼음","1f9ca"],"さ":["さかな","물고기","1f41f"],"し":["しか","사슴","1f98c"],"す":["すし","초밥","1f363"],"せ":["せかい","세계","1f30d"],"そ":["そら","하늘","2601"],"た":["たまご","달걀","1f95a"],"ち":["ちず","지도","1f5fa"],"つ":["つき","달","1f319"],"て":["て","손","270b"],"と":["とり","새","1f426"],"な":["なす","가지","1f346"],"に":["にじ","무지개","1f308"],"ぬ":["ぬいぐるみ","인형","1f9f8"],"ね":["ねこ","고양이","1f431"],"の":["のみもの","음료","1f964"],"は":["はな","꽃","1f338"],"ひ":["ひこうき","비행기","2708"],"ふ":["ふね","배","1f6a2"],"へ":["へび","뱀","1f40d"],"ほ":["ほし","별","2b50"],"ま":["まど","창문","1fa9f"],"み":["みかん","귤","1f34a"],"む":["むし","벌레","1f41b"],"め":["め","눈","1f441"],"も":["もも","복숭아","1f351"],"や":["やま","산","26f0"],"ゆ":["ゆき","눈","2744"],"よ":["よる","밤","1f303"],"ら":["らいおん","사자","1f981"],"り":["りんご","사과","1f34e"],"る":["さる","원숭이","1f412"],"れ":["れもん","레몬","1f34b"],"ろ":["ろうそく","양초","1f56f"],"わ":["わに","악어","1f40a"],"を":["ほんを","책을","1f4d6"],"ん":["ぱん","빵","1f35e"],"が":["がっこう","학교","1f3eb"],"ぎ":["ぎんこう","은행","1f3e6"],"ぐ":["ぐんて","장갑","1f9e4"],"げ":["げんかん","현관","1f6aa"],"ご":["ごはん","밥","1f35a"],"ざ":["ざっし","잡지","1f4f0"],"じ":["じてんしゃ","자전거","1f6b2"],"ず":["ずぼん","바지","1f456"],"ぜ":["かぜ","바람","1f4a8"],"ぞ":["ぞう","코끼리","1f418"],"だ":["だんご","경단","1f361"],"で":["でんしゃ","전철","1f683"],"ど":["どうぶつ","동물","1f43e"],"ば":["ばなな","바나나","1f34c"],"び":["びょういん","병원","1f3e5"],"ぶ":["ぶた","돼지","1f437"],"べ":["べんとう","도시락","1f371"],"ぼ":["ぼうし","모자","1f9e2"],"ぱ":["ぱん","빵","1f35e"],"ぴ":["ぴあの","피아노","1f3b9"],"ぷ":["ぷりん","푸딩","1f36e"],"ぺ":["ぺん","펜","1f58a"],"ぽ":["ぽすと","우체통","1f4ee"]},"k":{"ア":["アイス","아이스크림","1f366"],"イ":["イルカ","돌고래","1f42c"],"ウ":["ウマ","말","1f434"],"エ":["エビ","새우","1f990"],"オ":["オレンジ","오렌지","1f34a"],"カ":["カメラ","카메라","1f4f7"],"キ":["キウイ","키위","1f95d"],"ク":["クッキー","쿠키","1f36a"],"ケ":["ケーキ","케이크","1f370"],"コ":["コーヒー","커피","2615"],"サ":["サッカー","축구","26bd"],"シ":["シャツ","셔츠","1f455"],"ス":["スイカ","수박","1f349"],"セ":["セーター","스웨터","1f9e5"],"ソ":["ソファ","소파","1f6cb"],"タ":["タクシー","택시","1f695"],"チ":["チーズ","치즈","1f9c0"],"ツ":["ツリー","트리","1f384"],"テ":["テレビ","텔레비전","1f4fa"],"ト":["トマト","토마토","1f345"],"ナ":["ナッツ","견과류","1f95c"],"ニ":["ニンジン","당근","1f955"],"ヌ":["ヌードル","국수","1f35c"],"ネ":["ネクタイ","넥타이","1f454"],"ノ":["ノート","공책","1f4d3"],"ハ":["ハート","하트","2764"],"ヒ":["ヒヨコ","병아리","1f425"],"フ":["フルーツ","과일","1f353"],"ヘ":["ヘリコプター","헬리콥터","1f681"],"ホ":["ホテル","호텔","1f3e8"],"マ":["マスク","마스크","1f637"],"ミ":["ミルク","우유","1f95b"],"ム":["ムービー","영화","1f3ac"],"メ":["メロン","멜론","1f348"],"モ":["モモ","복숭아","1f351"],"ヤ":["ヤギ","염소","1f410"],"ユ":["ユニコーン","유니콘","1f984"],"ヨ":["ヨット","요트","26f5"],"ラ":["ラーメン","라면","1f35c"],"リ":["リス","다람쥐","1f43f"],"ル":["ルビー","루비","1f48e"],"レ":["レモン","레몬","1f34b"],"ロ":["ロケット","로켓","1f680"],"ワ":["ワイン","와인","1f377"],"ン":["ペンギン","펭귄","1f427"],"ガ":["ガソリン","휘발유","26fd"],"ギ":["ギター","기타","1f3b8"],"グ":["グラス","유리잔","1f943"],"ゲ":["ゲーム","게임","1f3ae"],"ゴ":["ゴリラ","고릴라","1f98d"],"ザ":["ピザ","피자","1f355"],"ジ":["ジュース","주스","1f9c3"],"ズ":["ズボン","바지","1f456"],"ゾ":["ゾウ","코끼리","1f418"],"ダ":["ダンス","춤","1f483"],"デ":["デザート","디저트","1f368"],"ド":["ドア","문","1f6aa"],"バ":["バナナ","바나나","1f34c"],"ビ":["ビール","맥주","1f37a"],"ブ":["ブドウ","포도","1f347"],"ベ":["ベッド","침대","1f6cf"],"ボ":["ボール","공","1f3c0"],"パ":["パン","빵","1f35e"],"ピ":["ピアノ","피아노","1f3b9"],"プ":["プリン","푸딩","1f36e"],"ペ":["ペン","펜","1f58a"],"ポ":["ポスト","우체통","1f4ee"]}};
 
-/* 글자별 설명: 카드마다 소리 · 모양 · 헷갈리는 글자 */
-const HN={"あ":"입을 크게 벌리고 '아'. 곡선이 한 바퀴 크게 도는 3획 글자예요.","い":"'이'. 세로 획 두 개가 나란히 서 있고 왼쪽이 더 길어요.","う":"'우'. 입술을 둥글게 내밀지 않고 가볍게 말해요. 위에 짧은 점이 있어요.","え":"'에'. 우리말 '에'와 같아요. 위에 점, 아래에 물결 모양 획이 와요.","お":"'오'. あ와 닮았지만 오른쪽 위에 점이 하나 더 있어요.",
-"か":"단어 첫머리에서는 'ㅋ', 단어 가운데서는 'ㄲ'처럼 가볍게 나요.","き":"'키'. 가로 획이 두 개면 き, 한 개면 さ예요.","く":"'쿠'. 부등호 '<'처럼 생겼어요.","け":"'케'. 오른쪽 획이 고리 없이 쭉 내려가면 け, 고리가 있으면 は예요.","こ":"'코'. 가로 획 두 개를 위아래로 쓴 모양이에요.",
-"さ":"'사'. 가로 획 하나에 굽은 세로 획이 이어져요. き와 비교해 보세요.","し":"'시'. 낚싯바늘 모양의 한 획이에요.","す":"'스'. 입술을 펴고 '스'에 가깝게 말해요. 아래쪽에 작은 고리가 있어요.","せ":"'세'. 가로로 긴 획에 세로 획이 이어져 내려와요.","そ":"'소'. 윗부분이 지그재그로 꺾이는 모양이에요.",
-"た":"'타'. ナ와 こ를 이어 붙인 모양으로 보면 외우기 쉬워요.","ち":"'치'. 숫자 5처럼 생겼어요.","つ":"'츠'. 혀끝을 윗니 뒤에 대고 말해요. 가로로 누운 곡선 한 획이에요.","て":"'테'. 짧은 가로 획에서 아래로 휘어 내려가는 한 획이에요.","と":"'토'. 짧은 획 아래에 큰 곡선이 이어져요.",
-"な":"'나'. 왼쪽은 ナ 모양이고 오른쪽에 점과 고리가 있어요.","に":"'니'. 왼쪽에 세로 획, 오른쪽에 가로 획 두 개가 있어요.","ぬ":"'누'. め와 닮았지만 끝에 고리가 있어요.","ね":"'네'. 왼쪽 세로 획과 오른쪽 고리가 있어요. れ·わ와 비교해 보세요.","の":"'노'. 소용돌이 같은 곡선 한 획이에요.",
-"は":"'하'. 조사로 쓰일 때는 '와'로 읽어요(예: 私は). け와 달리 오른쪽에 고리가 있어요.","ひ":"'히'. 웃는 입 모양처럼 생겼어요.","ふ":"'후'. 'ㅎ'과 'ㅍ' 사이의 부드러운 소리예요. 짧은 획 네 개로 이뤄져요.","へ":"'헤'. 조사로 쓰일 때는 '에'로 읽어요(예: 学校へ). 산 모양이에요.","ほ":"'호'. は에 가로 획이 하나 더 붙은 모양이에요.",
-"ま":"'마'. 가로 획 두 개에 세로 획이 내려와 아래에 고리를 만들어요.","み":"'미'. 숫자 21처럼 보인다고 외우면 쉬워요.","む":"'무'. す와 닮았지만 오른쪽 아래에 점이 하나 더 있어요.","め":"'메'. ぬ와 닮았지만 끝에 고리가 없어요.","も":"'모'. 세로 획에 가로 획 두 개가 걸쳐 있어요.",
-"や":"'야'. 오른쪽 위에 점이 있고 획이 가로질러요. 작게 쓴 ゃ는 요음에 써요.","ゆ":"'유'. 둥근 곡선에 세로 획이 가로질러요. 작게 쓴 ゅ는 요음에 써요.","よ":"'요'. ま와 닮았지만 아래 고리가 열려 있어요. 작게 쓴 ょ는 요음에 써요.",
-"ら":"'라'. 'ㄹ'과 'ㄷ' 사이로, 혀끝으로 윗잇몸을 살짝 튕겨요.","り":"'리'. い와 닮았지만 오른쪽 획이 더 길게 내려와요.","る":"'루'. ろ와 닮았지만 끝에 고리가 있어요.","れ":"'레'. ね와 닮았지만 끝에 고리가 없어요.","ろ":"'로'. る와 닮았지만 끝에 고리가 없어요.",
-"わ":"'와'. れ·ね와 닮았지만 끝이 둥글게 말려 있어요.","を":"'오'(お와 같은 소리). 목적을 나타내는 조사로만 써요(예: 水を飲む).","ん":"'응'. 뒤 소리에 따라 'ㄴ·ㅁ·ㅇ' 받침처럼 들려요. 단어 첫머리에는 오지 않아요."};
-const KN={"シ":"ツ와 헷갈리기 쉬워요. シ는 점이 옆으로 누운 모양이에요.","ツ":"シ와 헷갈리기 쉬워요. ツ는 점이 위에서 아래로 선 모양이에요.","ソ":"ン과 닮았어요. ソ는 점이 서 있어요.","ン":"ソ와 닮았어요. ン은 점이 누워 있어요.","ウ":"ワ와 닮았어요. ウ는 맨 위에 짧은 점이 있어요.","ワ":"ウ와 닮았어요. ワ는 맨 위에 점이 없어요.","ヲ":"조사 を에 해당하는 글자예요. 외래어에는 거의 안 써요.","ー":""};
-function kanaNote(c,k){
-  const ch=c[0], hc=toH(ch), disp=s=>k?toK(s):s, ko=x=>{ const f=H.find(y=>y[0]===x)||D.find(y=>y[0]===x); return f?f[2]:""; };
-  if(HN[hc]) return k?`히라가나 ${hc}와 같은 소리(${c[2]})예요. 직선 위주의 각진 글자예요.${KN[ch]?" "+KN[ch]:""}`:HN[hc];
-  const d=hc.normalize("NFD");
-  if(d.length===2&&/[\u3099\u309a]/.test(d[1])){ const b=d[0], mark=d[1]==="\u3099"?"탁점(゛)":"반탁점(゜)";
-    const same=hc==="ぢ"?` '${disp("じ")}'와 소리가 같고 거의 쓰이지 않아요.`:hc==="づ"?` '${disp("ず")}'와 소리가 같고 거의 쓰이지 않아요.`:"";
-    return `${disp(b)}(${ko(b)})에 ${mark}을 붙인 글자예요. '${c[2]}'로 읽어요.${same}`; }
-  if(hc.length===2){ const b=hc[0], sm=disp(hc[1]); return `${disp(b)}(${ko(b)})에 작은 ${sm}를 붙여 한 글자처럼 '${c[2]}'로 읽어요. 작은 글자는 오른쪽 아래에 작게 써요.`; }
-  return ""; }
+
+/* 단어의 한국어 발음(한글 표기): 글자마다 소리를 한글로 옮기고, っ는 받침 ㅅ, ん은 받침 ㄴ, 길게 끄는 소리는 '-'로 보여요 */
+const KR_SM={"ぁ":"아","ぃ":"이","ぅ":"우","ぇ":"에","ぉ":"오"};
+function koRead(w){
+  const tb={}; [...H,...D].forEach(c=>tb[c[0]]=c[2]); Y.forEach(c=>tb[c[0]]=c[2]);
+  const vowOf=s=>{ const m={"아":"a","이":"i","우":"u","에":"e","오":"o"}; const last=(s||"").slice(-1); const jung=["ㅏ","ㅣ","ㅜ","ㅔ","ㅗ"]; const code=last.charCodeAt(0)-0xAC00; if(code<0||code>11171) return ""; const j=Math.floor((code%588)/28); return {0:"a",2:"a",20:"i",13:"u",17:"u",14:"u",18:"u",6:"e",7:"e",1:"e",5:"e",3:"e",8:"o",12:"o",9:"o",10:"o",11:"o",4:"e",15:"u",16:"u",19:"i"}[j]||""; };
+  const addBat=(syl,bat)=>{ const c=syl.charCodeAt(0)-0xAC00; if(c<0||c>11171||c%28) return syl+bat; const T={"ㄴ":4,"ㅅ":19}; return String.fromCharCode(0xAC00+c+T[bat]); };
+  const s=toH(w), out=[]; let pend=null;
+  for(let i=0;i<s.length;i++){
+    const c=s[i], n=s[i+1];
+    if(c==="ん"){ if(out.length&&out[out.length-1]==="-") out.pop(); if(out.length){ out[out.length-1]=addBat(out[out.length-1],"ㄴ"); } else out.push("ㄴ"); continue; }
+    if(c==="っ"){ pend=true; if(out.length) out[out.length-1]=addBat(out[out.length-1],"ㅅ"); continue; }
+    if(c==="ー"){ out.push("-"); continue; }
+    let syl=null;
+    if(n&&/[ゃゅょ]/.test(n)&&tb[c+n]){ syl=tb[c+n]; i++; }
+    else if(n&&KR_SM[n]&&(c==="ふ"||c==="う"||c==="て"||c==="で"||c==="し"||c==="じ"||c==="ち"||c==="つ")){ const m={"ふぁ":"파","ふぃ":"피","ふぇ":"페","ふぉ":"포","てぃ":"티","でぃ":"디","うぃ":"위","うぇ":"웨","うぉ":"워","しぇ":"셰","じぇ":"제","ちぇ":"체"}[c+n]; if(m){ syl=m; i++; } }
+    if(!syl) syl=tb[c];
+    if(!syl) return "";
+    /* 길게 끄는 소리: 같은 모음이 이어지거나(あ+あ), お단+う, え단+い */
+    const prev=out.length?out[out.length-1]:"";
+    const pv=vowOf(prev.replace(/[ㄴㅅ]$/,"")), cv={"あ":"a","い":"i","う":"u","え":"e","お":"o"}[c];
+    if(cv&&prev&&prev!=="-"&&((cv===pv)||(c==="う"&&pv==="o")||(c==="い"&&pv==="e"))&&!pend){ out.push("-"); continue; }
+    out.push(syl); pend=null; }
+  return out.join("").replace(/-ㄴ/g,"-ㄴ"); }
 /* 글자 하나씩 카드로 배우기: 큰 글자 + 소리 + 읽는 법 + 예시 단어 → 다 보면 확인 퀴즈 */
 let C=null;
 function startCards(L,k,at){ const chars=lessonChars(L,k); if(!chars.length){ renderLesson(L,k); return; } C={L,k,i:Math.min(Math.max(+at||0,0),chars.length-1),chars,words:lessonWords(L,k)}; renderCard(); }
@@ -362,8 +364,8 @@ function renderCard(){
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
-   ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span></span></button>`:""}
-   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${i===0?`<div class="ktipin"><b>이 줄 설명</b> ${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}${kanaNote(c,k)?`<div class="kchn">${kanaNote(c,k)}</div>`:""}</div>
+   ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span>${koRead(ex.w)?`<i class="kexp">${koRead(ex.w)}</i>`:""}</span></button>`:""}
+   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
    <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
    ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠어요! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
