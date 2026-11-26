@@ -97,14 +97,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 .cdd{display:grid;margin:10px 0 4px;padding:12px 14px;border-radius:var(--r-md);background:var(--accent-soft)}.cdd b{font-size:22px;color:var(--accent-text)}.cdd span{font-size:13px;color:var(--sub)}
 .cplan{margin:4px 0 8px}.cnote{font-size:12px;margin:12px 0 0}.coach .plusgo{margin-top:10px}
 
-/* D-day: 로고 바로 옆의 작은 칩 — 얇은 테두리, 작은 회색 "JLPT" + 굵은 D-숫자 (누르면 시험 날짜 변경) */
-.hbrand{flex:1 1 150px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;min-width:0}
-/* 다른 탭(학습·뉴스·커뮤니티 등)에서도 항상 보이게: 머리글이 한 줄로 유지되도록 작게 */
-body:not([data-view=home]) .hbrand{flex-wrap:nowrap;gap:8px}
-@media(max-width:420px){ body:not([data-view=home]) .hdd .hdl{display:none} body:not([data-view=home]) .hdd{padding:0 11px;height:28px} }
-.hdd{position:relative;display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px 0 12px;border:0;border-radius:999px;background:linear-gradient(135deg,#5b5bf0,#9a6bff);box-shadow:0 4px 12px rgba(91,91,240,.35);cursor:pointer;white-space:nowrap;flex:none}
-.hdd .hdl{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:rgba(255,255,255,.82)}
-.hdd .hdn{font-size:15px;font-weight:900;letter-spacing:-.01em;color:#fff;font-variant-numeric:tabular-nums}
-.hdd.near{background:linear-gradient(135deg,#ff7a3d,#e0245e);box-shadow:0 4px 12px rgba(224,36,94,.35)}
-.hdd.none,.hdd.past{background:var(--card,#fff);border:1px solid var(--line,#e3e5ef);box-shadow:none}.hdd.none .hdn,.hdd.past .hdn{font-size:12px;font-weight:700;color:var(--sub,#6b6f93)}.hdd.none .hdl,.hdd.past .hdl{display:none}
+/* D-day: 로고 바로 옆 고정 칩 — 모든 탭에서 같은 자리·같은 모양 (위에 작은 "JLPT", 아래에 굵은 D-숫자, 누르면 시험 날짜 변경) */
+.hbrand{flex:1 1 auto;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;min-width:0}
+.hdd{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:0;height:34px;padding:0 11px;border:0;border-radius:12px;background:linear-gradient(135deg,#5b5bf0,#9a6bff);box-shadow:0 3px 10px rgba(91,91,240,.35);cursor:pointer;white-space:nowrap;flex:none;line-height:1}
+.hdd .hdl{font-size:8.5px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.85)}
+.hdd .hdn{font-size:15px;font-weight:900;letter-spacing:-.01em;color:#fff;font-variant-numeric:tabular-nums;margin-top:1px}
+.hdd.near{background:linear-gradient(135deg,#ff7a3d,#e0245e);box-shadow:0 3px 10px rgba(224,36,94,.35)}
+.hdd.none,.hdd.past{background:var(--card,#fff);border:1px solid var(--line,#e3e5ef);box-shadow:none}.hdd.none .hdn,.hdd.past .hdn{font-size:12px;font-weight:700;color:var(--sub,#6b6f93);margin:0}.hdd.none .hdl,.hdd.past .hdl{display:none}
 .hdd input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
