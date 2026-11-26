@@ -2224,7 +2224,7 @@ function gCountdown(rule,go,extraCls){
 function startMatch(){
   const seen=new Set(), uniq=[];
   for(const w of wshuffle(ALL.filter(inScope))){ if(w.ko && !seen.has(w.ko)){ seen.add(w.ko); uniq.push(w); } }
-  if(uniq.length<8){ toast("이 범위에는 단어가 부족해요 (8개 이상 필요)"); return; }
+  if(uniq.length<7){ toast("이 범위에는 단어가 부족해요 (7개 이상 필요)"); return; }
   gCountdown("왼쪽 단어와 같은 뜻을 오른쪽에서 골라요<br>제한 시간 90초 · 틀리면 2초 줄어요",()=>beginMatch(uniq));
 }
 function beginMatch(uniq){
@@ -2233,9 +2233,9 @@ function beginMatch(uniq){
 }
 function matchWord(){ const n=G.uniq.length; const shown=new Set([...G.cur,...G.right,...G.qL,...G.qR].map(x=>x.key)); let w,t=0; do{ w=G.uniq[G.ptr++%n]; }while(shown.has(w.key)&&++t<n); return w; }
 function matchRound(){
-  /* 처음 화면: 왼쪽 6개 · 오른쪽 6개. 짝이 없는 칸이 2개씩 있어서(w5·w6의 뜻은 나중에, w7·w8은 나중에 단어가 나와요) 새로 채워지는 칸이 서로의 짝이 되지 않아요 */
-  const ws=[], n=G.uniq.length; while(ws.length<8&&G.ptr<n*3){ const w=G.uniq[G.ptr++%n]; if(!ws.some(x=>x.key===w.key)) ws.push(w); }
-  G.cur=ws.slice(0,6); G.right=shuffle([ws[0],ws[1],ws[2],ws[3],ws[6],ws[7]]); G.qL=[ws[6],ws[7]]; G.qR=[ws[4],ws[5]];
+  /* 처음 화면: 왼쪽 5개 · 오른쪽 5개(10카드). 짝이 없는 칸이 2개씩 있어서(w4·w5의 뜻은 나중에, w6·w7은 나중에 단어가 나와요) 새로 채워지는 칸이 서로의 짝이 되지 않아요 */
+  const ws=[], n=G.uniq.length; while(ws.length<7&&G.ptr<n*3){ const w=G.uniq[G.ptr++%n]; if(!ws.some(x=>x.key===w.key)) ws.push(w); }
+  G.cur=ws.slice(0,5); G.right=shuffle([ws[0],ws[1],ws[2],ws[5],ws[6]]); G.qL=[ws[5],ws[6]]; G.qR=[ws[3],ws[4]];
   ws.forEach(w=>{ if(!G.seen.has(w.key)) G.seen.set(w.key,{w,st:"no"}); });
   G.done=new Set(); G.missed=new Set(); G.sel=null; G.bad=null; G.busy=false; renderMatch();
 }
