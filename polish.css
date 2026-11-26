@@ -111,3 +111,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 /* 글자 카드 보는 동안에는 위(로고·D-day·탭)와 아래(하단 탭) 배너를 숨겨서 카드만 크게 */
 body.kcardmode header,body.kcardmode .views,body.kcardmode #subtabs{display:none!important}
 body.kcardmode{padding-bottom:0!important}
+
+/* 일본 문화 한 줄 */
+.h2cul{margin:18px 0 8px}
+.h2cul .culb{padding:14px 16px;border-radius:16px;background:var(--card,#fff);border:1px solid var(--line,#e6e8f0);box-shadow:0 2px 8px rgba(40,50,100,.04)}
+.h2cul .culb b{display:block;font-size:15px;margin-bottom:4px}
+.h2cul .culb p{margin:0;font-size:14px;line-height:1.6;color:var(--sub,#6b6f93)}

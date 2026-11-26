@@ -993,10 +993,11 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
+<script src="funny.js?v=1"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=25">
+<link rel="stylesheet" href="polish.css?v=26">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2966,16 +2967,21 @@ function quotePick(off){
   const dn=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
   return Q[(((dn+off)%Q.length)+Q.length)%Q.length];
 }
+/* 웃픈 일상 예문: 이틀에 한 번 '오늘의 문장' 자리에 나와요(내 급수에 맞는 것 우선) */
+const modn=(a,n)=>((a%n)+n)%n, dayNo=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
+function funnyOn(off){ return (window.FUNNY||[]).length>0 && modn(dayNo()+off,2)===0; }
+function funnyPick(off){ const F=window.FUNNY||[]; if(!F.length) return null; let pool=F; const my=myLv(); if(my.length){ const f=F.filter(x=>my.includes(x.lv)); if(f.length>=3) pool=f; } return pool[modn(Math.floor((dayNo()+off)/2),pool.length)]; }
+function cultureHtml(){ const C=window.CULTURE||[]; if(!C.length) return ""; const c=C[modn(dayNo(),C.length)]; return `<section class="h2cul"><div class="h2sh"><b>일본 문화 한 줄</b><small>오늘의 이야기</small></div><div class="culb"><b>${E(c.t)}</b><p>${E(c.body)}</p></div></section>`; }
 function goalN(){ return [10,20,30].includes(prefs.goal)?prefs.goal:10; }
 let lvPop=false;
 function renderHome(){
   if(window.PATH&&PATH.page()){ $("homeView").innerHTML=PATH.pageHtml(); return; }
-  const my=myLv(), qt=quotePick(0), p=qt?null:todayPick(0), tl=log[today()]||{n:0,c:0}, nw=Object.keys(wrong).length, st=streakDays(), h=new Date().getHours(), g=goalN();
+  const my=myLv(), fn=funnyOn(0)?funnyPick(0):null, qt=fn?null:quotePick(0), p=(fn||qt)?null:todayPick(0), tl=log[today()]||{n:0,c:0}, nw=Object.keys(wrong).length, st=streakDays(), h=new Date().getHours(), g=goalN();
   const nick=(profiles.length>1||curProfile().name!=="기본")?curProfile().name:"";
   const greet=(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
   const pc=Math.min(100,Math.round(tl.n/g*100));
   const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
-  const sent=qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
+  const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"오늘의 웃픈 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
   /* 홈 v2: 인사·연속 출석 → 오늘의 학습(히어로) → 이어서/복습 → 이번 주 출석 → 탐색 → 오늘의 문장 (기능은 그대로, 7일 여정은 '더 보기'로) */
   const jr=window.PATH?PATH.journeyHtml():"", jrPending=jr.includes('data-gift="open"');
   let moreOpen=false; try{ moreOpen=localStorage.getItem("jp-homemore")==="1"; }catch(e){}
@@ -2999,6 +3005,7 @@ function renderHome(){
    ${window.PATH?`<div class="h2card h2act">${PATH.continueHtml()+PATH.reviewHtml()}</div>`:""}
    ${jr}
    <section><div class="h2sh"><b>탐색</b><small>골라서 공부해요</small></div><div class="h2grid">${tiles}</div></section>
+   ${cultureHtml()}
 </div>`;
   try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){}
 }
@@ -3018,6 +3025,22 @@ function beginnerHtml(){
    <button type="button" class="hbx" data-bgn="hide">나중에 볼게요</button></section>`;
 }
 function renderToday(){
+  const fn=funnyOn(todayOff)?funnyPick(todayOff):null;
+  if(fn){
+    todayJa=plain(fn.ja);
+    $("todayView").innerHTML=`<div class="today">
+     <button class="back" data-go="home">${ic("back")}홈으로</button>
+     <div class="tbox">
+       <div class="lab">${todayOff?"다른 문장":"오늘의 웃픈 문장"} · ${E(fn.lv)}</div>
+       <div class="tja">${R(fn.ja)}</div>
+       <div class="tko">${E(fn.ko)}</div>
+       <div class="qbtns" style="justify-content:flex-start;margin-top:8px">
+         ${"speechSynthesis" in window?`<button class="pill" data-act="speak">${ic("sound")} 듣기</button>`:""}
+         <button class="pill" data-act="other">${ic("refresh")} 다른 문장</button></div>
+     </div>
+     <div class="panel"><h3>이 문장으로 배우기</h3><div class="sub">${R(fn.note)}</div></div>
+    </div>`; return;
+  }
   const qt=quotePick(todayOff);
   if(qt){
     todayJa=plain(qt.ja);
