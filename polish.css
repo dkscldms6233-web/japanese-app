@@ -251,3 +251,6 @@ body.inq.inpaper{background:#d7dbe6!important}
 .epbm{font-size:18px;margin:16px 0 8px}.epcover .sub{color:#4a4f66;line-height:1.6}
 .epins{margin:6px 0 2px;font-size:13px;font-weight:700;color:#4a4f66;line-height:1.55}
 .epsheet .jq u{text-decoration-thickness:2px;text-underline-offset:4px}
+
+.pcell:last-child:nth-child(odd){grid-column:1/-1;margin-top:6px}
+.jmbtn .plusbadge{margin-left:4px;vertical-align:1px}
