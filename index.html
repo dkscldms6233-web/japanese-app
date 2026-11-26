@@ -1004,7 +1004,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=46">
+<link rel="stylesheet" href="polish.css?v=47">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -1884,6 +1884,7 @@ function examSetup(){
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>JLPT 모의시험</h2></div>
    <p class="sub devonly" data-noln="1" style="margin:0 0 10px">문자·어휘, 문법, 독해, 청해를 시험처럼 연습해요. 직접 만든 연습 문제예요.</p>
+   ${jResumeHtml()}
    ${lvRow(jl,"급수")}
    <button class="cta" data-act="jstart" data-s="all">${jl} 모의시험 전체 풀기</button>
    <div class="tiles2" style="margin-top:14px">
@@ -2549,9 +2550,9 @@ function jPick(i){
   jStop();
   renderJ();
 }
-function jNext(){ if(!Q||Q.mode!=="jlpt") return; jStop(); Q.i++; Q.sel=null; renderJ(); }
+function jNext(){ if(!Q||Q.mode!=="jlpt") return; jStop(); Q.i++; Q.sel=null; if(Q.i<Q.items.length) jSaveSnap(); else jSaveClear(); renderJ(); }
 function jResult(){
-  document.body.classList.remove("inpaper"); paperStop();
+  document.body.classList.remove("inpaper"); paperStop(); jSaveClear();
   try{ if(window.PLUS) PLUS.recordExam(Q); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.items.length, pct=Math.round(Q.score/t*100);
@@ -2566,6 +2567,43 @@ function jResult(){
   if(pct>=70) sakura(pct===100?26:14);
 }
 
+/* ---------- 모의시험 연습 모드: 중간에 저장하고 나가기 · 이어서 풀기 · 처음부터 다시 ---------- */
+const JSAVE="jp-jsave";
+function jSaveClear(){ try{ localStorage.removeItem(JSAVE); }catch(e){} }
+function jSaveSnap(){
+  if(!Q||Q.mode!=="jlpt"||Q.paper||Q.done||!Q.items) return;
+  try{ localStorage.setItem(JSAVE,JSON.stringify({lv:Q.lv,sec:Q.sec,i:Q.i,score:Q.score,by:Q.by,wrong:Q.wrong.map(w=>Q.items.indexOf(w)).filter(x=>x>=0),items:Q.items.map(it=>({...it,w:it.w?it.w.key:undefined})),t:Date.now()})); }catch(e){}
+}
+function jSaveGet(){ try{ const s=JSON.parse(localStorage.getItem(JSAVE)||"null"); return s&&s.items&&s.items.length&&s.i<s.items.length?s:null; }catch(e){ return null; } }
+function jResume(){
+  const s=jSaveGet(); if(!s){ toast("이어서 풀 시험이 없어요"); return; }
+  stopG(); const items=s.items.map(it=>({...it,w:it.w?byKey(it.w):undefined}));
+  prefs.jl=s.lv; LS.set("jp-prefs",prefs);
+  Q={mode:"jlpt",lv:s.lv,sec:s.sec,items,i:s.i,score:s.score,sel:null,done:false,by:s.by||{},wrong:(s.wrong||[]).map(i=>items[i]).filter(Boolean)};
+  renderJ();
+}
+function jResumeHtml(){
+  const s=jSaveGet(); if(!s) return "";
+  const nm=s.sec==="all"?"전체":(JSEC[s.sec]||s.sec);
+  return `<div class="jresume"><div><b>풀던 시험이 있어요</b><small>${E(s.lv)} ${E(nm)} · ${s.i}/${s.items.length}문제까지 풀었어요</small></div><div class="jrb"><button type="button" class="pill on" data-act="jresume">이어서 풀기</button><button type="button" class="pill" data-act="jresumedel">지우기</button></div></div>`;
+}
+function jQuitMenu(){
+  let d=$("jQuitDlg"); if(!d){ d=document.createElement("dialog"); d.id="jQuitDlg"; document.body.appendChild(d);
+    d.addEventListener("click",ev=>{ if(ev.target===d){ d.close(); return; } const b=ev.target.closest("[data-jq]"); if(!b) return; const k=b.dataset.jq; d.close();
+      if(k==="keep") return;
+      if(!Q||Q.mode!=="jlpt") return;
+      if(k==="save"){ if(Q.sel!==null){ Q.i++; Q.sel=null; } jSaveSnap(); jStop(); toast("저장했어요. 모의시험 화면에서 이어서 풀 수 있어요"); Q=null; document.body.classList.remove("inq"); quizSetup(); return; }
+      if(k==="restart"){ const sec=Q.sec; jStop(); jSaveClear(); Q=null; jStart(sec); return; }
+      if(k==="quit"){ jStop(); jSaveClear(); Q=null; document.body.classList.remove("inq"); if(quizFrom){ const v=quizFrom; quizFrom=null; setView(v); return; } quizSetup(); }
+    }); }
+  const n=Q.items.length, done=Math.min(n,Q.i+(Q.sel!==null?1:0));
+  d.innerHTML=`<h3>시험을 어떻게 할까요?</h3><p class="sub">${done} / ${n}문제를 풀었어요</p>
+   <button type="button" class="jmbtn" data-jq="keep"><b>계속 풀기</b><span>지금 문제로 돌아가요</span></button>
+   <button type="button" class="jmbtn" data-jq="save"><b>저장하고 나가기</b><span>나중에 모의시험 화면에서 이어서 풀 수 있어요</span></button>
+   <button type="button" class="jmbtn" data-jq="restart"><b>처음부터 다시</b><span>이 시험을 새 문제로 처음부터 시작해요</span></button>
+   <button type="button" class="jmbtn" data-jq="quit"><b>그만두기</b><span>저장하지 않고 나가요</span></button>`;
+  d.showModal();
+}
 /* ---------- 모의시험 '시험지 모드': 진짜 시험처럼 표지·교시별 제한 시간·쪽 넘기기, 끝난 뒤 한꺼번에 채점 ----------
  * 교시 구성과 시간은 한국 실시위원회의 JLPT 시험 시간표(N1·N2는 2교시, N3~N5는 3교시)를 따라요. */
 const PSCHED={
@@ -2764,6 +2802,9 @@ $("quizView").addEventListener("click",e=>{
   if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
   if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
+  if(a==="qquit"&&Q&&Q.mode==="jlpt"&&!Q.done&&!Q.paper){ jQuitMenu(); return; }
+  if(a==="jresume"){ jResume(); return; }
+  if(a==="jresumedel"){ jSaveClear(); examSetup(); return; }
   if(a==="jstart"){ if(b.dataset.s==="all") jModeChoose(); else jStart(b.dataset.s); return; }
   if(a==="ppick"){ paperPick(+b.dataset.q,+b.dataset.i); return; }
   if(a==="ppg"){ paperGo(+b.dataset.d); return; }
