@@ -114,5 +114,15 @@ service cloud.firestore {
       allow create: if request.auth != null && request.resource.data.by == request.auth.uid;
       allow read, delete: if isDev();
     }
+
+    // 방문자 수(익명): 기기당 하루 한 번 "왔어요"만 남길 수 있고(문서 ID로 막아요), 읽기는 개발자만
+    match /visits/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['d','v','t','pwa','nw'])
+        && request.resource.data.d is string && request.resource.data.d.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.v is string && request.resource.data.v.size() >= 6 && request.resource.data.v.size() <= 16
+        && id == request.resource.data.d + '_' + request.resource.data.v
+        && request.resource.data.t is number && request.resource.data.pwa is bool && request.resource.data.nw is bool;
+      allow read: if isDev();
+    }
   }
 }

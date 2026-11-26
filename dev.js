@@ -28,10 +28,21 @@ async function open(){ if(!isDev) return; const d=dlg(); let mem=[], rep=[], inq
   try{ const w=weekKey(); const ms=await db().collection("leagues").doc(w).collection("members").orderBy("xp","desc").limit(50).get(); mem=ms.docs.map(x=>({id:x.id,...x.data()}));
     const rs=await db().collection("reports").orderBy("at","desc").limit(30).get(); rep=rs.docs.map(x=>({id:x.id,...x.data()}));
     try{ const qs=await db().collection("inquiries").orderBy("at","desc").limit(30).get(); inq=qs.docs.map(x=>({id:x.id,...x.data()})); }catch(e){} }catch(e){ err="서버 규칙에 개발자 권한이 아직 없어요(firestore.rules 배포 필요)"; }
+  let vis="";
+  try{ localStorage.setItem("jp-vskip","1"); const from=new Date(Date.now()-new Date().getTimezoneOffset()*6e4-29*864e5).toISOString().slice(0,10);
+    const vs=await db().collection("visits").where("d",">=",from).limit(5000).get(), by={}, all=new Set(), first={};
+    vs.docs.forEach(x=>{ const q=x.data(); (by[q.d]=by[q.d]||new Set()).add(q.v); all.add(q.v); if(q.nw) first[q.d]=(first[q.d]||0)+1; });
+    const today=new Date(Date.now()-new Date().getTimezoneOffset()*6e4), ds=[]; for(let i=0;i<14;i++){ const t=new Date(today-i*864e5).toISOString().slice(0,10); ds.push([t,(by[t]||new Set()).size,first[t]||0]); }
+    const sum=n=>{ const s=new Set(); for(let i=0;i<n;i++){ const t=new Date(today-i*864e5).toISOString().slice(0,10); (by[t]||[]).forEach(v=>s.add(v)); } return s.size; };
+    const pwa=vs.docs.filter(x=>x.data().pwa).map(x=>x.data().v), pwaN=new Set(pwa).size;
+    vis=`<h3>방문자 (익명, 이 기기는 세지 않아요)</h3><p class="sub">오늘 <b>${ds[0][1]}</b>명 · 최근 7일 <b>${sum(7)}</b>명 · 30일 <b>${all.size}</b>명 · 앱으로 설치해 쓰는 기기 ${pwaN}대</p>
+     <div class="sub">${ds.map(([t,n,nw])=>`${t.slice(5)} · ${n}명${nw?` (처음 온 ${nw})`:""}`).join("<br>")}</div>`;
+  }catch(e){ vis=`<h3>방문자</h3><p class="sub" style="color:#c0392b">불러오지 못했어요(firestore.rules 배포가 필요할 수 있어요)</p>`; }
   const st=ps()?PATH.dev.state():{seeds:0,owned:[]}, nameOf=u=>(mem.find(m=>m.id===u)||{}).name||u.slice(0,6)+"…";
   const ver=[...document.scripts].map(s=>s.getAttribute("src")||"").filter(s=>/\.js\?v=/.test(s)).map(s=>s.replace("?v=","@")).join(" · ");
   d.innerHTML=`<div class="dh"><h2 style="margin:0">🛠 개발자 모드</h2><button class="x" data-dx aria-label="닫기">×</button></div><div class="db devdb">
    <p class="sub">${E(me&&me.email||"")} · 이번 주 ${weekKey()}</p>${err?`<p class="sub" style="color:#c0392b">${err}</p>`:""}
+   ${vis}
    <h3>씨앗 · XP (이 기기)</h3><p class="sub">씨앗 <b>${st.seeds||0}</b>개 · 보유 아이템 ${st.owned.length}개</p>
    <div class="devrow"><button class="pill" data-d="seed" data-n="100">씨앗 +100</button><button class="pill" data-d="seed" data-n="1000">씨앗 +1000</button><button class="pill" data-d="seed" data-n="-9999">씨앗 0으로</button><button class="pill" data-d="xp" data-n="100">XP +100</button><button class="pill" data-d="xp" data-n="1000">XP +1000</button></div>
    <h3>아이템</h3><div class="devrow"><button class="pill" data-d="unlock">전부 잠금 해제</button><button class="pill" data-d="reset">아이템 초기화</button></div>
