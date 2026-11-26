@@ -164,11 +164,11 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kcard .kch:active{transform:scale(.92)}
 @keyframes kpop{0%{transform:scale(.6) rotate(-8deg);opacity:0}70%{transform:scale(1.08) rotate(2deg)}100%{transform:none;opacity:1}}
 .kcard .kro{font-size:34px;font-weight:800;margin-top:6px;}.kcard .kro small{font-size:17px;font-weight:700;opacity:.7;margin-left:4px}
-.kcard .kexl{margin-top:10px;font-size:12px;font-weight:800;opacity:.7;letter-spacing:.02em}
+.kcard .kexl{margin-top:10px;font-size:12px;font-weight:800;opacity:.82;letter-spacing:.02em}
 .kcard .kex{display:inline-flex;align-items:center;gap:10px;margin-top:4px;background:#fff;color:#2b2f55;border:1.5px solid color-mix(in srgb,var(--k2) 18%,#fff);font:inherit;border-radius:18px;padding:6px 18px 6px 10px;cursor:pointer;text-align:left}
-.kcard .kex img{display:block;flex:none}.kcard .kexw b{font-size:22px;margin-right:8px}.kcard .kexw span{font-size:15px;color:#6b6f93;font-weight:700}
+.kcard .kex img{display:block;flex:none}.kcard .kexw b{font-size:22px;margin-right:8px}.kcard .kexw span{font-size:15px;color:#555a82;font-weight:700}
 .kcard .kex:active{transform:scale(.97)}
-.kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.6}
+.kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.78}
 /* 글자 카드: 화면을 가득 채워요 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
 .kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 56px - env(safe-area-inset-bottom,0px))}
 .kfull .kcard{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;margin:4px 0 10px;padding:12px 16px 14px}
@@ -178,7 +178,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcard .kex{margin-top:6px;padding:7px 18px 7px 10px;border-radius:20px}.kfull .kcard .kex img{width:clamp(44px,7dvh,64px);height:clamp(44px,7dvh,64px)}.kfull .kcard .kexw b{font-size:clamp(20px,3.3dvh,26px)}.kfull .kcard .kexw span{font-size:15px}
 .kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
 .kfull .kcb{margin-top:auto}
-.kfull .ktipin{margin-top:10px;font-size:13px;line-height:1.5;font-weight:600;color:var(--text);text-align:left;background:rgba(255,255,255,.7);border-radius:14px;padding:9px 12px;max-width:100%}
+.kfull .ktipin{margin-top:10px;font-size:13px;line-height:1.5;font-weight:600;color:#2b2f55;text-align:left;background:rgba(255,255,255,.7);border-radius:14px;padding:9px 12px;max-width:100%}
 .kfull.kfirst .kcard .kch{font-size:clamp(70px,calc((100dvh - 640px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 640px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 640px)*.42),72px)}
 /* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 차요 (화면 높이 780 부근에서는 기존 크기) */
 .kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 520px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 520px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 520px)*.42),76px)}
