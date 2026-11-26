@@ -12,7 +12,7 @@ const toH=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)
 const keyOf=t=>{ let h=5381,g=7; const s="kana4|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 const texts=new Set(), chars=new Set();
 ["H","D","Y"].forEach(n=>grab(n).forEach(r=>{ texts.add(toH(r[0])); chars.add(toH(r[0])); }));
-["WH","WK"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0]))));
+["WH","WK"].forEach(n=>grab(n).forEach(r=>texts.add(toH(r[0])))); { const km=src.match(/const KW=(\{[\s\S]*?\});\n/); if(km){ const KW=eval("("+km[1]+")"); for(const k in KW) for(const c in KW[k]) texts.add(toH(KW[k][c][0])); } } /* 글자 카드의 관련 단어(KW) */
 const BASE="http://127.0.0.1:50021", dir=path.join(root,"audio","kana"); fs.mkdirSync(dir,{recursive:true});
 const todo=[...texts].filter(t=>!fs.existsSync(path.join(dir,keyOf(t)+".m4a")));
 console.log(`음성 ${texts.size}개 중 새로 만들 것 ${todo.length}개`);
