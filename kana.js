@@ -157,16 +157,16 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kbird{display:flex;align-items:center;gap:8px;margin:2px 0 6px}.kbird img{width:54px;height:auto;flex:none}
 .kbub{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:9px 14px;font-weight:700;font-size:15px;line-height:1.35}
 .kbub:before{content:"";position:absolute;left:-7px;top:50%;margin-top:-6px;width:12px;height:12px;background:var(--card);border-left:1.5px solid var(--line);border-bottom:1.5px solid var(--line);transform:rotate(45deg)}
-.kcard{text-align:center;background:linear-gradient(150deg,var(--k1),var(--k2));border-radius:30px;padding:14px 16px 14px;margin:4px 0 12px;box-shadow:0 10px 24px color-mix(in srgb,var(--k2) 45%,transparent);color:#fff}
-.kcard .kch{display:block;margin:0 auto;border:0;background:rgba(255,255,255,.2);color:#fff;font:inherit;font-size:92px;line-height:1.15;font-weight:700;width:170px;border-radius:44px;padding:4px 0 6px;text-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer;animation:kpop .5s ease both}
+.kcard{text-align:center;background:linear-gradient(160deg,color-mix(in srgb,var(--k1) 16%,#fff),color-mix(in srgb,var(--k2) 22%,#fff));border:1.5px solid color-mix(in srgb,var(--k2) 22%,#fff);border-radius:30px;padding:14px 16px 14px;margin:4px 0 12px;box-shadow:0 6px 18px color-mix(in srgb,var(--k2) 14%,transparent);color:#2b2f55}
+.kcard .kch{display:block;margin:0 auto;border:0;background:#fff;color:var(--k2);font:inherit;font-size:92px;line-height:1.15;font-weight:700;width:170px;border-radius:44px;padding:4px 0 6px;box-shadow:0 3px 10px color-mix(in srgb,var(--k2) 16%,transparent);cursor:pointer;animation:kpop .5s ease both}
 .kcard .kch:active{transform:scale(.92)}
 @keyframes kpop{0%{transform:scale(.6) rotate(-8deg);opacity:0}70%{transform:scale(1.08) rotate(2deg)}100%{transform:none;opacity:1}}
-.kcard .kro{font-size:34px;font-weight:800;margin-top:6px;text-shadow:0 2px 0 rgba(0,0,0,.15)}.kcard .kro small{font-size:17px;font-weight:700;opacity:.9;margin-left:4px}
-.kcard .kexl{margin-top:10px;font-size:12px;font-weight:800;opacity:.92;letter-spacing:.02em}
-.kcard .kex{display:inline-flex;align-items:center;gap:10px;margin-top:4px;background:#fff;color:#2b2f55;border:0;font:inherit;border-radius:18px;padding:6px 18px 6px 10px;cursor:pointer;text-align:left}
+.kcard .kro{font-size:34px;font-weight:800;margin-top:6px;}.kcard .kro small{font-size:17px;font-weight:700;opacity:.7;margin-left:4px}
+.kcard .kexl{margin-top:10px;font-size:12px;font-weight:800;opacity:.7;letter-spacing:.02em}
+.kcard .kex{display:inline-flex;align-items:center;gap:10px;margin-top:4px;background:#fff;color:#2b2f55;border:1.5px solid color-mix(in srgb,var(--k2) 18%,#fff);font:inherit;border-radius:18px;padding:6px 18px 6px 10px;cursor:pointer;text-align:left}
 .kcard .kex img{display:block;flex:none}.kcard .kexw b{font-size:22px;margin-right:8px}.kcard .kexw span{font-size:15px;color:#6b6f93;font-weight:700}
 .kcard .kex:active{transform:scale(.97)}
-.kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.9}
+.kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.6}
 html body .kana .kcb .kgo{background:linear-gradient(150deg,var(--k1),var(--k2))!important;color:#fff!important;box-shadow:none!important;border-bottom-color:color-mix(in srgb,var(--k2) 60%,#000)!important}
 @media(max-width:380px){.klesson .kp{font-size:16px}.kc b{font-size:23px}}`;
 document.head.appendChild(ST);
