@@ -371,11 +371,13 @@ function krRender(){
   const k=KG; if(!k) return;
   const L=k.cur.map(x=>`<button class="opt ${k.done.has(x.id)?"good":k.sel===x.id?"sel":""}" data-kana="kpick" data-side="l" data-id="${x.id}" style="font-size:30px;font-weight:800;min-height:64px">${x.c}</button>`).join("");
   const R=k.right.map(x=>`<button class="opt ${k.done.has(x.id)?"good":k.bad===x.id?"bad":""}" data-kana="kpick" data-side="r" data-id="${x.id}" style="font-size:22px;font-weight:800;min-height:64px">${x.ko}</button>`).join("");
-  root().innerHTML=`<div class="qbox gbox" style="max-width:480px"><div class="gstat"><span>${k.round+1} / ${k.total} 판</span><span class="gsc"><small>맞힌 짝</small><b>${k.pairs}</b></span></div>
+  root().innerHTML=`<div class="qbox gbox" style="max-width:480px"><div class="gstat"><span>${k.round+1} / ${k.total} 판</span><span class="gsc"><small>맞힌 짝</small><b>${k.pairs}</b></span><button class="pill sm" data-act="gquit" aria-label="게임 나가기">나가기</button></div>
   <p class="sub" style="text-align:center">${k.sel?"같은 소리를 오른쪽에서 골라요":"왼쪽 글자를 눌러 보세요 (소리가 나요)"}</p>
   <div class="gcols"><div class="gcol">${L}</div><div class="gcol">${R}</div></div>
   <div class="qbtns"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
+/* 나가기를 누르면 진행 중이던 판을 끊어서, 뒤늦게 화면이 다시 그려지지 않게 해요 */
+document.addEventListener("click",e=>{ if(e.target.closest('[data-act="gquit"]')) KG=null; },true);
 function krPick(side,id){
   const k=KG; if(!k||k.busy||k.done.has(id)) return;
   if(side==="l"){ k.sel=id; try{ say(id); }catch(e){} krRender(); return; }
