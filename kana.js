@@ -167,6 +167,15 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kcard .kex img{display:block;flex:none}.kcard .kexw b{font-size:22px;margin-right:8px}.kcard .kexw span{font-size:15px;color:#6b6f93;font-weight:700}
 .kcard .kex:active{transform:scale(.97)}
 .kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.6}
+/* 글자 카드: 화면을 가득 채워요 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
+.kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 222px)}
+.kfull .kcard{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;margin:4px 0 10px;padding:12px 16px 14px}
+.kfull .kcard .kch{font-size:clamp(84px,12.5dvh,150px);width:clamp(150px,20dvh,236px);border-radius:clamp(36px,6dvh,52px);padding:4px 0 8px}
+.kfull .kcard .kro{font-size:clamp(26px,4.4dvh,40px);margin-top:6px}
+.kfull .kcard .kexl{margin-top:clamp(8px,2dvh,18px)}
+.kfull .kcard .kex{margin-top:6px;padding:7px 18px 7px 10px;border-radius:20px}.kfull .kcard .kex img{width:clamp(44px,7dvh,64px);height:clamp(44px,7dvh,64px)}.kfull .kcard .kexw b{font-size:clamp(20px,3.3dvh,26px)}.kfull .kcard .kexw span{font-size:15px}
+.kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
+.kfull .kcb{margin-top:auto}
 html body .kana .kcb .kgo{background:linear-gradient(150deg,var(--k1),var(--k2))!important;color:#fff!important;box-shadow:none!important;border-bottom-color:color-mix(in srgb,var(--k2) 60%,#000)!important}
 @media(max-width:380px){.klesson .kp{font-size:16px}.kc b{font-size:23px}}`;
 document.head.appendChild(ST);
@@ -313,7 +322,7 @@ function renderCard(){
   inq(false); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
   const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
-  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
+  root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
@@ -322,7 +331,7 @@ function renderCard(){
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
    <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
    ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠어요! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
-  ${i===0?`<div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>`;
+  </div>${i===0?`<div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>`;
   try{ const d=done(); d.cur=(d.cur&&typeof d.cur.k!=="number")?d.cur:{}; d.cur[k?"k":"h"]={i:L.i,c:i}; save(d); }catch(e){}
   window.scrollTo(0,0); setTimeout(()=>say(c[0]),150);
 }
