@@ -983,7 +983,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-readq.js"></script>
 <script src="jlpt-reading.js?v=3"></script>
 <script src="jlpt-listen.js?v=2"></script>
-<script src="listen-audio.js?v=4"></script>
+<script src="listen-audio.js?v=5"></script>
 <script src="news-audio.js?v=1"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="word-audio.js?v=3"></script>
@@ -998,6 +998,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-ctx2.js?v=1"></script>
 <script src="jlpt-more.js?v=2"></script>
 <script src="jlpt-more2.js?v=1"></script>
+<script src="jlpt-more3.js?v=1"></script>
+<script src="jlpt-more4.js?v=1"></script>
 <script src="funny-audio.js?v=2"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
@@ -2367,6 +2369,15 @@ function jWrite(lv,n){
     return {sec:"vocab",kind:"표기",prompt:"밑줄 친 말을 한자로 쓰면?",stem:`<div class="jq">${sent}</div>`,opts:m.o.map(E),a:m.a,exp:`${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)} · ${E(w.yomi)} = ${E(w.text)} (${E(w.ko)})`,w};
   }).filter(Boolean);
 }
+/* 용법: 제시된 말을 바르게 쓴 문장 고르기 / 단어 형성: 접두·접미어 고르기 (직접 만든 문제 은행) */
+function jUsage(lv,n){
+  return shuffle((window.JLPT_USAGE||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+    return {sec:"vocab",kind:"용법",prompt:"다음 말의 사용법으로 가장 알맞은 것은?",stem:`<div class="qw s" style="margin:12px 0"><u>${R(b.w)}</u></div>`,opts:m.o.map(R),a:m.a,exp:`<b>${R(b.w)}</b><br>${R(b.o[0])}<br>${R(b.e||"")}`}; });
+}
+function jWordForm(lv,n){
+  return shuffle((window.JLPT_WF||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+    return {sec:"vocab",kind:"단어 형성",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(b.q.replace("（　）",b.o[0]))}<br>${R(b.e||"")}`}; });
+}
 function jContextAuto(lv,n){
   const pool=jWords(lv).filter(w=>w.ex&&w.ex[0]&&["名詞","副詞","い形容詞","な形容詞"].includes(w.pos)&&w.text.length>=2&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=16);
   return wshuffle(pool).slice(0,n).map(w=>{
@@ -2478,7 +2489,7 @@ function jListen(lv,n){
   });
 }
 /* 전체 풀기 문항 수: 실제 JLPT 구성(한자 읽기·표기·문맥·유의·문법)을 따르되, 문제 은행이 있는 만큼만 내요 */
-const FULLPLAN={N5:{rd:12,wr:8,cx:10,sy:5,pr:3,gf:16,gs:5},N4:{rd:9,wr:6,cx:10,sy:5,pr:3,gf:15,gs:5},N3:{rd:8,wr:6,cx:11,sy:5,pr:3,gf:13,gs:5},N2:{rd:5,wr:5,cx:7,sy:5,pr:3,gf:12,gs:5},N1:{rd:6,wr:0,cx:7,sy:5,pr:3,gf:10,gs:5}};
+const FULLPLAN={N5:{rd:12,wr:8,cx:10,sy:5,pr:3,gf:16,gs:5},N4:{rd:9,wr:6,cx:10,sy:5,pr:3,gf:15,gs:5},N3:{rd:8,wr:6,cx:11,sy:5,us:5,pr:3,gf:13,gs:5},N2:{rd:5,wr:5,wf:5,cx:7,sy:5,us:5,pr:3,gf:12,gs:5},N1:{rd:6,wr:0,cx:7,sy:5,us:6,pr:3,gf:10,gs:5}};
 function jStart(sec,opt){
   stopG(); const lv=jlv(); let items=[];
   if(sec==="vocab") items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2)];
@@ -2488,7 +2499,7 @@ function jStart(sec,opt){
   else if(sec==="rnews") items=jRead(lv,5);
   else if(/^r(short|mid|long|integ|search)$/.test(sec)){ const k=sec.slice(1); if(!(RDG_PLAN[lv]||{})[k]){ toast(lv+" 시험에는 "+RDG_NAME[k]+" 유형이 없어요"); return; } items=jRdg(lv,k); }
   else if(sec==="listen") items=jListen(lv,8);
-  else { const P=FULLPLAN[lv]||FULLPLAN.N4; items=[...jReading(lv,P.rd),...jWrite(lv,P.wr),...jContext(lv,P.cx),...jSyn(lv,P.sy),...jPair(lv,P.pr),...jGramFull(lv,P.gf,P.gs),...jRdg(lv,"all",true),...jListen(lv,20)]; }
+  else { const P=FULLPLAN[lv]||FULLPLAN.N4; items=[...jReading(lv,P.rd),...jWrite(lv,P.wr),...jWordForm(lv,P.wf||0),...jContext(lv,P.cx),...jSyn(lv,P.sy),...jUsage(lv,P.us||0),...jPair(lv,P.pr),...jGramFull(lv,P.gf,P.gs),...jRdg(lv,"all",true),...jListen(lv,40)]; }
   if(!items.length){ toast("이 급수에는 아직 이 문제가 없어요"); return; }
   if(opt&&opt.paper&&sec==="all"){ paperStart(lv,items); return; }
   Q={mode:"jlpt",lv,sec,items,i:0,score:0,sel:null,done:false,by:{},wrong:[]};
@@ -2566,7 +2577,7 @@ function jModeChoose(){
    <button type="button" class="jmbtn paper" data-jm="paper"><b>시험지 모드</b><span>진짜 시험처럼 표지와 시험 안내가 있고, 교시마다 제한 시간이 흘러요. 쪽을 넘기며 풀고 다 푼 뒤에 한꺼번에 채점해요</span></button>`;
   d.showModal();
 }
-const KINDHEAD={"한자 읽기":"밑줄 친 말의 읽는 법으로 가장 알맞은 것을 1·2·3·4에서 하나 고르세요.","표기":"밑줄 친 말을 한자로 쓴 것 중 가장 알맞은 것을 고르세요.","문맥 규정":"（　）에 들어갈 가장 알맞은 것을 고르세요.","유의 표현":"밑줄 친 말과 뜻이 가장 가까운 것을 고르세요.","유의 표현 찾기":"밑줄 친 말과 뜻이 가장 가까운 것을 고르세요.","문법 형식":"（　）에 들어갈 가장 알맞은 것을 고르세요.","문장 만들기":"문장을 바르게 이어서 만들었을 때 ★에 들어가는 것을 고르세요.","글의 문법":"글 전체의 내용을 생각하며, 번호 빈칸에 들어갈 가장 알맞은 것을 고르세요."};
+const KINDHEAD={"한자 읽기":"밑줄 친 말의 읽는 법으로 가장 알맞은 것을 1·2·3·4에서 하나 고르세요.","표기":"밑줄 친 말을 한자로 쓴 것 중 가장 알맞은 것을 고르세요.","문맥 규정":"（　）에 들어갈 가장 알맞은 것을 고르세요.","유의 표현":"밑줄 친 말과 뜻이 가장 가까운 것을 고르세요.","유의 표현 찾기":"밑줄 친 말과 뜻이 가장 가까운 것을 고르세요.","문법 형식":"（　）에 들어갈 가장 알맞은 것을 고르세요.","문장 만들기":"문장을 바르게 이어서 만들었을 때 ★에 들어가는 것을 고르세요.","글의 문법":"글 전체의 내용을 생각하며, 번호 빈칸에 들어갈 가장 알맞은 것을 고르세요.","용법":"다음 말의 사용법으로 가장 알맞은 것을 고르세요.","단어 형성":"（　）에 들어갈 가장 알맞은 것을 고르세요."};
 const Q_same=(a,b)=>a.stem===b.stem;
 function paperPages(items){
   const pages=[]; let cur=null;

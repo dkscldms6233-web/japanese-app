@@ -5,7 +5,7 @@ const jKey=(who,text,rate)=>{ let h=5381,s=who+"|"+text+"|"+rate; for(let i=0;i<
 const RECENT=process.argv.includes("--news-recent");   /* 매일 뉴스 갱신용: 최근 30일 기사 + 고정 기사 문단만 */
 const out={listen:[],news:[],kana:[]};
 // listen
-if(!RECENT){ const ctx={window:{}}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root,"jlpt-listen.js"),"utf8"),ctx); ["jlpt-more.js","jlpt-more2.js","jlpt-more3.js"].forEach(f=>{ try{ vm.runInContext(fs.readFileSync(path.join(root,f),"utf8"),ctx); }catch(e){} });
+if(!RECENT){ const ctx={window:{}}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root,"jlpt-listen.js"),"utf8"),ctx); ["jlpt-more.js","jlpt-more2.js","jlpt-more3.js","jlpt-more4.js"].forEach(f=>{ try{ vm.runInContext(fs.readFileSync(path.join(root,f),"utf8"),ctx); }catch(e){} });
   const jRate=(lv,news)=>news?1:({N5:.85,N4:.9,N3:.95}[lv]||1); const seen=new Set();
   ctx.window.JLPT_LISTEN.forEach(d=>{ const rate=jRate(d.lv,d.type==="news"); d.lines.forEach(([who,t])=>{ const text=plain(t), key=jKey(who,text,rate); if(!seen.has(key)){ seen.add(key); out.listen.push({key,who,text,rate}); } }); }); }
 // news
