@@ -309,3 +309,16 @@ header #profBtn{padding:0 8px!important}
 .gcols .opt{overflow-wrap:anywhere;word-break:keep-all;hyphens:auto}
 .gcols .opt .ft{display:block;max-width:100%}
 .gcols .opt:has(.gst2){padding-left:22px!important;padding-right:22px!important}   /* 별 버튼과 글자가 겹치지 않게 */
+
+/* ===== 다크 모드 글자 대비 보정: 밝은 보라(accent) 바탕에는 어두운 글자, 흰색 반투명 바탕 위 밝은 글자 문제 해결 ===== */
+html[data-theme=dark] .kcta,html[data-theme=dark] .kcta *,html[data-theme=dark] .kentry .kg,html[data-theme=dark] .klesson.ok .kn,
+html[data-theme=dark] .qchip,html[data-theme=dark] .h2begin li.now i,html[data-theme=dark] .kbbtn.on{color:var(--onacc)!important}
+html[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .cta:not(.sec),html[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .cta:not(.sec) b,
+html[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .cta:not(.sec) small,html[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .pill.on,
+html[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .pill.on small,html[data-theme=dark] body:has(#quizView .gbox) #quizView .gbox .pill.on b{color:var(--onacc)!important}
+html[data-theme=dark] .inq .reveal .qbtns .pill{background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.28)!important;color:var(--text)!important}
+html[data-theme=dark] .fu{color:#ffb0be!important}
+html[data-theme=dark] .pill.dng,html[data-theme=dark] .dng{color:#ff9a8c!important}
+html[data-theme=dark] .jcredit{opacity:1!important;color:var(--sub)!important}
+.gt b em{background:#d93a45!important;color:#fff!important}   /* "왕초보 추천!" 칩: 흰 글자 대비 4.5 이상 */
+html[data-theme=dark] .h2ti.c1{color:#fff!important}
