@@ -995,6 +995,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="quotes.js"></script>
 <script src="funny.js?v=3"></script>
 <script src="jlpt-ctx.js?v=1"></script>
+<script src="jlpt-ctx2.js?v=1"></script>
 <script src="funny-audio.js?v=2"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
@@ -2358,7 +2359,11 @@ function jContextAuto(lv,n){
   }).filter(Boolean);
 }
 function jContext(lv,n){
-  const own=shuffle((window.JLPT_CTX||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+  /* 아직 안 푼 문제부터 내요. 다 풀면 처음부터 다시 섞어요 */
+  const all=(window.JLPT_CTX||[]).filter(x=>x.lv===lv), sm=LS.get("jp-ctxseen",{}); let seen=sm[lv]||[];
+  let pool=all.filter(x=>!seen.includes(x.q)); if(pool.length<n){ seen=[]; pool=all; }
+  const pick=shuffle(pool).slice(0,n); sm[lv]=seen.concat(pick.map(x=>x.q)); LS.set("jp-ctxseen",sm);
+  const own=pick.map(b=>{ const m=jShuf(b.o,0);
     return {sec:"vocab",kind:"문맥 규정",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(b.q.replace("（　）",b.o[0]))}<br>${R(b.e||"")}`}; });
   return own.length>=n?own:own.concat(jContextAuto(lv,n-own.length));
 }
