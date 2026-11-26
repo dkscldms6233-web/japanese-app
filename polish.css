@@ -102,6 +102,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 .hdd{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:0;height:34px;padding:0 11px;border:0;border-radius:12px;background:linear-gradient(135deg,#5b5bf0,#9a6bff);box-shadow:0 3px 10px rgba(91,91,240,.35);cursor:pointer;white-space:nowrap;flex:none;line-height:1}
 .hdd .hdl{font-size:8.5px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.85)}
 .hdd .hdn{font-size:15px;font-weight:900;letter-spacing:-.01em;color:#fff;font-variant-numeric:tabular-nums;margin-top:1px}
+/* 시험 한 달 전부터 보라가 살짝 분홍빛으로, 일주일 전부터는 주황~빨강 */
+.hdd.soon{background:linear-gradient(135deg,#6f4ef0,#d255d8);box-shadow:0 3px 10px rgba(180,80,220,.38)}
 .hdd.near{background:linear-gradient(135deg,#ff7a3d,#e0245e);box-shadow:0 3px 10px rgba(224,36,94,.35)}
 .hdd.none,.hdd.past{background:var(--card,#fff);border:1px solid var(--line,#e3e5ef);box-shadow:none}.hdd.none .hdn,.hdd.past .hdn{font-size:12px;font-weight:700;color:var(--sub,#6b6f93);margin:0}.hdd.none .hdl,.hdd.past .hdl{display:none}
 .hdd input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
+
+/* 글자 카드 보는 동안에는 위(로고·D-day·탭)와 아래(하단 탭) 배너를 숨겨서 카드만 크게 */
+body.kcardmode header,body.kcardmode .views,body.kcardmode #subtabs{display:none!important}
+body.kcardmode{padding-bottom:0!important}

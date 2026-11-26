@@ -988,7 +988,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-strokes.js?v=1"></script>
 <script src="word-audio.js?v=3"></script>
 <script src="kana-audio.js?v=6"></script>
-<script src="kana.js?v=47"></script>
+<script src="kana.js?v=51"></script>
 <script src="games2.js?v=30"></script>
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
@@ -996,7 +996,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=23">
+<link rel="stylesheet" href="polish.css?v=25">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2939,7 +2939,7 @@ function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   if(!QV(v)) quizFrom=null;
-  view=v; document.body.dataset.view=v; try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){} hideSel(); document.body.classList.remove("inq","inr","kanamode");
+  view=v; document.body.dataset.view=v; try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){} hideSel(); document.body.classList.remove("inq","inr","kanamode","kcardmode");
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","anime","community","read","stats","plus"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
     document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.grp?b.dataset.grp===g:b.dataset.view===eff)); renderSub(eff); }
@@ -3332,7 +3332,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
-<script src="plus.js?v=20"></script>
+<script src="plus.js?v=21"></script>
 <script src="dev.js?v=9"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

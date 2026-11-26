@@ -108,7 +108,7 @@ const say=(t,r)=>{ try{
   const k=kanaKey(toH(t)), A=window.KANA_AUDIO||{};
   if(A[k]){ try{ speechSynthesis.cancel(); }catch(e){} if(kAud){ try{ kAud.pause(); }catch(e){} } kAud=new Audio("audio/kana/"+k+".m4a"); kAud.play().catch(()=>speakJa(t,r||.8)); return; }
   speakJa(t,r||.8); }catch(e){} };
-const inq=on=>document.body.classList.toggle("inq",!!on);
+const inq=on=>{ document.body.classList.toggle("inq",!!on); document.body.classList.remove("kcardmode"); };   /* 다른 글자 화면으로 가면 카드 전체 화면 모드도 풀려요 */
 const root=()=>$("quizView");
 const ST=document.createElement("style");
 ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;font-size:24px}.kana h3{margin:22px 0 8px;font-size:17px}
@@ -168,7 +168,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kcard .kex:active{transform:scale(.97)}
 .kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.6}
 /* 글자 카드: 화면을 가득 채워요 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
-.kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 222px)}
+.kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 40px - env(safe-area-inset-bottom,0px))}
 .kfull .kcard{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;margin:4px 0 10px;padding:12px 16px 14px}
 .kfull .kcard .kch{font-size:clamp(84px,12.5dvh,150px);width:clamp(150px,20dvh,236px);border-radius:clamp(36px,6dvh,52px);padding:4px 0 8px}
 .kfull .kcard .kro{font-size:clamp(26px,4.4dvh,40px);margin-top:6px}
@@ -176,6 +176,13 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcard .kex{margin-top:6px;padding:7px 18px 7px 10px;border-radius:20px}.kfull .kcard .kex img{width:clamp(44px,7dvh,64px);height:clamp(44px,7dvh,64px)}.kfull .kcard .kexw b{font-size:clamp(20px,3.3dvh,26px)}.kfull .kcard .kexw span{font-size:15px}
 .kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
 .kfull .kcb{margin-top:auto}
+/* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 차요 (화면 높이 780 부근에서는 기존 크기) */
+.kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 520px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 520px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 520px)*.42),76px)}
+.kfull .kcard .kro{font-size:clamp(26px,calc(100dvh*.05),46px)}
+.kfull .kcard .kexl{margin-top:clamp(8px,calc(100dvh*.025),30px)}
+.kfull .kcard .kex img{width:clamp(44px,calc(100dvh*.075),84px);height:clamp(44px,calc(100dvh*.075),84px)}
+.kfull .kcard .kexw b{font-size:clamp(20px,calc(100dvh*.036),32px)}
+}
 html body .kana .kcb .kgo{background:linear-gradient(150deg,var(--k1),var(--k2))!important;color:#fff!important;box-shadow:none!important;border-bottom-color:color-mix(in srgb,var(--k2) 60%,#000)!important}
 @media(max-width:380px){.klesson .kp{font-size:16px}.kc b{font-size:23px}}`;
 document.head.appendChild(ST);
@@ -319,7 +326,7 @@ function startCards(L,k,at){ const chars=lessonChars(L,k); if(!chars.length){ re
 const KC=[["#ff8a5c","#ff5a7a"],["#ffb02e","#ff7a2e"],["#4cc9a0","#2a9d8f"],["#5bb6ff","#4a7bff"],["#a07cff","#6c4ff0"],["#ff7eb6","#e0508f"],["#7bd36a","#3fae5a"],["#ffc93c","#ff9a1f"]];
 const CHEER=["따라 해 봐요!","잘하고 있어요!","소리 내서 읽어 봐요","좋아요, 한 번 더!","멋져요!"];
 function renderCard(){
-  inq(false); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
+  inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
   const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
   root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
