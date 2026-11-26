@@ -993,8 +993,9 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
-<script src="funny.js?v=2"></script>
-<script src="funny-audio.js?v=1"></script>
+<script src="funny.js?v=3"></script>
+<script src="jlpt-ctx.js?v=1"></script>
+<script src="funny-audio.js?v=2"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
@@ -2344,8 +2345,10 @@ function jReading(lv,n){
     return {sec:"vocab",kind:"한자 읽기",prompt:"이 한자의 읽기는?",stem:`<div class="qw">${E(w.text)}</div>`,opts:o.map(E),a:o.indexOf(w.yomi),exp:`${R(w.f)} · ${E(w.ko)}`,w}; });
 }
 const jRe=w=>new RegExp([...w.text].map(c=>c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:\\[[^\\]]*\\])?").join(""));
-function jContext(lv,n){
-  const pool=jWords(lv).filter(w=>w.ex&&w.ex[0]&&["名詞","副詞","い形容詞","な形容詞"].includes(w.pos)&&w.text.length>=2&&jRe(w).test(w.ex[0].ja));
+/* 문맥 규정: 직접 만든 문제 은행(jlpt-ctx.js)을 먼저 쓰고, 모자라면 단어 예문으로 자동 생성해요.
+ * 자동 생성은 문장이 충분히 길어서(단서가 있어서) 정답이 하나로 정해지는 예문만 써요. */
+function jContextAuto(lv,n){
+  const pool=jWords(lv).filter(w=>w.ex&&w.ex[0]&&["名詞","副詞","い形容詞","な形容詞"].includes(w.pos)&&w.text.length>=2&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=16);
   return wshuffle(pool).slice(0,n).map(w=>{
     const sj=plain(w.ex[0].ja);
     const same=shuffle(jWords(lv).filter(x=>x.pos===w.pos&&x.text!==w.text&&!sj.includes(x.text))).slice(0,3);
@@ -2353,6 +2356,11 @@ function jContext(lv,n){
     const m=jShuf([w.f,...same.map(x=>x.f)],0);
     return {sec:"vocab",kind:"문맥 규정",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(w.ex[0].ja.replace(jRe(w),"（　　）"))}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)} · ${E(w.text)} = ${E(w.ko)}`,w};
   }).filter(Boolean);
+}
+function jContext(lv,n){
+  const own=shuffle((window.JLPT_CTX||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+    return {sec:"vocab",kind:"문맥 규정",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(b.q.replace("（　）",b.o[0]))}<br>${R(b.e||"")}`}; });
+  return own.length>=n?own:own.concat(jContextAuto(lv,n-own.length));
 }
 function jSyn(lv,n){
   return shuffle(jBank(window.JLPT_SYN||[],lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,b.a);
