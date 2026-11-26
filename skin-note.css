@@ -1,0 +1,43 @@
+/* 스킨: 일본 문구·노트 스타일 (주소 뒤에 ?skin=note 를 붙이면 켜지고, ?skin=off 로 꺼요)
+ * 둥근 상자 대신 종이·줄 노트·점선·도장 느낌으로. 색 변수와 모서리만 바꾸고, 기능은 그대로예요. */
+html[data-skin=note]{
+  --bg:#f6f1e3; --card:#fffdf5; --text:#25263a; --sub:#6a6650; --line:#ddd3b8;
+  --accent:#3b4ab5; --accent-dk:#2e3b9a; --accent-text:#2e3b9a; --accent-soft:#e9ebf8;
+  --chip:#efe8d2; --flame:#d9482b;
+  --rad:4px; --r-sm:3px; --r-md:5px; --r-lg:6px;
+  --shadow:0 1px 0 rgba(70,55,25,.14),0 3px 8px rgba(70,55,25,.07);
+  --sh-1:var(--shadow); --sh-2:var(--shadow);
+}
+html[data-skin=note] body{background-color:var(--bg);background-image:radial-gradient(rgba(90,75,40,.09) 1px,transparent 1.2px);background-size:18px 18px}
+html[data-skin=note] header{background:rgba(255,253,245,.92);border-bottom:1.5px dashed var(--line)}
+
+/* 홈 — 학습 카드: 노트 표지(실로 꿰맨 점선) */
+html[data-skin=note] .h2hero{border-radius:6px 12px 12px 6px;background:linear-gradient(135deg,#34439f,#27337f);box-shadow:0 4px 0 rgba(30,38,100,.35),0 10px 22px rgba(30,38,100,.22);padding:22px 20px 20px 26px}
+html[data-skin=note] .h2hero::after{display:none}
+html[data-skin=note] .h2hero::before{content:"";position:absolute;inset:7px;border:1.5px dashed rgba(255,255,255,.45);border-radius:3px 8px 8px 3px;pointer-events:none}
+html[data-skin=note] .h2hero .h2lvb{border-radius:3px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.45)}
+html[data-skin=note] .h2hero .cta{border-radius:4px!important;border-bottom-width:3px!important}
+html[data-skin=note] .h2qc{border-radius:3px;background:rgba(255,255,255,.18);border:1px dashed rgba(255,255,255,.5)}
+html[data-skin=note] .h2ring .rf{stroke:#ffd66b}
+
+/* 오늘의 문장: 줄 노트 한 장 */
+html[data-skin=note] .h2sent{border-radius:3px 8px 8px 3px;border:1px solid #ece4cc;padding:18px 18px 16px 38px;
+  background:linear-gradient(90deg,transparent 28px,rgba(217,72,43,.38) 28px,rgba(217,72,43,.38) 29.5px,transparent 29.5px),repeating-linear-gradient(180deg,transparent 0,transparent 29px,rgba(100,130,190,.2) 29px,rgba(100,130,190,.2) 30px),#fffdf4;
+  box-shadow:0 1px 0 rgba(70,55,25,.12),0 6px 14px rgba(70,55,25,.08)}
+html[data-skin=note] .h2sent .lab{display:inline-block;color:#d9482b;border:1.5px solid #d9482b;border-radius:3px;padding:1px 8px;transform:rotate(-2deg);font-weight:800;letter-spacing:.02em}
+
+/* 탐색 타일: 스티커 카드 + 도장 */
+html[data-skin=note] .h2t{border-radius:3px;border:1.5px solid #34344c;background:var(--card);box-shadow:3px 3px 0 rgba(37,38,58,.16)}
+html[data-skin=note] .h2t:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(37,38,58,.16)}
+html[data-skin=note] .h2ti{border-radius:3px;transform:rotate(-5deg);box-shadow:inset 0 0 0 2.5px rgba(255,255,255,.55)}
+html[data-skin=note] .h2sh b{font-family:"Jua","Gowun Dodum",var(--font);font-weight:400;font-size:18px;border-bottom:3px solid #ffd66b;padding:0 2px}
+
+/* 안내·일반 카드: 점선 종이 */
+html[data-skin=note] .h2card,html[data-skin=note] .gstbar,html[data-skin=note] .h2 .pstat,html[data-skin=note] .panel,html[data-skin=note] .fcard,html[data-skin=note] .jr{border-radius:4px!important;border:1.5px dashed var(--line)!important;box-shadow:none!important;background:var(--card)}
+html[data-skin=note] .gstbar{background:#fff7d6!important;border-color:#e3cf82!important}
+html[data-skin=note] .h2flame{border-radius:4px;border:1.5px dashed var(--line)}
+html[data-skin=note] .h2bird .hbird{border-radius:6px!important;border:1.5px solid #34344c;box-shadow:2px 2px 0 rgba(37,38,58,.16)}
+
+/* 하단 탭·일반 버튼 */
+html[data-skin=note] .views{border-top:1.5px dashed var(--line);background:rgba(255,253,245,.96)}
+html[data-skin=note] .cta,html[data-skin=note] .btn{border-radius:4px}
