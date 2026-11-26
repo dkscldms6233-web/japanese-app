@@ -1000,7 +1000,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=34">
+<link rel="stylesheet" href="polish.css?v=36">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2457,7 +2457,7 @@ function jListen(lv,n){
     return {sec:"listen",kind:news?"뉴스 듣기":"대화 듣기",prompt:R(q.q),ph:1,dlg:d.lines,dmeta:{lv:d.lv,news},script,opts:m.o.map(R),a:m.a,exp:E(q.e||"")};
   });
 }
-function jStart(sec){
+function jStart(sec,opt){
   stopG(); const lv=jlv(); let items=[];
   if(sec==="vocab") items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2)];
   else if(sec==="pair") items=jPair(lv,8);
@@ -2468,6 +2468,7 @@ function jStart(sec){
   else if(sec==="listen") items=jListen(lv,8);
   else items=[...jReading(lv,4),...jContext(lv,4),...jSyn(lv,2),...jPair(lv,3),...jGram(lv,12),...jRdg(lv,"all"),...jListen(lv,8)];
   if(!items.length){ toast("이 급수에는 아직 이 문제가 없어요"); return; }
+  if(opt&&opt.paper&&sec==="all"){ paperStart(lv,items); return; }
   Q={mode:"jlpt",lv,sec,items,i:0,score:0,sel:null,done:false,by:{},wrong:[]};
   renderJ();
 }
@@ -2507,6 +2508,7 @@ function jPick(i){
 }
 function jNext(){ if(!Q||Q.mode!=="jlpt") return; jStop(); Q.i++; Q.sel=null; renderJ(); }
 function jResult(){
+  document.body.classList.remove("inpaper");
   try{ if(window.PLUS) PLUS.recordExam(Q); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.items.length, pct=Math.round(Q.score/t*100);
@@ -2520,6 +2522,70 @@ function jResult(){
    </div></div>`;
   if(pct>=70) sakura(pct===100?26:14);
 }
+
+/* ---------- 모의시험 '시험지 모드': 한 쪽에 여러 문제, 옆으로 넘기며 풀고 끝난 뒤 한꺼번에 채점 ---------- */
+function jModeChoose(){
+  let d=$("jModeDlg"); if(!d){ d=document.createElement("dialog"); d.id="jModeDlg"; document.body.appendChild(d);
+    d.addEventListener("click",ev=>{ if(ev.target===d){ d.close(); return; } const b=ev.target.closest("[data-jm]"); if(!b) return; d.close(); jStart("all",{paper:b.dataset.jm==="paper"}); }); }
+  d.innerHTML=`<h3>어떻게 풀어 볼까요?</h3><p class="sub">${E(jlv())} 모의시험 전체 풀기</p>
+   <button type="button" class="jmbtn" data-jm="practice"><b>연습 모드</b><span>한 문제씩 풀고, 고르면 바로 정답과 해설을 봐요</span></button>
+   <button type="button" class="jmbtn paper" data-jm="paper"><b>시험지 모드</b><span>시험지처럼 한 쪽에 여러 문제가 있고, 옆으로 넘기며 풀어요. 다 푼 뒤에 한꺼번에 채점해요</span></button>`;
+  d.showModal();
+}
+function paperPages(items){
+  const pages=[]; let cur=null;
+  items.forEach((it,i)=>{
+    const solo=it.sec==="read"||it.sec==="listen"||it.dlg||it.listen;
+    if(solo){ pages.push({sec:it.sec,idx:[i]}); cur=null; return; }
+    if(cur&&cur.sec===it.sec&&cur.idx.length<4) cur.idx.push(i); else { cur={sec:it.sec,idx:[i]}; pages.push(cur); }
+  });
+  return pages;
+}
+function paperStart(lv,items){
+  stopG(); jStop(); Q={mode:"jlpt",paper:true,lv,sec:"all",items,i:0,score:0,sel:null,done:false,by:{},wrong:[],pg:0,ans:{},pages:paperPages(items)};
+  document.body.classList.add("inq","inpaper"); renderPaper(0);
+}
+function paperQ(i){
+  const it=Q.items[i], sel=Q.ans[i]; let mid=it.stem;
+  if(it.dlg||it.listen){
+    mid=jListenOk()?`<button type="button" class="cta sec epplay" data-act="jplay" data-idx="${i}">소리 듣기 ▶</button>`
+      :`<div class="warn">이 기기에서는 일본어 음성을 쓸 수 없어서 문장을 보여 드려요.</div>`+(it.dlg?it.script:`<div class="jq">${it.jaR}</div>`);
+  }
+  const pr=`<div class="eprompt">${it.ph?it.prompt:E(it.prompt)}</div>`;
+  const opts=it.opts.map((o,k)=>`<button type="button" class="eopt${sel===k?" on":""}" data-act="ppick" data-q="${i}" data-i="${k}"><kbd>${k+1}</kbd><span>${o}</span></button>`).join("");
+  return `<div class="eq" data-q="${i}"><div class="eqn">${i+1}</div><div class="eqb">${it.sec==="read"?mid+pr:pr+mid}<div class="eopts">${opts}</div></div></div>`;
+}
+function paperSheetHtml(){
+  const p=Q.pages[Q.pg]; return `<h4 class="eph">${JSEC[p.sec]}<small>${Q.lv}</small></h4>${p.idx.map(paperQ).join("")}`;
+}
+function renderPaper(dir){
+  const total=Q.pages.length, qv=$("quizView"), old=dir?qv.querySelector(".epsheet"):null, ghost=old?old.cloneNode(true):null;
+  const answered=Object.keys(Q.ans).length;
+  qv.innerHTML=`<div class="epaper"><div class="eptop"><button class="qx" data-act="qquit" aria-label="그만하기">×</button><span class="epsec">${JSEC[Q.pages[Q.pg].sec]}</span><span class="eppg">${Q.pg+1}쪽 / ${total}쪽 · 푼 문제 ${answered}/${Q.items.length}</span></div>
+   <div class="epstage"><div class="epsheet">${paperSheetHtml()}<i class="epcurl" aria-hidden="true"></i></div></div>
+   <div class="epnav"><button type="button" class="cta sec" data-act="ppg" data-d="-1" ${Q.pg?"":"disabled"}>‹ 이전 쪽</button>${Q.pg<total-1?`<button type="button" class="cta" data-act="ppg" data-d="1">다음 쪽 ›</button>`:`<button type="button" class="cta" data-act="psubmit">답안 제출하고 채점</button>`}</div>
+   <div class="ephint">좌우로 쓸어 넘길 수 있어요 · 답은 쪽을 넘겨도 그대로 남아요</div></div>`;
+  if(dir){ const st=qv.querySelector(".epstage"), sh=qv.querySelector(".epsheet");
+    if(dir>0&&ghost){ ghost.classList.add("epflip"); st.appendChild(ghost); setTimeout(()=>ghost.remove(),520); }
+    else if(dir<0&&ghost){ ghost.classList.add("epunder"); st.insertBefore(ghost,sh); sh.classList.add("epback"); setTimeout(()=>{ ghost.remove(); sh.classList.remove("epback"); },520); } }
+  window.scrollTo(0,0);
+}
+function paperPick(q,i){
+  if(!Q||!Q.paper) return; Q.ans[q]=i;
+  const box=document.querySelector('.eq[data-q="'+q+'"]'); if(box) box.querySelectorAll(".eopt").forEach((b,k)=>b.classList.toggle("on",k===i));
+  const el=document.querySelector(".eppg"); if(el) el.textContent=`${Q.pg+1}쪽 / ${Q.pages.length}쪽 · 푼 문제 ${Object.keys(Q.ans).length}/${Q.items.length}`;
+}
+function paperGo(d){ if(!Q||!Q.paper) return; const n=Q.pg+d; if(n<0||n>=Q.pages.length) return; jStop(); Q.pg=n; renderPaper(d); }
+function paperSubmit(){
+  if(!Q||!Q.paper) return; const un=Q.items.length-Object.keys(Q.ans).length;
+  if(un>0&&!confirm("아직 안 푼 문제가 "+un+"개 있어요. 그대로 제출할까요?")) return;
+  jStop();
+  Q.items.forEach((it,i)=>{ const picked=Q.ans[i], ok=picked===it.a; const s=Q.by[it.sec]||(Q.by[it.sec]={n:0,c:0}); s.n++; if(ok){ s.c++; Q.score++; } else Q.wrong.push(it); if(it.w&&picked!=null) record(it.w,ok); });
+  Q.paper=false; jResult();
+}
+document.addEventListener("touchstart",e=>{ if(!(Q&&Q.paper&&!Q.done)||!e.target.closest(".epstage")) return; Q._tx=e.touches[0].clientX; Q._ty=e.touches[0].clientY; },{passive:true});
+document.addEventListener("touchend",e=>{ if(!(Q&&Q.paper)||Q._tx==null) return; const dx=e.changedTouches[0].clientX-Q._tx, dy=e.changedTouches[0].clientY-Q._ty; Q._tx=null; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5) paperGo(dx<0?1:-1); },{passive:true});
+document.addEventListener("keydown",e=>{ if(Q&&Q.paper&&!Q.done&&!e.target.closest("input,textarea,select")){ if(e.key==="ArrowRight") paperGo(1); else if(e.key==="ArrowLeft") paperGo(-1); } });
 
 /* ---------- JLPT 독해: 시험 구성(단문·중문·장문·통합 이해·정보 검색) ---------- */
 const RDG_PLAN={N5:{short:2,mid:1,search:1},N4:{short:2,mid:1,search:1},N3:{short:2,mid:1,long:1,search:1},N2:{short:2,mid:1,integ:1,long:1,search:1},N1:{short:1,mid:1,long:1,integ:1,search:1}};
@@ -2583,12 +2649,15 @@ $("quizView").addEventListener("click",e=>{
   if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
   if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
-  if(a==="jstart"){ jStart(b.dataset.s); return; }
+  if(a==="jstart"){ if(b.dataset.s==="all") jModeChoose(); else jStart(b.dataset.s); return; }
+  if(a==="ppick"){ paperPick(+b.dataset.q,+b.dataset.i); return; }
+  if(a==="ppg"){ paperGo(+b.dataset.d); return; }
+  if(a==="psubmit"){ paperSubmit(); return; }
   if(a==="jpick"){ jPick(+b.dataset.i); return; }
   if(a==="jnext"){ jNext(); return; }
   if(a==="lspdm"){ lspdMenu(b); return; }
   if(a==="lspd"){ lspdSet(+b.dataset.v); return; }
-  if(a==="jplay"){ const it=Q&&Q.items&&Q.items[Q.i]; if(it&&it.dlg) jSpeakDlg(it.dlg,it.dmeta); else if(it&&it.listen) jSpeak(it.listen); return; }
+  if(a==="jplay"){ const it=Q&&Q.items&&Q.items[b.dataset.idx!=null?+b.dataset.idx:Q.i]; if(it&&it.dlg) jSpeakDlg(it.dlg,it.dmeta); else if(it&&it.listen) jSpeak(it.listen); return; }
   if(a==="jretry"){ Q={mode:"jlpt",lv:Q.lv,sec:Q.sec,items:Q.wrong.slice(),i:0,score:0,sel:null,done:false,by:{},wrong:[]}; document.body.classList.remove("inr"); renderJ(); return; }
   if(a==="start") startQuiz(b.dataset.mode,null,+$("qn").value);
   else if(a==="qscope"){ qscope=b.dataset.s||""; quizSetup(); }
@@ -2603,7 +2672,7 @@ $("quizView").addEventListener("click",e=>{
   else if(a==="next") nextQ();
   else if(a==="retry") startQuiz(Q.mode,Q.wrong.slice(),0);
   else if(a==="saveWrong"){ Q.wrong.filter(w=>!w.sent).forEach(w=>stars.add(w.key)); LS.set("jp-star",[...stars]); toast(Q.wrong.length+"개를 저장함에 담았어요"); }
-  else if(a==="again"||a==="qquit"){ jStop(); Q=null; if(a==="qquit"&&quizFrom){ const v=quizFrom; quizFrom=null; setView(v); return; } quizSetup(); }
+  else if(a==="again"||a==="qquit"){ jStop(); document.body.classList.remove("inpaper"); Q=null; if(a==="qquit"&&quizFrom){ const v=quizFrom; quizFrom=null; setView(v); return; } quizSetup(); }
   else if(a==="open"){ if(byKey(b.dataset.key)) openWord(b.dataset.key); }
   else if(a==="later"){ const k=b.dataset.key; if(!k) return; if(k in wrong){ delete wrong[k]; b.textContent="나중에 다시 풀기"; b.classList.remove("on"); b.setAttribute("aria-pressed","false"); toast("나중에 다시 풀기를 취소했어요"); } else { wrong[k]=0; b.textContent="나중에 다시 풀기 ✓"; b.classList.add("on"); b.setAttribute("aria-pressed","true"); toast("나중에 다시 풀 수 있게 담았어요"); } LS.set("jp-wrong",wrong); renderLevels(); }
   else if(a==="sent"){ const w=Q&&Q.list&&Q.list[Q.i]; if(w&&w.ex&&w.ex[0]) showSentence(w); }
@@ -2954,7 +3023,7 @@ function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   if(!QV(v)) quizFrom=null;
-  view=v; document.body.dataset.view=v; try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){} hideSel(); document.body.classList.remove("inq","inr","kanamode","kcardmode");
+  view=v; document.body.dataset.view=v; try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){} hideSel(); document.body.classList.remove("inq","inr","kanamode","kcardmode","inpaper");
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","anime","community","read","stats","plus"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
     document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.grp?b.dataset.grp===g:b.dataset.view===eff)); renderSub(eff); }
@@ -3371,7 +3440,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar.js?v=8"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
-<script src="plus.js?v=24"></script>
+<script src="plus.js?v=25"></script>
 <script src="dev.js?v=9"></script>
 <script src="kowrap.js?v=1"></script>
 <script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

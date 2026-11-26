@@ -85,6 +85,46 @@ function ddayHtml(){
   return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT</span><span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
 function renderDday(){ try{ const el=document.getElementById("hdDday"); if(el) el.innerHTML=ddayHtml(); }catch(e){} }
+
+/* ---- 오늘의 맞춤 플랜: 약점 + 복습할 단어 + 새 단어(시험까지 남은 날에 맞춰 개수 조절) ---- */
+function shuf(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function buildPlan(){
+  const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), srs=LSg().get("jp-srs",{});
+  const words=A().ALL.filter(w=>w.lv===lv), strong=w=>(srs[w.key]&&srs[w.key].b||0)>=3;
+  const weak=weakRank().slice(0,6).map(x=>x.w), used=new Set(weak.map(w=>w.key));
+  const review=shuf(words.filter(w=>srs[w.key]&&!strong(w)&&!used.has(w.key))).slice(0,4); review.forEach(w=>used.add(w.key));
+  let per=5, dd=null; if(pl.date){ dd=Math.ceil((new Date(pl.date+"T00:00:00")-new Date(new Date().toDateString()))/864e5); const left=words.filter(w=>!strong(w)).length; if(dd>0) per=Math.min(15,Math.max(4,Math.ceil(left/dd))); }
+  const fresh=shuf(words.filter(w=>!srs[w.key]&&!used.has(w.key))).slice(0,per);
+  const pool=[...weak,...review,...fresh];
+  return {lv,dd,weak:weak.length,review:review.length,fresh:fresh.length,pool,min:Math.max(3,Math.round(pool.length*0.5))};
+}
+function planHtml(){
+  const b=buildPlan(); if(b.pool.length<4) return `<div class="panel plusp"><h3>오늘의 맞춤 플랜 <em class="plusbadge">PLUS</em></h3><div class="sub">단어를 조금 더 공부하면 플랜이 만들어져요.</div></div>`;
+  const why=b.dd!=null&&b.dd>0?`시험까지 ${b.dd}일 · 하루 새 단어 ${b.fresh}개 페이스로 맞췄어요`:"시험 날짜를 정하면 새 단어 개수를 자동으로 맞춰 줘요";
+  return `<div class="panel plusp eplan"><h3>오늘의 맞춤 플랜 <em class="plusbadge">PLUS</em></h3>
+   <div class="eplrow"><div><b>${b.weak}</b><small>약점 단어</small></div><div><b>${b.review}</b><small>다시 볼 단어</small></div><div><b>${b.fresh}</b><small>새 단어</small></div><div><b>${b.min}분</b><small>예상 시간</small></div></div>
+   <p class="sub" style="margin:8px 0 10px">${why}</p><button type="button" class="pill on plusgo" data-pplan="go">플랜 시작 · ${b.lv} ${b.pool.length}문제</button></div>`;
+}
+function startPlan(){
+  const b=buildPlan(); if(b.pool.length<4){ A().toast("단어가 부족해서 플랜을 만들 수 없어요"); return; }
+  A().setView("quiz"); A().startQuiz("meaning",shuf(b.pool),Math.min(b.pool.length,20));
+}
+/* ---- 주간 학습 리포트: 이번 주 vs 지난주 ---- */
+function weeklyHtml(){
+  const log=LSg().get("jp-log",{}), ds=i=>new Date(Date.now()-i*864e5).toLocaleDateString("sv-SE");
+  const sum=(from,to)=>{ let n=0,c=0,d=0; for(let i=from;i<to;i++){ const e=log[ds(i)]; if(e&&e.n>0){ n+=e.n; c+=e.c||0; d++; } } return {n,c,d,acc:n?Math.round(c/n*100):0}; };
+  const tw=sum(0,7), lw=sum(7,14);
+  if(!tw.n&&!lw.n) return `<div class="panel plusp"><h3>주간 학습 리포트 <em class="plusbadge">PLUS</em></h3><div class="sub">이번 주 학습 기록이 아직 없어요. 오늘 10문제만 풀어도 리포트가 만들어져요.</div></div>`;
+  const dn=(a,b,u)=>{ const d=a-b; return d===0?"지난주와 같아요":(d>0?`지난주보다 +${d}${u}`:`지난주보다 ${d}${u}`); };
+  const top=weakRank().slice(0,3).map(x=>`<span class="ewk">${A().R(x.w.f)} <small>${E(x.w.ko)}</small></span>`).join("");
+  const goal=Math.max(10,Math.min(60,Math.round((tw.n/Math.max(1,tw.d)||10)*1.2/5)*5));
+  const days=[...Array(7)].map((_,k)=>{ const e=log[ds(6-k)], n=e&&e.n||0; return `<i style="height:${Math.min(100,8+n*3)}%" class="${n?"on":""}" title="${n}문제"></i>`; }).join("");
+  return `<div class="panel plusp eweek"><h3>주간 학습 리포트 <em class="plusbadge">PLUS</em></h3>
+   <div class="ewgrid"><div><b>${tw.n}</b><small>푼 문제 · ${dn(tw.n,lw.n,"개")}</small></div><div><b>${tw.acc}%</b><small>정답률 · ${dn(tw.acc,lw.acc,"%p")}</small></div><div><b>${tw.d}일</b><small>학습한 날 · ${dn(tw.d,lw.d,"일")}</small></div></div>
+   <div class="ewbars" aria-hidden="true">${days}</div>
+   ${top?`<h4 class="ph">이번 주 약점 TOP 3</h4><div class="ewks">${top}</div>`:""}
+   <p class="sub" style="margin:10px 0 0">다음 주 목표: <b>하루 ${goal}문제</b>${tw.acc<70?" · 정답률 70%를 먼저 노려 봐요":""}</p></div>`;
+}
 function coachHtml(){
   const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), words=A().ALL.filter(w=>w.lv===lv);
   const srs=LSg().get("jp-srs",{}); const learned=words.filter(w=>srs[w.key]).length, strong=words.filter(w=>(srs[w.key]&&srs[w.key].b||0)>=3).length;
@@ -130,7 +170,7 @@ function renderTab(){
   const el=document.getElementById("plusView"); if(!el) return;
   const plus=isPlus(), rk=weakRank(), why=window.__plusWhy; window.__plusWhy="";
   /* 아이콘: Lucide (ISC 라이선스, img/icons/LICENSE-lucide.txt) */
-  const BEN=[['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2"/><path d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2"/><path d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3"/></svg>',"합격 코치","시험 날짜를 정하면, 하루에 몇 개씩 익히면 되는지 계산해 줘요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>',"영역별 분석","모의시험에서 어디가 약한지 알려 주고, 약한 영역만 집중 연습해요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg>',"직전 총정리","자주 틀린 단어만 모아 20문제로 마지막 점검을 해요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8"/></svg>',"맞춤 복습 무제한","내 약점 단어만 골라 연습하고, 급수별·품사별 약점도 봐요"]];
+  const BEN=[['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2"/><path d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2"/><path d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3"/></svg>',"합격 코치","시험 날짜를 정하면, 하루에 몇 개씩 익히면 되는지 계산해 줘요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>',"영역별 분석","모의시험에서 어디가 약한지 알려 주고, 약한 영역만 집중 연습해요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg>',"직전 총정리","자주 틀린 단어만 모아 20문제로 마지막 점검을 해요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8"/></svg>',"맞춤 복습 무제한","내 약점 단어만 골라 연습하고, 급수별·품사별 약점도 봐요"],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="m9 15 2 2 4-4"/></svg>','오늘의 맞춤 플랜','약점·복습·새 단어를 시험까지 남은 날에 맞춰 10분 분량으로 짜 줘요'],['<svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>','주간 학습 리포트','이번 주 정답률 변화와 약점 TOP, 다음 주 목표를 알려 줘요']];
   const ben=`<div class="plusstage"><i class="psp pa1"></i><i class="psp pa2"></i><i class="psp pa3"></i><i class="psp pa4"></i><i class="psp pa5"></i><h3 class="pstt">플러스로 이렇게 달라져요</h3><div class="pbubs">${BEN.map((x,i)=>`<div class="pcell pk${i}"><div class="pbub"><span class="pi">${x[0]}</span><b>${x[1]}</b></div><p>${x[2]}</p></div>`).join("")}</div></div>`;
   const free=!plus&&freeUsed();
   el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>
@@ -138,9 +178,10 @@ function renderTab(){
    <p class="sub" style="margin:0 2px 12px">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>예요. 플러스는 JLPT 합격 준비를 더 깊게 도와주는 선택 기능이에요.</p>
    ${why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼어요. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있어요.</p>`:""}
    <div class="pluscta"><button class="pill on plusgo" data-plus="weak">${plus?"맞춤 복습 시작 · 약한 단어 10문제":free?"오늘 무료 체험은 끝났어요":"맞춤 복습 무료 체험 (하루 1번)"}</button>${rk.length<4?`<small>틀린 단어가 4개 이상 쌓이면 시작할 수 있어요</small>`:""}</div>
-   ${plus?(coachHtml()+(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없어요. 퀴즈를 풀면 여기에 약점이 쌓여요.</div></div>`)):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
+   ${plus?(planHtml()+weeklyHtml()+coachHtml()+(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없어요. 퀴즈를 풀면 여기에 약점이 쌓여요.</div></div>`)):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
    ${plus?`<h3 class="plusst">이용권 연장</h3>${passesHtml()}`:""}</div>`;
 }
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-pplan]"); if(b){ e.preventDefault(); startPlan(); } });
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,renderTab); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-plus]"); if(!b) return; e.preventDefault(); const k=b.dataset.plus; if(k==="weak") startWeak(); else open(); });
 window.addEventListener("load",()=>{ setTimeout(sync,2500); });
