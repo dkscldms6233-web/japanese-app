@@ -140,3 +140,23 @@ body.kcardmode{padding-bottom:0!important}
 .sbox input[type=search]:focus{outline:none;border-color:var(--accent,#5b5bf0)!important;box-shadow:0 0 0 4px var(--accent-soft,rgba(91,91,240,.14))}
 .sbox:focus-within .ic{stroke:var(--accent,#5b5bf0)}
 .sbox input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;height:18px;width:18px;margin-right:10px;border-radius:50%;cursor:pointer;background:var(--sub,#9a9ec0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M8 8l8 8M16 8l-8 8'/%3E%3C/svg%3E") center/12px no-repeat;opacity:.75}
+
+/* 플러스 혜택: 동동 떠다니는 원(비눗방울) 무대 */
+.plusstage{position:relative;margin:6px 0 18px;padding:22px 12px 20px;border-radius:26px;color:#fff;overflow:hidden;
+  background:radial-gradient(circle at 15% 8%,rgba(255,200,90,.35),transparent 42%),radial-gradient(circle at 90% 92%,rgba(255,110,170,.30),transparent 45%),linear-gradient(160deg,#2a2a78,#4a3bc7 55%,#7a4bd8);
+  box-shadow:0 14px 34px rgba(60,40,160,.38)}
+.plusstage .pstt{margin:0 0 14px;text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em;color:#fff}
+.plusstage .psp{position:absolute;border-radius:50%;background:rgba(255,255,255,.16);animation:pfloat 6s ease-in-out infinite}
+.plusstage .pa1{width:46px;height:46px;left:6%;top:30%;animation-delay:-1s}.plusstage .pa2{width:22px;height:22px;right:9%;top:22%;animation-delay:-3s}.plusstage .pa3{width:64px;height:64px;right:-14px;bottom:16%;animation-delay:-2s}.plusstage .pa4{width:16px;height:16px;left:46%;top:8px;animation-delay:-4s}.plusstage .pa5{width:30px;height:30px;left:-8px;bottom:10%;animation-delay:-5s}
+.pbubs{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
+.pcell{display:flex;flex-direction:column;align-items:center;text-align:center}
+.pcell.pk1,.pcell.pk3{margin-top:26px}
+.pbub{width:124px;height:124px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.62),rgba(255,255,255,.16) 46%,rgba(255,255,255,.07));
+  border:1.5px solid rgba(255,255,255,.38);box-shadow:inset 0 0 20px rgba(255,255,255,.2),0 12px 26px rgba(15,5,70,.4);animation:pfloat 4.4s ease-in-out infinite}
+.pcell.pk1 .pbub{animation-delay:-1.1s;animation-duration:5s}.pcell.pk2 .pbub{animation-delay:-2.2s;animation-duration:4.8s}.pcell.pk3 .pbub{animation-delay:-3.3s;animation-duration:5.4s}
+.pbub .pi{font-size:34px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.pbub b{font-size:13.5px;font-weight:800;color:#fff;letter-spacing:-.01em;padding:0 8px;line-height:1.25}
+.pcell p{margin:10px 4px 0;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);max-width:150px}
+@keyframes pfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@media(prefers-reduced-motion:reduce){.plusstage .psp,.pbub{animation:none}}

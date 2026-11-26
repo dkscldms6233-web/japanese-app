@@ -129,7 +129,8 @@ function passesHtml(){
 function renderTab(){
   const el=document.getElementById("plusView"); if(!el) return;
   const plus=isPlus(), rk=weakRank(), why=window.__plusWhy; window.__plusWhy="";
-  const ben=`<ul class="plusben"><li><b>JLPT 합격 코치</b><span>시험 날짜(D-day)를 정하면 하루에 몇 개씩 익히면 되는지 계산해 줘요. 단어 진행률과 합격 참고선도 보여요</span></li><li><b>모의시험 영역별 분석</b><span>문자·어휘·문법·독해·청해 중 어디가 약한지 알려 주고, 약한 영역만 집중 연습해요 (기록은 지금부터 쌓여요)</span></li><li><b>시험 직전 총정리</b><span>내가 자주 틀린 단어만 모아 20문제로 마지막 점검</span></li><li><b>맞춤 복습 무제한 · 심화 약점 분석</b><span>자주 틀리는 단어 연습(무료는 하루 1번), 급수별·품사별 약점, 헷갈린 오답 짝</span></li></ul>`;
+  const BEN=[["🏆","합격 코치","시험 날짜를 정하면, 하루에 몇 개씩 익히면 되는지 계산해 줘요"],["📊","영역별 분석","모의시험에서 어디가 약한지 알려 주고, 약한 영역만 집중 연습해요"],["⚡","직전 총정리","자주 틀린 단어만 모아 20문제로 마지막 점검을 해요"],["♾️","맞춤 복습 무제한","내 약점 단어만 골라 연습하고, 급수별·품사별 약점도 봐요"]];
+  const ben=`<div class="plusstage"><i class="psp pa1"></i><i class="psp pa2"></i><i class="psp pa3"></i><i class="psp pa4"></i><i class="psp pa5"></i><h3 class="pstt">플러스로 이렇게 달라져요</h3><div class="pbubs">${BEN.map((x,i)=>`<div class="pcell pk${i}"><div class="pbub"><span class="pi" aria-hidden="true">${x[0]}</span><b>${x[1]}</b></div><p>${x[2]}</p></div>`).join("")}</div></div>`;
   const free=!plus&&freeUsed();
   el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>
    <p>${plus?`이용 중이에요 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"JLPT 합격까지, 내 약점에 맞춰 연습해요"}</p></div>
