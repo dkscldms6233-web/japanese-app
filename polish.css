@@ -323,13 +323,9 @@ html[data-theme=dark] .jcredit{opacity:1!important;color:var(--sub)!important}
 .gt b em{background:#d93a45!important;color:#fff!important}   /* "왕초보 추천!" 칩: 흰 글자 대비 4.5 이상 */
 html[data-theme=dark] .h2ti.c1{color:#fff!important}
 
-/* ===== 기초(글자) 카드 다크 모드: 파스텔 카드를 어두운 톤으로, 설명 글자는 밝게 ===== */
-html[data-theme=dark] .kana .kcard{background:linear-gradient(160deg,color-mix(in srgb,var(--k1) 26%,#171b33),color-mix(in srgb,var(--k2) 30%,#171b33));border-color:color-mix(in srgb,var(--k2) 50%,#171b33);color:#eef0ff;box-shadow:none}
-html[data-theme=dark] .kana .kcard .kch{background:#222749;color:color-mix(in srgb,var(--k1) 55%,#fff);box-shadow:0 3px 14px rgba(0,0,0,.35)}
-html[data-theme=dark] .kana .kcard .kex{background:#222749;color:#eef0ff;border-color:color-mix(in srgb,var(--k2) 45%,#222749)}
-html[data-theme=dark] .kana .kcard .kexw span{color:#c3c8ea}
-html[data-theme=dark] .kana .kcard .kro,html[data-theme=dark] .kana .kcard .kexl,html[data-theme=dark] .kana .kcard .khint{color:#eef0ff;opacity:.9}
-html[data-theme=dark] .kana .kfull .ktipin{background:rgba(255,255,255,.1);color:#eef0ff}
+/* ===== 기초(글자) 카드: 다크 모드에서도 파스텔 카드를 그대로 두고, 설명 글자만 진하게 ===== */
 html[data-theme=dark] .kana .kstars i{color:#6a72aa}
 html[data-theme=dark] .kana .kstars i.on{color:#ffc933}
 .hdd .hdl{color:#fff!important}
+/* 단어장: 위쪽 로고·D-day 줄과 검색 줄 사이 간격 */
+header .hin>.bar.list-only{margin-top:12px}
