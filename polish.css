@@ -304,3 +304,8 @@ header #profBtn{padding:0 8px!important}
   header #setBtn{width:34px!important}
   header #profBtn{padding:0 6px!important}
 }
+
+/* 짝 맞추기 카드: 긴 단어·긴 뜻은 줄바꿈하고, 그래도 넘치면 글자를 줄여요(fitTiles) */
+.gcols .opt{overflow-wrap:anywhere;word-break:keep-all;hyphens:auto}
+.gcols .opt .ft{display:block;max-width:100%}
+.gcols .opt:has(.gst2){padding-left:22px!important;padding-right:22px!important}   /* 별 버튼과 글자가 겹치지 않게 */
