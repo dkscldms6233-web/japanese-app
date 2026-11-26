@@ -254,3 +254,14 @@ body.inq.inpaper{background:#d7dbe6!important}
 
 .pcell:last-child:nth-child(odd){grid-column:1/-1;margin-top:6px}
 .jmbtn .plusbadge{margin-left:4px;vertical-align:1px}
+
+/* 위쪽 배너: 프로필·설정 아이콘과 D-day 칩의 높이·모양을 38px로 맞춤 */
+header .tools{gap:8px}
+header #profBtn,header #setBtn{box-sizing:border-box;height:38px!important;min-width:38px;padding:0 9px!important;border-radius:999px!important;display:inline-flex;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow)}
+header #setBtn{width:38px!important;padding:0!important}
+header #profBtn .ic,header #setBtn .ic{width:20px;height:20px}
+header .hdd{height:38px;border-radius:999px;padding:0 13px}
+header .hdd .hdl{font-size:8.5px}
+header .hdd .hdn{font-size:15px}
+#hdDday{display:flex;align-items:center}
+header #profBtn{padding:0 8px!important}
