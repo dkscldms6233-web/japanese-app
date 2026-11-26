@@ -3248,7 +3248,7 @@ function renderHome(){
   const greet=(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 볼까요?":"오늘 하루도 수고했어요");
   const pc=Math.min(100,Math.round(tl.n/g*100));
   const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
-  const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"오늘의 웃픈 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
+  const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"오늘의 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
   /* 홈 v2: 인사·연속 출석 → 오늘의 학습(히어로) → 이어서/복습 → 이번 주 출석 → 탐색 → 오늘의 문장 (기능은 그대로, 7일 여정은 '더 보기'로) */
   const jr=window.PATH?PATH.journeyHtml():"", jrPending=jr.includes('data-gift="open"');
   let moreOpen=false; try{ moreOpen=localStorage.getItem("jp-homemore")==="1"; }catch(e){}
@@ -3298,7 +3298,7 @@ function renderToday(){
     $("todayView").innerHTML=`<div class="today">
      <button class="back" data-go="home">${ic("back")}홈으로</button>
      <div class="tbox">
-       <div class="lab">${todayOff?"다른 문장":"오늘의 웃픈 문장"} · ${E(fn.lv)}</div>
+       <div class="lab">${todayOff?"다른 문장":"오늘의 문장"} · ${E(fn.lv)}</div>
        <div class="tja">${R(fn.ja)}</div>
        <div class="tko">${E(fn.ko)}</div>
        <div class="qbtns" style="justify-content:flex-start;margin-top:8px">
