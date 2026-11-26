@@ -1000,7 +1000,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=26">
+<link rel="stylesheet" href="polish.css?v=27">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2986,7 +2986,7 @@ function quotePick(off){
 const modn=(a,n)=>((a%n)+n)%n, dayNo=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
 function funnyOn(off){ return (window.FUNNY||[]).length>0 && modn(dayNo()+off,2)===0; }
 function funnyPick(off){ const F=window.FUNNY||[]; if(!F.length) return null; let pool=F; const my=myLv(); if(my.length){ const f=F.filter(x=>my.includes(x.lv)); if(f.length>=3) pool=f; } return pool[modn(Math.floor((dayNo()+off)/2),pool.length)]; }
-function cultureHtml(){ const C=window.CULTURE||[]; if(!C.length) return ""; const c=C[modn(dayNo(),C.length)]; return `<section class="h2cul"><div class="h2sh"><b>일본 문화 한 줄</b><small>오늘의 이야기</small></div><div class="culb"><b>${R(c.t)}</b><p>${R(c.body)}</p></div></section>`; }
+function cultureHtml(){ const C=window.CULTURE||[]; if(!C.length) return ""; const i=modn(dayNo(),C.length), c=C[i], d=new Date(); return `<section class="h2cul"><div class="cnote"><i class="ctape" aria-hidden="true"></i><div class="chead"><span class="ctag">✎ 일본 문화 한 줄</span><span class="cno">No.${i+1}</span></div><h3 class="ctit">${R(c.t)}</h3><p class="cbody">${R(c.body)}</p><div class="cfoot">${d.getMonth()+1}월 ${d.getDate()}일의 이야기 · 내일은 또 다른 이야기가 와요</div></div></section>`; }
 function goalN(){ return [10,20,30].includes(prefs.goal)?prefs.goal:10; }
 let lvPop=false;
 function renderHome(){
