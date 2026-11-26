@@ -82,7 +82,7 @@ function ddayHtml(){
     if(d<0){ big="끝"; top="시험일이 지났어요"; sub="눌러서 새 시험 날짜 정하기"; cls=" past"; }
     else { big=d===0?"D-DAY":"D-"+d; top="JLPT "+lv+" 시험까지"; sub=md+(off?" · 공식 시험일":"")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":""; pct=Math.max(4,Math.min(100,Math.round((1-d/100)*100))); } }
   else { big="날짜 정하기"; top=""; sub="눌러서 날짜 고르기"; cls=" none"; }
-  return `<label class="ddpill${cls}"><span class="ddsm">JLPT ${lv}</span><span class="ddbig">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
+  return `<label class="ddpill${cls}"><span class="ddsm">JLPT 시험</span><span class="ddbig">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
 function coachHtml(){
   const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), words=A().ALL.filter(w=>w.lv===lv);
