@@ -38,10 +38,13 @@ def tasks():
         pct=round((j["rate"]-1)*100); yield ("listen",j["key"],j["text"],KEITA if j["who"]=="M" else NANAMI,f"{pct:+d}%",48000,6,12)
     for j in J["news"]:
         yield ("news",j["key"],j["text"],NANAMI,"-5%",32000,6,12)
+    for j in J.get("funny",[]):
+        yield ("funny",j["key"],j["text"],NANAMI,"-8%",32000,6,12)
 print("음성:",tts_backend.backend_name(),flush=True)
 T=[t for t in tasks() if not (NEWS_MODE and os.path.exists(os.path.join(ROOT,"audio",t[0],t[1]+".m4a")))]; print("만들 것",len(T),flush=True)
 async def main():
     sem=asyncio.Semaphore(CONC); loop=asyncio.get_running_loop(); tmpd=tempfile.mkdtemp(); fail=[]; done=0
+    os.makedirs(os.path.join(ROOT,"audio","funny"),exist_ok=True)
     async def one(i,t):
         nonlocal done
         d,key,text,voice,rate,br,pre,post=t

@@ -993,7 +993,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="bgm.js?v=37"></script>
 <script src="gametheme.js?v=41"></script>
 <script src="quotes.js"></script>
-<script src="funny.js?v=1"></script>
+<script src="funny.js?v=2"></script>
+<script src="funny-audio.js?v=1"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
@@ -2950,7 +2951,8 @@ $("logo").addEventListener("click",()=>setView("home"));
 document.querySelector("main").addEventListener("click",e=>{ const g=e.target.closest("[data-go]"); if(g) setView(g.dataset.go); });
 
 /* ---------- 홈 / 오늘의 문장 ---------- */
-let todayOff=0, todayJa="";
+let todayOff=0, todayJa="", todayFk="";   /* todayFk: 웃픈 예문의 음성 파일 키 */
+const funnyKey=ja=>{ let h=5381,g=7; const s="fun1|"+ja.replace(/\[[^\]]*\]/g,""); for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 function streakDays(){
   const ds=i=>new Date(Date.now()-i*864e5).toLocaleDateString("sv-SE"); let s=0;
   for(let i=(log[ds(0)]&&log[ds(0)].n?0:1); log[ds(i)]&&log[ds(i)].n>0; i++) s++;
@@ -2971,7 +2973,7 @@ function quotePick(off){
 const modn=(a,n)=>((a%n)+n)%n, dayNo=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
 function funnyOn(off){ return (window.FUNNY||[]).length>0 && modn(dayNo()+off,2)===0; }
 function funnyPick(off){ const F=window.FUNNY||[]; if(!F.length) return null; let pool=F; const my=myLv(); if(my.length){ const f=F.filter(x=>my.includes(x.lv)); if(f.length>=3) pool=f; } return pool[modn(Math.floor((dayNo()+off)/2),pool.length)]; }
-function cultureHtml(){ const C=window.CULTURE||[]; if(!C.length) return ""; const c=C[modn(dayNo(),C.length)]; return `<section class="h2cul"><div class="h2sh"><b>일본 문화 한 줄</b><small>오늘의 이야기</small></div><div class="culb"><b>${E(c.t)}</b><p>${E(c.body)}</p></div></section>`; }
+function cultureHtml(){ const C=window.CULTURE||[]; if(!C.length) return ""; const c=C[modn(dayNo(),C.length)]; return `<section class="h2cul"><div class="h2sh"><b>일본 문화 한 줄</b><small>오늘의 이야기</small></div><div class="culb"><b>${R(c.t)}</b><p>${R(c.body)}</p></div></section>`; }
 function goalN(){ return [10,20,30].includes(prefs.goal)?prefs.goal:10; }
 let lvPop=false;
 function renderHome(){
@@ -3027,7 +3029,7 @@ function beginnerHtml(){
 function renderToday(){
   const fn=funnyOn(todayOff)?funnyPick(todayOff):null;
   if(fn){
-    todayJa=plain(fn.ja);
+    todayJa=plain(fn.ja); todayFk=funnyKey(fn.ja);
     $("todayView").innerHTML=`<div class="today">
      <button class="back" data-go="home">${ic("back")}홈으로</button>
      <div class="tbox">
@@ -3041,7 +3043,7 @@ function renderToday(){
      <div class="panel"><h3>이 문장으로 배우기</h3><div class="sub">${R(fn.note)}</div></div>
     </div>`; return;
   }
-  const qt=quotePick(todayOff);
+  todayFk=""; const qt=quotePick(todayOff);
   if(qt){
     todayJa=plain(qt.ja);
     $("todayView").innerHTML=`<div class="today">
@@ -3082,6 +3084,7 @@ $("todayView").addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   if(b.dataset.act==="other"){ todayOff++; renderToday(); }
   else if(b.dataset.act==="speak"){
+    if(todayFk&&window.FUNNY_AUDIO&&FUNNY_AUDIO[todayFk]){ try{ speechSynthesis.cancel(); }catch(err){} const au=new Audio("audio/funny/"+todayFk+".m4a"); au.play().catch(()=>{}); return; }
     try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(todayJa); u.lang="ja-JP"; u.rate=.9; speechSynthesis.speak(u); }catch(err){}
   }
 });
