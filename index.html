@@ -1020,7 +1020,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more2.js?v=1"></script>
 <script src="jlpt-more3.js?v=1"></script>
 <script src="jlpt-more4.js?v=1"></script>
-<script src="funny-audio.js?v=2"></script>
+<script src="funny-audio.js?v=3"></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
@@ -3222,6 +3222,7 @@ function streakDays(){
 }
 function todayPick(off){
   let pool=ALL.filter(w=>w.ex&&w.ex[0]&&w.ex[0].ja); if(!pool.length) return null;
+  const FA=window.FUNNY_AUDIO||{}, voiced=pool.filter(w=>FA[funnyKey(w.ex[0].ja)]); if(voiced.length>=60) pool=voiced;   /* 마이크로소프트 음성이 있는 문장만 오늘의 문장으로 */
   const my=myLv(); if(my.length){ const f=pool.filter(w=>my.includes(w.lv)); if(f.length) pool=f; }
   const dn=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
   return pool[(((dn+off)%pool.length)+pool.length)%pool.length];
@@ -3307,7 +3308,7 @@ function renderToday(){
   }
   todayFk=""; const qt=quotePick(todayOff);
   if(qt){
-    todayJa=plain(qt.ja);
+    todayJa=plain(qt.ja); todayFk=funnyKey(qt.ja);
     $("todayView").innerHTML=`<div class="today">
      <button class="back" data-go="home">${ic("back")}홈으로</button>
      <div class="tbox">
@@ -3323,7 +3324,7 @@ function renderToday(){
   }
   const p=todayPick(todayOff);
   if(!p){ $("todayView").innerHTML=`<div class="today"><button class="back" data-go="home">${ic("back")}홈으로</button><div class="empty">예문이 있는 단어가 아직 없어요.</div></div>`; return; }
-  const e=p.ex[0]; todayJa=plain(e.ja);
+  const e=p.ex[0]; todayJa=plain(e.ja); todayFk=funnyKey(e.ja);
   const chunks=chunkSentence(todayJa);
   $("todayView").innerHTML=`<div class="today">
    <button class="back" data-go="home">${ic("back")}홈으로</button>
