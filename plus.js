@@ -77,12 +77,12 @@ function ddayHtml(){
   const pl0=plan(), lv=LVS.includes(pl0.lv)?pl0.lv:((A().myLv()[0])||"N4"), today=new Date().toLocaleDateString("sv-SE");
   /* 날짜를 안 정했으면 다가오는 공식 시험일(한국 JLPT 2026년 제2회: 12월 6일, 출처 jlpt.jp·한국 실시위원회)을 보여 줘요 */
   const OFFICIAL=["2026-12-06"], off=!pl0.date?OFFICIAL.find(d=>d>=today):"", pl={...pl0,date:pl0.date||off||""};
-  let main, sub, cls="";
+  let big, top, sub, cls="", pct=0;
   if(pl.date){ const d=Math.ceil((new Date(pl.date+"T00:00:00")-new Date(new Date().toDateString()))/864e5), md=(+pl.date.slice(5,7))+"월 "+(+pl.date.slice(8,10))+"일";
-    if(d<0){ main="시험일이 지났어요"; sub="새 시험 날짜 정하기"; cls=" past"; }
-    else { main=d===0?"오늘이 시험일!":"JLPT "+lv+" D-"+d; sub=md+(off?" 공식 시험일":" 시험")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":""; } }
-  else { main="JLPT 시험 날짜를 정해 보세요"; sub="D-day를 홈에서 바로 볼 수 있어요"; cls=" none"; }
-  return `<label class="ddchip${cls}"><span class="ddm"><b>${main}</b><small>${sub}</small></span><span class="ddi" aria-hidden="true">📅</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
+    if(d<0){ big="끝"; top="시험일이 지났어요"; sub="눌러서 새 시험 날짜 정하기"; cls=" past"; }
+    else { big=d===0?"D-DAY":"D-"+d; top="JLPT "+lv+" 시험까지"; sub=md+(off?" · 공식 시험일":"")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":""; pct=Math.max(4,Math.min(100,Math.round((1-d/100)*100))); } }
+  else { big="D-?"; top="JLPT 시험 날짜를 정해 보세요"; sub="눌러서 날짜 고르기"; cls=" none"; }
+  return `<label class="ddtk${cls}"><span class="ddbig">${big}</span><span class="ddtx"><b>${top}</b><small>${sub}</small>${pct?`<i class="ddbar"><u style="width:${pct}%"></u></i>`:""}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
 function coachHtml(){
   const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), words=A().ALL.filter(w=>w.lv===lv);
