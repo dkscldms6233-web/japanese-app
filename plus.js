@@ -72,6 +72,18 @@ const plan=()=>{ try{ return LSg().get("jp-jplan",{})||{}; }catch(e){ return {};
 const savePlan=o=>{ try{ LSg().set("jp-jplan",o); }catch(e){} };
 const hist=()=>{ try{ return LSg().get("jp-jhist",[])||[]; }catch(e){ return []; } };
 function recordExam(Q){ try{ if(!Q||!Q.by) return; const h=hist(); h.push({t:Date.now(),lv:Q.lv,by:Q.by,n:Q.items.length,c:Q.score}); LSg().set("jp-jhist",h.slice(-40)); }catch(e){} }
+/* 홈 화면 D-day: 시험 날짜는 누구나 정할 수 있고(합격 코치와 같은 값), 날짜를 누르면 바꿀 수 있어요 */
+function ddayHtml(){
+  const pl0=plan(), lv=LVS.includes(pl0.lv)?pl0.lv:((A().myLv()[0])||"N4"), today=new Date().toLocaleDateString("sv-SE");
+  /* 날짜를 안 정했으면 다가오는 공식 시험일(한국 JLPT 2026년 제2회: 12월 6일, 출처 jlpt.jp·한국 실시위원회)을 보여 줘요 */
+  const OFFICIAL=["2026-12-06"], off=!pl0.date?OFFICIAL.find(d=>d>=today):"", pl={...pl0,date:pl0.date||off||""};
+  let main, sub, cls="";
+  if(pl.date){ const d=Math.ceil((new Date(pl.date+"T00:00:00")-new Date(new Date().toDateString()))/864e5), md=(+pl.date.slice(5,7))+"월 "+(+pl.date.slice(8,10))+"일";
+    if(d<0){ main="시험일이 지났어요"; sub="새 시험 날짜 정하기"; cls=" past"; }
+    else { main=d===0?"오늘이 시험일!":"JLPT "+lv+" D-"+d; sub=md+(off?" 공식 시험일":" 시험")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":""; } }
+  else { main="JLPT 시험 날짜를 정해 보세요"; sub="D-day를 홈에서 바로 볼 수 있어요"; cls=" none"; }
+  return `<label class="ddchip${cls}"><span class="ddm"><b>${main}</b><small>${sub}</small></span><span class="ddi" aria-hidden="true">📅</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
+}
 function coachHtml(){
   const pl=plan(), lv=LVS.includes(pl.lv)?pl.lv:(A().myLv()[0]||"N4"), words=A().ALL.filter(w=>w.lv===lv);
   const srs=LSg().get("jp-srs",{}); const learned=words.filter(w=>srs[w.key]).length, strong=words.filter(w=>(srs[w.key]&&srs[w.key].b||0)>=3).length;
@@ -101,7 +113,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest("[data-pcoach]")
   if(k==="lv"){ const p=plan(); p.lv=lv; savePlan(p); A().setJl(lv); renderTab(); }
   else if(k==="sec"){ A().setJl(lv); A().setView("exam"); A().jStart(b.dataset.s); }
   else if(k==="final"){ const pool=weakRank().filter(x=>x.w.lv===lv).map(x=>x.w); if(pool.length<4){ A().toast(lv+" 단어 중 틀린 기록이 아직 적어요. 퀴즈를 더 풀어 보세요."); return; } A().startQuiz("meaning",pool.slice(0,40),20); } });
-document.addEventListener("change",e=>{ if(e.target&&e.target.id==="pcDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); renderTab(); } });
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="hmDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); try{ A().renderHome(); }catch(x){} return; } if(e.target&&e.target.id==="pcDate"){ const p=plan(); p.date=e.target.value; if(!p.lv) p.lv=(A().myLv()[0]||"N4"); savePlan(p); renderTab(); } });
 
 /* ---- 플러스 탭 (하단 메뉴) ---- */
 function open(why){ try{ document.querySelectorAll("dialog[open]").forEach(d=>d.close()); }catch(e){} try{ window.__plusWhy=why||""; }catch(e){} A().setView("plus"); }
@@ -129,5 +141,5 @@ function renderTab(){
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,renderTab); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-plus]"); if(!b) return; e.preventDefault(); const k=b.dataset.plus; if(k==="weak") startWeak(); else open(); });
 window.addEventListener("load",()=>{ setTimeout(sync,2500); });
-window.PLUS={isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
+window.PLUS={ddayHtml,isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
 })();
