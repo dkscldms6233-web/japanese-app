@@ -1,6 +1,6 @@
 /* JLPT N3 추가 문제 은행: N3 문제집(직전대책·20日で合格)에서 자주 나온 출제 포인트로 새로 만든 문제들
  * (문제집의 문제를 그대로 옮긴 것이 아니라, 같은 문법·단어를 이 앱이 새로 지은 문장으로 묻습니다)
- * pri:2 = 출제할 때 다른 문제보다 2배 더 잘 뽑히게 하는 표시 (index.html의 wshuffle)
+ * pri:2 = 출제할 때 다른 문제보다 2배 더 잘 뽑히게 하는 표시 (index.html의 pshuffle)
  * 형식은 jlpt-bank.js(문법), jlpt-ctx.js(문맥), jlpt-bank.js JLPT_SYN(유의), jlpt-more3.js JLPT_USAGE(용법)와 같습니다. */
 window.JLPT_GRAM=(window.JLPT_GRAM||[]).concat([
 /* ===== 문법 형식 ===== */
