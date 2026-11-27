@@ -516,3 +516,10 @@ html[data-theme=dark] .tr-tip{--tr-line:rgba(255,255,255,.26);box-shadow:0 12px 
 html[data-theme=dark] .tr-tip{background:#252c55}
 html[data-theme=dark] .tr-tip::after{background:#252c55}
 html[data-theme=dark] .tr-dots i{background:rgba(255,255,255,.25)}
+
+/* 말풍선이 어두워진 배경과 구분되게: 배경을 더 어둡게, 말풍선은 앱 강조색 테두리 + 은은한 빛 */
+.tr-sh{background:rgba(8,10,28,.74)}
+.tr-tip{border:2px solid var(--accent);--tr-line:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent),0 14px 34px rgba(0,0,0,.45)}
+.tr-tip.up::after{border-left-width:2px;border-top-width:2px}.tr-tip.down::after{border-right-width:2px;border-bottom-width:2px}
+html[data-theme=dark] .tr-tip{background:#323a72;--tr-line:#a9a9ff;border-color:#a9a9ff;box-shadow:0 0 0 4px rgba(169,169,255,.2),0 14px 34px rgba(0,0,0,.6)}
+html[data-theme=dark] .tr-tip::after{background:#323a72}
