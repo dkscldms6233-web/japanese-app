@@ -358,3 +358,7 @@ html[data-theme=dark] #grid .card{background:#242b52!important;border-color:rgba
 html[data-theme=dark] #grid .card .w{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--lc,var(--nx)) 55%,transparent) 62%);color:#fff}
 html[data-theme=dark] #grid .card .m{color:#f2f4ff}
 html[data-theme=dark] #grid .card .lvb{color:#c9cfee!important}
+
+/* 색 카드(.t2.c1~c4): 마우스를 올려도 배경이 흰색으로 바뀌지 않게 (흰 글자가 안 보이던 문제) */
+.t2.c1:hover{background:#5b5bf0!important}.t2.c2:hover{background:#ff8a3d!important}.t2.c3:hover{background:#1fb673!important}.t2.c4:hover{background:#2aa3f0!important}
+.t2.c1:hover,.t2.c2:hover,.t2.c3:hover,.t2.c4:hover{filter:brightness(1.06)}
