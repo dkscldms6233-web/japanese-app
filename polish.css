@@ -488,3 +488,8 @@ details.pllist[open]{padding-bottom:6px}
 .stmore[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
 html[data-theme=dark] .h2hero.soft .cta{background:color-mix(in srgb,var(--accent) 22%,transparent)!important;color:#fff!important;border-color:rgba(255,255,255,.22)!important}
 html[data-theme=dark] .h2hero.soft .h2rw b{color:#fff}
+.obagree{margin:12px 0 14px!important}
+
+/* 뉴스 읽기: 문장마다 붙은 '번역 보기'는 테두리 없는 작은 글씨로 낮춰서, 본문과 위쪽 듣기 버튼이 먼저 보이게 */
+.kobtn{border:0!important;background:transparent!important;padding:2px 0!important;font-size:12.5px!important;color:var(--accent-text,var(--accent))!important;text-decoration:underline;text-underline-offset:3px}
+.kobtn:hover{background:transparent!important;opacity:.8}
