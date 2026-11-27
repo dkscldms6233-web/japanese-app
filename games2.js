@@ -1,5 +1,5 @@
 /* 새 게임 3종: 일본어 워들 · しりとり(끝말잇기) · 떨어지는 단어
- * index.html의 게임 도구(G, stopG, gCountdown, gResult, sfx, record …)를 그대로 써요.
+ * index.html의 게임 도구(G, stopG, gCountdown, gResult, sfx, record …)를 그대로 씁니다.
  */
 (function(){
 const toHira=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
@@ -51,11 +51,11 @@ const KB={
   etc:KBET0
 };
 
-/* 입력 방식: 기본은 내 핸드폰의 일본어 키보드. 일본어 키보드가 없으면 화면 키보드로 바꿀 수 있어요 (워들·しりとり 공통, 선택은 기억해요) */
+/* 입력 방식: 기본은 내 핸드폰의 일본어 키보드. 일본어 키보드가 없으면 화면 키보드로 바꿀 수 있습니다 (워들·しりとり 공통, 선택은 기억합니다) */
 const natOn=()=>typeof prefs!=="undefined"&&prefs.gNative===true;
 const setNat=v=>{ prefs.gNative=!!v; LS.set("jp-prefs",prefs); };
 const toKata=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
-/* 컴퓨터(마우스·키보드)에서는 키보드로 로마자를 치면 가나로 바뀌어요: ka→か, shi→し, kka→っか, nn→ん, -→ー */
+/* 컴퓨터(마우스·키보드)에서는 키보드로 로마자를 치면 가나로 바뀝니다: ka→か, shi→し, kka→っか, nn→ん, -→ー */
 const isDesk=()=>{ try{ return matchMedia("(hover:hover) and (pointer:fine)").matches; }catch(e){ return false; } };
 const RMAP=(()=>{ const m={a:"あ",i:"い",u:"う",e:"え",o:"お",la:"ぁ",li:"ぃ",lu:"ぅ",le:"ぇ",lo:"ぉ",xa:"ぁ",xi:"ぃ",xu:"ぅ",xe:"ぇ",xo:"ぉ",wa:"わ",wo:"を",nn:"ん","n'":"ん",
   shi:"し",chi:"ち",tsu:"つ",fu:"ふ",ji:"じ",si:"し",ti:"ち",tu:"つ",hu:"ふ",zi:"じ",wi:"うぃ",we:"うぇ",xtu:"っ",ltu:"っ",xtsu:"っ",ltsu:"っ",xya:"ゃ",xyu:"ゅ",xyo:"ょ",lya:"ゃ",lyu:"ゅ",lyo:"ょ",xwa:"ゎ",
@@ -66,12 +66,12 @@ const RMAP=(()=>{ const m={a:"あ",i:"い",u:"う",e:"え",o:"お",la:"ぁ",li:"
   const ys={k:"きゃきゅきょ",g:"ぎゃぎゅぎょ",n:"にゃにゅにょ",h:"ひゃひゅひょ",m:"みゃみゅみょ",r:"りゃりゅりょ",b:"びゃびゅびょ",p:"ぴゃぴゅぴょ",s:"しゃしゅしょ",t:"ちゃちゅちょ",d:"ぢゃぢゅぢょ",z:"じゃじゅじょ"};
   for(const c in ys){ ["a","u","o"].forEach((v,i)=>{ const k=c+"y"+v; if(!m[k]) m[k]=ys[c].slice(i*2,i*2+2); }); }
   return m; })();
-/* 로마자 버퍼를 가나로 바꿔요. 돌려주는 값: {out: 완성된 가나, rest: 아직 덜 친 로마자} */
+/* 로마자 버퍼를 가나로 바꿉니다. 돌려주는 값: {out: 완성된 가나, rest: 아직 덜 친 로마자} */
 function romaji(buf){
   let out="",b=buf.toLowerCase();
   while(b){
     if(b.length>=2&&b[0]===b[1]&&/[bcdfghjklmpqrstvwxyz]/.test(b[0])){ out+="っ"; b=b.slice(1); continue; }
-    if(b==="nn") break;   /* 다음 글자가 모음이면 こんにちは(konnichiha)처럼 n+な행이 돼요 */
+    if(b==="nn") break;   /* 다음 글자가 모음이면 こんにちは(konnichiha)처럼 n+な행이 됩니다 */
     if(b[0]==="n"&&b[1]==="n"&&b.length>=3){ out+="ん"; b=/[aiueoy]/.test(b[2])?b.slice(1):b.slice(2); continue; }
     if(b[0]==="n"&&b.length>=2&&!/[aiueoyn']/.test(b[1])){ out+="ん"; b=b.slice(1); continue; }
     let hit=0; for(let l=Math.min(4,b.length);l>=1;l--){ if(RMAP[b.slice(0,l)]){ hit=l; break; } }
@@ -81,21 +81,21 @@ function romaji(buf){
   }
   return {out,rest:b};
 }
-const rkLine=g=>false?`<p class="rkh">⌨️ <b>키보드로 로마자</b>를 치면 가나로 바뀌어요 &nbsp;(<b>ka</b>→か · <b>shi</b>→し · <b>kka</b>→っか · <b>nn</b>→ん · <b>-</b>→ー) &nbsp;Enter 확인 · Backspace 지우기${g.rk?` <span class="rkb">${g.rk}</span>`:""}</p>`:"";
-/* 키 하나를 처리해요. 처리했으면 true */
+const rkLine=g=>false?`<p class="rkh">⌨️ <b>키보드로 로마자</b>를 치면 가나로 바뀝니다 &nbsp;(<b>ka</b>→か · <b>shi</b>→し · <b>kka</b>→っか · <b>nn</b>→ん · <b>-</b>→ー) &nbsp;Enter 확인 · Backspace 지우기${g.rk?` <span class="rkb">${g.rk}</span>`:""}</p>`:"";
+/* 키 하나를 처리합니다. 처리했으면 true */
 function rkKey(g,e,max,minLen){
   if(e.ctrlKey||e.metaKey||e.altKey) return false;
   if(e.key==="Backspace"){ if(g.rk){ g.rk=g.rk.slice(0,-1); return true; } if(g.cur.length>minLen){ g.cur=g.cur.slice(0,-1); return true; } return true; }
   if(/^[a-zA-Z'\-]$/.test(e.key)){ if(g.cur.length>=max) return true; const r=romaji((g.rk||"")+e.key); const add=g.kata?toKata(r.out):r.out; g.cur=([...g.cur+add]).slice(0,max).join(""); g.rk=r.rest; return true; }
   return false;
 }
-/* Enter 직전에 남은 n 은 ん 으로 확정해요 */
+/* Enter 직전에 남은 n 은 ん 으로 확정합니다 */
 function rkFlush(g,max){ if((g.rk==="n"||g.rk==="nn")&&g.cur.length<max) g.cur+=g.kata?"ン":"ん"; g.rk=""; }
 
-/* 일본어 플릭(밀어서 입력) 글자판: 톡 누르면 あ단, 누른 채 왼쪽 い·위 う·오른쪽 え·아래 お. 폰의 일본어 키보드와 같은 방식이에요 */
+/* 일본어 플릭(밀어서 입력) 글자판: 톡 누르면 あ단, 누른 채 왼쪽 い·위 う·오른쪽 え·아래 お. 폰의 일본어 키보드와 같은 방식입니다 */
 const FLICK=[["あ","い","う","え","お"],["か","き","く","け","こ"],["さ","し","す","せ","そ"],["た","ち","つ","て","と"],["な","に","ぬ","ね","の"],["は","ひ","ふ","へ","ほ"],["ま","み","む","め","も"],["や","","ゆ","","よ"],["ら","り","る","れ","ろ"],["わ","を","ん","ー",""]];
 const FCYC=["かが","きぎ","くぐ","けげ","こご","さざ","しじ","すず","せぜ","そぞ","ただ","ちぢ","つっづ","てで","とど","はばぱ","ひびぴ","ふぶぷ","へべぺ","ほぼぽ","やゃ","ゆゅ","よょ","あぁ","いぃ","うぅ","えぇ","おぉ"];
-/* 마지막 글자를 ゛ ゜ 작은 글자로 바꿔요 (か→が, は→ば→ぱ, つ→っ→づ, や→ゃ …) */
+/* 마지막 글자를 ゛ ゜ 작은 글자로 바꿉니다 (か→が, は→ば→ぱ, つ→っ→づ, や→ゃ …) */
 function kbMod(str,kata){ if(!str) return str; const last=str.slice(-1).replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); const c=FCYC.find(x=>x.includes(last)); if(!c) return str; const n=c[(c.indexOf(last)+1)%c.length]; return str.slice(0,-1)+(kata?toKata(n):n); }
 const FKEYS=[0,1,2,3,4,5,6,7,8];
 /* 컴퓨터용: 처음 만들었던 50음도 표 글자판 */
@@ -113,9 +113,9 @@ function kbHTML(tab,state,attr,kata){
     return `<button type="button" class="fk" data-fi="${i}"><span class="${st(f[0])}">${cv(f[0])}</span>${hs}${ps}</button>`; };
   const fn=(lab,act)=>`<button type="button" class="fk fn" data-fa="${act}">${lab}</button>`;
   return `<div class="fkb" data-kba="${attr}" data-kata="${kata?1:0}">${[0,1,2,3,4,5,6,7,8].map(key).join("")}${fn(kata?"゛゜小":"゛゜小","mod")}${key(9)}${fn("⌫","del")}</div>
-  ${(()=>{ try{ return LS.get("jp-fk-used",0)?"":`<p class="fkh">글자를 누른 채 <b>왼쪽·위·오른쪽·아래</b>로 밀면 い·う·え·お가 입력돼요</p>`; }catch(e){ return ""; } })()}`;
+  ${(()=>{ try{ return LS.get("jp-fk-used",0)?"":`<p class="fkh">글자를 누른 채 <b>왼쪽·위·오른쪽·아래</b>로 밀면 い·う·え·お가 입력됩니다</p>`; }catch(e){ return ""; } })()}`;
 }
-/* 플릭 입력: 눌렀을 때 주변에 후보가 뜨고, 밀어서 손을 떼면 그 글자가 입력돼요 */
+/* 플릭 입력: 눌렀을 때 주변에 후보가 뜨고, 밀어서 손을 떼면 그 글자가 입력됩니다 */
 (function(){
   let cur=null;
   const $q=()=>document.getElementById("quizView");
@@ -131,9 +131,9 @@ function kbHTML(tab,state,attr,kata){
   document.addEventListener("pointerup",e=>end(e,true)); document.addEventListener("pointercancel",e=>end(e,false));
   document.addEventListener("contextmenu",e=>{ if(e.target.closest&&e.target.closest(".fkb")) e.preventDefault(); });
 })();
-/* 타자판을 화면 아래에 고정하고, 그만큼 위쪽 내용이 가리지 않게 여백을 줘요 */
+/* 타자판을 화면 아래에 고정하고, 그만큼 위쪽 내용이 가리지 않게 여백을 줍니다 */
 function dockPad(){ const d=document.querySelector(".wd-dock"); if(d&&d.parentElement) d.parentElement.style.paddingBottom=d.classList.contains("nat")?"":(d.offsetHeight+14)+"px";
-  /* 지금 쓰는 줄이 고정 타자판에 가려지면 위로 올려 줘요 */
+  /* 지금 쓰는 줄이 고정 타자판에 가려지면 위로 올려 줍니다 */
   if(d&&!d.classList.contains("nat")){ const c=document.querySelector(".wd-c.cur"), top=d.getBoundingClientRect().top; if(c){ const b=c.getBoundingClientRect().bottom; if(b>top-12) window.scrollBy(0,b-top+16); } } }
 const kbTabs=(tab,attr,kata)=>isDesk()?`<div class="wd-tabs">${[["basic",kata?"ア〜ワ":"あ〜わ"],["dak","゛ ゜"],["etc","ん·작은 글자"]].map(([k,l])=>`<button class="pill sm ${tab===k?"on":""}" ${attr}="tab" data-t="${k}">${l}</button>`).join("")}</div>`:"";
 let WDK=false; // 마지막에 고른 문자: false=히라가나, true=가타카나
@@ -150,18 +150,18 @@ function startWordle(){
 }
 function wdIntro(){
   $("quizView").innerHTML=`<div class="qbox gbox wdbox"><h2>일본어 워들</h2>
-   <div class="sub" style="text-align:center">뜻 힌트를 보고 <b>읽기</b>를 맞혀요. 6번 안에 도전!<br>초록=글자와 위치가 맞음 · 노랑=글자는 있지만 위치가 달라요 · 회색=없는 글자</div>
+   <div class="sub" style="text-align:center">뜻 힌트를 보고 <b>읽기</b>를 맞힙니다. 6번 안에 도전!<br>초록=글자와 위치가 맞음 · 노랑=글자는 있지만 위치가 다릅니다 · 회색=없는 글자</div>
    <div class="kseg" style="max-width:360px;margin:14px auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--chip);border-radius:14px;padding:4px">
      <button class="pill ${WDK?"":"on"}" style="justify-content:center;padding:10px" data-wd="script" data-k="0">히라가나 <small>ひらがな</small></button>
      <button class="pill ${WDK?"on":""}" style="justify-content:center;padding:10px" data-wd="script" data-k="1">가타카나 <small>カタカナ</small></button></div>
-   <div class="sub" data-noln="1" style="text-align:center">${WDK?"외래어 단어를 가타카나로 입력해요 (ー, ッ, ァィゥェォ, ャュョ 포함)":"한자어·고유어 단어의 읽기를 히라가나로 입력해요 (っ, ゃゅょ, ぁぃぅぇぉ, ー 포함)"}</div>
+   <div class="sub" data-noln="1" style="text-align:center">${WDK?"외래어 단어를 가타카나로 입력합니다 (ー, ッ, ァィゥェォ, ャュョ 포함)":"한자어·고유어 단어의 읽기를 히라가나로 입력합니다 (っ, ゃゅょ, ぁぃぅぇぉ, ー 포함)"}</div>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:360px;margin:14px auto"><button class="cta" data-wd="new" data-m="daily">오늘의 문제 (${jlvQ()})</button><button class="cta sec" data-wd="new" data-m="free">연습 (무제한)</button></div>
    <div class="qbtns"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
 function hashStr(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h*33)^s.charCodeAt(i))>>>0; return h; }
 function wdBegin(mode){
   const pool=wdPool(WDK);
-  if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족해요 (다른 급수나 문자를 골라 보세요)`); return; }
+  if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족합니다 (다른 급수나 문자를 골라 보세요)`); return; }
   const pick=mode==="daily"?pool[hashStr(today()+"|"+jlvQ()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
   G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map(),rk:""};
   wdRender(); bgmStart();
@@ -172,7 +172,7 @@ function wdEval(guess,ans){
   for(let i=0;i<ans.length;i++){ if(res[i]!=="ok"&&rest[guess[i]]>0){ res[i]="pos"; rest[guess[i]]--; } }
   return res;
 }
-/* 빈칸 문장 힌트: 예문에서 정답 단어 자리를 （　　）로 비워서 보여 줘요 (동사·형용사는 어간 부분만 비워요) */
+/* 빈칸 문장 힌트: 예문에서 정답 단어 자리를 （　　）로 비워서 보여 줍니다 (동사·형용사는 어간 부분만 비웁니다) */
 function wdBlank(w){
   const e=w.ex&&w.ex[0]; if(!e||!e.ja) return "";
   const t=w.text, cand=[t]; if(/[ぁ-ゖ]$/.test(t)&&t.length>1) cand.push(t.slice(0,-1)); if(t.length>2&&/[ぁ-ゖ]$/.test(t)) cand.push(t.slice(0,-2));
@@ -180,7 +180,7 @@ function wdBlank(w){
   return "";
 }
 function wdRender(){
-  const g=G, w=g.w, show=g.showKanji&&w.text!==w.yomi?`<br><span style="font-size:26px">${E(w.text)}</span> <small style="color:var(--accent)">(3초만 보여요)</small>`:"";
+  const g=G, w=g.w, show=g.showKanji&&w.text!==w.yomi?`<br><span style="font-size:26px">${E(w.text)}</span> <small style="color:var(--accent)">(3초만 보입니다)</small>`:"";
   const rows=[]; for(let r=0;r<6;r++){
     const guess=g.guesses[r], isCur=r===g.guesses.length&&!g.over;
     const cells=[...Array(g.len)].map((_,i)=>{ if(guess) return `<div class="wd-c ${guess.res[i]}">${guess.s[i]}</div>`; if(isCur) return `<div class="wd-c cur">${g.cur[i]||""}</div>`; return `<div class="wd-c"></div>`; }).join("");
@@ -192,10 +192,10 @@ function wdRender(){
    ${wdBlank(w)}
    ${rkLine(g)}
    <div class="wd-grid">${rows.join("")}</div>
-   ${nat?`<input id="wdNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${g.kata?"가타카나":"히라가나"}로 입력해요">
+   ${nat?`<input id="wdNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${g.kata?"가타카나":"히라가나"}로 입력합니다">
    <div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button><button class="pill kbbtn" data-kbbtn="wdNat">⌨️ 키보드 닫기</button></div>
-   <p class="sub" style="text-align:center;font-size:12.5px;margin:2px 0">지금은 <b>핸드폰 키보드</b>로 입력해요. 일본어 키보드가 없다면 아래를 눌러요.</p>
-   <div class="qbtns"><button class="pill" data-wd="native">일본어 글자판 쓰기 (화면에 나와요)</button></div></div>`
+   <p class="sub" style="text-align:center;font-size:12.5px;margin:2px 0">지금은 <b>핸드폰 키보드</b>로 입력합니다. 일본어 키보드가 없다면 아래를 누릅니다.</p>
+   <div class="qbtns"><button class="pill" data-wd="native">일본어 글자판 쓰기 (화면에 나옵니다)</button></div></div>`
    :(g.kbHide?`<div class="qbtns" style="height:56px"></div><button type="button" class="pill on wd-show" data-wd="show">⌨️ 글자판 열기</button></div>`
    :`<div class="wd-dock"><button type="button" class="wd-hide" data-wd="hide">▼ 글자판 접기</button><div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button><button class="pill" data-wd="native">📱 핸드폰 키보드</button></div>
    ${kbTabs(g.tab,"data-wd",g.kata)}
@@ -216,37 +216,37 @@ function wdEnd(won){
   const tries=g.guesses.length, score=won?(7-tries)*20+(g.hint?0:10):0, key=g.kata?"wordle_k":"wordle", prev=getBest(key), isNew=score>0&&(prev==null||score>prev);
   if(isNew) setBest(key,score); record(g.w,won);
   const seen=new Map([[g.w.key,{w:g.w,st:won?"ok":"ng"}]]);
-  gResult({title:`일본어 워들 결과 (${g.kata?"가타카나":"히라가나"})`,big:won?`${tries}번 만에 성공!`:"아쉬워요",score,isNew,seen,marks:new Set(),type:"wordle",
+  gResult({title:`일본어 워들 결과 (${g.kata?"가타카나":"히라가나"})`,big:won?`${tries}번 만에 성공!`:"아쉽습니다",score,isNew,seen,marks:new Set(),type:"wordle",
     note:`정답은 「${g.ans}」(${E(g.w.text)} · ${E(g.w.ko)}) · 점수 ${score}점${prev!=null&&!isNew?` · 최고 기록 ${prev}점`:""}`});
 }
 
 /* ======================= しりとり (끝말잇기) : 직접 입력하는 방식 ======================= */
 const SMALL={"ゃ":"や","ゅ":"ゆ","ょ":"よ","ぁ":"あ","ぃ":"い","ぅ":"う","ぇ":"え","ぉ":"お"};
 const lastKana=r=>{ let s=r.replace(/ー+$/,""); let c=s[s.length-1]; return SMALL[c]||c; };
-/* 끝말잇기 전용 보충 단어: 「る」「ず」「ぷ」처럼 시작하는 단어가 적은 글자를 이을 수 있도록 넣었어요(단어장에는 들어가지 않아요) */
+/* 끝말잇기 전용 보충 단어: 「る」「ず」「ぷ」처럼 시작하는 단어가 적은 글자를 이을 수 있도록 넣었어요(단어장에는 들어가지 않습니다) */
 const SHX=[["るーる","ルール","규칙"],["るーむ","ルーム","방·룸"],["るーと","ルート","경로"],["るーぺ","ルーペ","돋보기"],["るーきー","ルーキー","신인"],["るーつ","ルーツ","뿌리·기원"],["るびー","ルビー","루비(보석)"],["るす","留守","부재중"],["るすばん","留守番","집 보기"],["るり","瑠璃","청금석(푸른 보석)"],["るい","類","종류·부류"],["るいじ","類似","유사"],["るいけい","累計","누계"],["るいすい","類推","유추"],["るいせん","涙腺","눈물샘"],["るーれっと","ルーレット","룰렛"],["るんば","ルンバ","룸바(춤)"],["るーず","ルーズ","느슨함·허술함"],["るぽ","ルポ","르포(현장 보고)"],["るーじゅ","ルージュ","립스틱"],["るあー","ルアー","루어(낚시 미끼)"],["るてん","流転","유전·끊임없이 변함"],["るろう","流浪","유랑"],["るふ","流布","유포·널리 퍼짐"],["るけい","流刑","유배형"],["るくす","ルクス","럭스(조도 단위)"],["るいか","累加","누가·계속 더함"],["るいせき","累積","누적"],["るいしん","累進","누진"],
  ["ずぼん","ズボン","바지"],["ずるい","狡い","교활하다·치사하다"],["ずっと","ずっと","쭉·훨씬"],["ずのう","頭脳","두뇌"],["ずかん","図鑑","도감"],["ぷりん","プリン","푸딩"],["ぷーる","プール","수영장"],["ぷらん","プラン","계획"],["ぷれぜんと","プレゼント","선물"],["ぷろぐらむ","プログラム","프로그램"],["ぷりんと","プリント","인쇄물"],["ぺん","ペン","펜"],["ぺーじ","ページ","페이지"],["ぺっと","ペット","반려동물"],["ぴあの","ピアノ","피아노"],["ぴざ","ピザ","피자"],["ぽすと","ポスト","우체통"],["ぽけっと","ポケット","주머니"],["ぬのじ","布地","천(옷감)"],["ぬいぐるみ","縫いぐるみ","봉제 인형"],["ぬま","沼","늪"],["ぬすむ","盗む","훔치다"]];
 let SHD=null;   // 사전: 히라가나 읽기 → 단어 목록 (모든 급수)
 function shDict(){ if(SHD) return SHD; SHD=new Map(); ALL.forEach(w=>{ const r=toHira(w.yomi); if(!/^[ぁ-ゖー]+$/.test(r)||r.length<2) return; (SHD.get(r)||SHD.set(r,[]).get(r)).push(w); }); SHX.forEach(([r,text,ko])=>{ if(!SHD.has(r)) SHD.set(r,[{text,ko,yomi:r,extra:true,key:null,pos:"名詞",lv:"-"}]); }); return SHD; }
 const shScope=()=>ALL.filter(inScope).map(w=>({w,r:toHira(w.yomi)})).filter(x=>/^[ぁ-ゖー]+$/.test(x.r)&&x.r.length>=2&&x.r.length<=7);
 let SHDIFF=2;
-const SH_D={1:{name:"초보",hints:5,mult:1,minNext:10,desc:"쉬운 단어로 이어 주고, 이어 갈 단어가 넉넉한 글자로 끝내요 · 힌트 5번"},
- 2:{name:"중수",hints:3,mult:1.5,minNext:4,desc:"무난하게 이어요. 가끔 조금 어려운 글자로 끝내요 · 힌트 3번"},
- 3:{name:"고수",hints:1,mult:2,minNext:1,desc:"일부러 이어 가기 어려운 글자(る·ず·ぷ…)로 끝내 압박해요 · 힌트 1번 · 점수 2배"}};
+const SH_D={1:{name:"초보",hints:5,mult:1,minNext:10,desc:"쉬운 단어로 이어 주고, 이어 갈 단어가 넉넉한 글자로 끝냅니다 · 힌트 5번"},
+ 2:{name:"중수",hints:3,mult:1.5,minNext:4,desc:"무난하게 잇습니다. 가끔 조금 어려운 글자로 끝냅니다 · 힌트 3번"},
+ 3:{name:"고수",hints:1,mult:2,minNext:1,desc:"일부러 이어 가기 어려운 글자(る·ず·ぷ…)로 끝내 압박합니다 · 힌트 1번 · 점수 2배"}};
 function startShiri(){
   stopG(); Q=null; const pool=shScope();
-  if(pool.length<30){ toast("이 급수에는 끝말잇기에 쓸 단어가 부족해요"); return; }
+  if(pool.length<30){ toast("이 급수에는 끝말잇기에 쓸 단어가 부족합니다"); return; }
   G={type:"shiri-intro"};
   $("quizView").innerHTML=`<div class="qbox gbox wdbox"><h2>しりとり 끝말잇기</h2>
-   <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>해요.<br>사전에 있는 단어면 어느 급수든 괜찮아요.</div>
-   <div class="sub" style="text-align:center;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"><b>왜 「ん」으로 끝나면 질까요?</b><br>「ん」으로 시작하는 단어는 거의 없어서, 「ん」으로 끝내면 상대가 이을 수 없어요. 한국 끝말잇기의 '한방단어'와 같은 규칙이에요.</div>
+   <div class="sub" style="text-align:center">컴퓨터와 일본어 끝말잇기! 앞 단어의 끝 글자로 시작하는 단어를 <b>직접 입력</b>합니다.<br>사전에 있는 단어면 어느 급수든 괜찮습니다.</div>
+   <div class="sub" style="text-align:center;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px"><b>왜 「ん」으로 끝나면 질까요?</b><br>「ん」으로 시작하는 단어는 거의 없어서, 「ん」으로 끝내면 상대가 이을 수 없습니다. 한국 끝말잇기의 '한방단어'와 같은 규칙입니다.</div>
    <h3 style="text-align:center;margin:16px 0 6px">상대 난이도</h3>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:0 auto">${[1,2,3].map(d=>`<button class="cta ${d===SHDIFF?"":"sec"}" data-sd="${d}" style="text-align:left"><b>${SH_D[d].name}</b><br><small style="opacity:.85">${SH_D[d].desc}</small></button>`).join("")}</div>
    <div class="qbtns" style="margin-top:14px"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
 function startShiriGo(d){
   SHDIFF=d; const pool=shScope();
-  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 져요<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없어요)</small>`,()=>shBegin(pool),"wdbox");
+  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력합니다 · 「ん」으로 끝나면 집니다<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없습니다)</small>`,()=>shBegin(pool),"wdbox");
 }
 function shBegin(pool){
   const used=new Set(), cnt=(ch)=>pool.filter(x=>x.r[0]===ch).length, starts=shuffle(pool.filter(x=>lastKana(x.r)!=="ん"&&cnt(lastKana(x.r))>=4)), start=starts[0]||pool.find(x=>lastKana(x.r)!=="ん");
@@ -284,35 +284,35 @@ function shRender(){
   if(nat){ const cur=$("shNat"); if(cur){ if(oldNat&&oldNat.isConnected===false){ cur.replaceWith(oldNat); } const el=$("shNat"); el.value=g.cur; if(g.kbOpen!==false) el.focus(); kbBtnSync(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(_){} } }
 }
 function shHint(){
-  const g=G; if(!g||g.type!=="shiri"||g.busy) return; if(g.hints>=g.maxHints){ g.msg="힌트를 모두 썼어요"; return shRender(); }
+  const g=G; if(!g||g.type!=="shiri"||g.busy) return; if(g.hints>=g.maxHints){ g.msg="힌트를 모두 썼습니다"; return shRender(); }
   let cand=g.pool.filter(x=>x.r[0]===g.need&&!g.used.has(x.r)&&lastKana(x.r)!=="ん").map(x=>({r:x.r,ko:x.w.ko}));
   if(!cand.length){ shDict().forEach((arr,rd)=>{ if(rd[0]===g.need&&!g.used.has(rd)&&lastKana(rd)!=="ん") cand.push({r:rd,ko:arr[0].ko}); }); }
-  if(!cand.length){ g.msg="쓸 수 있는 단어가 없어요"; return shRender(); }
+  if(!cand.length){ g.msg="쓸 수 있는 단어가 없습니다"; return shRender(); }
   const c=cand[Math.floor(Math.random()*cand.length)]; g.hints++; g.hintShown={r:c.r,ko:c.ko}; g.msg=""; shRender();
 }
 function shSubmit(){
   const g=G; if(!g||g.type!=="shiri"||g.over||g.busy) return; const r=g.cur;
   if(r.length<2){ return; }
   const ws=shDict().get(r);
-  if(g.used.has(r)){ g.msg="이미 나온 단어예요"; return shMiss(); }
-  if(!ws){ g.msg=`「${r}」는 사전에 없어요`; return shMiss(); }
+  if(g.used.has(r)){ g.msg="이미 나온 단어입니다"; return shMiss(); }
+  if(!ws){ g.msg=`「${r}」는 사전에 없습니다`; return shMiss(); }
   const w=ws.find(x=>g.pool.some(p=>p.w===x))||ws[0];
   g.used.add(r); g.chain.push({who:"me",r,w});
-  if(lastKana(r)==="ん"){ if(!w.extra){ g.seen.set(w.key,{w,st:"ng"}); record(w,false); } sfx("ng"); return shEnd("lose",`「${r}」는 ん으로 끝나요. 「ん」으로 시작하는 단어는 없어서 이을 수 없으니 졌어요!`); }
+  if(lastKana(r)==="ん"){ if(!w.extra){ g.seen.set(w.key,{w,st:"ng"}); record(w,false); } sfx("ng"); return shEnd("lose",`「${r}」는 ん으로 끝납니다. 「ん」으로 시작하는 단어는 없어서 이을 수 없으니 졌습니다!`); }
   const hinted=g.hintShown&&g.hintShown.r===r; const pts=Math.round((hinted?5:10+Math.min(g.rounds,10)*2)*SH_D[g.diff].mult);
   if(!w.extra){ g.seen.set(w.key,{w,st:"ok"}); record(w,true); } g.rounds++; g.score+=pts; sfx("ok"); popFx("+"+pts,"pts");
-  // 컴퓨터 차례 (난이도에 따라 고르는 방식이 달라요)
+  // 컴퓨터 차례 (난이도에 따라 고르는 방식이 다릅니다)
   const need=lastKana(r), dict=shDict(), D=SH_D[g.diff];
   const followCount=rd=>{ const ch=lastKana(rd); let n=0; dict.forEach((arr,k)=>{ if(k[0]===ch&&!g.used.has(k)&&k!==rd&&lastKana(k)!=="ん") n++; }); return n; };
   let cand=g.pool.filter(y=>y.r[0]===need&&!g.used.has(y.r)&&lastKana(y.r)!=="ん");
   const all=[]; dict.forEach((arr,rd)=>{ if(rd[0]===need&&!g.used.has(rd)&&lastKana(rd)!=="ん") all.push({r:rd,w:arr[0]}); });
   if(!cand.length) cand=all;
-  if(!cand.length){ g.score+=Math.round(50*D.mult); popFx("+"+Math.round(50*D.mult),"pts"); return shEnd("win","컴퓨터가 이을 단어가 없어요. 당신의 승리!"); }
+  if(!cand.length){ g.score+=Math.round(50*D.mult); popFx("+"+Math.round(50*D.mult),"pts"); return shEnd("win","컴퓨터가 이을 단어가 없습니다. 당신의 승리!"); }
   const mk=list=>list.map(y=>({y,n:followCount(y.r)})).filter(x=>x.n>=1), sP=mk(cand), sA=mk(all);
   const rnd=arr=>arr[Math.floor(Math.random()*arr.length)];
   let y;
   if(!sP.length&&!sA.length) y=rnd(cand);
-  else if(g.diff===3){ // 고수: 이어 가기 어려운 단어(하지만 이어 갈 단어가 2개 이상은 남겨 줘요)
+  else if(g.diff===3){ // 고수: 이어 가기 어려운 단어(하지만 이어 갈 단어가 2개 이상은 남겨 줍니다)
     const base0=sP.length?sP:sA, ok=base0.filter(x=>x.n>=2), base=(ok.length?ok:base0).slice().sort((a,b)=>a.n-b.n);
     y=(Math.random()<.75?rnd(base.slice(0,3)):rnd(base)).y;
   } else { // 초보·중수: 이어 갈 단어가 넉넉한 글자로 끝나는 단어
@@ -323,7 +323,7 @@ function shSubmit(){
   const gg=g; gFlash=setTimeout(()=>{ if(G!==gg) return; gg.busy=false; },400);
 }
 function shMiss(){
-  const g=G; g.lives--; sfx("ng"); if(g.lives<=0) return shEnd("lose","기회를 모두 썼어요."); g.cur=g.need; shRender();
+  const g=G; g.lives--; sfx("ng"); if(g.lives<=0) return shEnd("lose","기회를 모두 썼습니다."); g.cur=g.need; shRender();
 }
 function shEnd(res,msg){
   const g=G; if(!g) return; g.over=true; sfx("end");
@@ -335,8 +335,8 @@ function shEnd(res,msg){
 /* ======================= 떨어지는 단어 ======================= */
 function startFall(){
   stopG(); Q=null; const pool=ALL.filter(inScope);
-  if(pool.length<8){ toast("이 범위에는 단어가 부족해요"); return; }
-  gCountdown("위에서 단어가 떨어져요! 가장 아래 단어의 뜻을 빨리 골라요<br>바닥에 닿으면 하트가 줄고, 3개를 잃으면 끝나요",()=>fBegin(pool));
+  if(pool.length<8){ toast("이 범위에는 단어가 부족합니다"); return; }
+  gCountdown("위에서 단어가 떨어집니다! 가장 아래 단어의 뜻을 빨리 고릅니다<br>바닥에 닿으면 하트가 줄고, 3개를 잃으면 끝납니다",()=>fBegin(pool));
 }
 function fBegin(pool){
   G={type:"fall",pool:wshuffle(pool),pi:0,words:[],lives:3,score:0,combo:0,maxc:0,right:0,lv:1,last:performance.now(),spawnAt:0,seen:new Map(),marks:new Set(),opts:null,optFor:null,lostIdx:-1,raf:0};
@@ -383,7 +383,7 @@ function fRemove(o,pop){ const g=G; g.words=g.words.filter(x=>x!==o); if(g.optFo
 function fMiss(o){
   const g=G; g.lives--; g.lostIdx=g.lives; g.combo=0; sfx("ng"); record(o.w,false);
   const r=g.seen.get(o.w.key); g.seen.set(o.w.key,{w:o.w,st:"ng"});
-  const hp=$("fhp"); if(hp) hp.innerHTML=[0,1,2].map(i=>heart(i<g.lives,i===g.lostIdx)).join(""); const cb=$("fcb"); if(cb) cb.textContent="연속 0"; popFx("바닥에 닿았어요","pts neg");
+  const hp=$("fhp"); if(hp) hp.innerHTML=[0,1,2].map(i=>heart(i<g.lives,i===g.lostIdx)).join(""); const cb=$("fcb"); if(cb) cb.textContent="연속 0"; popFx("바닥에 닿았습니다","pts neg");
 }
 function fPick(i){
   const g=G; if(!g||g.type!=="fall") return; const t=fLowest(); if(!t||!t.opts) return; const o=t.opts[i]; if(o===undefined) return;
@@ -395,7 +395,7 @@ function fPick(i){
     fRemove(t,true); if(g.right%5===0){ g.lv++; popFx("레벨 "+g.lv,"clr"); const l=$("flv"); if(l) l.textContent=g.lv; }
     if(g.words.length<2) g.spawnAt=0;
   } else {
-    g.combo=0; sfx("ng"); record(t.w,false); g.seen.set(t.w.key,{w:t.w,st:"ng"}); t.y=Math.min(.97,t.y+.14); popFx("틀렸어요 -","pts neg");
+    g.combo=0; sfx("ng"); record(t.w,false); g.seen.set(t.w.key,{w:t.w,st:"ng"}); t.y=Math.min(.97,t.y+.14); popFx("틀렸습니다 -","pts neg");
     const b=document.querySelector(`#fopts [data-fo="${i}"]`); if(b){ b.classList.add("wrong"); b.disabled=true; }
   }
   const sc=$("fsc"); if(sc) sc.innerHTML="<small>점수</small><b>"+g.score+"</b>"; const cb=$("fcb"); if(cb) cb.textContent="연속 "+g.combo;
@@ -436,7 +436,7 @@ document.addEventListener("click",e=>{
     else if(a==="enter") shSubmit();
     else if(a==="tab"){ G.tab=sk.dataset.t; shRender(); }
     else if(a==="hint") shHint();
-    else if(a==="giveup") shEnd("lose","포기했어요.");
+    else if(a==="giveup") shEnd("lose","포기했습니다.");
     return; }
   const fo=e.target.closest("[data-fo]"); if(fo){ fPick(+fo.dataset.fo); return; }
 });
@@ -446,7 +446,7 @@ function wdNatInput(el){
   g.cur=v0; if(el.value!==v0) el.value=v0; wdRender();
 }
 document.addEventListener("compositionstart",e=>{ if(e.target&&e.target.id==="wdNat") e.target.dataset.comp="1"; });
-/* 핸드폰 키보드가 열려 있을 때 눈에 띄는 "키보드 닫기" 버튼 (닫으면 "키보드 열기"로 바뀌어요) */
+/* 핸드폰 키보드가 열려 있을 때 눈에 띄는 "키보드 닫기" 버튼 (닫으면 "키보드 열기"로 바뀝니다) */
 function kbBtnSync(){ document.querySelectorAll("[data-kbbtn]").forEach(b=>{ const el=document.getElementById(b.dataset.kbbtn); const open=!!el&&document.activeElement===el; b.textContent=open?"⌨️ 키보드 닫기":"⌨️ 키보드 열기"; b.classList.toggle("on",!open); }); }
 document.addEventListener("focusin",e=>{ if(e.target&&(e.target.id==="wdNat"||e.target.id==="shNat")){ if(G) G.kbOpen=true; kbBtnSync(); } });
 document.addEventListener("focusout",e=>{ if(e.target&&(e.target.id==="wdNat"||e.target.id==="shNat")) setTimeout(kbBtnSync,0); });

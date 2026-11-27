@@ -1,6 +1,6 @@
 /* 히라가나·가타카나 입문 코스 (일본어를 전혀 모르는 사람을 위한 시작 코스)
  * 화면 순서: 글자표(눌러서 소리 듣기) → 행별 레슨(あ행~ぱ행, 요음, 촉음·장음) → 전체 시험
- * - 진행 상황은 LS("jp-kana")에 프로필별로 저장해요. 소리는 미리 만든 VOICEVOX 음성(audio/kana, tools/make-kana-audio.js)이고, 없으면 기기 내장 음성이에요.
+ * - 진행 상황은 LS("jp-kana")에 프로필별로 저장합니다. 소리는 미리 만든 VOICEVOX 음성(audio/kana, tools/make-kana-audio.js)이고, 없으면 기기 내장 음성입니다.
  */
 (function(){
 const H=[["あ","a","아"],["い","i","이"],["う","u","우"],["え","e","에"],["お","o","오"],
@@ -28,35 +28,35 @@ const toK=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60)
 const toH=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
 /* 레슨 목록 — 한 줄(행)마다 레슨 하나 */
 const LESSONS=[
- {g:"기본 글자(오십음도)",label:"あ행",chars:H.slice(0,5),tip:"모음 5개예요: あ(아) い(이) う(우) え(에) お(오). 우리말 '아 이 우 에 오'와 거의 같아요. う는 입술을 둥글게 내밀지 않고 가볍게 발음해요. 모든 글자의 기본이 되는 소리예요.",
-  ktip:"ア イ ウ エ オ는 히라가나 あ い う え お와 소리가 같아요. 가타카나는 직선 위주의 각진 글자예요. 길게 끄는 소리는 ー로 써요(예: ケーキ=케-키)."},
- {g:"기본 글자(오십음도)",label:"か행",chars:H.slice(5,10),tip:"か(카) き(키) く(쿠) け(케) こ(코). 단어 첫머리에서는 'ㅋ'에 가깝고, 단어 가운데서는 'ㄲ'처럼 가볍게 들려요."},
- {g:"기본 글자(오십음도)",label:"さ행",chars:H.slice(10,15),tip:"さ(사) し(시) す(스) せ(세) そ(소). し는 '시', す는 입술을 펴고 '스'에 가깝게 발음해요."},
+ {g:"기본 글자(오십음도)",label:"あ행",chars:H.slice(0,5),tip:"모음 5개입니다: あ(아) い(이) う(우) え(에) お(오). 우리말 '아 이 우 에 오'와 거의 같습니다. う는 입술을 둥글게 내밀지 않고 가볍게 발음합니다. 모든 글자의 기본이 되는 소리입니다.",
+  ktip:"ア イ ウ エ オ는 히라가나 あ い う え お와 소리가 같습니다. 가타카나는 직선 위주의 각진 글자입니다. 길게 끄는 소리는 ー로 써요(예: ケーキ=케-키)."},
+ {g:"기본 글자(오십음도)",label:"か행",chars:H.slice(5,10),tip:"か(카) き(키) く(쿠) け(케) こ(코). 단어 첫머리에서는 'ㅋ'에 가깝고, 단어 가운데서는 'ㄲ'처럼 가볍게 들립니다."},
+ {g:"기본 글자(오십음도)",label:"さ행",chars:H.slice(10,15),tip:"さ(사) し(시) す(스) せ(세) そ(소). し는 '시', す는 입술을 펴고 '스'에 가깝게 발음합니다."},
  {g:"기본 글자(오십음도)",label:"た행",chars:H.slice(15,20),tip:"た(타) ち(치) つ(츠) て(테) と(토). ち는 '치', つ는 혀끝을 윗니 뒤에 대고 '츠'라고 해 보세요."},
- {g:"기본 글자(오십음도)",label:"な행",chars:H.slice(20,25),tip:"な(나) に(니) ぬ(누) ね(네) の(노). 우리말 'ㄴ' 소리와 같아서 쉬워요. ぬ와 め, ね와 れ는 모양이 비슷하니 구분해 보세요."},
- {g:"기본 글자(오십음도)",label:"は행",chars:H.slice(25,30),tip:"は(하) ひ(히) ふ(후) へ(헤) ほ(호). ふ는 입술을 모아 '후'와 '푸' 사이로 가볍게 내요. 조사로 쓰는 は는 'wa(와)'로 읽어요(예: 私は → 와타시와), 조사 へ는 'e(에)'로 읽어요.",
-  ktip:"ハ(하) ヒ(히) フ(후) ヘ(헤) ホ(호). ヘ는 히라가나 へ와 거의 같은 모양이에요. 가타카나는 외래어에 많이 써요(예: ホテル 호텔)."},
- {g:"기본 글자(오십음도)",label:"ま행",chars:H.slice(30,35),tip:"ま(마) み(미) む(무) め(메) も(모). 우리말 'ㅁ' 소리와 같아요."},
- {g:"기본 글자(오십음도)",label:"や행",chars:H.slice(35,38),tip:"や(야) ゆ(유) よ(요), 세 글자뿐이에요. や행에는 い·え 소리가 없어요. 이 글자들은 작게 써서 다른 글자 뒤에 붙이기도 해요(요음, 뒤에서 배워요).",
-  ktip:"ヤ(야) ユ(유) ヨ(요). 세 글자뿐이에요. 작게 써서 다른 글자 뒤에 붙이기도 해요(요음)."},
- {g:"기본 글자(오십음도)",label:"ら행",chars:H.slice(38,43),tip:"ら(라) り(리) る(루) れ(레) ろ(로). 우리말 'ㄹ'과 'ㄷ' 사이의 가벼운 소리예요. 혀끝으로 윗잇몸을 톡 치듯이 발음해요."},
- {g:"기본 글자(오십음도)",label:"わ행 · ん",chars:H.slice(43,46),tip:"わ(와) を(오) ん(응). を는 'wo'라고 쓰지만 소리는 'o(오)'이고, 조사(〜을/를)로만 써요. ん은 받침 소리라 뒤에 오는 글자에 따라 'ㄴ·ㅇ·ㅁ'처럼 들려요(ほん=홍, さんぽ=삼포).",
-  ktip:"ワ(와) ヲ(오) ン(응). ヲ는 일상에서 거의 쓰지 않아요. ン은 받침 소리예요(パン=팡, ペン=펜). シ·ソ와 ツ·ン이 헷갈리기 쉬워서 '헷갈리는 글자'에서 구분해 보세요."},
- {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"が행",chars:D.slice(0,5),tip:"か행 글자에 점 두 개(゛)가 붙으면 'ㄱ' 소리가 돼요: が(가) ぎ(기) ぐ(구) げ(게) ご(고). 단어 가운데에서는 코를 살짝 울리는 'ㅇ' 소리로 들릴 때도 있어요."},
- {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"ざ행",chars:D.slice(5,10),tip:"さ행에 점(゛)이 붙으면 'ㅈ' 소리가 돼요: ざ(자) じ(지) ず(즈) ぜ(제) ぞ(조)."},
- {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"だ행",chars:D.slice(10,15),tip:"た행에 점(゛)이 붙으면 'ㄷ' 소리: だ(다) ぢ(지) づ(즈) で(데) ど(도). ぢ와 づ는 じ·ず와 소리가 같고 거의 쓰지 않아요."},
+ {g:"기본 글자(오십음도)",label:"な행",chars:H.slice(20,25),tip:"な(나) に(니) ぬ(누) ね(네) の(노). 우리말 'ㄴ' 소리와 같아서 쉽습니다. ぬ와 め, ね와 れ는 모양이 비슷하니 구분해 보세요."},
+ {g:"기본 글자(오십음도)",label:"は행",chars:H.slice(25,30),tip:"は(하) ひ(히) ふ(후) へ(헤) ほ(호). ふ는 입술을 모아 '후'와 '푸' 사이로 가볍게 냅니다. 조사로 쓰는 は는 'wa(와)'로 읽어요(예: 私は → 와타시와), 조사 へ는 'e(에)'로 읽습니다.",
+  ktip:"ハ(하) ヒ(히) フ(후) ヘ(헤) ホ(호). ヘ는 히라가나 へ와 거의 같은 모양입니다. 가타카나는 외래어에 많이 써요(예: ホテル 호텔)."},
+ {g:"기본 글자(오십음도)",label:"ま행",chars:H.slice(30,35),tip:"ま(마) み(미) む(무) め(메) も(모). 우리말 'ㅁ' 소리와 같습니다."},
+ {g:"기본 글자(오십음도)",label:"や행",chars:H.slice(35,38),tip:"や(야) ゆ(유) よ(요), 세 글자뿐입니다. や행에는 い·え 소리가 없습니다. 이 글자들은 작게 써서 다른 글자 뒤에 붙이기도 해요(요음, 뒤에서 배웁니다).",
+  ktip:"ヤ(야) ユ(유) ヨ(요). 세 글자뿐입니다. 작게 써서 다른 글자 뒤에 붙이기도 해요(요음)."},
+ {g:"기본 글자(오십음도)",label:"ら행",chars:H.slice(38,43),tip:"ら(라) り(리) る(루) れ(레) ろ(로). 우리말 'ㄹ'과 'ㄷ' 사이의 가벼운 소리입니다. 혀끝으로 윗잇몸을 톡 치듯이 발음합니다."},
+ {g:"기본 글자(오십음도)",label:"わ행 · ん",chars:H.slice(43,46),tip:"わ(와) を(오) ん(응). を는 'wo'라고 쓰지만 소리는 'o(오)'이고, 조사(〜을/를)로만 씁니다. ん은 받침 소리라 뒤에 오는 글자에 따라 'ㄴ·ㅇ·ㅁ'처럼 들려요(ほん=홍, さんぽ=삼포).",
+  ktip:"ワ(와) ヲ(오) ン(응). ヲ는 일상에서 거의 쓰지 않습니다. ン은 받침 소리예요(パン=팡, ペン=펜). シ·ソ와 ツ·ン이 헷갈리기 쉬워서 '헷갈리는 글자'에서 구분해 보세요."},
+ {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"が행",chars:D.slice(0,5),tip:"か행 글자에 점 두 개(゛)가 붙으면 'ㄱ' 소리가 됩니다: が(가) ぎ(기) ぐ(구) げ(게) ご(고). 단어 가운데에서는 코를 살짝 울리는 'ㅇ' 소리로 들릴 때도 있습니다."},
+ {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"ざ행",chars:D.slice(5,10),tip:"さ행에 점(゛)이 붙으면 'ㅈ' 소리가 됩니다: ざ(자) じ(지) ず(즈) ぜ(제) ぞ(조)."},
+ {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"だ행",chars:D.slice(10,15),tip:"た행에 점(゛)이 붙으면 'ㄷ' 소리: だ(다) ぢ(지) づ(즈) で(데) ど(도). ぢ와 づ는 じ·ず와 소리가 같고 거의 쓰지 않습니다."},
  {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"ば행",chars:D.slice(15,20),tip:"は행에 점(゛)이 붙으면 'ㅂ' 소리: ば(바) び(비) ぶ(부) べ(베) ぼ(보)."},
  {g:"탁음 · 반탁음 (점이 붙은 글자)",label:"ぱ행",chars:D.slice(20,25),tip:"は행에 동그라미(゜)가 붙으면 'ㅍ' 소리(반탁음): ぱ(파) ぴ(피) ぷ(푸) ぺ(페) ぽ(포)."},
- {g:"요음 (작은 ゃ ゅ ょ)",label:"きゃ·しゃ·ちゃ·にゃ",chars:Y.slice(0,12),tip:"い단 글자(き し ち に) 뒤에 작은 や·ゆ·よ를 붙이면 한 글자처럼 합쳐 읽어요: きゃ(캬) きゅ(큐) きょ(쿄). 작게 쓰는 것이 포인트예요(きや와 きゃ는 달라요).",
-  ktip:"キ シ チ ニ 뒤에 작은 ャ ュ ョ를 붙이면 한 글자처럼 합쳐 읽어요: キャ(캬) キュ(큐) キョ(쿄)."},
- {g:"요음 (작은 ゃ ゅ ょ)",label:"ひゃ·みゃ·りゃ",chars:Y.slice(12,21),tip:"ひ み り에도 같은 방식으로 붙어요: ひゃ(햐) みゃ(먀) りゃ(랴)."},
- {g:"요음 (작은 ゃ ゅ ょ)",label:"ぎゃ·じゃ·びゃ·ぴゃ",chars:Y.slice(21,33),tip:"점이 있는 글자에도 붙어요: ぎゃ(갸) じゃ(자) びゃ(뱌) ぴゃ(퍄). じゃ·じゅ·じょ는 '자·주·조'로 읽어요."},
- {g:"특수 표기",label:"작은 っ · 장음",chars:[],special:true,tip:"작은 っ(ッ)는 뒤 소리를 짧게 막는 받침이에요: がっこう(각꼬-), きって(킫테). 소리를 길게 끄는 장음은 히라가나는 모음을 하나 더 써요(おかあさん, おおきい, ありがとう). 가타카나는 ー로 써요(コーヒー=코-히-).",
-  ktip:"작은 ッ는 뒤 소리를 짧게 막는 받침이에요: サッカー(삭카-), ネット(넷토). 장음은 ー로 써요: コーヒー(코-히-), ケーキ(케-키)."}
+ {g:"요음 (작은 ゃ ゅ ょ)",label:"きゃ·しゃ·ちゃ·にゃ",chars:Y.slice(0,12),tip:"い단 글자(き し ち に) 뒤에 작은 や·ゆ·よ를 붙이면 한 글자처럼 합쳐 읽습니다: きゃ(캬) きゅ(큐) きょ(쿄). 작게 쓰는 것이 포인트예요(きや와 きゃ는 다릅니다).",
+  ktip:"キ シ チ ニ 뒤에 작은 ャ ュ ョ를 붙이면 한 글자처럼 합쳐 읽습니다: キャ(캬) キュ(큐) キョ(쿄)."},
+ {g:"요음 (작은 ゃ ゅ ょ)",label:"ひゃ·みゃ·りゃ",chars:Y.slice(12,21),tip:"ひ み り에도 같은 방식으로 붙습니다: ひゃ(햐) みゃ(먀) りゃ(랴)."},
+ {g:"요음 (작은 ゃ ゅ ょ)",label:"ぎゃ·じゃ·びゃ·ぴゃ",chars:Y.slice(21,33),tip:"점이 있는 글자에도 붙습니다: ぎゃ(갸) じゃ(자) びゃ(뱌) ぴゃ(퍄). じゃ·じゅ·じょ는 '자·주·조'로 읽습니다."},
+ {g:"특수 표기",label:"작은 っ · 장음",chars:[],special:true,tip:"작은 っ(ッ)는 뒤 소리를 짧게 막는 받침입니다: がっこう(각꼬-), きって(킫테). 소리를 길게 끄는 장음은 히라가나는 모음을 하나 더 써요(おかあさん, おおきい, ありがとう). 가타카나는 ー로 써요(コーヒー=코-히-).",
+  ktip:"작은 ッ는 뒤 소리를 짧게 막는 받침입니다: サッカー(삭카-), ネット(넷토). 장음은 ー로 씁니다: コーヒー(코-히-), ケーキ(케-키)."}
 ];
 LESSONS.forEach((L,i)=>L.i=i);
-const CORE=15;   /* 기본 글자(10)+탁음·반탁음(5)까지가 필수 코스. 요음·작은 っ·장음은 선택(더 배우기)이에요 */
-/* 단어(표기, 뜻). 어느 레슨에서 읽을 수 있는지는 글자로 자동 계산해요 */
+const CORE=15;   /* 기본 글자(10)+탁음·반탁음(5)까지가 필수 코스. 요음·작은 っ·장음은 선택(더 배우기)입니다 */
+/* 단어(표기, 뜻). 어느 레슨에서 읽을 수 있는지는 글자로 자동 계산합니다 */
 const WH=[["あい","사랑"],["いえ","집"],["うえ","위"],["あお","파랑"],["あう","만나다"],["いい","좋다"],["おおい","많다"],
 ["かお","얼굴"],["いけ","연못"],["くち","입"],["こえ","목소리"],["あき","가을"],["えき","역"],["かく","쓰다"],["きく","듣다"],["かい","조개"],["ここ","여기"],["あかい","빨갛다"],["いか","오징어"],
 ["さけ","술"],["すし","초밥"],["せかい","세계"],["しお","소금"],["あさ","아침"],["いし","돌"],["おかし","과자"],["すいか","수박"],["さかな","생선"],["かさ","우산"],["あおい","파랗다"],
@@ -101,16 +101,16 @@ const key=(L,k)=>(k?"k":"h")+L.i;
 const done=()=>LS.get("jp-kana",{done:{}});
 const save=d=>LS.set("jp-kana",d);
 const canVoice=()=>Object.keys(window.KANA_AUDIO||{}).length>0 || "speechSynthesis" in window && speechSynthesis.getVoices().some(v=>/^ja/i.test(v.lang));
-/* 미리 만든 자연스러운 음성(audio/kana, 청해와 같은 VOICEVOX 목소리)이 있으면 그걸 틀고, 없으면 기기 음성으로 읽어요 */
+/* 미리 만든 자연스러운 음성(audio/kana, 청해와 같은 VOICEVOX 목소리)이 있으면 그걸 틀고, 없으면 기기 음성으로 읽습니다 */
 const kanaKey=(t,pre)=>{ let h=5381,g=7; const s=(pre||"kana4|")+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
 let kAud=null;
 const say=(t,r)=>{ try{
   const A=window.KANA_AUDIO||{}; let k=kanaKey(toH(t));
-  /* 가타카나는 가타카나 글자 그대로 만든 전용 음성(kana5)이 있으면 그걸 써요. 외래어 억양이 더 자연스러워요 */
+  /* 가타카나는 가타카나 글자 그대로 만든 전용 음성(kana5)이 있으면 그걸 씁니다. 외래어 억양이 더 자연스럽습니다 */
   if(/[ァ-ヶー]/.test(t)){ const kk=kanaKey(t,"kana5|"); if(A[kk]) k=kk; }
   if(A[k]){ try{ speechSynthesis.cancel(); }catch(e){} if(kAud){ try{ kAud.pause(); }catch(e){} } kAud=new Audio("audio/kana/"+k+".m4a"); kAud.play().catch(()=>speakJa(t,r||.8)); return; }
   speakJa(t,r||.8); }catch(e){} };
-const inq=on=>{ document.body.classList.toggle("inq",!!on); document.body.classList.remove("kcardmode"); };   /* 다른 글자 화면으로 가면 카드 전체 화면 모드도 풀려요 */
+const inq=on=>{ document.body.classList.toggle("inq",!!on); document.body.classList.remove("kcardmode"); };   /* 다른 글자 화면으로 가면 카드 전체 화면 모드도 풀립니다 */
 const root=()=>$("quizView");
 const ST=document.createElement("style");
 ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;font-size:24px}.kana h3{margin:22px 0 8px;font-size:17px}
@@ -170,7 +170,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kcard .kexp{font-style:normal;display:block;font-size:13px;font-weight:700;color:#4b5075;margin:1px 0 1px}
 .kcard .kex:active{transform:scale(.97)}
 .kcard .khint{margin-top:8px;font-size:13px;font-weight:700;opacity:.78}
-/* 글자 카드: 화면을 가득 채워요 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
+/* 글자 카드: 화면을 가득 채웁니다 (화면 높이에 맞춰 글자·그림 크기가 자동으로 조절되고, 버튼은 맨 아래) */
 .kfull{display:flex;flex-direction:column;min-height:calc(100dvh - 56px - env(safe-area-inset-bottom,0px))}
 .kfull .kcard{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;margin:4px 0 10px;padding:12px 16px 14px}
 .kfull .kcard .kch{font-size:clamp(84px,12.5dvh,150px);width:clamp(150px,20dvh,236px);border-radius:clamp(36px,6dvh,52px);padding:4px 0 8px}
@@ -182,7 +182,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 @media(max-height:660px){.kfull .kcard{padding-top:8px;padding-bottom:8px}.kfull .kcard .kch,.kfull.kfirst .kcard .kch{font-size:54px;width:96px;border-radius:28px;padding:2px 0 4px}.kfull .kcard .kro{font-size:24px;margin-top:2px}.kfull .kcard .kexl,.kfull .kcard .khint{display:none}.kfull .kcard .kex{margin-top:4px;padding:4px 14px 4px 8px}.kfull .kcard .kex img{width:36px;height:36px}.kfull .kcard .kexw b{font-size:18px}.kfull .ktipin{font-size:12px;line-height:1.4;padding:6px 10px;margin-top:6px}.kbird img{width:40px}.kbub{padding:5px 12px;font-size:13px}}
 .kfull .ktipin{margin-top:10px;font-size:13px;line-height:1.5;font-weight:600;color:#2b2f55;text-align:left;background:rgba(255,255,255,.7);border-radius:14px;padding:9px 12px;max-width:100%}
 .kfull.kfirst .kcard .kch{font-size:clamp(70px,calc((100dvh - 640px)/1.15),230px);width:clamp(130px,min(calc((100dvh - 640px)*1.5),70vw),320px);border-radius:clamp(32px,calc((100dvh - 640px)*.42),72px)}
-/* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 차요 (화면 높이 780 부근에서는 기존 크기) */
+/* 키 큰 폰에서는 카드 안의 글자·그림도 더 커져서 빈 곳 없이 꽉 찹니다 (화면 높이 780 부근에서는 기존 크기) */
 .kfull .kcard .kch{font-size:clamp(84px,calc((100dvh - 520px)/1.15),250px);width:clamp(150px,min(calc((100dvh - 520px)*1.5),76vw),340px);border-radius:clamp(36px,calc((100dvh - 520px)*.42),76px)}
 .kfull .kcard .kro{font-size:clamp(26px,calc(100dvh*.05),46px)}
 .kfull .kcard .kexl{margin-top:clamp(8px,calc(100dvh*.025),30px)}
@@ -201,28 +201,28 @@ function chartHTML(k){
   return `<div class="kchart"><span></span>${th}${rows.map(([l,a])=>`<span class="rl">${k?toK(l):l}</span>${a.map(cellBtn).join("")}`).join("")}</div>`;
 }
 const curOf=(d,k)=>{ const c=d.cur; return c&&typeof c.k!=="number"?c[k?"k":"h"]:null; };
-/* 탁음·반탁음은 규칙만 간단히 알려 주니, 기본 10행을 마치면 자동으로 완료로 쳐요 */
+/* 탁음·반탁음은 규칙만 간단히 알려 주니, 기본 10행을 마치면 자동으로 완료로 칩니다 */
 function autoDk(k){ const d=done(); if(d.done[key(LESSONS[9],k)]&&!LESSONS.slice(10,15).every(L=>d.done[key(L,k)])){ LESSONS.slice(10,15).forEach(L=>{ d.done[key(L,k)]=true; }); save(d); } }
 function nextLesson(k){ autoDk(k);  const d=done().done; return LESSONS.slice(0,CORE).find(L=>!d[key(L,k)]); }
 function renderHome(){
   inq(false); const k=K.tab==="k", T0=s=>k?toK(s):s, d=done().done, doneN=LESSONS.slice(0,10).filter(L=>d[key(L,k)]).length, nx=nextLesson(k);
   const cu=curOf(done(),k), cuL=cu&&LESSONS[cu.i]&&!d[key(LESSONS[cu.i],k)]?LESSONS[cu.i]:null, tgt=cuL||nx;
   root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div><h2 style="margin-bottom:8px">일본어 글자</h2>
-  <button class="pill sm" data-kana="intro" style="margin:0 0 10px">히라가나·가타카나가 뭐예요?</button><div class="kseg"><button class="${k?"":"on"}" data-kana="tab" data-t="h">히라가나<small>ひらがな</small></button><button class="${k?"on":""}" data-kana="tab" data-t="k">가타카나<small>カタカナ</small></button></div>
-  ${tgt?`<button class="kcta" data-kana="learn" data-k="${k?"k":"h"}"><span class="kg">${(lessonChars(tgt,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${(doneN||cuL?"이어서 배우기":"카드로 배우기 시작")+": "+lessonLabel(tgt,k)}</b><small>${cuL&&cu.c>0?(cu.c+1)+"번째 글자부터":"한 글자씩 소리와 그림으로"}</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤어요! 아래에서 전체 시험에 도전해 보세요.</div>`}
+  <button class="pill sm" data-kana="intro" style="margin:0 0 10px">히라가나·가타카나가 무엇입니까?</button><div class="kseg"><button class="${k?"":"on"}" data-kana="tab" data-t="h">히라가나<small>ひらがな</small></button><button class="${k?"on":""}" data-kana="tab" data-t="k">가타카나<small>カタカナ</small></button></div>
+  ${tgt?`<button class="kcta" data-kana="learn" data-k="${k?"k":"h"}"><span class="kg">${(lessonChars(tgt,k)[0]||[k?"ッ":"っ"])[0]}</span><span><b>${(doneN||cuL?"이어서 배우기":"카드로 배우기 시작")+": "+lessonLabel(tgt,k)}</b><small>${cuL&&cu.c>0?(cu.c+1)+"번째 글자부터":"한 글자씩 소리와 그림으로"}</small></span></button>`:`<div class="ktip">레슨을 모두 마쳤습니다! 아래에서 전체 시험에 도전해 보세요.</div>`}
   <h3>글자표 <small style="font-weight:400;color:var(--sub)">· 눌러서 소리 듣기</small></h3>${chartHTML(k)}
-  <h3>소리가 바뀌는 글자 <small style="font-weight:400;color:var(--sub)">· 규칙만 알면 돼요</small></h3>
-  <details class="kdet"><summary>점이 붙으면 소리가 바뀌어요 (탁음·반탁음)</summary><div style="padding-bottom:10px"><p class="sub" style="margin:0 0 8px">か(카)에 점 둘 ゛을 붙이면 が(가), は(하)에 동그라미 ゜를 붙이면 ぱ(파)가 돼요.</p><div class="kgrid" style="grid-template-columns:repeat(5,minmax(0,1fr))">${["が","ざ","だ","ば","ぱ"].map(c=>{ const r=D.find(x=>x[0]===c); return cellBtn([T0(c),r[1],r[2]]); }).join("")}</div><p class="sub" style="margin:8px 0 0">ぢ·づ는 じ·ず와 소리가 같고 거의 안 써요.</p></div></details>
-  <details class="kdet"><summary>작은 ゃ ゅ ょ가 붙으면 한 소리예요 (요음)</summary><div style="padding-bottom:10px"><p class="sub" style="margin:0 0 8px">き + ゃ = きゃ(캬)처럼 두 글자를 한 박자로 읽어요. 예) ひゃく(백), びょういん(병원)</p><div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${["きゃ","しゅ","ちょ"].map(c=>{ const r=Y.find(x=>x[0]===c); return cellBtn([T0(c),r[1],r[2]]); }).join("")}</div></div></details>
-  <details class="kdet"><summary>작은 っ · 길게 끄는 소리 ー</summary><div style="padding-bottom:10px"><p class="sub" style="margin:0">작은 ${T0("っ")}는 뒤 소리를 짧게 막아요: ${T0("きって")}(킷테, 우표). 길게 끄는 소리는 ${k?"ー":"あ·い·う 같은 모음"}로 늘려요: ${k?"ケーキ(케-키)":"おかあさん(어머니)"}.</p></div></details>
+  <h3>소리가 바뀌는 글자 <small style="font-weight:400;color:var(--sub)">· 규칙만 알면 됩니다</small></h3>
+  <details class="kdet"><summary>점이 붙으면 소리가 바뀝니다 (탁음·반탁음)</summary><div style="padding-bottom:10px"><p class="sub" style="margin:0 0 8px">か(카)에 점 둘 ゛을 붙이면 が(가), は(하)에 동그라미 ゜를 붙이면 ぱ(파)가 됩니다.</p><div class="kgrid" style="grid-template-columns:repeat(5,minmax(0,1fr))">${["が","ざ","だ","ば","ぱ"].map(c=>{ const r=D.find(x=>x[0]===c); return cellBtn([T0(c),r[1],r[2]]); }).join("")}</div><p class="sub" style="margin:8px 0 0">ぢ·づ는 じ·ず와 소리가 같고 거의 안 씁니다.</p></div></details>
+  <details class="kdet"><summary>작은 ゃ ゅ ょ가 붙으면 한 소리입니다 (요음)</summary><div style="padding-bottom:10px"><p class="sub" style="margin:0 0 8px">き + ゃ = きゃ(캬)처럼 두 글자를 한 박자로 읽습니다. 예) ひゃく(백), びょういん(병원)</p><div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${["きゃ","しゅ","ちょ"].map(c=>{ const r=Y.find(x=>x[0]===c); return cellBtn([T0(c),r[1],r[2]]); }).join("")}</div></div></details>
+  <details class="kdet"><summary>작은 っ · 길게 끄는 소리 ー</summary><div style="padding-bottom:10px"><p class="sub" style="margin:0">작은 ${T0("っ")}는 뒤 소리를 짧게 막습니다: ${T0("きって")}(킷테, 우표). 길게 끄는 소리는 ${k?"ー":"あ·い·う 같은 모음"}로 늘립니다: ${k?"ケーキ(케-키)":"おかあさん(어머니)"}.</p></div></details>
   <details class="kdet"><summary>행별로 골라서 보기 (${doneN} / 10 완료)</summary><div class="kgrid" style="grid-template-columns:repeat(5,minmax(0,1fr));padding-bottom:10px">${LESSONS.slice(0,10).map(L=>`<button class="kc" data-kana="lesson" data-i="${L.i}"><b style="font-size:17px">${d[key(L,k)]?"✓ ":""}${lessonLabel(L,k).slice(0,2)}</b></button>`).join("")}</div></details>
   <div class="kbtns" style="grid-template-columns:repeat(3,1fr);margin-top:18px"><button class="cta sec" data-kana="writeall">따라 쓰기</button><button class="cta sec" data-kana="confuse">헷갈리는 글자</button><button class="cta" data-kana="final">전체 시험</button></div>${Object.keys(window.KANA_AUDIO||{}).length?`<div class="jcredit">Microsoft Azure AI Speech (Nanami)</div>`:""}</div>`;
 }
 function renderConfuse(){
   inq(false);
   const pairs=[["さ","き"],["ぬ","め"],["ろ","る"],["わ","れ","ね"],["は","ほ"],["あ","お"],["シ","ツ"],["ソ","ン"],["ク","ケ"],["ウ","ワ"],["フ","ワ"],["ミ","シ"]];
-  const info={"さ":"さ(사)는 아래가 열려 있어요","き":"き(키)는 가로선이 두 줄이에요","ぬ":"ぬ(누)는 꼬리가 둥글게 감겨요","め":"め(메)는 꼬리 없이 열려 있어요","ろ":"ろ(로)는 끝이 열려 있어요","る":"る(루)는 끝에 동그란 고리가 있어요","わ":"わ(와)는 뾰족하게 꺾여요","れ":"れ(레)는 오른쪽 아래가 꺾여요","ね":"ね(네)는 끝에 고리가 있어요","は":"は(하)는 오른쪽이 닫혀 있어요","ほ":"ほ(호)는 가로선이 한 줄 더 있어요","あ":"あ(아)는 가운데서 교차해 안으로 말려요","お":"お(오)는 위에 점이 있고 오른쪽이 말려요","シ":"シ(시)는 점 두 개가 옆으로 누워요(↘)","ツ":"ツ(츠)는 점 두 개가 위에서 아래로 내려와요(↓)","ソ":"ソ(소)는 점 하나가 위로 짧고 선이 비스듬해요","ン":"ン(응)은 점이 아래에서 위로(↗) 올라가요","ク":"ク(쿠)는 위 획이 짧게 시작해요","ケ":"ケ(케)는 가로선이 먼저 나와요","ウ":"ウ(우)는 위에 점이 있어요","ワ":"ワ(와)는 점 없이 뚜껑만 있어요","フ":"フ(후)는 한 획으로 꺾여요","ミ":"ミ(미)는 가로선 세 줄이에요"};
-  root().innerHTML=`<div class="kana"><button class="back" data-kana="home">${ic("back")}입문 코스</button><h2>헷갈리는 글자</h2><div class="sub">모양이 비슷해서 자주 틀리는 글자예요. 눌러서 소리도 들어 보세요.</div>
+  const info={"さ":"さ(사)는 아래가 열려 있습니다","き":"き(키)는 가로선이 두 줄입니다","ぬ":"ぬ(누)는 꼬리가 둥글게 감깁니다","め":"め(메)는 꼬리 없이 열려 있습니다","ろ":"ろ(로)는 끝이 열려 있습니다","る":"る(루)는 끝에 동그란 고리가 있습니다","わ":"わ(와)는 뾰족하게 꺾입니다","れ":"れ(레)는 오른쪽 아래가 꺾입니다","ね":"ね(네)는 끝에 고리가 있습니다","は":"は(하)는 오른쪽이 닫혀 있습니다","ほ":"ほ(호)는 가로선이 한 줄 더 있습니다","あ":"あ(아)는 가운데서 교차해 안으로 말립니다","お":"お(오)는 위에 점이 있고 오른쪽이 말립니다","シ":"シ(시)는 점 두 개가 옆으로 누워요(↘)","ツ":"ツ(츠)는 점 두 개가 위에서 아래로 내려와요(↓)","ソ":"ソ(소)는 점 하나가 위로 짧고 선이 비스듬합니다","ン":"ン(응)은 점이 아래에서 위로(↗) 올라갑니다","ク":"ク(쿠)는 위 획이 짧게 시작합니다","ケ":"ケ(케)는 가로선이 먼저 나옵니다","ウ":"ウ(우)는 위에 점이 있습니다","ワ":"ワ(와)는 점 없이 뚜껑만 있습니다","フ":"フ(후)는 한 획으로 꺾입니다","ミ":"ミ(미)는 가로선 세 줄입니다"};
+  root().innerHTML=`<div class="kana"><button class="back" data-kana="home">${ic("back")}입문 코스</button><h2>헷갈리는 글자</h2><div class="sub">모양이 비슷해서 자주 틀리는 글자입니다. 눌러서 소리도 들어 보세요.</div>
   ${pairs.map(p=>`<div class="ktip"><div class="ksim">${p.map(c=>`<button class="kc" data-kana="say" data-t="${c}"><b>${c}</b></button>`).join("")}</div>${p.map(c=>info[c]||"").filter(Boolean).join("<br>")}</div>`).join("")}</div>`;
 }
 function renderLesson(L,k){
@@ -231,7 +231,7 @@ function renderLesson(L,k){
   root().innerHTML=`<div class="kana"><button class="back" data-kana="home">${ic("back")}글자표·레슨 목록</button><h2>레슨 ${L.i+1}. ${lessonLabel(L,k)}</h2><div class="sub">${k?"가타카나":"히라가나"} · ${L.g}</div>
   <div class="ktip">${k?(L.ktip||toK(L.tip)):L.tip}</div>
   ${ch.length?`<div class="kgrid" style="grid-template-columns:repeat(${ch.length%3===0&&ch.length>5?3:5},minmax(0,1fr))">${ch.map(cellBtn).join("")}</div>`:""}
-  <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b>${koRead(x.w)?`<small>${koRead(x.w)}</small>`:""}<small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서는 아직 읽을 수 있는 단어가 없어요.</div>`}
+  <h3>${ch.length?"이 글자가 들어간 단어":"단어로 읽어 보기"}</h3>${words.length?`<div class="kgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${words.map(x=>`<button class="kc" data-kana="say" data-t="${x.w}"><b style="font-size:22px">${x.w}</b>${koRead(x.w)?`<small>${koRead(x.w)}</small>`:""}<small>${x.m}</small></button>`).join("")}</div>`:`<div class="sub">이 행에서는 아직 읽을 수 있는 단어가 없습니다.</div>`}
   <div class="kbtns">${ch.length?`<button class="cta" data-kana="cards" data-i="${L.i}">카드로 한 글자씩 배우기</button>`:""}${ch.length?`<button class="cta sec" data-kana="write" data-i="${L.i}">글자 따라 쓰기</button>`:""}${words.some(x=>x.w.length<=5)?`<button class="cta sec" data-kana="writew" data-i="${L.i}">단어 따라 쓰기</button>`:""}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="cta sec" data-kana="lesson" data-i="${prv?prv.i:L.i}" ${prv?"":"disabled"}>‹ 이전 레슨</button><button class="cta sec" data-kana="lesson" data-i="${nxt?nxt.i:L.i}" ${nxt?"":"disabled"}>다음 레슨 ›</button></div></div></div>`;
 }
@@ -246,7 +246,7 @@ function mkQuestions(targets,optChars,words,wordPool,n){
     const c=targets[Math.floor(Math.random()*targets.length)];
     if(t==="hear") qs.push({t,ans:c[0],opts:mix(c[0],optChars.map(x=>x[0])),say:c[0],note:`${c[0]} = ${c[2]} (${c[1]})`});
     else if(t==="kana") qs.push({t,big:c[2],sub:"이 소리의 글자는?",ans:c[0],opts:mix(c[0],optChars.map(x=>x[0])),say:c[0],note:`${c[2]} = ${c[0]} (${c[1]})`});
-    else qs.push({t:"ko",big:c[0],sub:"이 글자는 어떻게 읽을까요?",ans:c[2],opts:mix(c[2],kos),say:c[0],note:`${c[0]} = ${c[2]} (${c[1]})`}); }
+    else qs.push({t:"ko",big:c[0],sub:"이 글자는 어떻게 읽으시겠습니까?",ans:c[2],opts:mix(c[2],kos),say:c[0],note:`${c[0]} = ${c[2]} (${c[1]})`}); }
   return qs;
 }
 function startLesson(L,k){
@@ -266,7 +266,7 @@ function renderQ(){
   root().innerHTML=`<div class="kana"><div class="qtop"><button class="qx" data-kana="home" aria-label="그만하기">×</button><div class="prog"><div style="width:${Math.round(K.i/K.qs.length*100)}%"></div></div></div>
   <div class="sub">${K.title} · ${K.i+1} / ${K.qs.length}</div><div class="sub jprompt" style="text-align:center">${prompts[q.t]}</div>${big}
   <div class="opts4">${q.opts.map((o,i)=>{ let c=""; if(dn){ if(o===q.ans) c="correct"; else if(i===K.sel) c="wrong"; } return `<button class="opt ${c}" data-kana="ans" data-i="${i}" ${dn?"disabled":""}><kbd>${i+1}</kbd><span style="font-size:${/[ぁ-んァ-ヶー]/.test(o)?"24px":"inherit"}">${o}</span></button>`; }).join("")}</div>
-  ${dn?`<div class="reveal ${q.opts[K.sel]===q.ans?"ok":"ng"}" style="position:static;margin-top:14px;border-radius:16px"><div class="rvt">${q.opts[K.sel]===q.ans?"정답이에요!":"아쉬워요"}</div><div>${q.note}</div><div class="qbtns"><button class="cta" data-kana="next">${K.i+1>=K.qs.length?"결과 보기":"계속하기"}</button></div></div>`:""}</div>`;
+  ${dn?`<div class="reveal ${q.opts[K.sel]===q.ans?"ok":"ng"}" style="position:static;margin-top:14px;border-radius:16px"><div class="rvt">${q.opts[K.sel]===q.ans?"정답입니다!":"아쉽습니다"}</div><div>${q.note}</div><div class="qbtns"><button class="cta" data-kana="next">${K.i+1>=K.qs.length?"결과 보기":"계속하기"}</button></div></div>`:""}</div>`;
   if(!dn&&q.t==="hear") setTimeout(()=>{ if(K&&K.qs&&K.qs[K.i]===q&&K.sel===null) say(q.say); },200);
 }
 function renderResult(){
@@ -274,7 +274,7 @@ function renderResult(){
   if(ok&&K.lessonKey){ const d=done(); d.done[K.lessonKey]=true; save(d); try{ if(window.PATH) PATH.kanaDone(K.lessonKey); }catch(e){} }
   const nxt=K.lessonI!=null?LESSONS[K.lessonI+1]:null;
   root().innerHTML=`<div class="kana" style="text-align:center"><h2>${K.title} 결과</h2><div class="score" style="font-size:44px;margin:16px 0">${K.score} / ${n}</div>
-  <div class="sub">${ok?(K.lessonKey?"합격! 이 레슨을 완료로 표시했어요.":"잘했어요!"):"70% 이상이면 완료로 표시돼요. 글자표를 한 번 더 보고 다시 도전해 보세요."}</div>
+  <div class="sub">${ok?(K.lessonKey?"합격! 이 레슨을 완료로 표시했습니다.":"잘했습니다!"):"70% 이상이면 완료로 표시됩니다. 글자표를 한 번 더 보고 다시 도전해 보세요."}</div>
   <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">${ok&&nxt?`<button class="cta" data-kana="lesson" data-i="${nxt.i}">다음 레슨: ${lessonLabel(nxt,K.k)}</button><button class="cta sec" data-kana="again">다시 풀기</button>`:`<button class="cta" data-kana="again">다시 풀기</button>`}<button class="cta sec" data-kana="home">글자표·레슨 목록으로</button></div></div>`;
   if(ok&&typeof sakura==="function") sakura(14);
 }
@@ -298,7 +298,7 @@ function renderWrite(){
    <canvas id="kwc"></canvas></div>
   <div class="kwbar"><button data-kana="wanim">▶ 획순<br>보기</button><button data-kana="wundo">↶ 한 획<br>지우기</button><button data-kana="wclear">전부<br>지우기</button><button data-kana="wguide" class="${W.guide?"on":""}">밑그림<br>${W.guide?"켜짐":"꺼짐"}</button></div>
   <div class="kbtns" style="margin-top:6px"><button class="cta sec" data-kana="wsay">소리 듣기</button><div class="kwnav"><button class="cta sec" data-kana="wprev" ${W.i?"":"disabled"}>‹ 이전</button><button class="cta" data-kana="wnext">${W.i+1<W.items.length?"다음 ›":"완료 "}</button></div></div>
-  <div class="sub" style="margin-top:14px;font-size:12px">획 순서 데이터: KanjiVG (CC BY-SA 3.0). 밑그림을 끄면 보지 않고 써 볼 수 있어요. 막히면 '획순 보기'를 눌러요.</div></div>`;
+  <div class="sub" style="margin-top:14px;font-size:12px">획 순서 데이터: KanjiVG (CC BY-SA 3.0). 밑그림을 끄면 보지 않고 써 볼 수 있습니다. 막히면 '획순 보기'를 누릅니다.</div></div>`;
   setupCanvas();
 }
 function setupCanvas(){
@@ -322,13 +322,13 @@ async function wAnimate(){
   for(const p of ps){ if(tok!==wTok) return; p.style.opacity="1"; void p.getBoundingClientRect(); p.style.transition="stroke-dashoffset .7s ease"; p.style.strokeDashoffset="0"; await new Promise(r=>setTimeout(r,820)); }
   await new Promise(r=>setTimeout(r,900)); if(tok===wTok) ps.forEach(p=>{ p.style.transition="none"; p.style.strokeDashoffset="1"; p.style.opacity="0"; });
 }
-function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
+function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼습니다! 잘했습니다"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
 function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLesson(LESSONS[b.i],b.k); } else renderHome(); window.scrollTo(0,0); }
 /* 글자별 관련 단어와 그림. 그림은 Google Noto Emoji(Apache License 2.0, img/emoji/LICENSE.txt) */
 const KW={"h":{"あ":["あめ","비","1f327"],"い":["いぬ","개","1f436"],"う":["うさぎ","토끼","1f430"],"え":["えんぴつ","연필","270f"],"お":["おにぎり","주먹밥","1f359"],"か":["かさ","우산","2602"],"き":["きのこ","버섯","1f344"],"く":["くるま","자동차","1f697"],"け":["けいたい","휴대폰","1f4f1"],"こ":["こおり","얼음","1f9ca"],"さ":["さかな","물고기","1f41f"],"し":["しか","사슴","1f98c"],"す":["すし","초밥","1f363"],"せ":["せかい","세계","1f30d"],"そ":["そら","하늘","2601"],"た":["たまご","달걀","1f95a"],"ち":["ちず","지도","1f5fa"],"つ":["つき","달","1f319"],"て":["て","손","270b"],"と":["とり","새","1f426"],"な":["なす","가지","1f346"],"に":["にじ","무지개","1f308"],"ぬ":["ぬいぐるみ","인형","1f9f8"],"ね":["ねこ","고양이","1f431"],"の":["のみもの","음료","1f964"],"は":["はな","꽃","1f338"],"ひ":["ひこうき","비행기","2708"],"ふ":["ふね","배","1f6a2"],"へ":["へび","뱀","1f40d"],"ほ":["ほし","별","2b50"],"ま":["まど","창문","1fa9f"],"み":["みかん","귤","1f34a"],"む":["むし","벌레","1f41b"],"め":["め","눈","1f441"],"も":["もも","복숭아","1f351"],"や":["やま","산","26f0"],"ゆ":["ゆき","눈","2744"],"よ":["よる","밤","1f303"],"ら":["らいおん","사자","1f981"],"り":["りんご","사과","1f34e"],"る":["さる","원숭이","1f412"],"れ":["れもん","레몬","1f34b"],"ろ":["ろうそく","양초","1f56f"],"わ":["わに","악어","1f40a"],"を":["ほんを","책을","1f4d6"],"ん":["ぱん","빵","1f35e"],"が":["がっこう","학교","1f3eb"],"ぎ":["ぎんこう","은행","1f3e6"],"ぐ":["ぐんて","장갑","1f9e4"],"げ":["げんかん","현관","1f6aa"],"ご":["ごはん","밥","1f35a"],"ざ":["ざっし","잡지","1f4f0"],"じ":["じてんしゃ","자전거","1f6b2"],"ず":["ずぼん","바지","1f456"],"ぜ":["かぜ","바람","1f4a8"],"ぞ":["ぞう","코끼리","1f418"],"だ":["だんご","경단","1f361"],"で":["でんしゃ","전철","1f683"],"ど":["どうぶつ","동물","1f43e"],"ば":["ばなな","바나나","1f34c"],"び":["びょういん","병원","1f3e5"],"ぶ":["ぶた","돼지","1f437"],"べ":["べんとう","도시락","1f371"],"ぼ":["ぼうし","모자","1f9e2"],"ぱ":["ぱん","빵","1f35e"],"ぴ":["ぴあの","피아노","1f3b9"],"ぷ":["ぷりん","푸딩","1f36e"],"ぺ":["ぺん","펜","1f58a"],"ぽ":["ぽすと","우체통","1f4ee"]},"k":{"ア":["アイス","아이스크림","1f366"],"イ":["イルカ","돌고래","1f42c"],"ウ":["ウマ","말","1f434"],"エ":["エビ","새우","1f990"],"オ":["オレンジ","오렌지","1f34a"],"カ":["カメラ","카메라","1f4f7"],"キ":["キウイ","키위","1f95d"],"ク":["クッキー","쿠키","1f36a"],"ケ":["ケーキ","케이크","1f370"],"コ":["コーヒー","커피","2615"],"サ":["サッカー","축구","26bd"],"シ":["シャツ","셔츠","1f455"],"ス":["スイカ","수박","1f349"],"セ":["セーター","스웨터","1f9e5"],"ソ":["ソファ","소파","1f6cb"],"タ":["タクシー","택시","1f695"],"チ":["チーズ","치즈","1f9c0"],"ツ":["ツリー","트리","1f384"],"テ":["テレビ","텔레비전","1f4fa"],"ト":["トマト","토마토","1f345"],"ナ":["ナッツ","견과류","1f95c"],"ニ":["ニンジン","당근","1f955"],"ヌ":["ヌードル","국수","1f35c"],"ネ":["ネクタイ","넥타이","1f454"],"ノ":["ノート","공책","1f4d3"],"ハ":["ハート","하트","2764"],"ヒ":["ヒヨコ","병아리","1f425"],"フ":["フルーツ","과일","1f353"],"ヘ":["ヘリコプター","헬리콥터","1f681"],"ホ":["ホテル","호텔","1f3e8"],"マ":["マスク","마스크","1f637"],"ミ":["ミルク","우유","1f95b"],"ム":["ムービー","영화","1f3ac"],"メ":["メロン","멜론","1f348"],"モ":["モモ","복숭아","1f351"],"ヤ":["ヤギ","염소","1f410"],"ユ":["ユニコーン","유니콘","1f984"],"ヨ":["ヨット","요트","26f5"],"ラ":["ラーメン","라면","1f35c"],"リ":["リス","다람쥐","1f43f"],"ル":["ルビー","루비","1f48e"],"レ":["レモン","레몬","1f34b"],"ロ":["ロケット","로켓","1f680"],"ワ":["ワイン","와인","1f377"],"ン":["ペンギン","펭귄","1f427"],"ガ":["ガソリン","휘발유","26fd"],"ギ":["ギター","기타","1f3b8"],"グ":["グラス","유리잔","1f943"],"ゲ":["ゲーム","게임","1f3ae"],"ゴ":["ゴリラ","고릴라","1f98d"],"ザ":["ピザ","피자","1f355"],"ジ":["ジュース","주스","1f9c3"],"ズ":["ズボン","바지","1f456"],"ゾ":["ゾウ","코끼리","1f418"],"ダ":["ダンス","춤","1f483"],"デ":["デザート","디저트","1f368"],"ド":["ドア","문","1f6aa"],"バ":["バナナ","바나나","1f34c"],"ビ":["ビール","맥주","1f37a"],"ブ":["ブドウ","포도","1f347"],"ベ":["ベッド","침대","1f6cf"],"ボ":["ボール","공","1f3c0"],"パ":["パン","빵","1f35e"],"ピ":["ピアノ","피아노","1f3b9"],"プ":["プリン","푸딩","1f36e"],"ペ":["ペン","펜","1f58a"],"ポ":["ポスト","우체통","1f4ee"]}};
 
 
-/* 단어의 한국어 발음(한글 표기): 글자마다 소리를 한글로 옮기고, っ는 받침 ㅅ, ん은 받침 ㄴ, 길게 끄는 소리는 '-'로 보여요 */
+/* 단어의 한국어 발음(한글 표기): 글자마다 소리를 한글로 옮기고, っ는 받침 ㅅ, ん은 받침 ㄴ, 길게 끄는 소리는 '-'로 보입니다 */
 const KR_SM={"ぁ":"아","ぃ":"이","ぅ":"우","ぇ":"에","ぉ":"오"};
 function koRead(w){
   const tb={}; [...H,...D].forEach(c=>tb[c[0]]=c[2]); Y.forEach(c=>tb[c[0]]=c[2]);
@@ -355,25 +355,25 @@ function koRead(w){
 let C=null;
 function startCards(L,k,at){ const chars=lessonChars(L,k); if(!chars.length){ renderLesson(L,k); return; } C={L,k,i:Math.min(Math.max(+at||0,0),chars.length-1),chars,words:lessonWords(L,k)}; renderCard(); }
 const KC=[["#ff8a5c","#ff5a7a"],["#ffb02e","#ff7a2e"],["#4cc9a0","#2a9d8f"],["#5bb6ff","#4a7bff"],["#a07cff","#6c4ff0"],["#ff7eb6","#e0508f"],["#7bd36a","#3fae5a"],["#ffc93c","#ff9a1f"]];
-const CHEER=["따라 해 봐요!","잘하고 있어요!","소리 내서 읽어 봐요","좋아요, 한 번 더!","멋져요!"];
+const CHEER=["따라 해 보세요!","잘하고 있습니다!","소리 내서 읽어 보세요","좋습니다, 한 번 더!","멋집니다!"];
 function renderCard(){
   inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
-  const say1=i===0?`${c[2]}~ 소리 내서 따라 해 봐요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
+  const say1=i===0?`${c[2]}~ 소리 내서 따라 해 보세요!`:last?"마지막 글자입니다! 거의 다 왔습니다!":CHEER[i%CHEER.length];
   root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull${i===0?" kfirst":""}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
    ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span>${koRead(ex.w)?`<i class="kexp">${koRead(ex.w)}</i>`:""}</span></button>`:""}
-   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
+   <div class="khint">글자와 그림을 눌러 보세요. 소리가 납니다</div>${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
    <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
-   ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠어요! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
+   ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠습니다! 다음 행으로 ›":"다 배웠습니다! 끝났습니다"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
   </div></div>`;
   try{ const d=done(); d.cur=(d.cur&&typeof d.cur.k!=="number")?d.cur:{}; d.cur[k?"k":"h"]={i:L.i,c:i}; save(d); }catch(e){}
   window.scrollTo(0,0); setTimeout(()=>say(c[0]),150);
 }
-/* 탁음·반탁음 / 요음은 글자 하나씩이 아니라 규칙과 표로 한눈에 알려줘요 */
+/* 탁음·반탁음 / 요음은 글자 하나씩이 아니라 규칙과 표로 한눈에 알려줍니다 */
 const DKROWS=[["か","が",5,0],["さ","ざ",10,5],["た","だ",15,10],["は","ば",25,15],["は","ぱ",25,20]];
 function renderDakuten(k){
   inq(false); const T=c=>k?toK(c):c;
@@ -381,29 +381,29 @@ function renderDakuten(k){
     return `<div class="kgh"><span>${T(bl)}행 + ${r===4?"゜(동그라미)":"゛(점 두 개)"} → ${T(dl)}행</span><span>${r===4?"ㅍ 소리":r===3?"ㅂ 소리":r===0?"ㄱ 소리":r===1?"ㅈ 소리":"ㄷ 소리"}</span></div>
     <div class="kgrid">${cs.map((c,i)=>`<button class="kc" data-kana="say" data-t="${T(c[0])}"><small class="bs">${T(bs[i][0])} →</small><b>${T(c[0])}</b><small>${c[2]} · ${c[1]}</small></button>`).join("")}</div>`; }).join("");
   root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
-  <h2>${k?"가타카나":"히라가나"} · 탁음 · 반탁음</h2><div class="sub">글자를 새로 외우는 게 아니라, <b>점 하나로 소리가 바뀌는 규칙</b>만 알면 돼요.</div>
-  <div class="ktip"><b>゛(점 두 개)</b>를 붙이면 소리가 부드럽게 탁해져요. か(카) → が(가), さ(사) → ざ(자), た(타) → だ(다), は(하) → ば(바).<br><b>゜(동그라미)</b>는 は행에만 붙어요. は(하) → ぱ(파), 소리가 ㅍ으로 바뀌어요.</div>
+  <h2>${k?"가타카나":"히라가나"} · 탁음 · 반탁음</h2><div class="sub">글자를 새로 외우는 게 아니라, <b>점 하나로 소리가 바뀌는 규칙</b>만 알면 됩니다.</div>
+  <div class="ktip"><b>゛(점 두 개)</b>를 붙이면 소리가 부드럽게 탁해집니다. か(카) → が(가), さ(사) → ざ(자), た(타) → だ(다), は(하) → ば(바).<br><b>゜(동그라미)</b>는 は행에만 붙습니다. は(하) → ぱ(파), 소리가 ㅍ으로 바뀝니다.</div>
   ${rows}
-  <div class="ktip">알아 두면 좋아요: じ와 ぢ, ず와 づ는 소리가 같아요. ぢ·づ는 거의 쓰지 않아서 じ·ず만 기억하면 돼요.</div>
-  <div class="kbtns"><button class="cta kgo" data-kana="dkdone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠어요! 다 봤어요</button></div></div>`;
+  <div class="ktip">알아 두면 좋습니다: じ와 ぢ, ず와 づ는 소리가 같습니다. ぢ·づ는 거의 쓰지 않아서 じ·ず만 기억하면 됩니다.</div>
+  <div class="kbtns"><button class="cta kgo" data-kana="dkdone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠습니다! 다 봤습니다</button></div></div>`;
   window.scrollTo(0,0);
 }
 function renderYoon(k){
   inq(false); const T=c=>k?toK(c):c; const rows=[]; for(let i=0;i<Y.length;i+=3) rows.push(Y.slice(i,i+3));
   root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
-  <h2>${k?"가타카나":"히라가나"} · 요음</h2><div class="sub">큰 글자 뒤에 <b>작은 ゃ ゅ ょ</b>를 붙이면, 두 글자가 <b>한 소리</b>로 합쳐져요.</div>
-  <div class="ktip">き(키) + ゃ = きゃ(캬), し(시) + ゅ = しゅ(슈), ち(치) + ょ = ちょ(쵸). 작은 글자는 앞 글자와 붙여서 <b>한 박자</b>로 읽어요. 예) ひゃく(백), びょういん(병원)</div>
+  <h2>${k?"가타카나":"히라가나"} · 요음</h2><div class="sub">큰 글자 뒤에 <b>작은 ゃ ゅ ょ</b>를 붙이면, 두 글자가 <b>한 소리</b>로 합쳐집니다.</div>
+  <div class="ktip">き(키) + ゃ = きゃ(캬), し(시) + ゅ = しゅ(슈), ち(치) + ょ = ちょ(쵸). 작은 글자는 앞 글자와 붙여서 <b>한 박자</b>로 읽습니다. 예) ひゃく(백), びょういん(병원)</div>
   <div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${Y.map(([c,r,ko])=>cellBtn([T(c),r,ko])).join("")}</div>
-  <div class="kbtns"><button class="cta kgo" data-kana="yodone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠어요! 다 봤어요</button></div></div>`;
+  <div class="kbtns"><button class="cta kgo" data-kana="yodone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠습니다! 다 봤습니다</button></div></div>`;
   window.scrollTo(0,0);
 }
 const markDone=(ids,k)=>{ const d=done(); ids.forEach(i=>{ d.done[key(LESSONS[i],k)]=true; try{ if(window.PATH) PATH.kanaDone(key(LESSONS[i],k)); }catch(e){} }); save(d); };
-/* ---------- 글자 맞추기 (왕초보 게임): 글자 하나와 한글 소리를 짝지어요. 시간 제한·감점 없음 ---------- */
+/* ---------- 글자 맞추기 (왕초보 게임): 글자 하나와 한글 소리를 짝짓습니다. 시간 제한·감점 없음 ---------- */
 let KG=null;
 function kgame(mode){
   if(!mode){ stopG(); G={type:"km"};
     root().innerHTML=`<div class="qbox gbox" style="max-width:480px"><div class="qm-h"><h2>글자 맞추기</h2></div>
-    <p class="sub" style="text-align:center">글자를 누르면 소리가 나요.<br>같은 소리를 오른쪽에서 골라 짝을 맞춰요.<br>시간 제한도, 감점도 없어요.</p>
+    <p class="sub" style="text-align:center">글자를 누르면 소리가 납니다.<br>같은 소리를 오른쪽에서 골라 짝을 맞춥니다.<br>시간 제한도, 감점도 없습니다.</p>
     <div class="qbtns" style="flex-direction:column;align-items:stretch"><button class="cta" data-kana="kgo" data-m="h">히라가나 (あ い う)</button><button class="cta" data-kana="kgo" data-m="k">가타카나 (ア イ ウ)</button><button class="cta sec" data-kana="kgo" data-m="m">히라가나·가타카나 섞어서</button><button class="pill" data-act="gquit">뒤로</button></div></div>`; return; }
   const base=H.filter(r=>r[0]!=="を"); KG={m:mode,base,round:0,total:5,miss:0,pairs:0,seen:new Set()}; krRound();
 }
@@ -413,17 +413,17 @@ function krRound(){
   k.cur=pick.map(r=>({id:r[0],c:k.m==="k"?toK(r[0]):k.m==="m"&&Math.random()<.5?toK(r[0]):r[0],ko:r[2],h:r[0]}));
   k.right=shuffle(k.cur); k.sel=null; k.done=new Set(); k.bad=null; k.busy=false; krRender();
 }
-const base_n=k=>14+k.round*8;   /* 처음엔 앞쪽(あ행~) 글자 위주, 갈수록 넓어져요 */
+const base_n=k=>14+k.round*8;   /* 처음엔 앞쪽(あ행~) 글자 위주, 갈수록 넓어집니다 */
 function krRender(){
   const k=KG; if(!k) return;
   const L=k.cur.map(x=>`<button class="opt ${k.done.has(x.id)?"good":k.sel===x.id?"sel":""}" data-kana="kpick" data-side="l" data-id="${x.id}" style="font-size:30px;font-weight:800;min-height:64px">${x.c}</button>`).join("");
   const R=k.right.map(x=>`<button class="opt ${k.done.has(x.id)?"good":k.bad===x.id?"bad":""}" data-kana="kpick" data-side="r" data-id="${x.id}" style="font-size:22px;font-weight:800;min-height:64px">${x.ko}</button>`).join("");
   root().innerHTML=`<div class="qbox gbox" style="max-width:480px"><div class="gstat"><span>${k.round+1} / ${k.total} 판</span><span class="gsc"><small>맞힌 짝</small><b>${k.pairs}</b></span><button class="pill sm" data-act="gquit" aria-label="게임 나가기">나가기</button></div>
-  <p class="sub" style="text-align:center">${k.sel?"같은 소리를 오른쪽에서 골라요":"왼쪽 글자를 눌러 보세요 (소리가 나요)"}</p>
+  <p class="sub" style="text-align:center">${k.sel?"같은 소리를 오른쪽에서 고릅니다":"왼쪽 글자를 눌러 보세요 (소리가 납니다)"}</p>
   <div class="gcols"><div class="gcol">${L}</div><div class="gcol">${R}</div></div>
   <div class="qbtns"><button class="pill" data-act="gquit">그만하기</button></div></div>`;
 }
-/* 나가기를 누르면 진행 중이던 판을 끊어서, 뒤늦게 화면이 다시 그려지지 않게 해요 */
+/* 나가기를 누르면 진행 중이던 판을 끊어서, 뒤늦게 화면이 다시 그려지지 않게 합니다 */
 document.addEventListener("click",e=>{ if(e.target.closest('[data-act="gquit"]')) KG=null; },true);
 function krPick(side,id){
   const k=KG; if(!k||k.busy||k.done.has(id)) return;
@@ -435,26 +435,26 @@ function krPick(side,id){
 }
 function krEnd(){
   const k=KG; KG=null; try{ stopG(); questInc("gm"); questCheck(); }catch(e){}
-  const msg=k.miss===0?"한 번도 안 틀렸어요! 대단해요":k.miss<=3?"아주 잘했어요":"괜찮아요, 한 번 더 하면 더 잘 맞춰요";
+  const msg=k.miss===0?"한 번도 안 틀렸습니다! 대단합니다":k.miss<=3?"아주 잘했습니다":"괜찮습니다, 한 번 더 하면 더 잘 맞춥니다";
   root().innerHTML=`<div class="qbox gbox gres" style="max-width:480px"><div class="gres-top"><div class="score">${k.pairs}쌍</div><div class="rank">${msg}</div><div class="sub gres-note">틀린 횟수 ${k.miss}번</div></div>
   <div class="gres-acts"><button class="pill on" data-act="gstart" data-g="kmatch">한 번 더</button><button class="pill" data-act="again">처음으로</button></div></div>`;
 }
-/* 처음 오는 왕초보용 설명: 히라가나·가타카나가 뭔지부터 알려 줘요 */
+/* 처음 오는 왕초보용 설명: 히라가나·가타카나가 뭔지부터 알려 줍니다 */
 function renderIntro(k){
   const box=(t,b,s)=>`<div class="ktip" style="margin:10px 0"><b>${t}</b><br>${b}${s?`<br><span style="color:var(--sub)">${s}</span>`:""}</div>`;
   root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
-  <h2>일본어 글자, 이것부터 알아요</h2><div class="sub">처음이어도 괜찮아요. 딱 3가지만 알고 시작해요.</div>
-  ${box("① 일본어에는 글자가 3종류 있어요","<b>히라가나</b> あ い う — 동글동글, 일본어의 기본 글자<br><b>가타카나</b> ア イ ウ — 각진 모양, 외국어·외래어를 적을 때<br><b>한자</b> 日 本 語 — 뜻을 가진 글자","한국어의 ㄱㄴㄷ처럼, 히라가나·가타카나가 일본어의 '소리 글자'예요. 먼저 히라가나부터 배워요.")}
-  ${box("② 글자 하나 = 소리 하나","あ는 '아', い는 '이'처럼 글자마다 소리가 하나씩 정해져 있어요.","あ い う え お(아 이 우 에 오)가 모음이고, か き く け こ(카 키 쿠 케 코)처럼 자음이 붙어서 한 줄씩 늘어나요. 총 46글자예요.")}
-  ${box("③ 카드로 이렇게 배워요","큰 글자 카드가 하나씩 나와요. 소리 듣기 버튼을 눌러 발음을 듣고, 예시 단어를 보고, 다음 카드로 넘겨요.","한 번에 다 외울 필요 없어요. 하루에 한 줄(5글자)씩만 해도 충분해요. 중간에 나가도 그 글자부터 이어서 할 수 있어요.")}
-  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:#5b5bf0;--k2:#8a63ff">알겠어요! 카드로 시작</button></div></div>`;
+  <h2>일본어 글자, 이것부터 압니다</h2><div class="sub">처음이어도 괜찮습니다. 딱 3가지만 알고 시작합니다.</div>
+  ${box("① 일본어에는 글자가 3종류 있습니다","<b>히라가나</b> あ い う — 동글동글, 일본어의 기본 글자<br><b>가타카나</b> ア イ ウ — 각진 모양, 외국어·외래어를 적을 때<br><b>한자</b> 日 本 語 — 뜻을 가진 글자","한국어의 ㄱㄴㄷ처럼, 히라가나·가타카나가 일본어의 '소리 글자'입니다. 먼저 히라가나부터 배웁니다.")}
+  ${box("② 글자 하나 = 소리 하나","あ는 '아', い는 '이'처럼 글자마다 소리가 하나씩 정해져 있습니다.","あ い う え お(아 이 우 에 오)가 모음이고, か き く け こ(카 키 쿠 케 코)처럼 자음이 붙어서 한 줄씩 늘어납니다. 총 46글자입니다.")}
+  ${box("③ 카드로 이렇게 배웁니다","큰 글자 카드가 하나씩 나옵니다. 소리 듣기 버튼을 눌러 발음을 듣고, 예시 단어를 보고, 다음 카드로 넘깁니다.","한 번에 다 외울 필요 없습니다. 하루에 한 줄(5글자)씩만 해도 충분합니다. 중간에 나가도 그 글자부터 이어서 할 수 있습니다.")}
+  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:#5b5bf0;--k2:#8a63ff">알겠습니다! 카드로 시작</button></div></div>`;
   window.scrollTo(0,0);
 }
 const introSeen=()=>{ try{ return !!localStorage.getItem("jp-kana-intro"); }catch(e){ return true; } };
 function learn(k){ k=!!k; K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode");
   if(!introSeen()&&!Object.keys(done().done||{}).length){ renderIntro(k); return; }
   const d=done(), cu=curOf(d,k); /* 중간에 나갔으면 그 글자부터 이어서 */
-  if(cu&&LESSONS[cu.i]&&!d.done[key(LESSONS[cu.i],k)]&&(cu.c>0||cu.i>0)){ try{ toast("지난번에 하던 곳부터 이어서 해요"); }catch(e){} startCards(LESSONS[cu.i],k,cu.c); return; }
+  if(cu&&LESSONS[cu.i]&&!d.done[key(LESSONS[cu.i],k)]&&(cu.c>0||cu.i>0)){ try{ toast("지난번에 하던 곳부터 이어서 합니다"); }catch(e){} startCards(LESSONS[cu.i],k,cu.c); return; }
   const nl=nextLesson(k)||LESSONS[0]; startCards(nl,k); }
 function open(tab){ K={tab:(typeof tab==="string"&&tab)||K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
 document.addEventListener("click",e=>{
@@ -473,13 +473,13 @@ document.addEventListener("click",e=>{
   else if(a==="cnext"&&C){ C.i++; renderCard(); }
   else if(a==="cprev"&&C&&C.i){ C.i--; renderCard(); }
   else if(a==="cdone"&&C){ const {L,k}=C, d=done(); d.done[key(L,k)]=true; if(d.cur&&typeof d.cur.k!=="number") delete d.cur[k?"k":"h"]; save(d); try{ if(window.PATH) PATH.kanaDone(key(L,k)); }catch(e){}
-    toast(lessonLabel(L,k)+" 완료! 잘했어요"); if(L.i===9) autoDk(k); const nx=L.i<9?LESSONS[L.i+1]:null; if(nx) startCards(nx,k); else { C=null; K={tab:k?"k":"h"}; renderHome(); window.scrollTo(0,0); } }
+    toast(lessonLabel(L,k)+" 완료! 잘했습니다"); if(L.i===9) autoDk(k); const nx=L.i<9?LESSONS[L.i+1]:null; if(nx) startCards(nx,k); else { C=null; K={tab:k?"k":"h"}; renderHome(); window.scrollTo(0,0); } }
   else if(a==="home"){ K={tab:K.tab||"h"}; renderHome(); window.scrollTo(0,0); }
   else if(a==="exit"){ inq(false); setView("quiz"); }
   else if(a==="dk") renderDakuten(K.tab==="k");
   else if(a==="yo") renderYoon(K.tab==="k");
-  else if(a==="dkdone"){ const kk=K.tab==="k"; markDone([10,11,12,13,14],kk); try{ toast("탁음·반탁음 완료! 잘했어요"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
-  else if(a==="yodone"){ const kk=K.tab==="k"; markDone([15,16,17],kk); try{ toast("요음 완료! 잘했어요"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
+  else if(a==="dkdone"){ const kk=K.tab==="k"; markDone([10,11,12,13,14],kk); try{ toast("탁음·반탁음 완료! 잘했습니다"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
+  else if(a==="yodone"){ const kk=K.tab==="k"; markDone([15,16,17],kk); try{ toast("요음 완료! 잘했습니다"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
   else if(a==="gohome"){ inq(false); setView("home"); window.scrollTo(0,0); }
   else if(a==="tab"){ K={tab:b.dataset.t}; renderHome(); }
   else if(a==="say") say(b.dataset.t);

@@ -1,7 +1,7 @@
 /* 학습 경로 · 경험치(XP) · 자동 복습(간격 반복)
- * - 홈 화면에 유닛 → 레슨 순서의 학습 경로를 보여 줘요. 글자 입문 레슨과 단어 레슨(20개씩)이 한 길로 이어져요.
- * - 단어 레슨은 퀴즈에서 70% 이상 맞히면 완료돼요. 이미 아는 유닛은 건너뛸 수 있어요.
- * - 단어를 풀 때마다(record) 복습 일정이 갱신돼요: 틀리면 10분 뒤, 맞히면 1일 → 3일 → 7일 → 14일 → 30일 → 60일 뒤에 다시 나와요.
+ * - 홈 화면에 유닛 → 레슨 순서의 학습 경로를 보여 줍니다. 글자 입문 레슨과 단어 레슨(20개씩)이 한 길로 이어집니다.
+ * - 단어 레슨은 퀴즈에서 70% 이상 맞히면 완료됩니다. 이미 아는 유닛은 건너뛸 수 있습니다.
+ * - 단어를 풀 때마다(record) 복습 일정이 갱신됩니다: 틀리면 10분 뒤, 맞히면 1일 → 3일 → 7일 → 14일 → 30일 → 60일 뒤에 다시 나옵니다.
  * - 경험치·경로 진행·복습 일정은 계정에 동기화돼요(index.html 의 PER 목록).
  * 기록 키: jp-path(레슨 완료), jp-xp(경험치), jp-srs(복습 일정)
  */
@@ -16,7 +16,7 @@ const MAXLV=50;
 /* ---------- 경험치 ---------- */
 const xpState=()=>get("jp-xp",{t:0,d:{}});
 function addXp(n){ if(!n) return; const s=xpState(); s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s);  try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
-/* 레벨이 오를수록 필요한 경험치가 점점 커져요. 50레벨까지 약 20,800 XP(= N5·N4를 거의 다 공부했을 때) */
+/* 레벨이 오를수록 필요한 경험치가 점점 커집니다. 50레벨까지 약 20,800 XP(= N5·N4를 거의 다 공부했을 때) */
 const lvFloor=l=>Math.round(50*Math.pow(l-1,1.55));
 const lvOf=t=>{ let l=1; while(l<MAXLV&&(t||0)>=lvFloor(l+1)) l++; return l; };
 const titleOf=l=>{ let n=TITLES[0][1]; for(const [s,t] of TITLES) if(l>=s) n=t; return n; };
@@ -31,7 +31,7 @@ const dueKeys=()=>{ const s=get("jp-srs",{}), n=Date.now(); return Object.keys(s
 function duePool(){ const set1=new Set(dueKeys()); return A().ALL.filter(w=>set1.has(w.key)); }
 
 /* ---------- 내 참새 · 씨앗 · 상점 ---------- */
-/* 씨앗 그림: 숫자 옆에 붙여서 "씨앗이 이거구나" 하고 눈에 보이게 해요 */
+/* 씨앗 그림: 숫자 옆에 붙여서 "씨앗이 이거구나" 하고 눈에 보이게 합니다 */
 const seedIc=(px)=>`<svg class="seedic" width="${px||18}" height="${px||18}" viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(-28 16 16)"><path d="M16 2C9 7 6 14 6 20C6 26 10 30 16 30C22 30 26 26 26 20C26 14 23 7 16 2Z" fill="#f2c94c" stroke="#7a4b14" stroke-width="2" stroke-linejoin="round"/><path d="M16 5V27M11 10C10 15 10 22 12 27M21 10C22 15 22 22 20 27" stroke="#b8761f" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M12 8C10 11 9 14 9 17" stroke="#fff6cf" stroke-width="2.2" fill="none" stroke-linecap="round"/></g></svg>`;
 
 const spark=(x,y,r,f,d,dur)=>{ const t=dur||2.6, b=`-${d||0}s`; return `<g transform="translate(${x} ${y})"><path d="M0 ${-r}Q${r*.16} ${-r*.16} ${r} 0Q${r*.16} ${r*.16} 0 ${r}Q${-r*.16} ${r*.16} ${-r} 0Q${-r*.16} ${-r*.16} 0 ${-r}Z" fill="${f}"><animateTransform attributeName="transform" type="scale" values="0.1;1.15;0.1" dur="${t}s" begin="${b}" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="${t}s" begin="${b}" repeatCount="indefinite"/></path></g>`; };
@@ -58,7 +58,7 @@ const pearlsSvg=()=>{ const P=t=>[210+t*96,116+Math.sin(t*Math.PI)*38], rOf=t=>4
   const str=Array.from({length:41},(_,i)=>{ const [x,y]=P(i/40); return (i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1); }).join(" ");
   return `<path d="${str}" stroke="#8d8680" stroke-width="1.2" fill="none"/>`+out.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.r.toFixed(1)}" fill="#fbf7f0" stroke="${INK}" stroke-width="1"/><circle cx="${(p.x+p.r*.35).toFixed(1)}" cy="${(p.y+p.r*.4).toFixed(1)}" r="${(p.r*.55).toFixed(1)}" fill="#f2dce6" opacity=".7"/><circle cx="${(p.x-p.r*.38).toFixed(1)}" cy="${(p.y-p.r*.42).toFixed(1)}" r="${(p.r*.26).toFixed(1)}" fill="#fff"/>`).join(""); };
 
-/* ---------- 급수 클리어 특별 아이템(씨앗으로는 살 수 없어요) ---------- */
+/* ---------- 급수 클리어 특별 아이템(씨앗으로는 살 수 없습니다) ---------- */
 const grandWreath=()=>{ const cx=240,cy=50,rx=49,ry=46; let s=`<path d="${Array.from({length:21},(_,i)=>{ const [x,y]=arcP(176-i*8.2,cx,cy,rx,ry); return (i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1); }).join(" ")}" stroke="#6f9a62" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
   [172,158,144,130,116,102,88,74,60,46,32,20].forEach((t,i)=>{ const [x,y]=arcP(t,cx,cy,rx,ry), ang=Math.atan2(ry*Math.cos(t*Math.PI/180),rx*Math.sin(t*Math.PI/180))*180/Math.PI; s+=leaf(x,y,.8,ang+(i%2?40:-40),i%3?"#8dc29a":"#a6d3a8"); });
   [[166,.78],[140,.7],[114,.82],[88,.74],[62,.8],[36,.7],[16,.62]].forEach(([t,sc],i)=>{ const [x,y]=arcP(t,cx,cy,rx,ry); s+=sakura(x,y,sc,t*1.3+i*20); });
@@ -111,7 +111,7 @@ const SL=a=>a.map(([x,y,z,c,f])=>STAR(c,f)+" "+x+"% "+y+"%/"+z+"% "+z+"% no-repe
 /* 별빛(약한 네온): 은은한 빛무리 + 가느다란 4갈래 빛줄기 + 밝은 중심 */
 const GLOW=c=>"url(data:image/svg+xml,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><radialGradient id='g'><stop offset='0' stop-color='"+c+"' stop-opacity='.85'/><stop offset='.35' stop-color='"+c+"' stop-opacity='.28'/><stop offset='1' stop-color='"+c+"' stop-opacity='0'/></radialGradient></defs><circle cx='20' cy='20' r='19' fill='url(#g)'/><path fill='#fff' fill-opacity='.95' d='M20 1L21.3 18.7L39 20L21.3 21.3L20 39L18.7 21.3L1 20L18.7 18.7Z'/><circle cx='20' cy='20' r='2.6' fill='#fff'/></svg>").replace(/'/g,"%27").replace(/\(/g,"%28").replace(/\)/g,"%29")+")";
 const GL=a=>a.map(([x,y,z,c])=>GLOW(c||"#ffe9a0")+" "+x+"% "+y+"%/"+z+"% "+z+"% no-repeat").join(",");
-/* 별 하나하나가 제자리에서 따로 반짝이는 층: [가로%, 세로%, 최대크기%, 색, 번호(1~8)] — 크기는 --t번호(0~1)가 정해요 */
+/* 별 하나하나가 제자리에서 따로 반짝이는 층: [가로%, 세로%, 최대크기%, 색, 번호(1~8)] — 크기는 --t번호(0~1)가 정합니다 */
 const GT=a=>a.map(([x,y,m,c,t])=>GLOW(c)+" "+x+"% "+y+"%/calc(var(--t"+t+")*"+m+"%) calc(var(--t"+t+")*"+m+"%) no-repeat").join(",");
 const DT=a=>a.map(([x,y,c])=>"radial-gradient(circle at "+x+"% "+y+"%,"+c+" 0 1.5px,transparent 2.4px)").join(",");
 const RING="inset 0 0 0 1.5px rgba(255,255,255,.6)";
@@ -126,23 +126,23 @@ ITEMS.push(
  FR("rainbow","무지개",150,"linear-gradient(#fff,#fff)","conic-gradient(from 0deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#c77dff,#ff6b6b)",RING+",0 0 8px rgba(120,120,255,.35)"),
  FR("aurora","오로라",170,"linear-gradient(160deg,#0f2b3d,#1f6f6b 55%,#7d4fb5)","linear-gradient(135deg,#7df2d1,#9d7dff,#7df2d1)",RING+",0 0 10px rgba(125,242,209,.5)")
 );
-/* 특별 프레임: 7일 연속 출석 선물을 처음 받으면 / N5~N1을 모두 클리어하면 받아요 */
+/* 특별 프레임: 7일 연속 출석 선물을 처음 받으면 / N5~N1을 모두 클리어하면 받습니다 */
 ITEMS.push(
  Object.assign(FR("streak","7일 출석 불꽃",0,"radial-gradient(circle at 50% 115%,#ff7a2f 0,#ffb15c 32%,transparent 66%),linear-gradient(180deg,#fff4e0,#ffe1b8)","conic-gradient(from var(--fang,0deg),#ff3d54,#ff8a3d,#ffd23d,#ff8a3d,#ff3d54)",RING+",0 0 10px rgba(255,120,60,.45)","--fxo:'';--fxb1:radial-gradient(circle at 20% 92%,#ffd23d 0 1.6px,transparent 2.6px),radial-gradient(circle at 50% 100%,#ff9a3d 0 1.9px,transparent 2.9px),radial-gradient(circle at 78% 96%,#ffe27a 0 1.5px,transparent 2.5px);--fxa1:fember 2.4s ease-in infinite;--fxa:fspin 3s linear infinite,fglowo 1.8s ease-in-out infinite;"),{special:true,level:"STREAK7"}),
  Object.assign(FR("master","JLPT 정복자",0,DT([[12,34,"#fff"],[44,16,"#ffe9a0"],[64,30,"#fff"],[34,66,"#ffe9a0"],[58,88,"#fff"],[90,36,"#ffe9a0"],[84,86,"#fff"],[10,70,"#ffe9a0"]])+",radial-gradient(circle at 50% 45%,rgba(255,214,102,.4) 0,transparent 62%),linear-gradient(160deg,#241a52,#4b2a86 60%,#1a1240)","conic-gradient(from 30deg,#fff6bf,#f0b429,#fff6bf,#b9791a,#ffe27a,#f0b429,#fff6bf)",RING+",0 0 14px rgba(255,200,80,.65)","--fxo:'';--fxb1:"+GL([[20,24,7,"#ffffff"],[78,20,9,"#ffe27a"],[70,72,6,"#ffffff"],[24,76,8,"#ffe27a"],[50,10,6,"#ffffff"],[90,50,6,"#ffe27a"]])+";--fxb2:"+GL([[5,5,14,"#fff2a8"],[95,5,14,"#fff2a8"],[5,95,14,"#fff2a8"],[95,95,14,"#fff2a8"],[34,40,6,"#ffffff"],[64,58,7,"#ffe27a"]])+";"),{special:true,level:"ALL"})
 );
-const PRICE_MULT=5;   /* 상점 가격 배수 — 아이템 가격(씨앗 수)을 한꺼번에 올리거나 내릴 땐 이 숫자만 바꿔요 */
+const PRICE_MULT=5;   /* 상점 가격 배수 — 아이템 가격(씨앗 수)을 한꺼번에 올리거나 내릴 땐 이 숫자만 바꿉니다 */
 ITEMS.forEach(i=>{ if(i.price) i.price*=PRICE_MULT; });
-/* 정복자 프레임의 별빛: 별 하나하나가 차례로 번쩍였다가 천천히 흐려져요 */
+/* 정복자 프레임의 별빛: 별 하나하나가 차례로 번쩍였다가 천천히 흐려집니다 */
 const FX_STARS=[[8,8,20,"#fff2a8"],[50,9,13,"#ffffff"],[92,8,20,"#fff2a8"],[91,50,14,"#ffe27a"],[92,92,20,"#fff2a8"],[50,91,13,"#ffffff"],[8,92,20,"#fff2a8"],[9,50,14,"#ffe27a"]];
 const frameFx=eq=>false&&eq&&eq.frame==="fr_master"?`<span class="fxs" aria-hidden="true">${FX_STARS.map(([x,y,z,c],i)=>`<i style="left:${x}%;top:${y}%;width:${z}%;background-image:${GLOW(c)};animation-delay:${(i*0.8).toFixed(1)}s"></i>`).join("")}</span>`:"";
 const frameStyle=eq=>{ const it=eq&&eq.frame?ITEMS.find(x=>x.id===eq.frame&&x.slot==="frame"):null; return it?it.fv:""; };
 const charState=()=>{ const s=get("jp-char",null)||{seeds:30,owned:[],equip:{}}; s.equip=s.equip||{}; Object.keys(s.equip).forEach(k=>{ const it=ITEMS.find(x=>x.id===s.equip[k]); if(!it||it.slot!==k) delete s.equip[k]; }); return s; };
-/* 급수를 전부 끝낸 사람에게만 열리는 특별 아이템(건너뛰기로는 안 열려요) */
+/* 급수를 전부 끝낸 사람에게만 열리는 특별 아이템(건너뛰기로는 안 열립니다) */
 function levelProgress(L){ const st=get("jp-path",{done:{}}); let all=0, real=0; build().forEach(u=>{ if(L==="ALL"?["N5","N4","N3","N2","N1"].includes(u.tag):u.tag===L) u.nodes.forEach(n=>{ all++; if(st.done&&st.done[n.id]===1) real++; }); }); return {all,real}; }
 const levelCleared=L=>{ const p=levelProgress(L); return p.all>0&&p.real>=p.all; };
 function checkSpecial(){ try{ const s=charState(); let changed=false;
-  ITEMS.filter(x=>x.special&&x.level!=="ALL").forEach(it=>{ if(!s.owned.includes(it.id)&&levelCleared(it.level)){ s.owned.push(it.id); changed=true; A().toast(it.level+" 클리어! 특별 아이템 「"+it.name+"」을(를) 받았어요"); } });
+  ITEMS.filter(x=>x.special&&x.level!=="ALL").forEach(it=>{ if(!s.owned.includes(it.id)&&levelCleared(it.level)){ s.owned.push(it.id); changed=true; A().toast(it.level+" 클리어! 특별 아이템 「"+it.name+"」을(를) 받았습니다"); } });
   if((giftState().items||[]).length&&!s.owned.includes("fr_streak")){ s.owned.push("fr_streak"); changed=true; }
   if(changed) saveChar(s);
   /* N5부터 N1까지 모든 단계를 직접 끝내면 특별 칭호 */
@@ -168,14 +168,14 @@ function shopRender(){
   d.innerHTML=`<div class="dh"><h2 style="margin:0;font-size:17px">${E(birdTitle())}</h2><button class="x" data-sclose aria-label="닫기">×</button></div>
   <div class="db"><div class="shopbird"><div class="frm shopfrm" style="${frameStyle(eq)}">${frameFx(eq)}${birdSvg(eq,"big")}</div></div>
   <p class="sub" style="text-align:center;margin:4px 0 2px;min-height:22px;font-size:.85em">${pvItems.length?`미리보기: <b style="color:var(--accent-text)">${pvItems.map(i=>E(i.name)).join(", ")}</b> · <button class="shreset" data-sreset="1">원래대로</button>`:""}</p>
-  ${(()=>{ const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l); return `<div class="shlv"><div class="shlt"><b>Lv.${l} ${titleOf(l)}</b><span>${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div><small>${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`; })()}
-  <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em"><span class="seedbal">${seedIc(34)}<b>${s.seeds||0}</b></span><br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있어요.</p>
+  ${(()=>{ const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l); return `<div class="shlv"><div class="shlt"><b>Lv.${l} ${titleOf(l)}</b><span>${x.t} XP</span></div><div class="prog"><div style="width:${pc}%"></div></div><small>${l>=MAXLV?"최고 레벨입니다!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`; })()}
+  <p class="sub" style="text-align:center;margin:0 0 10px;font-size:.85em"><span class="seedbal">${seedIc(34)}<b>${s.seeds||0}</b></span><br>씨앗은 단계별로 공부하기 / 7일 연속출석 / 주간리그를 통해서 받을 수 있습니다.</p>
   ${window.PLUS?PLUS.shopHtml():""}
   ${window.SEEDPAY?SEEDPAY.html(shopRender):""}
   <div style="text-align:center;margin:0 0 10px"><button class="pill" data-sunall="1" ${Object.keys(s.equip).length?"":"disabled"}>모두 해제</button></div>
   <div class="shtabs">${SLOTS.map(([k,n])=>`<button class="pill ${shopSlot===k?"on":""}" data-sslot="${k}">${n}</button>`).join("")}</div>
-  ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 돼요). N5~N1을 모두 끝내면 정복자 전용 금관·메달·날개빛까지!</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?(x.special&&x.slot!=="frame"):(shopSlot==="frame"?x.slot==="frame":(!x.special&&x.slot===shopSlot))).sort((a,b)=>((a.special?1:0)-(b.special?1:0))||((a.level==="ALL")-(b.level==="ALL"))).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special&&it.level!=="STREAK7"?levelProgress(it.level):null;
-    return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${it.slot==="frame"?`<div class="frm shpf" style="${it.fv}">${frameFx({frame:it.id})}${birdSvg({},"mini")}</div>`:birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level==="ALL"?"N5~N1":it.level==="STREAK7"?"출석":it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?(it.level==="STREAK7"?"7일 연속 출석 선물을 받으면 얻어요":`${it.level==="ALL"?"N5~N1":it.level} 전체 클리어 · ${lp.real} / ${lp.all} 단계`):`<span class="seedpr">${seedIc(15)}<b>${it.price}</b></span>`)}</small></div>
+  ${shopSlot==="special"?`<p class="sub" style="text-align:center;margin:4px 0">급수의 단어 퀴즈를 전부 직접 통과하면 받는 특별아이템이에요(건너뛰기는 안 됩니다). N5~N1을 모두 끝내면 정복자 전용 금관·메달·날개빛까지!</p>`:""}<div class="shl">${ITEMS.filter(x=>shopSlot==="special"?(x.special&&x.slot!=="frame"):(shopSlot==="frame"?x.slot==="frame":(!x.special&&x.slot===shopSlot))).sort((a,b)=>((a.special?1:0)-(b.special?1:0))||((a.level==="ALL")-(b.level==="ALL"))).map(it=>{ const own=s.owned.includes(it.id), on=s.equip[it.slot]===it.id, isPv=shopPrev[it.slot]===it.id, lp=it.special&&it.level!=="STREAK7"?levelProgress(it.level):null;
+    return `<div class="shi ${isPv?"pv":""}" data-spv="${it.id}"><div class="shp">${it.slot==="frame"?`<div class="frm shpf" style="${it.fv}">${frameFx({frame:it.id})}${birdSvg({},"mini")}</div>`:birdSvg({[it.slot]:it.id},"mini")}</div><div class="shn"><b>${E(it.name)}${it.special?` <em class="spb">${it.level==="ALL"?"N5~N1":it.level==="STREAK7"?"출석":it.level}</em>`:""}</b><small>${own?(on?"착용 중":"보유 중"):(it.special?(it.level==="STREAK7"?"7일 연속 출석 선물을 받으면 얻습니다":`${it.level==="ALL"?"N5~N1":it.level} 전체 클리어 · ${lp.real} / ${lp.all} 단계`):`<span class="seedpr">${seedIc(15)}<b>${it.price}</b></span>`)}</small></div>
      ${own?`<button class="pill ${on?"":"on"}" data-sequip="${it.id}">${on?"해제":"입히기"}</button>`:(it.special?`<span class="shlock">잠김</span>`:`<button class="pill ${(s.seeds||0)>=it.price?"on":""}" data-sbuy="${it.id}" ${(s.seeds||0)>=it.price?"":"disabled"} style="line-height:1.15">購入<small style="display:block;font-size:10px;font-weight:400">구입</small></button>`)}</div>`; }).join("")}</div></div>`;
 }
 function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
@@ -185,8 +185,8 @@ function openShop(){ checkSpecial(); let d=document.getElementById("shopDlg");
       const sl=ev.target.closest("[data-sslot]"), by=ev.target.closest("[data-sbuy]"), eq=ev.target.closest("[data-sequip]"), rs=ev.target.closest("[data-sreset]"), pv=ev.target.closest("[data-spv]");
       if(sl){ shopSlot=sl.dataset.sslot; shopRender(); }
       else if(rs){ shopPrev={}; shopRender(); }
-      else if(ev.target.closest("[data-sunall]")){ const s=charState(); if(!Object.keys(s.equip).length) return; s.equip={}; shopPrev={}; saveChar(s); A().toast("모두 해제했어요"); shopRender(); }
-      else if(by){ const it=ITEMS.find(x=>x.id===by.dataset.sbuy), s=charState(); if(it&&(s.seeds||0)>=it.price&&!s.owned.includes(it.id)){ s.seeds-=it.price; s.owned.push(it.id); s.equip[it.slot]=it.id; delete shopPrev[it.slot]; saveChar(s); A().toast("「"+it.name+"」을(를) 샀어요!"); shopRender(); } }
+      else if(ev.target.closest("[data-sunall]")){ const s=charState(); if(!Object.keys(s.equip).length) return; s.equip={}; shopPrev={}; saveChar(s); A().toast("모두 해제했습니다"); shopRender(); }
+      else if(by){ const it=ITEMS.find(x=>x.id===by.dataset.sbuy), s=charState(); if(it&&(s.seeds||0)>=it.price&&!s.owned.includes(it.id)){ s.seeds-=it.price; s.owned.push(it.id); s.equip[it.slot]=it.id; delete shopPrev[it.slot]; saveChar(s); A().toast("「"+it.name+"」을(를) 샀습니다!"); shopRender(); } }
       else if(eq){ const it=ITEMS.find(x=>x.id===eq.dataset.sequip), s=charState(); if(it&&s.owned.includes(it.id)){ if(s.equip[it.slot]===it.id) delete s.equip[it.slot]; else s.equip[it.slot]=it.id; delete shopPrev[it.slot]; saveChar(s); shopRender(); } }
       else if(pv){ const it=ITEMS.find(x=>x.id===pv.dataset.spv); if(it){ if(shopPrev[it.slot]===it.id) delete shopPrev[it.slot]; else shopPrev[it.slot]=it.id; shopRender(); } } }); }
   shopRender(); if(!d.open) d.showModal();
@@ -227,9 +227,9 @@ function profileHtml(){
   return `<div class="pfbird frm" style="${frameStyle(charState().equip)}">${frameFx(charState().equip)}${birdSvg(null,"big")}</div>
    <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>${seedIc(15)} <b>${charState().seeds||0}</b></span></div>
    ${earnedTitles().length?`<div class="pftt"><small>대표 칭호</small><select data-reptitle aria-label="대표 칭호">${["",...earnedTitles()].map(t=>`<option value="${E(t)}" ${t===repTitle()?"selected":""}>${t?"「"+E(t)+"」":"없음"}</option>`).join("")}</select></div>`:""}
-   <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
+   <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨입니다!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
 }
-function reviewHtml(){ const n=dueKeys().length; if(!n){ const c=window.REVIEW?REVIEW.counts():null; if(!c||!c.tom) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>오늘 복습 끝 · 내일 <b style="color:var(--accent-text)">${c.tom}개</b></span><i>›</i></button>`; } return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없어요"}</span><i>›</i></button>`; }
+function reviewHtml(){ const n=dueKeys().length; if(!n){ const c=window.REVIEW?REVIEW.counts():null; if(!c||!c.tom) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>오늘 복습 끝 · 내일 <b style="color:var(--accent-text)">${c.tom}개</b></span><i>›</i></button>`; } return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없습니다"}</span><i>›</i></button>`; }
 function pathHtml(full){
   const st=state(), cur=current(), all=vis(); if(cur) openUnits.add(cur.u.id);
   const offs=[0,26,44,26,0,-26,-44,-26];
@@ -238,7 +238,7 @@ function pathHtml(full){
     return `<div class="pu ${open?"open":""} ${alld?"all":""}"><button class="puh" data-pu="${u.id}" data-lv="${E(u.tag)}"><span class="pun">${E(u.tag)}</span><b>${E(u.title)}</b><small>${alld?"완료":done+" / "+u.nodes.length}</small><i class="pbar" aria-hidden="true"><i style="width:${Math.round(done/Math.max(1,u.nodes.length)*100)}%"></i></i></button>
      ${open?`<div class="pnodes">${u.nodes.map((n,i)=>{ const dn=isDone(n,st), isCur=cur&&cur.n.id===n.id;
         return `<div class="pn" style="margin-left:calc(50% - 36px + ${offs[i%offs.length]}px)">${isCur?`<span class="pnow">시작</span><span class="pbird ${offs[i%offs.length]>0?"l":"r"}">${birdSvg(null,"mini")}</span>`:""}<button class="pnb ${dn?"done":""} ${isCur?"cur":""}" data-pn="${n.id}" aria-label="${E(n.label)}">${dn?"✓":E(n.glyph)}</button><small>${E(n.label)}</small></div>`; }).join("")}
-       ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 알아요</button>`}</div>`:""}</div>`; }).join("")}</div>`;
+       ${alld?"":`<button class="pskip" data-pskip="${u.id}">이 유닛은 이미 압니다</button>`}</div>`:""}</div>`; }).join("")}</div>`;
 }
 /* 홈의 '이어서 하기' 한 줄 */
 function continueHtml(){ const c=current(); if(!c) return ""; return `<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:8px;font-size:11px;color:var(--sub)">단계별로 공부하기</div><button class="lrow" data-pn="${c.n.id}"><span>이어서 하기 · <b>${E(c.n.L||"")} ${E(c.n.label)}</b></span><i>›</i></button>`; }
@@ -248,7 +248,7 @@ const back=`<button class="back" data-ppage="home">‹ 홈으로</button>`;
 document.addEventListener("change",e=>{ const t=e.target.closest&&e.target.closest("[data-bgnt]"); if(t) A().setPref("beginner",t.checked); });
 function basicHtml(){
   const d=get("jp-kana",{done:{}}).done||{}, cnt=k=>{ let n=0; for(let i=0;i<15;i++) if(d[k+i]) n++; return n; };
-  return `<div class="home">${back}<h2 style="margin:6px 0 4px">기초</h2><div class="sub" style="margin-bottom:10px">일본어 글자와 기초 단어를 처음부터 배워요</div>
+  return `<div class="home">${back}<h2 style="margin:6px 0 4px">기초</h2><div class="sub" style="margin-bottom:10px">일본어 글자와 기초 단어를 처음부터 배웁니다</div>
    <label class="tg" style="margin:0 0 12px"><span>홈에 '일본어 첫걸음' 안내 보이기</span><input type="checkbox" data-bgnt ${A().prefs().beginner?"checked":""}></label>
    <div class="lrows"><button class="lrow" data-bkana="h"><span>히라가나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">글자표 · 행별 레슨 · 따라 쓰기</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("h")} / 15 ›</span></button>
    <button class="lrow" data-bkana="k"><span>가타카나<small style="display:block;font-weight:400;color:var(--sub);font-size:13px">외래어에 쓰는 글자</small></span><span style="color:var(--sub);font-size:13px;font-weight:600">${cnt("k")} / 15 ›</span></button>
@@ -256,7 +256,7 @@ function basicHtml(){
 }
 function pageHtml(){
   if(page==="basic") return basicHtml();
-  return `<div class="home">${back}<h2 style="margin:6px 0 4px">단계별로 공부하기</h2><div class="sub">단계를 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료돼요</div>${pathHtml(true)}</div>`;
+  return `<div class="home">${back}<h2 style="margin:6px 0 4px">단계별로 공부하기</h2><div class="sub">단계를 눌러 단어 20개를 공부하고, 퀴즈에서 70% 이상 맞히면 완료됩니다</div>${pathHtml(true)}</div>`;
 }
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -266,7 +266,7 @@ function sheet(n){
   const ws=lessonWords(n.L,n.j); let d=document.getElementById("pathDlg");
   if(!d){ d=document.createElement("dialog"); d.id="pathDlg"; document.body.appendChild(d); d.addEventListener("click",ev=>{ if(ev.target===d||ev.target.closest("[data-pclose]")) d.close(); }); }
   d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(n.L)} · ${E(n.label)}</h2><button class="x" data-pclose aria-label="닫기">×</button></div>
-   <div class="db"><p class="sub">${ws.length}개 단어를 보고, 퀴즈에서 ${Math.round(PASS*100)}% 이상 맞히면 단계가 완료돼요.</p>
+   <div class="db"><p class="sub">${ws.length}개 단어를 보고, 퀴즈에서 ${Math.round(PASS*100)}% 이상 맞히면 단계가 완료됩니다.</p>
    <div class="pwl">${ws.map(w=>`<div class="pwi"><b>${A().R(w.f)}</b><span>${E(w.ko)}</span></div>`).join("")}</div>
    <div class="qbtns" style="flex-direction:column;align-items:stretch;margin-top:12px"><button class="cta sec" data-pgo="card">카드로 먼저 보기</button><button class="cta" data-pgo="quiz">퀴즈 시작</button></div></div>`;
   d.dataset.n=n.id; if(!d.open) d.showModal();
@@ -277,7 +277,7 @@ function startNode(id){
 }
 function go(mode){
   const d=document.getElementById("pathDlg"); if(!d) return; const id=d.dataset.n, [,L,j]=id.split(":"), ws=lessonWords(L,+j); d.close();
-  if(!ws.length){ A().toast("이 단계에는 단어가 없어요"); return; }
+  if(!ws.length){ A().toast("이 단계에는 단어가 없습니다"); return; }
   active=mode==="quiz"?{id,keys:new Set(ws.map(w=>w.key))}:null;
   A().setView("quiz"); A().startQuiz(mode==="quiz"?"meaning":"card",ws,ws.length);
 }
@@ -302,7 +302,7 @@ function journey(){
   return {s,pos,run,pending,items:gs.items||[]};
 }
 const JX=i=>24+i*45.3, JY=i=>[64,42,64,42,64,42,52][i], JH=100;
-/* ---------- 계절 배경(날짜에 맞춰 자동으로 바뀌어요) ---------- */
+/* ---------- 계절 배경(날짜에 맞춰 자동으로 바뀝니다) ---------- */
 const SEASON_NAMES={spring:"봄",summer:"여름",autumn:"가을",winter:"겨울",xmas:"크리스마스"};
 function seasonKey(){ try{ const pv=sessionStorage.getItem("jp-season-pv"); if(pv) return pv; const o=localStorage.getItem("jp-season"); if(o) return o; }catch(e){} const d=new Date(), m=d.getMonth()+1, day=d.getDate();
   if(m===12&&day<=26) return "xmas";
@@ -353,8 +353,8 @@ function journeyHtml(){
   const line=[0,1,2,3,4,5,6].map(i=>`${i?"L":"M"}${JX(i)} ${JY(i)}`).join(" ");
   const pxy=p=>p<=0?[6,JY(0)]:[JX(p-1),JY(p-1)];
   const [fx,fy]=pxy(prev), [tx,ty]=pxy(J.pos);
-  const DAYMSG=["오늘 출석하면 7일 여정이 시작돼요","첫 출석 완료! 내일 또 만나요","이틀 연속이에요! 좋은 시작이에요","사흘 연속이에요! 벌써 절반 가까이 왔어요","나흘 연속이에요! 절반을 넘었어요","닷새 연속이에요! 선물까지 이틀 남았어요","엿새 연속이에요! 내일이면 선물을 받아요"];
-  const msg=J.pending?"7일 연속 출석 달성! 선물을 받아 보세요":J.pos<7?DAYMSG[J.pos]:"완주했어요! 내일부터 새로 시작해요";
+  const DAYMSG=["오늘 출석하면 7일 여정이 시작됩니다","첫 출석 완료! 내일 또 만납니다","이틀 연속입니다! 좋은 시작입니다","사흘 연속입니다! 벌써 절반 가까이 왔습니다","나흘 연속입니다! 절반을 넘었습니다","닷새 연속입니다! 선물까지 이틀 남았습니다","엿새 연속입니다! 내일이면 선물을 받습니다"];
+  const msg=J.pending?"7일 연속 출석 달성! 선물을 받아 보세요":J.pos<7?DAYMSG[J.pos]:"완주했습니다! 내일부터 새로 시작합니다";
   setTimeout(()=>{ const b=document.querySelector(".jrb"); if(b){ b.style.left=(tx/3.2)+"%"; b.style.top=((ty-40)/JH*100)+"%"; } try{ localStorage.setItem("jp-jpos",String(J.pos)); }catch(e){} },80);
   return `<div class="jr" data-season="${sn}"><div class="jrh"><b>7일 연속 출석</b><span>${J.pos} / 7일</span></div>
    <div class="jrsteps" style="--p:${(Math.max(0,J.pos-1)/6*86).toFixed(1)}%">${[0,1,2,3,4,5,6].map(i=>{ const dn=i<J.pos, cu=i===J.pos-1; return `<div class="jst ${dn?"done":""} ${cu?"cur":""} ${i===6?"gift":""}"><i>${i===6?'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="10" width="17" height="10" rx="2"/><path d="M3 7h18v3H3zM12 7v13M12 7c-1-3-4.5-3.5-4.5-1.5S10 7 12 7zM12 7c1-3 4.5-3.5 4.5-1.5S14 7 12 7z"/></svg>':dn?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':i+1}</i><span>${i===6?"선물":(i+1)+"일"}</span></div>`; }).join("")}</div>
@@ -369,12 +369,12 @@ function giftAct(a){
     d.innerHTML=`<div class="db" style="text-align:center;padding:28px 20px"><p class="sub">${J.pending*7}일 연속 달성!</p><svg class="giftbox" viewBox="0 0 120 110" aria-hidden="true"><rect x="20" y="46" width="80" height="54" rx="6"/><rect x="14" y="32" width="92" height="20" rx="5"/><path d="M60 32v68M60 32q-16 -22 -26 -10q-6 12 26 10zM60 32q16 -22 26 -10q6 12 -26 10z"/></svg><div><button class="cta" data-gift="reveal" data-j="${J.pending}" style="max-width:220px;margin:14px auto 0">상자 열기</button></div></div>`;
     if(!d.open) d.showModal(); return; }
   if(a==="reveal"){ const J=journey(), j=J.pending; if(!j) return; const gs=giftState(); gs.claimed[J.run+":"+j]=1; gs.items.push({j,n:j*7,title:giftTitle(j),at:Date.now()}); set("jp-gift",gs); addXp(100); addSeeds(70); let gotFr=false; try{ const c=charState(); if(!c.owned.includes("fr_streak")){ c.owned.push("fr_streak"); saveChar(c); gotFr=true; } }catch(e){}
-    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했어요</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 씨앗 70개 · 칭호 모음에 보관돼요</p>${gotFr?`<p class="sub" style="margin:8px 0 0"><b>새 프레임 「7일 출석 불꽃」</b>도 받았어요!<br>상점의 프레임 탭에서 입혀 보세요</p>`:""}<button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋아요</button></div>`; return; }
+    d.innerHTML=`<div class="db" style="text-align:center;padding:26px 20px"><p class="sub">선물이 도착했습니다</p>${stamp(j*7)}<h3 style="margin:12px 0 2px">「${giftTitle(j)}」 칭호</h3><p class="sub" style="margin:0">+100 XP · 씨앗 70개 · 칭호 모음에 보관됩니다</p>${gotFr?`<p class="sub" style="margin:8px 0 0"><b>새 프레임 「7일 출석 불꽃」</b>도 받았습니다!<br>상점의 프레임 탭에서 입혀 보세요</p>`:""}<button class="cta" data-gclose style="max-width:220px;margin:18px auto 0">좋습니다</button></div>`; return; }
   if(a==="box"){ const gs=giftState(), cur=repTitle();
     const cards=[...(gs.extra||[]).map(x=>({title:x.title,at:x.at,master:1})),...(gs.items||[]).slice().reverse().map(x=>({title:x.title,at:x.at,n:x.n}))];
     d.innerHTML=`<div class="dh"><h2 style="margin:0">내 칭호 모음</h2><button class="x" data-gclose aria-label="닫기">×</button></div><div class="db">
      <p class="sub gsum">받은 칭호 <b>${new Set(cards.map(c=>c.title)).size}</b>개 · 대표 칭호 <b>${cur?"「"+E(cur)+"」":"없음"}</b></p>
-     <p class="sub" style="font-size:12px;margin:0 0 10px">칸을 누르면 대표 칭호가 바뀌어요. 내 계정과 리그에 보여요.</p>
+     <p class="sub" style="font-size:12px;margin:0 0 10px">칸을 누르면 대표 칭호가 바뀝니다. 내 계정과 리그에 보입니다.</p>
      <div class="gl">${cards.map(c=>`<button class="gi ${c.title===cur?"rep":""} ${c.master?"master":""}" data-rt="${E(c.title)}">${c.master?`<div class="stamp"><b style="font-size:30px">全</b><small>制覇</small></div>`:stamp(c.n)}<b>${E(c.title)}</b><small>${new Date(c.at).toLocaleDateString("ko-KR")}</small>${c.title===cur?`<em class="grp">대표</em>`:""}</button>`).join("")}</div></div>`;
     if(!d.open) d.showModal(); }
 }
@@ -390,7 +390,7 @@ window.PATH={
     spendSeeds(n){ const c=charState(); if(!(n>0)||(c.seeds||0)<n) return false; c.seeds-=n; saveChar(c); return true; },
     removeItem(id){ const c=charState(), i=ITEMS.find(x=>x.id===id); if(!i||i.special||!c.owned.includes(id)) return false; c.owned=c.owned.filter(x=>x!==id); Object.keys(c.equip||{}).forEach(k=>{ if(c.equip[k]===id) delete c.equip[k]; }); saveChar(c); return true; },
     receive(g){ const c=charState(); if(g.kind==="seed"){ const n=Math.max(0,Math.min(100000,+g.amount||0)); c.seeds=(c.seeds||0)+n; saveChar(c); return "씨앗 "+n+"개"; }
-      const i=ITEMS.find(x=>x.id===g.item); if(!i) return ""; if(c.owned.includes(i.id)){ c.seeds=(c.seeds||0)+i.price; saveChar(c); return "「"+i.name+"」(이미 있어서 씨앗 "+i.price+"개로 바꿨어요)"; } c.owned.push(i.id); saveChar(c); return "「"+i.name+"」"; } },
+      const i=ITEMS.find(x=>x.id===g.item); if(!i) return ""; if(c.owned.includes(i.id)){ c.seeds=(c.seeds||0)+i.price; saveChar(c); return "「"+i.name+"」(이미 있어서 씨앗 "+i.price+"개로 바꿨습니다)"; } c.owned.push(i.id); saveChar(c); return "「"+i.name+"」"; } },
   dev:{state:charState,save:saveChar,items:()=>ITEMS,maxLv:MAXLV,
     setLevel(L){ const x=xpState(); x.t=lvFloor(Math.max(1,Math.min(MAXLV,L))); set("jp-xp",x); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} },
     pathSet(L,on){ const st=get("jp-path",{done:{}}); st.done=st.done||{}; build().forEach(u=>{ if(L==="ALL"||u.tag===L) u.nodes.forEach(n=>{ if(on) st.done[n.id]=1; else delete st.done[n.id]; }); }); set("jp-path",st); if(on) checkSpecial(); },
@@ -402,10 +402,10 @@ window.PATH={
     if(!keys.every(k=>a.keys.has(k))) return;
     const ok=keys.length&&score/keys.length>=PASS;
     if(ok){ const st=state(); const first=!(st.done&&st.done[a.id]); markDone(a.id); if(first){ addXp(30); addSeeds(5); A().toast("단계 완료! +30 XP · 🌱 씨앗 5개"); } else A().toast("단계 완료!"); }
-    else A().toast("70% 이상 맞히면 완료돼요. 한 번 더 도전해 보세요");
+    else A().toast("70% 이상 맞히면 완료됩니다. 한 번 더 도전해 보세요");
   }catch(e){} },
   kanaDone(id){ try{ const st=state(); st.kx=st.kx||{}; if(!st.kx[id]){ st.kx[id]=1; set("jp-path",st); addXp(30); addSeeds(5); A().toast("단계 완료! +30 XP · 🌱 씨앗 5개"); } }catch(e){} },
-  review(){ if(window.REVIEW){ REVIEW.open(); return; } const pool=duePool(); if(!pool.length){ A().toast("지금 복습할 단어가 없어요. 단어를 풀면 복습 일정이 생겨요"); return; } A().setView("quiz"); A().startQuiz("meaning",pool,Math.min(20,pool.length)); }
+  review(){ if(window.REVIEW){ REVIEW.open(); return; } const pool=duePool(); if(!pool.length){ A().toast("지금 복습할 단어가 없습니다. 단어를 풀면 복습 일정이 생깁니다"); return; } A().setView("quiz"); A().startQuiz("meaning",pool,Math.min(20,pool.length)); }
 };
 
 /* ---------- 이벤트 ---------- */
@@ -414,7 +414,7 @@ document.addEventListener("click",e=>{
   const pu=e.target.closest("[data-pu]"), pn=e.target.closest("[data-pn]"), sk=e.target.closest("[data-pskip]"), pr=e.target.closest("[data-pr]");
   if(pu){ const id=pu.dataset.pu; openUnits.has(id)?openUnits.delete(id):openUnits.add(id); A().renderHome(); }
   else if(pn) startNode(pn.dataset.pn);
-  else if(sk){ const u=build().find(x=>x.id===sk.dataset.pskip); if(u&&confirm("「"+u.title+"」 유닛을 이미 알고 있는 것으로 표시할까요? 경험치는 오르지 않아요.")){ u.nodes.forEach(n=>markDone(n.id,true)); A().renderHome(); } }
+  else if(sk){ const u=build().find(x=>x.id===sk.dataset.pskip); if(u&&confirm("「"+u.title+"」 유닛을 이미 알고 있는 것으로 표시하시겠습니까? 경험치는 오르지 않습니다.")){ u.nodes.forEach(n=>markDone(n.id,true)); A().renderHome(); } }
   else if(pr) window.PATH.review();
   else if(e.target.closest("[data-shop]")) openShop();
   else if(e.target.closest("[data-ppage]")){ const v=e.target.closest("[data-ppage]").dataset.ppage; page=v==="home"?null:v; A().renderHome(); window.scrollTo(0,0); }

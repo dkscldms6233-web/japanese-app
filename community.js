@@ -1,21 +1,21 @@
 /* 커뮤니티 1단계 — 글 없이 즐기는 함께 공부하기
- * - 주간 리그: 이번 주 경험치 순위(참여를 켠 사람만 이름·경험치·연속 출석일·참새 모습이 보여요)
+ * - 주간 리그: 이번 주 경험치 순위(참여를 켠 사람만 이름·경험치·연속 출석일·참새 모습이 보입니다)
  * - 함께 공부 중: 오늘 공부한 사람 수 / 지금 공부 중인 사람 수(리그 참가자 기준)
- * - 친구: 친구 코드로 추가하고(서로 추가하면 맞친구) 이번 주 경험치를 봐요
- * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막혀요  ※ 현재 CHAT_ON=false 로 꺼져 있어요
+ * - 친구: 친구 코드로 추가하고(서로 추가하면 맞친구) 이번 주 경험치를 봅니다
+ * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막힙니다  ※ 현재 CHAT_ON=false 로 꺼져 있습니다
  * - 응원: 정해진 이모티콘 10개만 보낼 수 있어요(자유 글 없음). 한 사람에게 하루 한 번
- * - 신고: 이상한 닉네임은 신고할 수 있어요
+ * - 신고: 이상한 닉네임은 신고할 수 있습니다
  * 저장 위치(Firestore): leagues/{주 시작일}/members/{uid}, codes/{코드}, cheers/{id}, reports/{id}
- * 로그인(계정)한 사람만 쓸 수 있어요. 게스트는 로그인 안내가 보여요.
+ * 로그인(계정)한 사람만 쓸 수 있습니다. 게스트는 로그인 안내가 보입니다.
  */
 (function(){
 const A=()=>window.APP;
 const $=id=>document.getElementById(id);
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const STICKERS=[["👍","최고예요"],["🔥","불타오르네"],["💪","힘내요"],["🎉","축하해요"],["👏","박수!"],["🌸","예뻐요"],["😊","반가워요"],["⭐","대단해요"],["🐥","같이 해요"],["💖","고마워요"]];
+const STICKERS=[["👍","최고입니다"],["🔥","불타오르네"],["💪","힘내세요"],["🎉","축하합니다"],["👏","박수!"],["🌸","예쁩니다"],["😊","반갑습니다"],["⭐","대단합니다"],["🐥","같이 합니다"],["💖","고맙습니다"]];
 const REWARD=[50,30,20];
 /* 1:1 자유 글 대화 스위치. 출시 전에는 꺼 둠 (치은 결정 2026-11-22). 다시 켜려면 true로 바꾸세요.
-   꺼져 있으면: 대화 버튼·대화 창·새 메시지 알림이 없어요. 리그·함께 공부·친구·이모티콘 응원·신고는 그대로예요. */
+   꺼져 있으면: 대화 버튼·대화 창·새 메시지 알림이 없습니다. 리그·함께 공부·친구·이모티콘 응원·신고는 그대로입니다. */
 const CHAT_ON=false;
 const lg=()=>A().LS.get("jp-league",{joined:false,code:"",claimed:{}});
 const saveLg=v=>A().LS.set("jp-league",v);
@@ -49,7 +49,7 @@ async function join(){
   s.joined=true; s.code=code; saveLg(s); await publish(); wKey=""; startWatch(); render();
 }
 async function leave(){
-  if(!confirm("리그에서 나갈까요? 내 이름과 경험치가 목록에서 사라져요.")) return;
+  if(!confirm("리그에서 나가시겠습니까? 내 이름과 경험치가 목록에서 사라집니다.")) return;
   try{ await members(weekKey()).doc(uid()).delete(); }catch(e){}
   const s=lg(); s.joined=false; saveLg(s); stopWatch(); UN.cheers=0; UN.gifts=0; UN.chats={}; badge(); render();
 }
@@ -69,7 +69,7 @@ async function weeklyReward(){
   const pw=prevWeek(), s=lg(); if(s.claimed&&s.claimed[pw]) return;
   try{ const snap=await members(pw).orderBy("xp","desc").limit(3).get(); const i=snap.docs.findIndex(d=>d.id===uid());
     s.claimed=s.claimed||{}; s.claimed[pw]=1; saveLg(s);
-    if(i>=0&&snap.docs[i].data().xp>0){ window.PATH&&PATH.addSeeds(REWARD[i]); A().toast("지난주 리그 "+(i+1)+"위! 씨앗 "+REWARD[i]+"개를 받았어요"); } }catch(e){}
+    if(i>=0&&snap.docs[i].data().xp>0){ window.PATH&&PATH.addSeeds(REWARD[i]); A().toast("지난주 리그 "+(i+1)+"위! 씨앗 "+REWARD[i]+"개를 받았습니다"); } }catch(e){}
 }
 
 const pairId=o=>[uid(),o].sort().join("_");
@@ -95,10 +95,10 @@ async function startWatch(){
     const seen=+(localStorage.getItem("jp-cheer-seen")||0); let n=0, last=null;
     s.docs.forEach(d=>{ const x=d.data(); if(x.at>seen){ n++; if(!last||x.at>last.at) last=x; } });
     const was=UN.cheers; UN.cheers=n; badge();
-    if(wInit.cheers&&n>was&&last&&!(window.APP.view&&APP.view()==="community")) notify((last.fromName||"친구")+" 님이 응원을 보냈어요",last.sticker);
+    if(wInit.cheers&&n>was&&last&&!(window.APP.view&&APP.view()==="community")) notify((last.fromName||"친구")+" 님이 응원을 보냈습니다",last.sticker);
     wInit.cheers=true; },()=>{}));
   watchers.push(db().collection("gifts").where("to","==",me).where("claimed","==",false).limit(30).onSnapshot(s=>{ const was=UN.gifts||0; UN.gifts=s.size; badge();
-    if(wInit.gifts&&UN.gifts>was&&!(window.APP.view&&APP.view()==="community")){ const g=s.docs[0].data(); notify((g.fromName||"친구")+" 님이 선물을 보냈어요",g.kind==="seed"?"씨앗 "+g.amount+"개":(g.itemName||"아이템")); }
+    if(wInit.gifts&&UN.gifts>was&&!(window.APP.view&&APP.view()==="community")){ const g=s.docs[0].data(); notify((g.fromName||"친구")+" 님이 선물을 보냈습니다",g.kind==="seed"?"씨앗 "+g.amount+"개":(g.itemName||"아이템")); }
     wInit.gifts=true; },()=>{}));
   if(CHAT_ON) mutual.forEach(f=>{
     watchers.push(db().collection("chats").doc(pairId(f.uid)).collection("msgs").orderBy("at").limitToLast(1).onSnapshot(s=>{
@@ -110,7 +110,7 @@ async function startWatch(){
       wInit[f.uid]=true; },()=>{}));
   });
 }
-async function askNotify(){ try{ const p=await Notification.requestPermission(); A().toast(p==="granted"?"알림을 켰어요. 앱을 열어 둔 동안 알려 줘요":"알림이 꺼져 있어요"); }catch(e){ A().toast("이 브라우저는 알림을 지원하지 않아요"); } render(); }
+async function askNotify(){ try{ const p=await Notification.requestPermission(); A().toast(p==="granted"?"알림을 켰습니다. 앱을 열어 둔 동안 알려 줍니다":"알림이 꺼져 있습니다"); }catch(e){ A().toast("이 브라우저는 알림을 지원하지 않습니다"); } render(); }
 
 /* ---------- 화면 ---------- */
 const bird=(eq,cls)=>window.PATH?PATH.birdSvg(eq||{},cls||"cmb"):"";
@@ -127,19 +127,19 @@ function row(x,rank,me,isFr,mutual){
 async function render(){
   const v=$("communityView"); if(!v||busy) return;
   const head=`<div class="cm"><h2>커뮤니티</h2>`;
-  if(!cloud()||!cloud().ok){ v.innerHTML=head+`<p class="sub">서버에 연결할 수 없어요. 인터넷을 확인해 주세요.</p></div>`; return; }
+  if(!cloud()||!cloud().ok){ v.innerHTML=head+`<p class="sub">서버에 연결할 수 없습니다. 인터넷을 확인해 주세요.</p></div>`; return; }
   if(!signedIn()){
-    v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있어요.<br>경험치는 일주일마다 초기화돼요.</p>
+    v.innerHTML=head+`<p class="sub">로그인하면 친구와 함께 공부하고, 주간 리그에 참여할 수 있습니다.<br>경험치는 일주일마다 초기화됩니다.</p>
      <div class="lrows"><div class="cmrow3"><b>주간 리그</b><span>이번 주 경험치 순위</span></div><div class="cmrow3"><b>친구</b><span>친구 코드로 추가하고 서로 응원하기</span></div><div class="cmrow3"><b>함께 공부 중</b><span>오늘 몇 명이 함께 공부하고 있을까요?</span></div></div>
      <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="login" style="max-width:240px">로그인</button><button class="cta sec" data-cm="signup" style="max-width:240px">회원가입</button></div></div>`; return; }
   if(!verified()){
-    v.innerHTML=head+`<p class="sub">이메일 인증이 필요해요.<br><b>${E(cloud().auth.currentUser.email||"")}</b> 로 보낸 인증 메일의 링크를 누른 뒤, 아래 버튼을 눌러 주세요.<br>메일이 안 보이면 스팸함도 확인해 주세요.</p>
-     <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="verified" style="max-width:240px">인증했어요</button><button class="cta sec" data-cm="resend" style="max-width:240px">인증 메일 다시 받기</button></div></div>`; return; }
+    v.innerHTML=head+`<p class="sub">이메일 인증이 필요합니다.<br><b>${E(cloud().auth.currentUser.email||"")}</b> 로 보낸 인증 메일의 링크를 누른 뒤, 아래 버튼을 눌러 주세요.<br>메일이 안 보이면 스팸함도 확인해 주세요.</p>
+     <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="verified" style="max-width:240px">인증했습니다</button><button class="cta sec" data-cm="resend" style="max-width:240px">인증 메일 다시 받기</button></div></div>`; return; }
   if(!lg().joined){
-    v.innerHTML=head+`<p class="sub">주간 리그에 참여할까요?</p><div class="lrows"><div class="cmrow3"><b>다른 사용자에게 보이는 것</b><span>닉네임(${E(A().curProfile().name)}), 이번 주 경험치, 연속 출석일, 내 참새 모습</span></div><div class="cmrow3"><b>보이지 않는 것</b><span>이메일, 틀린 단어, 학습 기록</span></div></div>
-     <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="join" style="max-width:240px">참여하기</button></div><p class="sub" style="margin-top:10px">언제든 나갈 수 있어요.</p></div>`; return; }
+    v.innerHTML=head+`<p class="sub">주간 리그에 참여하시겠습니까?</p><div class="lrows"><div class="cmrow3"><b>다른 사용자에게 보이는 것</b><span>닉네임(${E(A().curProfile().name)}), 이번 주 경험치, 연속 출석일, 내 참새 모습</span></div><div class="cmrow3"><b>보이지 않는 것</b><span>이메일, 틀린 단어, 학습 기록</span></div></div>
+     <div class="qbtns" style="margin-top:16px"><button class="cta" data-cm="join" style="max-width:240px">참여하기</button></div><p class="sub" style="margin-top:10px">언제든 나갈 수 있습니다.</p></div>`; return; }
   busy=true; v.innerHTML=head+`<p class="sub">불러오는 중…</p></div>`;
-  let d; try{ await publish(); d=await load(); }catch(e){ busy=false; v.innerHTML=head+`<p class="sub">불러오지 못했어요. 잠시 후 다시 해 주세요.</p><button class="cta sec" data-cm="reload" style="max-width:200px">다시 시도</button></div>`; return; }
+  let d; try{ await publish(); d=await load(); }catch(e){ busy=false; v.innerHTML=head+`<p class="sub">불러오지 못했습니다. 잠시 후 다시 해 주세요.</p><button class="cta sec" data-cm="reload" style="max-width:200px">다시 시도</button></div>`; return; }
   busy=false; weeklyReward(); wKey=""; startWatch();
   const fr=friends(), frSet=new Set(fr.map(f=>f.uid)), me=signedIn()?uid():"";
   const today=A().today(), now=Date.now(), nToday=d.list.filter(x=>x.day===today).length, nNow=d.list.filter(x=>now-(x.at||0)<10*60*1000).length;
@@ -148,14 +148,14 @@ async function render(){
   const seen=+(localStorage.getItem("jp-cheer-seen")||0), unread=d.cheers.filter(c=>c.at>seen).length;
   v.innerHTML=head+`<div class="cmhd"><div><b>이번 주 리그</b><small>${rangeText()}</small></div><div class="cmme">${myIdx>=0?(myIdx+1)+"위":"50위 밖"} · ${myXp} XP</div></div>
    <div class="cmqa"><button class="pill on" data-cm="addfriend">친구 추가</button><span class="sub">내 친구 코드 <b>${E(lg().code)}</b></span></div>
-   <div class="sub cmact">${nToday?`오늘 ${nToday}명이 함께 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중이에요`:""}`:"오늘의 첫 번째 주인공이 되어 보세요"}</div>
-   <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없어요. 첫 번째로 이름을 올려 보세요!</p>`}</div>
+   <div class="sub cmact">${nToday?`오늘 ${nToday}명이 함께 공부했어요${nNow?` · 지금 ${nNow}명이 공부 중입니다`:""}`:"오늘의 첫 번째 주인공이 되어 보세요"}</div>
+   <div class="cml">${d.list.length?d.list.map((x,i)=>row(x,i+1,x.uid===me,frSet.has(x.uid),d.mutual[x.uid])).join(""):`<p class="sub">아직 아무도 없습니다. 첫 번째로 이름을 올려 보세요!</p>`}</div>
    <div class="cmfh"><h3 class="cmh3" style="margin:0">친구</h3><span class="cmfb"><button class="pill" data-cm="invite">앱 초대하기</button><button class="pill on" data-cm="addfriend">친구 추가</button></span></div>
-   <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없어요. 「친구 추가」에서 친구 코드를 입력해 보세요.</p>`}</div>
-   <p class="sub" style="margin-top:6px">${CHAT_ON?"서로 친구로 추가하면 「대화」 버튼이 생겨요.":"서로 친구로 추가하면 이번 주 경험치를 보고 응원을 보낼 수 있어요."}</p>
-   ${d.gifts&&d.gifts.length?`<h3 class="cmh3">받은 선물 <em class="cmnew">${d.gifts.length}</em></h3><div class="cml">${d.gifts.map(g=>`<div class="cmc cmg"><span><b>${E(g.fromName||"친구")}</b> 님이 ${g.kind==="seed"?"씨앗 "+(+g.amount||0)+"개":"「"+E(g.itemName||"아이템")+"」"}를 보냈어요<small>${new Date(g.at).toLocaleDateString("ko-KR")}</small></span><button class="pill on sm" data-claim="${E(g.id)}">받기</button></div>`).join("")}</div>`:""}
+   <div class="cml" style="margin-top:8px">${fr.length?friendRows:`<p class="sub">아직 친구가 없습니다. 「친구 추가」에서 친구 코드를 입력해 보세요.</p>`}</div>
+   <p class="sub" style="margin-top:6px">${CHAT_ON?"서로 친구로 추가하면 「대화」 버튼이 생깁니다.":"서로 친구로 추가하면 이번 주 경험치를 보고 응원을 보낼 수 있습니다."}</p>
+   ${d.gifts&&d.gifts.length?`<h3 class="cmh3">받은 선물 <em class="cmnew">${d.gifts.length}</em></h3><div class="cml">${d.gifts.map(g=>`<div class="cmc cmg"><span><b>${E(g.fromName||"친구")}</b> 님이 ${g.kind==="seed"?"씨앗 "+(+g.amount||0)+"개":"「"+E(g.itemName||"아이템")+"」"}를 보냈습니다<small>${new Date(g.at).toLocaleDateString("ko-KR")}</small></span><button class="pill on sm" data-claim="${E(g.id)}">받기</button></div>`).join("")}</div>`:""}
    <h3 class="cmh3">받은 응원${unread?` <em class="cmnew">새 ${unread}</em>`:""}</h3>
-   <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 <span class="stkv">${E(c.sticker)}</span> 응원을 보냈어요<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없어요.</p>`}</div>
+   <div class="cml">${d.cheers.length?d.cheers.slice(0,10).map(c=>`<div class="cmc"><b>${E(c.fromName||"")}</b> 님이 <span class="stkv">${E(c.sticker)}</span> 응원을 보냈습니다<small>${new Date(c.at).toLocaleDateString("ko-KR")}</small></div>`).join(""):`<p class="sub">아직 받은 응원이 없습니다.</p>`}</div>
    ${window.Notification&&Notification.permission==="default"?`<button class="cmnotif" data-cm="notify">응원·메시지 알림 켜기 (앱을 열어 둔 동안)</button>`:""}
    <button class="cmleave" data-cm="leave">리그에서 나가기</button></div>`;
   try{ localStorage.setItem("jp-cheer-seen",String(Date.now())); }catch(e){} UN.cheers=0; UN.gifts=0; badge();
@@ -177,32 +177,32 @@ function cheerDlg(to,name){
   let d=$("cheerDlg"); if(!d){ d=document.createElement("dialog"); d.id="cheerDlg"; document.body.appendChild(d);
     d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-cclose]")){ d.close(); return; }
       const s=ev.target.closest("[data-sticker]"); if(!s) return; const to=d.dataset.to, nm=d.dataset.n, day=A().today();
-      try{ await db().collection("cheers").doc(uid()+"_"+to+"_"+day).set({from:uid(),fromName:A().curProfile().name,to,sticker:s.dataset.sticker,day,at:Date.now()}); A().toast(nm+" 님에게 응원을 보냈어요"); }
-      catch(e){ A().toast("오늘은 이미 응원했어요"); } d.close(); }); }
+      try{ await db().collection("cheers").doc(uid()+"_"+to+"_"+day).set({from:uid(),fromName:A().curProfile().name,to,sticker:s.dataset.sticker,day,at:Date.now()}); A().toast(nm+" 님에게 응원을 보냈습니다"); }
+      catch(e){ A().toast("오늘은 이미 응원했습니다"); } d.close(); }); }
   d.dataset.to=to; d.dataset.n=name;
-  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(([e,l])=>`<button class="stkb" data-sticker="${e}"><span>${e}</span><small>${l}</small></button>`).join("")}</div><p class="sub" style="margin-top:10px">한 명에게는 하루에 한 번만 보낼 수 있어요.</p></div>`;
+  d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(([e,l])=>`<button class="stkb" data-sticker="${e}"><span>${e}</span><small>${l}</small></button>`).join("")}</div><p class="sub" style="margin-top:10px">한 명에게는 하루에 한 번만 보낼 수 있습니다.</p></div>`;
   if(!d.open) d.showModal();
 }
 async function report(target){
-  if(!confirm("이 사용자의 이름을 신고할까요?")) return;
-  try{ await db().collection("reports").add({by:uid(),target,week:weekKey(),at:Date.now()}); A().toast("신고했어요. 확인할게요"); }catch(e){ A().toast("신고하지 못했어요"); }
+  if(!confirm("이 사용자의 이름을 신고하시겠습니까?")) return;
+  try{ await db().collection("reports").add({by:uid(),target,week:weekKey(),at:Date.now()}); A().toast("신고했습니다. 확인하겠습니다"); }catch(e){ A().toast("신고하지 못했습니다"); }
 }
 async function addFriend(code){
-  code=(code||"").trim().toUpperCase(); if(code.length!==6){ A().toast("친구 코드는 6자리예요"); return; }
-  if(code===lg().code){ A().toast("내 코드예요"); return; }
-  try{ const d=await db().collection("codes").doc(code).get(); if(!d.exists){ A().toast("없는 코드예요"); return; }
-    const f=friends(); if(f.some(x=>x.uid===d.data().uid)){ A().toast("이미 친구예요"); return; }
+  code=(code||"").trim().toUpperCase(); if(code.length!==6){ A().toast("친구 코드는 6자리입니다"); return; }
+  if(code===lg().code){ A().toast("내 코드입니다"); return; }
+  try{ const d=await db().collection("codes").doc(code).get(); if(!d.exists){ A().toast("없는 코드입니다"); return; }
+    const f=friends(); if(f.some(x=>x.uid===d.data().uid)){ A().toast("이미 친구입니다"); return; }
     try{ await db().collection("follows").doc(uid()+"_"+d.data().uid).set({from:uid(),to:d.data().uid,at:Date.now()}); }catch(e){}
-    f.push({uid:d.data().uid,name:d.data().name}); saveFr(f); A().toast("「"+d.data().name+"」 님을 친구로 추가했어요"); wKey=""; startWatch(); render(); }catch(e){ A().toast("추가하지 못했어요"); }
+    f.push({uid:d.data().uid,name:d.data().name}); saveFr(f); A().toast("「"+d.data().name+"」 님을 친구로 추가했습니다"); wKey=""; startWatch(); render(); }catch(e){ A().toast("추가하지 못했습니다"); }
 }
 
 function addDlg(){
   let d=$("addFrDlg"); if(!d){ d=document.createElement("dialog"); d.id="addFrDlg"; document.body.appendChild(d);
     d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-fclose]")){ d.close(); return; }
-      if(ev.target.closest("[data-fcopy]")){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } });
+      if(ev.target.closest("[data-fcopy]")){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했습니다"); }catch(err){ A().toast("코드: "+lg().code); } } });
     d.addEventListener("submit",async ev=>{ ev.preventDefault(); const code=new FormData(ev.target).get("c"); await addFriend(code); d.close(); }); }
   d.innerHTML=`<div class="dh"><h2 style="margin:0">친구 추가</h2><button class="x" data-fclose aria-label="닫기">×</button></div><div class="db">
-   <p class="sub">친구의 6자리 코드를 입력하세요. 친구도 내 코드를 입력하면 ${CHAT_ON?"서로 대화할 수 있어요.":"서로 응원을 주고받을 수 있어요."}</p>
+   <p class="sub">친구의 6자리 코드를 입력하세요. 친구도 내 코드를 입력하면 ${CHAT_ON?"서로 대화할 수 있습니다.":"서로 응원을 주고받을 수 있습니다."}</p>
    <form class="cmadd"><input name="c" maxlength="6" placeholder="친구 코드 6자리" autocomplete="off" autocapitalize="characters" autofocus><button class="pill on" type="submit">추가</button></form>
    <div class="cmcode"><span>내 친구 코드 <b>${E(lg().code)}</b></span><button class="pill sm" data-fcopy="1">복사</button></div></div>`;
   if(!d.open) d.showModal();
@@ -215,12 +215,12 @@ function chatDlg(other,name){
     d.addEventListener("close",()=>{ if(chatUnsub){ chatUnsub(); chatUnsub=null; } });
     d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-chclose]")){ d.close(); return; }
       if(ev.target.closest("[data-chmenu]")){ const m=d.querySelector(".chmenu"); if(m) m.hidden=!m.hidden; return; }
-      if(ev.target.closest("[data-chdel]")){ if(!confirm("정말 이 친구를 삭제할까요?\n삭제하면 서로 대화할 수 없고, 다시 서로 추가해야 해요.")) return; const o=d.dataset.o;
+      if(ev.target.closest("[data-chdel]")){ if(!confirm("정말 이 친구를 삭제하시겠습니까?\n삭제하면 서로 대화할 수 없고, 다시 서로 추가해야 합니다.")) return; const o=d.dataset.o;
         try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(e){} saveFr(friends().filter(f=>f.uid!==o)); d.close(); wKey=""; startWatch(); render(); return; }
       if(ev.target.closest("[data-chrep]")){ const m=d.querySelector(".chmenu"); if(m) m.hidden=true; report(d.dataset.o); return; }
       const m=d.querySelector(".chmenu"); if(m&&!m.hidden&&!ev.target.closest(".chmenu")) m.hidden=true; });
     d.addEventListener("submit",async ev=>{ ev.preventDefault(); const inp=ev.target.querySelector("input"), t=inp.value.trim().slice(0,200); if(!t) return; inp.value="";
-      try{ await db().collection("chats").doc(pairId(d.dataset.o)).collection("msgs").add({from:uid(),text:t,at:Date.now()}); }catch(e){ A().toast("보내지 못했어요"); } }); }
+      try{ await db().collection("chats").doc(pairId(d.dataset.o)).collection("msgs").add({from:uid(),text:t,at:Date.now()}); }catch(e){ A().toast("보내지 못했습니다"); } }); }
   d.dataset.o=other; markRead(other);
   d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)}</h2><span class="chhr"><button class="x" data-chmenu="1" aria-label="더보기">⋯</button><button class="x" data-chclose aria-label="닫기">×</button></span></div>
    <div class="chmenu" hidden><button data-chrep="1">신고하기</button><button data-chdel="1" class="danger">친구 삭제</button></div>
@@ -231,7 +231,7 @@ function chatDlg(other,name){
   chatUnsub=db().collection("chats").doc(pairId(other)).collection("msgs").orderBy("at").limitToLast(100).onSnapshot(s=>{
     const box=$("chMsgs"); if(!box) return; const me=uid();
     box.innerHTML=s.docs.length?s.docs.map(x=>{ const m=x.data(), mine=m.from===me; return `<div class="chm ${mine?"mine":""}"><span>${E(m.text)}</span></div>`; }).join(""):`<p class="sub" style="text-align:center">첫 메시지를 보내 보세요</p>`;
-    box.scrollTop=box.scrollHeight; },()=>{ const box=$("chMsgs"); if(box) box.innerHTML=`<p class="sub" style="text-align:center">대화할 수 없어요. 서로 친구로 추가해야 해요.</p>`; });
+    box.scrollTop=box.scrollHeight; },()=>{ const box=$("chMsgs"); if(box) box.innerHTML=`<p class="sub" style="text-align:center">대화할 수 없습니다. 서로 친구로 추가해야 합니다.</p>`; });
 }
 
 
@@ -242,7 +242,7 @@ function giftPaint(d){ const P=PATH.gift, name=d.dataset.n, tab=d.dataset.tab, i
      <div class="shtabs" style="justify-content:flex-start"><button class="pill ${tab==="seed"?"on":""}" data-gtab="seed">씨앗</button><button class="pill ${tab==="item"?"on":""}" data-gtab="item">아이템</button></div>
      ${tab==="seed"?`<div class="gseeds" style="margin-top:10px">${[10,50,100,300,500,1000].map(n=>`<button class="pill" data-gseed="${n}">${n}개</button>`).join("")}</div>`
      :`<div class="gitems">${its.map(i=>`<div class="gi2"><div class="gp">${PATH.birdSvg({[i.slot]:i.id},"mini")}</div><b>${E(i.name)}</b><button class="pill sm on" data-gitem="${E(i.id)}">보내기</button></div>`).join("")}</div>`}
-     <p class="sub" style="margin-top:10px">개발자 전용이에요. 내 씨앗·아이템은 줄지 않아요.</p></div>`; }
+     <p class="sub" style="margin-top:10px">개발자 전용입니다. 내 씨앗·아이템은 줄지 않습니다.</p></div>`; }
 let gBusy=false;
 function giftDlg(to,name){
   const P=window.PATH&&PATH.gift; if(!P) return;
@@ -252,12 +252,12 @@ function giftDlg(to,name){
       const sd=ev.target.closest("[data-gseed]"), it=ev.target.closest("[data-gitem]"); if(!sd&&!it||gBusy) return;
       const to=d.dataset.to, nm=d.dataset.n, day=A().today(), seed=!!sd;
       const amount=seed?+sd.dataset.gseed:0, item=seed?"":it.dataset.gitem, label=seed?"씨앗 "+amount+"개":"「"+P.itemName(item)+"」";
-      if(!isDevOn()){ A().toast("개발자만 보낼 수 있어요"); return; }
-      if(!confirm(nm+" 님에게 "+label+"를 선물할까요?")) return;
+      if(!isDevOn()){ A().toast("개발자만 보낼 수 있습니다"); return; }
+      if(!confirm(nm+" 님에게 "+label+"를 선물하시겠습니까?")) return;
       gBusy=true;
       try{ const g={from:uid(),fromName:"운영자",to,kind:seed?"seed":"item",day,claimed:false,at:Date.now()}; if(seed) g.amount=amount; else { g.item=item; g.itemName=P.itemName(item); }
         await db().collection("gifts").add(g);
-        A().toast(nm+" 님에게 선물을 보냈어요"); d.close(); }
+        A().toast(nm+" 님에게 선물을 보냈습니다"); d.close(); }
       catch(e){ A().toast("보내지 못했어요(개발자 권한·서버 규칙 확인)"); }
       gBusy=false; }); }
   d.dataset.to=to; d.dataset.n=name; d.dataset.tab=d.dataset.tab||"seed";
@@ -266,16 +266,16 @@ function giftDlg(to,name){
 document.addEventListener("click",async e=>{
   const v=$("communityView"); if(!v||!v.contains(e.target)) return;
   const bd=e.target.closest("[data-bird]"), cm=e.target.closest("[data-cm]"), ch=e.target.closest("[data-cheer]"), rp=e.target.closest("[data-rep]"), ct=e.target.closest("[data-chat]"), gf=e.target.closest("[data-gift]"), cl=e.target.closest("[data-claim]"), fd=e.target.closest("[data-frdel]");
-  if(fd){ if(!confirm("정말 「"+(fd.dataset.n||"이 친구")+"」님을 친구에서 삭제할까요?\n다시 서로 추가해야 친구가 돼요.")) return; const o=fd.dataset.frdel; try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(err){} saveFr(friends().filter(f=>f.uid!==o)); wKey=""; startWatch(); render(); return; }
+  if(fd){ if(!confirm("정말 「"+(fd.dataset.n||"이 친구")+"」님을 친구에서 삭제하시겠습니까?\n다시 서로 추가해야 친구가 됩니다.")) return; const o=fd.dataset.frdel; try{ await db().collection("follows").doc(uid()+"_"+o).delete(); }catch(err){} saveFr(friends().filter(f=>f.uid!==o)); wKey=""; startWatch(); render(); return; }
   if(bd){ birdDlg(bd.dataset.bird); return; }
   if(cm){ const a=cm.dataset.cm;
     if(a==="login"||a==="signup") A().openAuth(a);
     else if(a==="invite"){ if(window.SETTINGS) SETTINGS.invite(lg().code); } else if(a==="addfriend") addDlg(); else if(a==="notify") askNotify();
-    else if(a==="verified"){ try{ await cloud().auth.currentUser.reload(); await cloud().auth.currentUser.getIdToken(true); }catch(err){} if(verified()) A().toast("인증됐어요!"); else A().toast("아직 인증되지 않았어요"); render(); }
-    else if(a==="resend"){ try{ await cloud().auth.currentUser.sendEmailVerification(); A().toast("인증 메일을 다시 보냈어요"); }catch(err){ A().toast("잠시 후 다시 해 주세요"); } }
+    else if(a==="verified"){ try{ await cloud().auth.currentUser.reload(); await cloud().auth.currentUser.getIdToken(true); }catch(err){} if(verified()) A().toast("인증됐습니다!"); else A().toast("아직 인증되지 않았습니다"); render(); }
+    else if(a==="resend"){ try{ await cloud().auth.currentUser.sendEmailVerification(); A().toast("인증 메일을 다시 보냈습니다"); }catch(err){ A().toast("잠시 후 다시 해 주세요"); } }
     else if(a==="join") join(); else if(a==="leave") leave(); else if(a==="reload") render();
-    else if(a==="copy"){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했어요"); }catch(err){ A().toast("코드: "+lg().code); } } }
-  else if(cl){ cl.disabled=true; try{ const ref=db().collection("gifts").doc(cl.dataset.claim), snap=await ref.get(); const g=snap.data(); if(!snap.exists||g.to!==uid()||g.claimed) throw 0; await ref.update({claimed:true}); const got=window.PATH.gift.receive(g); A().toast(got?got+"를 받았어요!":"받았어요"); }catch(err){ A().toast("받지 못했어요. 잠시 후 다시 해 주세요"); } render(); }
+    else if(a==="copy"){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했습니다"); }catch(err){ A().toast("코드: "+lg().code); } } }
+  else if(cl){ cl.disabled=true; try{ const ref=db().collection("gifts").doc(cl.dataset.claim), snap=await ref.get(); const g=snap.data(); if(!snap.exists||g.to!==uid()||g.claimed) throw 0; await ref.update({claimed:true}); const got=window.PATH.gift.receive(g); A().toast(got?got+"를 받았습니다!":"받았습니다"); }catch(err){ A().toast("받지 못했습니다. 잠시 후 다시 해 주세요"); } render(); }
   else if(gf) giftDlg(gf.dataset.gift,gf.dataset.n);
   else if(ct) chatDlg(ct.dataset.chat,ct.dataset.n);
   else if(ch) cheerDlg(ch.dataset.cheer,ch.dataset.n);

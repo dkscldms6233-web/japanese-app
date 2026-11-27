@@ -98,7 +98,7 @@ body:has(#quizView .gbox) #quizView .gbox .opt{font-size:18px}
 body:has(#quizView .gbox) #quizView .gbox kbd{font-size:13px}
 body:has(#quizView .gbox) #quizView .gbox .wd-hint a,body:has(#quizView .gbox) #quizView .gbox .wd-hint small{font-size:15px!important}
 body:has(#quizView .gbox) #quizView .gbox .gstat span{font-size:19px}
-/* 캐릭터는 게임 화면에서 뺐어요 */
+/* 캐릭터는 게임 화면에서 뺐습니다 */
 body:has(#quizView .gbox) #quizView .gbox .cdmk,body:has(#quizView .gbox) #quizView .gbox .rmk,body:has(#quizView .gbox) #quizView .gbox .mascot,body:has(#quizView .gbox) #quizView .gbox .gfx .mascot{display:none!important}
 body:has(#quizView .gbox) #quizView .gbox .fw{font-size:26px!important}
 /* 떨어지는 단어 바닥선: 줄무늬 대신 단색 */
@@ -126,7 +126,7 @@ body:has(#quizView .gbox) #quizView #gbar.low{background:#ef4b6a!important}
 document.head.appendChild(ST);
 
 /* 설명 글(앱 전체): 문장·쉼표·가운뎃점(·)마다 줄을 바꿔서 한 줄에 한 덩어리씩 보이게
- * 뉴스·읽기 본문, 오늘의 문장, 문법 카드 본문, 단어 상세처럼 '내용' 자체인 글은 건드리지 않아요. */
+ * 뉴스·읽기 본문, 오늘의 문장, 문법 카드 본문, 단어 상세처럼 '내용' 자체인 글은 건드리지 않습니다. */
 (function(){
   if(!window.MutationObserver) return;
   function start(){

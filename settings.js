@@ -1,11 +1,11 @@
 /* 설정 — 이용자가 직접 바꾸는 간단한 앱 설정
  * 화면 모드 · 글자 크기 · 후리가나 · 하루 목표 · 내 급수 · 게임 소리 · 계정 · 기록 백업/복원/초기화
- * 값은 기존 설정(prefs)에 그대로 저장돼요. */
+ * 값은 기존 설정(prefs)에 그대로 저장됩니다. */
 (function(){
 const A=()=>window.APP, $=id=>document.getElementById(id);
 const SCALES=[["normal","보통",1],["large","크게",1.1],["xl","아주 크게",1.2]];
 
-/* 글자 크기: 시작할 때 저장된 값을 적용해요 */
+/* 글자 크기: 시작할 때 저장된 값을 적용합니다 */
 function scaleOf(){ const k=A().prefs().fontScale; return (SCALES.find(x=>x[0]===k)||SCALES[0]); }
 function applyScale(){ const z=scaleOf()[2]; document.body.style.zoom=z===1?"":String(z); }
 
@@ -23,7 +23,7 @@ function render(){
    ${row("내 급수","홈·퀴즈의 기본 범위",`<div class="stchips">${lvs}</div>`)}
    ${row("게임 소리","배경음악과 효과음",`<label class="stsw"><input type="checkbox" data-st="sound" ${P.sound===false?"":"checked"}><span>켜기</span></label>`)}
    <h3 class="sth">계정</h3>
-   ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장돼요",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}
+   ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장됩니다",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}
    <h3 class="sth">도움</h3>
    ${row("친구 초대하기","앱을 아직 안 쓰는 친구에게 링크 보내기",`<button type="button" class="pill" data-st="invite">초대</button>`)}
    ${row("문의하기","오류·제안을 보내 주세요",`<button type="button" class="pill" data-st="inq">문의</button>`)}
@@ -50,16 +50,16 @@ async function act(b){ const k=b.dataset.st, v=b.dataset.v, a=A();
   else if(k==="acct"){ $("setDlg").close(); a.openProf(); }
   else if(k==="invite"){ invite(); }
   else if(k==="inq"){ inquiry(); }
-  else if(k==="reset"){ if(!confirm("학습 기록과 오답 노트를 모두 지울까요? 단어와 저장함은 그대로예요.")) return; if(!confirm("정말 지울까요? 되돌릴 수 없어요.")) return; a.resetLearning(); a.toast("기록을 지웠어요"); a.renderHome(); }
+  else if(k==="reset"){ if(!confirm("학습 기록과 오답 노트를 모두 지우시겠습니까? 단어와 저장함은 그대로입니다.")) return; if(!confirm("정말 지우시겠습니까? 되돌릴 수 없습니다.")) return; a.resetLearning(); a.toast("기록을 지웠습니다"); a.renderHome(); }
 }
 
 
-/* ---------- 친구 초대: 앱을 아직 안 쓰는 친구에게 링크를 보내요 ---------- */
+/* ---------- 친구 초대: 앱을 아직 안 쓰는 친구에게 링크를 보냅니다 ---------- */
 function appUrl(){ return location.href.split("#")[0].split("?")[0].replace(/index\.html$/,""); }
 async function invite(code){
-  const text="일본어 같이 공부해요! 술술 일본어에서 만나요."+(code?" 내 친구 코드는 "+code+"예요.":""), url=appUrl();
+  const text="일본어 같이 공부합시다! 술술 일본어에서 만납니다."+(code?" 내 친구 코드는 "+code+"입니다.":""), url=appUrl();
   try{ if(navigator.share){ await navigator.share({title:"술술 일본어",text,url}); return; } }catch(e){ if(e&&e.name==="AbortError") return; }
-  try{ await navigator.clipboard.writeText(text+"\n"+url); A().toast("초대 문구와 링크를 복사했어요"); }catch(e){ prompt("복사해서 친구에게 보내 주세요",text+"\n"+url); }
+  try{ await navigator.clipboard.writeText(text+"\n"+url); A().toast("초대 문구와 링크를 복사했습니다"); }catch(e){ prompt("복사해서 친구에게 보내 주세요",text+"\n"+url); }
 }
 
 /* ---------- 문의하기: 로그인한 이용자가 개발자에게 글을 남겨요(하루 3번까지) ---------- */
@@ -72,8 +72,8 @@ function inqDlg(){ let d=$("inqDlg"); if(!d){ d=document.createElement("dialog")
     const btn=ev.target.closest("[data-iqsend]"); btn.disabled=true;
     try{ const c=A().cloud, u=c.auth.currentUser, day=A().today(); let ok=false;
       for(let n=0;n<3&&!ok;n++){ try{ await c.db.collection("inquiries").doc(u.uid+"_"+day+"_"+n).set({from:u.uid,name:String(A().curProfile().name||"").slice(0,20),kind,text:text.slice(0,500),day,at:Date.now()}); ok=true; }catch(e){} }
-      if(!ok) throw 0; A().toast("문의를 보냈어요. 고마워요"); d.close(); }
-    catch(e){ err.textContent="보내지 못했어요. 하루에 3번까지 보낼 수 있고, 잠시 뒤 다시 해 주세요"; btn.disabled=false; } }); }
+      if(!ok) throw 0; A().toast("문의를 보냈습니다. 고맙습니다"); d.close(); }
+    catch(e){ err.textContent="보내지 못했습니다. 하루에 3번까지 보낼 수 있고, 잠시 뒤 다시 해 주세요"; btn.disabled=false; } }); }
   return d; }
 function inquiry(pre){
   const d=inqDlg(), p=A().curProfile(), c=A().cloud;
@@ -83,8 +83,8 @@ function inquiry(pre){
    <label class="iql">내용<textarea id="iqText" rows="5" maxlength="500" placeholder="어떤 화면에서 어떤 일이 있었는지 적어 주세요"></textarea></label>
    <p class="iqerr" id="iqErr" role="alert"></p>
    <button type="button" class="cta" data-iqsend>보내기</button>
-   <p class="sub stnote">하루에 3번까지 보낼 수 있어요. 이름과 문의 내용만 전달돼요.</p>`
-   :`<p class="sub" style="margin:8px 0 14px">문의는 로그인한 뒤에 보낼 수 있어요.</p><button type="button" class="cta" data-iqlogin>로그인</button>`}
+   <p class="sub stnote">하루에 3번까지 보낼 수 있습니다. 이름과 문의 내용만 전달됩니다.</p>`
+   :`<p class="sub" style="margin:8px 0 14px">문의는 로그인한 뒤에 보낼 수 있습니다.</p><button type="button" class="cta" data-iqlogin>로그인</button>`}
   </div>`;
   if(!d.open) d.showModal();
   if(pre&&ok&&$("iqText")){ $("iqKind").value=pre.kind||"bug"; const t=$("iqText"); t.value=String(pre.text||"").slice(0,450); t.focus(); t.setSelectionRange(t.value.length,t.value.length); }

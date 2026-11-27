@@ -1,5 +1,5 @@
-/* 방문자 수(익명): 기기마다 무작위 번호(jp-vid)를 한 번 만들고, 하루에 한 번만 서버(visits)에 "오늘 왔어요"를 남겨요.
- * 이름·이메일·학습 내용은 저장하지 않아요. 개발자 계정만 읽을 수 있어요(firestore.rules). 내 컴퓨터(localhost)와 개발자 기기는 세지 않아요. */
+/* 방문자 수(익명): 기기마다 무작위 번호(jp-vid)를 한 번 만들고, 하루에 한 번만 서버(visits)에 "오늘 왔습니다"를 남깁니다.
+ * 이름·이메일·학습 내용은 저장하지 않습니다. 개발자 계정만 읽을 수 있어요(firestore.rules). 내 컴퓨터(localhost)와 개발자 기기는 세지 않습니다. */
 (function(){
 if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
 const day=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);

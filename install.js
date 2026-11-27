@@ -1,5 +1,5 @@
-/* 홈 화면에 추가 안내: 안드로이드 크롬은 '추가하기' 버튼으로 바로 설치, 아이폰은 방법을 알려 줘요.
- * 이미 앱으로 열었거나(standalone) 최근에 '나중에'를 눌렀다면 보이지 않아요. */
+/* 홈 화면에 추가 안내: 안드로이드 크롬은 '추가하기' 버튼으로 바로 설치, 아이폰은 방법을 알려 줍니다.
+ * 이미 앱으로 열었거나(standalone) 최근에 '나중에'를 눌렀다면 보이지 않습니다. */
 (function(){
 const KEY="jp-install-dismiss", DAY=864e5;
 const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true||document.referrer.startsWith("android-app://");
@@ -21,8 +21,8 @@ function show(){
   if(box||document.getElementById("onb")&&document.getElementById("onb").offsetParent) { setTimeout(show,4000); return; }
   const st=document.createElement("style"); st.textContent=css; document.head.appendChild(st);
   box=document.createElement("div"); box.id="instBar"; box.setAttribute("role","dialog"); box.setAttribute("aria-label","홈 화면에 추가");
-  const msg=inapp?`<b>브라우저에서 열어 주세요</b>지금 화면에서는 홈 화면에 추가할 수 없어요. ${ios?"아래 <b style=\"display:inline;font-size:inherit\">⋯ → Safari로 열기</b>":"오른쪽 위 <b style=\"display:inline;font-size:inherit\">⋮ → 다른 브라우저로 열기</b>"}를 눌러 주세요.`:ios?`<b>홈 화면에 추가해 보세요</b>아래 <b style="display:inline;font-size:inherit">공유 버튼 ⬆︎</b> → <b style="display:inline;font-size:inherit">홈 화면에 추가</b>를 누르면 앱처럼 바로 열려요.`
-              :`<b>홈 화면에 추가할까요?</b>앱처럼 바로 열 수 있어요.`;
+  const msg=inapp?`<b>브라우저에서 열어 주세요</b>지금 화면에서는 홈 화면에 추가할 수 없습니다. ${ios?"아래 <b style=\"display:inline;font-size:inherit\">⋯ → Safari로 열기</b>":"오른쪽 위 <b style=\"display:inline;font-size:inherit\">⋮ → 다른 브라우저로 열기</b>"}를 눌러 주세요.`:ios?`<b>홈 화면에 추가해 보세요</b>아래 <b style="display:inline;font-size:inherit">공유 버튼 ⬆︎</b> → <b style="display:inline;font-size:inherit">홈 화면에 추가</b>를 누르면 앱처럼 바로 열립니다.`
+              :`<b>홈 화면에 추가하시겠습니까?</b>앱처럼 바로 열 수 있습니다.`;
   box.innerHTML=`<img src="icon-192.png" alt=""><div class="t">${msg}</div>${ios||inapp?"":`<button class="go" type="button">추가하기</button>`}<button class="no" type="button" aria-label="닫기">×</button>`;
   document.body.appendChild(box);
   box.querySelector(".no").onclick=close;
