@@ -1045,11 +1045,10 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=103">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=82">
+<link rel="stylesheet" href="polish.css?v=83">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
-<script src="warmup.js?v=8"></script>
-<script src="tour.js?v=1"></script>
+<script src="tour.js?v=2"></script>
 <script src="install.js?v=5"></script>
 <script src="visits.js?v=4"></script>
 </head>
@@ -3599,7 +3598,7 @@ document.addEventListener("click",e=>{
   if(a==="goal"){
     prefs.goal=+b.dataset.n; prefs.showKana=!!obKana; prefs.beginner=!!obBeg; prefs.myLevels=obLv||[]; delete prefs.myLevel;
     lvSel=new Set(prefs.myLevels); level="전체"; todayOff=0; renderLevels();
-    closeOnb(); renderHome(); if(!(window.TOUR&&!TOUR.done())) toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); const nxt=()=>{ if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700); }; if(window.TOUR) setTimeout(()=>TOUR.maybe(nxt),500); else nxt();
+    closeOnb(); renderHome(); if(!(window.TOUR&&!TOUR.done())) toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); const nxt=()=>{ if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); }; if(window.TOUR) setTimeout(()=>TOUR.maybe(nxt),500); else nxt();
   }
 });
 window.APP={setFrom:v=>{ quizFrom=v; },jStart:s=>jStart(s),setJl:v=>{ prefs.jl=v; LS.set("jp-prefs",prefs); },view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,

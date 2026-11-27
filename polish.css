@@ -494,20 +494,17 @@ html[data-theme=dark] .h2hero.soft .h2rw b{color:#fff}
 .kobtn{border:0!important;background:transparent!important;padding:2px 0!important;font-size:12.5px!important;color:var(--accent-text,var(--accent))!important;text-decoration:underline;text-underline-offset:3px}
 .kobtn:hover{background:transparent!important;opacity:.8}
 
-/* ===== 앱 둘러보기(튜토리얼) ===== */
-dialog.tour{border:0;border-radius:26px;padding:20px 22px 22px;width:min(92vw,380px);background:var(--card);color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
-dialog.tour::backdrop{background:rgba(20,22,40,.55)}
-.trtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.trn{font-size:12.5px;color:var(--sub);font-weight:700}
-.trskip{border:0;background:transparent;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:4px}
-.tric{width:84px;height:84px;margin:10px auto 14px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent-text,var(--accent))}
-.tric .ic{width:40px;height:40px;stroke:currentColor}
-dialog.tour h2{margin:0 0 8px;font-size:20px;line-height:1.3}
-dialog.tour p{margin:0;font-size:14.5px;line-height:1.65;color:var(--sub);min-height:72px}
-dialog.tour p b{color:var(--text)}
-.trdots{display:flex;justify-content:center;gap:6px;margin:16px 0 14px}
-.trdots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.trdots i.on{width:20px;border-radius:99px;background:var(--accent)}
-.trbtns{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
-.trprev{border:0;background:transparent;color:var(--sub);font:inherit;font-size:14px;font-weight:700;padding:10px 6px;cursor:pointer}
-.trnext{width:100%;margin:0}
-html[data-theme=dark] dialog.tour{border:1px solid rgba(255,255,255,.2)}
+/* ===== 앱 둘러보기(직접 눌러 보는 안내) ===== */
+.tr-sh{position:fixed;inset:0;z-index:100000;background:rgba(12,14,34,.62)}
+.tr-ring{position:fixed;z-index:100001;pointer-events:none;border:3px solid #ffc93c;box-shadow:0 0 0 4px rgba(255,201,60,.28);animation:trPulse 1.2s ease-in-out infinite}
+@keyframes trPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,201,60,.35)}50%{box-shadow:0 0 0 9px rgba(255,201,60,.08)}}
+.tr-tip{position:fixed;z-index:100002;box-sizing:border-box;background:var(--card);color:var(--text);border-radius:18px;padding:12px 14px 14px;box-shadow:0 12px 36px rgba(0,0,0,.35);font-size:14.5px;line-height:1.55}
+.tr-tip::after{content:"";position:absolute;left:var(--ax,40px);width:16px;height:16px;background:var(--card);transform:translateX(-50%) rotate(45deg)}
+.tr-tip.up::after{top:-7px;border-radius:3px 0 0 0}.tr-tip.down::after{bottom:-7px;border-radius:0 0 3px 0}
+.tr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.tr-n{font-size:12px;font-weight:700;color:var(--sub)}
+.tr-skip{border:0;background:transparent;color:var(--sub);font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer;padding:2px}
+.tr-tip p{margin:0 0 10px}.tr-tip p b{color:var(--accent-text,var(--accent))}
+.tr-next{width:100%;margin:0;padding:11px}
+.tr-hint{font-size:13px;font-weight:700;color:var(--accent-text,var(--accent))}
+html[data-theme=dark] .tr-tip{border:1px solid rgba(255,255,255,.2)}
