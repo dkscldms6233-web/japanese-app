@@ -733,3 +733,8 @@ html[data-theme=dark] .hdd .hdl,html[data-theme=dark] .hdd.near .hdl{color:var(-
 .hdd.none,.hdd.past{border:1px solid var(--line)!important;background:var(--card)!important;border-radius:10px!important;padding:5px 10px!important}
 .hdd.none .hdl,.hdd.past .hdl{display:none!important}
 .hdd.none .hdn,.hdd.past .hdn{border:0!important;font-size:12.5px!important;color:var(--sub)!important;padding:0!important}
+/* D-day: 평소엔 보라 밑줄, 7일 이내만 빨강 */
+.hdd .hdn,.hdd.soon .hdn{border-bottom-color:var(--accent)!important}
+html[data-theme=dark] .hdd .hdn,html[data-theme=dark] .hdd.soon .hdn{border-bottom-color:var(--accent)!important}
+.hdd.near .hdn{border-bottom-color:#d83a3a!important}
+html[data-theme=dark] .hdd.near .hdn{border-bottom-color:#ff6b6b!important}
