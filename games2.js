@@ -81,7 +81,7 @@ function romaji(buf){
   }
   return {out,rest:b};
 }
-const rkLine=g=>isDesk()?`<p class="rkh">⌨️ <b>키보드로 로마자</b>를 치면 가나로 바뀌어요 &nbsp;(<b>ka</b>→か · <b>shi</b>→し · <b>kka</b>→っか · <b>nn</b>→ん · <b>-</b>→ー) &nbsp;Enter 확인 · Backspace 지우기${g.rk?` <span class="rkb">${g.rk}</span>`:""}</p>`:"";
+const rkLine=g=>false?`<p class="rkh">⌨️ <b>키보드로 로마자</b>를 치면 가나로 바뀌어요 &nbsp;(<b>ka</b>→か · <b>shi</b>→し · <b>kka</b>→っか · <b>nn</b>→ん · <b>-</b>→ー) &nbsp;Enter 확인 · Backspace 지우기${g.rk?` <span class="rkb">${g.rk}</span>`:""}</p>`:"";
 /* 키 하나를 처리해요. 처리했으면 true */
 function rkKey(g,e,max,minLen){
   if(e.ctrlKey||e.metaKey||e.altKey) return false;
@@ -98,7 +98,15 @@ const FCYC=["かが","きぎ","くぐ","けげ","こご","さざ","しじ","す�
 /* 마지막 글자를 ゛ ゜ 작은 글자로 바꿔요 (か→が, は→ば→ぱ, つ→っ→づ, や→ゃ …) */
 function kbMod(str,kata){ if(!str) return str; const last=str.slice(-1).replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); const c=FCYC.find(x=>x.includes(last)); if(!c) return str; const n=c[(c.indexOf(last)+1)%c.length]; return str.slice(0,-1)+(kata?toKata(n):n); }
 const FKEYS=[0,1,2,3,4,5,6,7,8];
+/* 컴퓨터용: 처음 만들었던 50음도 표 글자판 */
+function kbGrid(tab,state,attr,kata){
+  const rows=KB[tab]||[];
+  const cv=c=>kata?toKata(c):c;
+  const keyBtn=c=>c?`<button class="wd-k ${state[c]||""}" ${attr}="key" data-c="${cv(c)}">${cv(c)}</button>`:`<span class="wd-k sp"></span>`;
+  return rows.map(r=>`<div class="wd-row" style="grid-template-columns:repeat(${r.length},1fr)">${r.map(keyBtn).join("")}</div>`).join("");
+}
 function kbHTML(tab,state,attr,kata){
+  if(isDesk()) return kbGrid(tab,state,attr,kata);
   const cv=c=>kata?toKata(c):c, st=c=>state[c]||"";
   const pos=["c","l","u","r","d"], hpos=[null,"l","u","r","d"];
   const key=(i)=>{ const f=FLICK[i]; const hs=f.map((c,k)=>c&&k?`<i class="fh ${hpos[k]}"><span class="${st(c)}">${cv(c)}</span></i>`:"").join(""); const ps=f.map((c,k)=>c?`<span class="fp ${pos[k]}" data-i="${k}">${cv(c)}</span>`:"").join("");
@@ -127,7 +135,7 @@ function kbHTML(tab,state,attr,kata){
 function dockPad(){ const d=document.querySelector(".wd-dock"); if(d&&d.parentElement) d.parentElement.style.paddingBottom=d.classList.contains("nat")?"":(d.offsetHeight+14)+"px";
   /* 지금 쓰는 줄이 고정 타자판에 가려지면 위로 올려 줘요 */
   if(d&&!d.classList.contains("nat")){ const c=document.querySelector(".wd-c.cur"), top=d.getBoundingClientRect().top; if(c){ const b=c.getBoundingClientRect().bottom; if(b>top-12) window.scrollBy(0,b-top+16); } } }
-const kbTabs=()=>"";
+const kbTabs=(tab,attr,kata)=>isDesk()?`<div class="wd-tabs">${[["basic",kata?"ア〜ワ":"あ〜わ"],["dak","゛ ゜"],["etc","ん·작은 글자"]].map(([k,l])=>`<button class="pill sm ${tab===k?"on":""}" ${attr}="tab" data-t="${k}">${l}</button>`).join("")}</div>`:"";
 let WDK=false; // 마지막에 고른 문자: false=히라가나, true=가타카나
 function wdPool(kata){
   const re=kata?/^[ァ-ヶー]+$/:/^[ぁ-ゖー]+$/;
@@ -155,7 +163,7 @@ function wdBegin(mode){
   const pool=wdPool(WDK);
   if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족해요 (다른 급수나 문자를 골라 보세요)`); return; }
   const pick=mode==="daily"?pool[hashStr(today()+"|"+jlvQ()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
-  G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map(),kbHide:isDesk(),rk:""};
+  G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map(),rk:""};
   wdRender(); bgmStart();
 }
 function wdEval(guess,ans){
@@ -243,7 +251,7 @@ function startShiriGo(d){
 function shBegin(pool){
   const used=new Set(), cnt=(ch)=>pool.filter(x=>x.r[0]===ch).length, starts=shuffle(pool.filter(x=>lastKana(x.r)!=="ん"&&cnt(lastKana(x.r))>=4)), start=starts[0]||pool.find(x=>lastKana(x.r)!=="ん");
   used.add(start.r);
-  G={type:"shiri",diff:SHDIFF,maxHints:SH_D[SHDIFF].hints,pool,used,chain:[{who:"com",r:start.r,w:start.w}],score:0,rounds:0,lives:3,hints:0,hintShown:null,kbHide:isDesk(),rk:"",cur:"",tab:"basic",msg:"",seen:new Map(),over:false,busy:false};
+  G={type:"shiri",diff:SHDIFF,maxHints:SH_D[SHDIFF].hints,pool,used,chain:[{who:"com",r:start.r,w:start.w}],score:0,rounds:0,lives:3,hints:0,hintShown:null,rk:"",cur:"",tab:"basic",msg:"",seen:new Map(),over:false,busy:false};
   G.need=lastKana(start.r); G.cur=G.need; shRender(); bgmStart();
 }
 function shNatSync(){
