@@ -679,3 +679,20 @@ html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark]
 .hdd .hdl{font-size:9.5px!important;letter-spacing:.14em!important}
 .hdd .hdn{font-size:22px!important;padding-top:1px!important}
 html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{box-shadow:0 0 0 2.5px #f2f2f4,0 0 0 4.5px #3a3a3c!important}
+
+/* D-day: 빨간 띠 달력(작게) */
+.hdd,header .hdd,.hdd.soon,.hdd.near{display:inline-flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;position:relative!important;margin:0 4px!important;padding:12px 0 0!important;width:40px!important;min-width:40px!important;height:38px!important;border:1.5px solid #25263a!important;border-radius:8px!important;background:#fff!important;box-shadow:none!important;overflow:hidden!important}
+.hdd::before{content:""!important;display:block!important;position:absolute;left:0;right:0;top:0;width:auto;height:9px;border:0;border-radius:0;background:#d83a3a}
+.hdd::after{display:none!important}
+.hdd .hdl,.hdd .hdm{display:none!important}
+.hdd .hdn,.hdd.soon .hdn,.hdd.near .hdn{font-size:14px!important;font-weight:800!important;line-height:1!important;letter-spacing:-.02em!important;color:#25263a!important;padding:0!important;margin:0!important;background:none!important;border:0!important}
+.hdd.near{border-color:#d83a3a!important}.hdd.near .hdn{color:#d83a3a!important}
+.hdd.none,.hdd.past{width:auto!important;min-width:0!important;height:auto!important;padding:5px 10px!important;border:1px solid var(--line)!important;background:var(--card)!important}
+.hdd.none::before,.hdd.past::before{display:none!important}
+.hdd.none .hdn,.hdd.past .hdn{font-size:12.5px!important;font-weight:700!important;color:var(--sub)!important}
+html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{background:#2c2c2e!important;border-color:#f2f2f4!important;box-shadow:none!important}
+html[data-theme=dark] .hdd::before{background:#ff6b6b}
+html[data-theme=dark] .hdd .hdn{color:#f2f2f4!important}
+html[data-theme=dark] .hdd.near{border-color:#ff6b6b!important}html[data-theme=dark] .hdd.near .hdn{color:#ff8a8a!important}
+html[data-theme=dark] .hdd.none,html[data-theme=dark] .hdd.past{background:var(--card)!important;border-color:var(--line)!important}
+html[data-theme=dark] .hdd.none .hdn,html[data-theme=dark] .hdd.past .hdn{color:var(--sub)!important}
