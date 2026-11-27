@@ -163,6 +163,8 @@ function passesHtml(){
   const ready=SP&&SP.ready&&SP.ready(), signed=!!uid();
   if(inPlay) return `<p class="sub">플레이스토어 앱에서는 구매를 지원하지 않습니다. 웹(surasura-nihongo.web.app)에서 가능합니다.</p>`;
   const act=p=>ready&&signed?`<button class="pill on" data-pbuy="${p.sku}">${won(p.price)}</button>`:`<button class="pill" disabled>${ready?"로그인 필요":"준비 중"}</button>`;
+  if(!ready) return `<div class="plusps soon"><b>이용권은 곧 열립니다</b><p>${PASSES.map(p=>`${p.days}일 ${won(p.price)}`).join(" · ")}</p></div>
+  <p class="sub" style="font-size:12px">기간제 이용권이라 <b>자동으로 갱신되지 않습니다</b>. 가격은 부가세 포함입니다. <a href="terms.html" target="_blank" rel="noopener">이용약관</a></p>`;
   return `<div class="plusps">${PASSES.map(p=>`<div class="pp${p.tag==="인기"?" hot":""}"><span class="tg">${p.tag}</span><b>${p.days}일</b><em>${won(p.price)}</em><small>${p.note||"부가세 포함"}</small>${act(p)}</div>`).join("")}</div>
   <p class="sub" style="font-size:12px">기간제 이용권이라 <b>자동으로 갱신되지 않습니다</b>. 끝나기 전에 또 사면 남은 기간 뒤에 이어집니다. 가격은 부가세 포함입니다. <a href="terms.html" target="_blank" rel="noopener">이용약관</a>${ready?"":" 결제는 곧 열립니다."}</p>`;
 }
@@ -175,7 +177,7 @@ function renderTab(){
   const TOP=[0,4,6], CAP={0:"D-day 맞춤 학습",4:"10분 맞춤 플랜",6:"진짜 시험처럼"}, GROUPS=[["시험 준비",[0,2,6]],["내 약점 공부",[1,3,4,5]]];
   const row=i=>`<details class="plrow"><summary><span class="plic">${BEN[i][0]}</span><b>${BEN[i][1]}</b><span class="plch" aria-hidden="true"></span></summary><p>${BEN[i][2]}</p></details>`;
   const ben=`<div class="plusstage"><i class="psp pa1"></i><i class="psp pa2"></i><i class="psp pa3"></i><i class="psp pa4"></i><i class="psp pa5"></i><h3 class="pstt">플러스, 이렇게 달라집니다</h3><div class="pbubs pb3">${TOP.map(i=>`<div class="pcell"><div class="pbub"><span class="pi">${BEN[i][0]}</span><b>${BEN[i][1]}</b></div><p>${CAP[i]}</p></div>`).join("")}</div></div>
-   <div class="pllist"><h4 class="plhd">플러스 기능 ${BEN.length}가지 <small>누르면 설명이 나옵니다</small></h4>${GROUPS.map(([g,ids])=>`<h5 class="plgh">${g}</h5>${ids.map(row).join("")}`).join("")}</div>`;
+   <details class="pllist"><summary class="plhd">플러스 기능 ${BEN.length}가지 보기</summary>${GROUPS.map(([g,ids])=>`<h5 class="plgh">${g}</h5>${ids.map(row).join("")}`).join("")}</details>`;
   const free=!plus&&freeUsed();
   el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>
    <p>${plus?`이용 중입니다 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"JLPT 합격까지, 내 약점에 맞춰 연습합니다"}</p></div>

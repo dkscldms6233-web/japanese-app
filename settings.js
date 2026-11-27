@@ -24,11 +24,13 @@ function render(){
    ${row("게임 소리","배경음악과 효과음",`<label class="stsw"><input type="checkbox" data-st="sound" ${P.sound===false?"":"checked"}><span>켜기</span></label>`)}
    <h3 class="sth">계정</h3>
    ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장됩니다",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}
+   <details class="stmore"><summary>더 보기 <small>도움 · 기록 지우기</small></summary>
    <h3 class="sth">도움</h3>
    ${row("친구 초대하기","앱을 아직 안 쓰는 친구에게 링크 보내기",`<button type="button" class="pill" data-st="invite">초대</button>`)}
    ${row("문의하기","오류·제안을 보내 주세요",`<button type="button" class="pill" data-st="inq">문의</button>`)}
    <h3 class="sth">내 기록</h3>
    <div class="stbtns"><button type="button" class="pill dng" data-st="reset">학습 기록 지우기</button></div>
+   </details>
   </div>`;
   if(!d.open) d.showModal();
 }

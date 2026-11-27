@@ -464,3 +464,27 @@ html[data-theme=dark] .jmbtn.jm-save .ic{color:#d6e9fa}html[data-theme=dark] .jm
 .qopt>summary::-webkit-details-marker{display:none}
 .qopt>summary em{font-style:normal;font-size:12.5px;color:var(--accent-text,var(--accent));font-weight:700}
 .qopt[open]>summary{margin-bottom:10px}
+
+/* 플러스: 결제가 열리기 전에는 눌러도 안 되는 버튼 3개 대신 안내 한 줄, 기능 목록은 접어 두기 */
+.plusps.soon{display:block;padding:14px 16px;border-radius:14px;background:var(--accent-soft);text-align:center;margin:10px 0}
+.plusps.soon b{display:block;font-size:15px}.plusps.soon p{margin:4px 0 0;font-size:13px;color:var(--sub)}
+details.pllist{padding:0 14px}
+details.pllist>summary{list-style:none;cursor:pointer;padding:14px 0;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+details.pllist>summary::-webkit-details-marker{display:none}
+details.pllist>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(45deg) translateY(-2px);transition:transform .15s}
+details.pllist[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
+details.pllist[open]{padding-bottom:6px}
+
+/* 첫 화면: 주 버튼은 '바로 시작하기' 하나, 로그인·회원가입은 조용한 링크로 */
+.obrow{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;color:var(--sub)}
+.obrow .obskip{margin:0}
+
+/* 설정: 자주 바꾸는 것만 먼저, 도움·기록 지우기는 '더 보기' 안에 */
+.stmore{margin-top:14px;border-top:1px solid var(--line);padding-top:4px}
+.stmore>summary{list-style:none;cursor:pointer;padding:12px 2px;font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;align-items:center}
+.stmore>summary::-webkit-details-marker{display:none}
+.stmore>summary small{font-weight:500;color:var(--sub);font-size:12.5px}
+.stmore>summary::after{content:"";margin-left:8px;width:9px;height:9px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(45deg) translateY(-2px);transition:transform .15s}
+.stmore[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
+html[data-theme=dark] .h2hero.soft .cta{background:color-mix(in srgb,var(--accent) 22%,transparent)!important;color:#fff!important;border-color:rgba(255,255,255,.22)!important}
+html[data-theme=dark] .h2hero.soft .h2rw b{color:#fff}

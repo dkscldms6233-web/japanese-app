@@ -246,7 +246,7 @@ function mkQuestions(targets,optChars,words,wordPool,n){
     const c=targets[Math.floor(Math.random()*targets.length)];
     if(t==="hear") qs.push({t,ans:c[0],opts:mix(c[0],optChars.map(x=>x[0])),say:c[0],note:`${c[0]} = ${c[2]} (${c[1]})`});
     else if(t==="kana") qs.push({t,big:c[2],sub:"이 소리의 글자는?",ans:c[0],opts:mix(c[0],optChars.map(x=>x[0])),say:c[0],note:`${c[2]} = ${c[0]} (${c[1]})`});
-    else qs.push({t:"ko",big:c[0],sub:"이 글자는 어떻게 읽으시겠습니까?",ans:c[2],opts:mix(c[2],kos),say:c[0],note:`${c[0]} = ${c[2]} (${c[1]})`}); }
+    else qs.push({t:"ko",big:c[0],sub:"이 글자는 어떻게 읽을까요?",ans:c[2],opts:mix(c[2],kos),say:c[0],note:`${c[0]} = ${c[2]} (${c[1]})`}); }
   return qs;
 }
 function startLesson(L,k){

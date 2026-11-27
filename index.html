@@ -1012,7 +1012,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-strokes.js?v=2"></script>
 <script src="word-audio.js?v=4"></script>
 <script src="kana-audio.js?v=8"></script>
-<script src="kana.js?v=66"></script>
+<script src="kana.js?v=67"></script>
 <script src="games2.js?v=42"></script>
 <script src="bgm.js?v=38"></script>
 <script src="gametheme.js?v=44"></script>
@@ -1029,7 +1029,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=103">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=74">
+<link rel="stylesheet" href="polish.css?v=78">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="warmup.js?v=8"></script>
@@ -1530,7 +1530,7 @@ function renderPick(){
   const card=(id,name,sub,n,c,pr)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n.toLocaleString()}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em>${pr||""}</button>`;
   const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`,prog(l))).join("");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
-  $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 여시겠습니까?</h2>
+  $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
    <div class="sub"><span class="devonly">단어를 ${PART}개씩 파트로 나눠 보여 줘요${my.length?" · ":""}</span>${my.length?`내 급수: <b>${lvText(my)}</b>`:""}</div>
    <div class="pkgrid five">${lv}</div>
    <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}${card("경어","경어","존경어·겸양어·정중어",ALL.filter(w=>w.kg).length,"#e0507a")}</div>
@@ -2658,7 +2658,7 @@ function paperStop(){ if(paperTm){ clearInterval(paperTm); paperTm=null; } }
 function jModeChoose(){
   let d=$("jModeDlg"); if(!d){ d=document.createElement("dialog"); d.id="jModeDlg"; document.body.appendChild(d);
     d.addEventListener("click",ev=>{ if(ev.target===d){ d.close(); return; } const b=ev.target.closest("[data-jm]"); if(!b) return; d.close(); const paper=b.dataset.jm==="paper"; if(paper&&!(window.PLUS&&PLUS.isPlus())){ toast("시험지 모드는 술술 플러스 기능입니다"); if(window.PLUS) PLUS.open("paper"); return; } jStart("all",{paper}); }); }
-  d.innerHTML=`<h3>어떻게 풀어 보시겠습니까?</h3><p class="sub">${E(jlv())} 모의시험 전체 풀기</p>
+  d.innerHTML=`<h3>어떻게 풀어 볼까요?</h3><p class="sub">${E(jlv())} 모의시험 전체 풀기</p>
    <button type="button" class="jmbtn" data-jm="practice"><b>연습 모드</b><span>한 문제씩 풀고, 고르면 바로 정답과 해설을 봐요</span></button>
    <button type="button" class="jmbtn paper" data-jm="paper"><b>시험지 모드 <em class="plusbadge">PLUS</em></b><span>진짜 시험처럼 표지와 시험 안내가 있고, 교시마다 제한 시간이 흘러요. 쪽을 넘기며 풀고 다 푼 뒤에 한꺼번에 채점해요</span></button>`;
   d.showModal();
@@ -3508,7 +3508,7 @@ $("homeView").addEventListener("click",e=>{
 /* ---------- 첫 실행 안내 (3단계) ---------- */
 const needOnb = () => !prefs.onboarded && !Object.keys(log).length && !(prefs.myLevels&&prefs.myLevels.length);
 const OB_LV=[["히라가나부터 시작해요",["N5"],"N5"],["기초는 압니다",["N5","N4"],"N5~N4"],["중급입니다",["N3","N2"],"N3~N2"],["상급입니다",["N1"],"N1"],["잘 모르겠어요",["N5"],"N5부터"]];
-const OB_GOAL=[[10,"가볍게","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
+const OB_GOAL=[[10,"가볍게 · 추천","10문제 · 약 3분"],[20,"적당히","20문제 · 약 6분"],[30,"열심히","30문제 · 약 9분"]];
 let obStep=0, obLv=null, obKana=false, obBeg=false, obAuth="main", obMsg="", obFrom=false;
 function closeOnb(){ const o=$("onb"); if(o) o.remove(); prefs.onboarded=true; LS.set("jp-prefs",prefs); }
 let obDraft={n:"",e:""};
@@ -3527,7 +3527,7 @@ function renderOnb(){
     else if(obAuth==="signup") body=`<h2>회원가입</h2><p class="sub">계정을 만들면 다른 기기에서도 기록이 이어집니다.</p>${off}${msg}
       <div class="obopts"><input id="obN" class="obin" placeholder="닉네임 (12자까지)" maxlength="12" autocomplete="nickname" value="${E(obDraft.n)}"><input id="obE" class="obin" type="email" placeholder="이메일" autocomplete="username" value="${E(obDraft.e)}"><input id="obP" class="obin" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password"><input id="obP2" class="obin" type="password" placeholder="비밀번호 확인" autocomplete="new-password"></div><label class="obagree"><input type="checkbox" id="obAg"> <span>닉네임·이메일 수집에 동의합니다 (<a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>)</span></label><button class="cta" data-ob="dosignup">가입하기</button><button class="obskip" data-ob="login">이미 계정이 있습니다, 로그인</button>${bk}`;
     else if(obAuth==="has") body=`<h2>이미 계정이 있어요</h2><p class="sub">이 기기에서 쓴 계정을 고르거나 다른 계정으로 로그인합니다.</p>${msg}<div class="obopts">${accts.map(p=>`<button class="mode" data-ob="pickacct" data-id="${p.id}"><b>${E(p.name)}</b></button>`).join("")}</div><button class="obskip" data-ob="login">다른 계정으로 로그인</button>${bk}`;
-    else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="login">로그인</button><button class="cta sec" data-ob="guest">게스트로 참여</button></div><button class="obskip" data-ob="signup">회원가입</button>`;
+    else body=`<div class="obopts" style="margin-top:6px"><button class="cta" data-ob="guest">바로 시작하기</button></div><div class="obrow"><button class="obskip" data-ob="login">로그인</button><span aria-hidden="true">·</span><button class="obskip" data-ob="signup">회원가입</button></div>`;
     if(obAuth==="guestinfo") body=`<h2>게스트로 시작하시겠습니까?</h2><p class="sub">가입 없이 바로 쓸 수 있지만, 아래 두 가지가 달라요.</p>
       <div class="gstwarn"><div><b>커뮤니티를 쓸 수 없어요</b><span>친구와 함께 공부하기, 주간 리그는 로그인한 사용자만 할 수 있어요.</span></div><div><b>학습 기록이 이 기기에만 저장돼요</b><span>다른 기기에서는 이어지지 않고, 앱이나 브라우저 데이터를 지우면 기록도 사라집니다.</span></div></div>
       <button class="cta" data-ob="guestok">이해했습니다, 게스트로 시작</button><button class="cta sec" data-ob="signup">회원가입하고 시작</button><button class="obskip" data-ob="aback">뒤로</button>`;
@@ -3582,7 +3582,7 @@ document.addEventListener("click",e=>{
   if(a==="goal"){
     prefs.goal=+b.dataset.n; prefs.showKana=!!obKana; prefs.beginner=!!obBeg; prefs.myLevels=obLv||[]; delete prefs.myLevel;
     lvSel=new Set(prefs.myLevels); level="전체"; todayOff=0; renderLevels();
-    closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 보시겠습니까?"); if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
+    closeOnb(); renderHome(); toast("준비 끝! 오늘 첫 학습을 시작해 볼까요?"); if(obKana&&window.KANA) setTimeout(()=>KANA.learn(false),300); else if(window.WARMUP) setTimeout(()=>WARMUP.open(),700);
   }
 });
 window.APP={setFrom:v=>{ quizFrom=v; },jStart:s=>jStart(s),setJl:v=>{ prefs.jl=v; LS.set("jp-prefs",prefs); },view:()=>view,cloud,curProfile:()=>curProfile(),openAuth:m=>{ obFrom=true; obStep="auth"; obAuth=m; obMsg=""; renderOnb(); },prefs:()=>prefs,setPref:(k,v)=>{ prefs[k]=v; LS.set("jp-prefs",prefs); },get ALL(){return ALL;},LS,today,myLv,streakDays,studiedToday:()=>!!(log[today()]&&log[today()].n>0),toast,R,startQuiz,setView,renderHome:()=>renderHome(),wrong:()=>wrong,miss:()=>miss,wlog:()=>wlog,byKey,openWord,recordRating,E,ic,openProf:()=>openProf(),theme:()=>RAW.get("jp-theme","auto"),setTheme:m=>{ RAW.set("jp-theme",m); applyTheme(); },goalN,
@@ -3657,9 +3657,9 @@ renderLevels(); renderGrid(); setView("home");
 <script src="community.js?v=24"></script>
 <script src="review.js?v=10"></script>
 <script src="grammar.js?v=12"></script>
-<script src="settings.js?v=7"></script>
+<script src="settings.js?v=8"></script>
 <script src="mrank.js?v=4"></script>
-<script src="plus.js?v=32"></script>
+<script src="plus.js?v=35"></script>
 <script>
 /* 짝 맞추기·경어 짝 맞추기 카드의 긴 글자: 카드 안에 안 들어가면 글자를 한 단계씩 줄입니다 */
 (function(){
