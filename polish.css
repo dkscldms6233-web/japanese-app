@@ -696,3 +696,20 @@ html[data-theme=dark] .hdd .hdn{color:#f2f2f4!important}
 html[data-theme=dark] .hdd.near{border-color:#ff6b6b!important}html[data-theme=dark] .hdd.near .hdn{color:#ff8a8a!important}
 html[data-theme=dark] .hdd.none,html[data-theme=dark] .hdd.past{background:var(--card)!important;border-color:var(--line)!important}
 html[data-theme=dark] .hdd.none .hdn,html[data-theme=dark] .hdd.past .hdn{color:var(--sub)!important}
+
+/* D-day: 선으로 그린 달력 */
+.hdd,header .hdd,.hdd.soon,.hdd.near{overflow:visible!important;background:transparent!important;border:1.6px solid var(--text)!important;border-radius:8px!important;padding:9px 0 0!important;height:36px!important;margin:0 4px!important}
+.hdd::before{content:""!important;display:block!important;position:absolute;left:4px;right:4px;top:8px;width:auto;height:1.6px;border:0;border-radius:0;background:var(--text)}
+.hdd::after{content:""!important;display:block!important;position:absolute;top:-5px;left:9px;width:2px;height:8px;border:0;border-radius:2px;background:var(--text);box-shadow:16px 0 0 var(--text)}
+.hdd .hdn,.hdd.soon .hdn,.hdd.near .hdn{color:var(--text)!important;font-size:13px!important}
+.hdd.near{border-color:#d83a3a!important}.hdd.near::before,.hdd.near::after{background:#d83a3a}.hdd.near::after{box-shadow:16px 0 0 #d83a3a}.hdd.near .hdn{color:#d83a3a!important}
+html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{background:transparent!important;border-color:var(--text)!important}
+html[data-theme=dark] .hdd::before{background:var(--text)}
+html[data-theme=dark] .hdd::after{background:var(--text);box-shadow:16px 0 0 var(--text)}
+html[data-theme=dark] .hdd .hdn{color:var(--text)!important}
+html[data-theme=dark] .hdd.near{border-color:#ff6b6b!important}html[data-theme=dark] .hdd.near::before,html[data-theme=dark] .hdd.near::after{background:#ff6b6b}html[data-theme=dark] .hdd.near::after{box-shadow:16px 0 0 #ff6b6b}html[data-theme=dark] .hdd.near .hdn{color:#ff8a8a!important}
+.hdd.none,.hdd.past,html[data-theme=dark] .hdd.none,html[data-theme=dark] .hdd.past{height:auto!important;padding:5px 10px!important;border:1px solid var(--line)!important;background:var(--card)!important}
+.hdd.none::before,.hdd.none::after,.hdd.past::before,.hdd.past::after{display:none!important}
+.hdd,header .hdd,.hdd.soon,.hdd.near{height:38px!important;padding-top:11px!important}
+.hdd::before{top:9px}
+.hdd.none,.hdd.past,html[data-theme=dark] .hdd.none,html[data-theme=dark] .hdd.past{height:auto!important;padding:5px 10px!important}
