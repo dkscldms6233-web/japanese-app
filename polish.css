@@ -392,3 +392,24 @@ html[data-theme=dark] body[data-view=exam] .tiles2 .t2::before{background:color-
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover{background:var(--pbg)!important;border-color:var(--pc)!important}
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover small{color:#fff}
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover::before{background:var(--pc);color:#111}
+
+/* ===== 모의시험 중간 메뉴("시험을 어떻게 할까요?"): 우선순위가 한눈에 보이게 =====
+   계속 풀기(가장 크고 진한 색) > 저장하고 나가기(파스텔 파랑) > 처음부터 다시 / 그만두기(작게 나란히, 그만두기는 파스텔 빨강) */
+.jmprog{height:6px;border-radius:99px;background:var(--chip);overflow:hidden;margin:8px 0 14px}
+.jmprog i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.jmbtn.jm-keep{background:var(--accent);border-color:var(--accent);color:var(--onacc,#fff);padding:16px 18px}
+.jmbtn.jm-keep b{font-size:18px;color:var(--onacc,#fff)}.jmbtn.jm-keep span{color:var(--onacc,#fff);opacity:.9}
+.jmbtn.jm-save{background:#e4f1fd;border-color:#b9dcf6}.jmbtn.jm-save b{color:#0b4f82}.jmbtn.jm-save span{color:#2f6f9a}
+.jmrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.jmrow .jmbtn{margin:0}
+.jmbtn.jm-redo{background:var(--card);border-color:var(--line)}
+.jmbtn.jm-quit{background:#ffeaea;border-color:#f5c2c2}.jmbtn.jm-quit b{color:#a32323}.jmbtn.jm-quit span{color:#b04a4a}
+.jmrow .jmbtn b{font-size:15px}.jmrow .jmbtn span{font-size:12.5px}
+.jmbtn.jm-save:hover,.jmbtn.jm-redo:hover,.jmbtn.jm-quit:hover{filter:brightness(.97)}
+.jmbtn.jm-keep:hover{filter:brightness(1.07)}
+html[data-theme=dark] .jmbtn.jm-save{background:color-mix(in srgb,#3aa6e8 24%,#1c2142);border-color:rgba(120,190,245,.5)}
+html[data-theme=dark] .jmbtn.jm-save b{color:#fff}html[data-theme=dark] .jmbtn.jm-save span{color:#d6e9fa}
+html[data-theme=dark] .jmbtn.jm-redo{background:#1c2142;border-color:rgba(255,255,255,.22)}
+html[data-theme=dark] .jmbtn.jm-redo b{color:#fff}html[data-theme=dark] .jmbtn.jm-redo span{color:#c3c9ee}
+html[data-theme=dark] .jmbtn.jm-quit{background:color-mix(in srgb,#e5484d 26%,#1c2142);border-color:rgba(255,140,140,.5)}
+html[data-theme=dark] .jmbtn.jm-quit b{color:#ffe1e1}html[data-theme=dark] .jmbtn.jm-quit span{color:#ffc4c4}
+@media(max-width:360px){.jmrow{grid-template-columns:1fr}}

@@ -1029,7 +1029,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=68">
+<link rel="stylesheet" href="polish.css?v=69">
 <script src="mascot-flat.js?v=1"></script>
 <script src="cheer.js?v=4"></script>
 <script src="warmup.js?v=5"></script>
@@ -2630,10 +2630,13 @@ function jQuitMenu(){
     }); }
   const n=Q.items.length, done=Math.min(n,Q.i+(Q.sel!==null?1:0));
   d.innerHTML=`<h3>시험을 어떻게 할까요?</h3><p class="sub">${done} / ${n}문제를 풀었어요</p>
-   <button type="button" class="jmbtn" data-jq="keep"><b>계속 풀기</b><span>지금 문제로 돌아가요</span></button>
-   <button type="button" class="jmbtn" data-jq="save"><b>저장하고 나가기</b><span>나중에 모의시험 화면에서 이어서 풀 수 있어요</span></button>
-   <button type="button" class="jmbtn" data-jq="restart"><b>처음부터 다시</b><span>이 시험을 새 문제로 처음부터 시작해요</span></button>
-   <button type="button" class="jmbtn" data-jq="quit"><b>그만두기</b><span>저장하지 않고 나가요</span></button>`;
+   <div class="jmprog" aria-hidden="true"><i style="width:${n?Math.round(done/n*100):0}%"></i></div>
+   <button type="button" class="jmbtn jm-keep" data-jq="keep"><b>계속 풀기</b><span>지금 문제로 돌아가요</span></button>
+   <button type="button" class="jmbtn jm-save" data-jq="save"><b>저장하고 나가기</b><span>나중에 모의시험 화면에서 이어서 풀 수 있어요</span></button>
+   <div class="jmrow">
+    <button type="button" class="jmbtn jm-redo" data-jq="restart"><b>처음부터 다시</b><span>새 문제로 시작해요</span></button>
+    <button type="button" class="jmbtn jm-quit" data-jq="quit"><b>그만두기</b><span>저장하지 않고 나가요</span></button>
+   </div>`;
   d.showModal();
 }
 /* ---------- 모의시험 '시험지 모드': 진짜 시험처럼 표지·교시별 제한 시간·쪽 넘기기, 끝난 뒤 한꺼번에 채점 ----------
