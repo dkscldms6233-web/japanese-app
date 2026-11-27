@@ -671,3 +671,11 @@ html[data-theme=dark] .hdd::before,html[data-theme=dark] .hdd::after{background:
 html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{box-shadow:0 0 0 3px #f2f2f4,0 0 0 5.5px #3a3a3c!important}
 .hdd.near .hdl{color:#ffe1e3!important}
 .hdd.none .hdn,.hdd.past .hdn{font-size:13px!important}
+
+/* D-day 달력: 너무 크다는 의견에 맞춰 중간 크기로 (읽히되 헤더에서 튀지 않게) */
+.hdd,header .hdd,.hdd.soon,.hdd.near{margin:9px 6px 3px!important;padding:4px 11px 5px!important;min-width:62px!important;box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px #1d1f2b!important}
+.hdd::before,.hdd::after{top:-10px;width:6px;height:12px;border-width:2px}
+.hdd::before{left:12px}.hdd::after{right:12px}
+.hdd .hdl{font-size:9.5px!important;letter-spacing:.14em!important}
+.hdd .hdn{font-size:22px!important;padding-top:1px!important}
+html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{box-shadow:0 0 0 2.5px #f2f2f4,0 0 0 4.5px #3a3a3c!important}
