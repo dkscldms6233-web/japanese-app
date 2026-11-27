@@ -641,3 +641,23 @@ html[data-theme=dark] .hdd.near .hdn{color:#ff9a9a!important}
 .hdd.none,.hdd.past{display:inline-flex!important;flex-direction:row!important;border:0!important;background:transparent!important}
 .hdd.none .hdn,.hdd.past .hdn{background:none!important;font-size:12.5px!important;padding:0!important;font-weight:700!important;color:var(--sub)!important}
 .hdd:active{background:var(--chip)!important}
+
+/* ===== D-day 최종: 탁상 달력 모양 (링 두 개 + 흰 테두리 + 진한 본체에 큰 글자) ===== */
+.hdd,header .hdd,.hdd.soon,.hdd.near{display:inline-flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:0!important;position:relative!important;margin:8px 6px 4px!important;padding:5px 11px 5px!important;min-width:54px;border:0!important;border-radius:6px!important;background:#1d1f2b!important;
+  box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px #1d1f2b!important;overflow:visible!important}
+.hdd::before,.hdd::after{content:""!important;display:block!important;position:absolute;top:-10px;width:6px;height:12px;border-radius:4px;background:#fff;border:2px solid #1d1f2b;box-sizing:content-box}
+.hdd::before{left:11px}.hdd::after{right:11px}
+.hdd .hdl{font-size:8px!important;font-weight:800!important;letter-spacing:.14em!important;color:#aeb2c8!important;line-height:1;margin:0!important}
+.hdd .hdm{display:none!important}
+.hdd .hdn{font-size:19px!important;font-weight:900!important;line-height:1.05!important;letter-spacing:-.01em!important;color:#fff!important;border:0!important;padding:1px 0 0!important;margin:0!important;background:none!important}
+.hdd.soon{background:#2c2f55!important}
+.hdd.near{background:#b3202a!important}.hdd.near .hdl{color:#ffd0d4!important}
+html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{box-shadow:0 0 0 2.5px #f2f2f4,0 0 0 4.5px #3a3a3c!important}
+html[data-theme=dark] .hdd{background:#0e0e11!important}
+html[data-theme=dark] .hdd.soon{background:#262a52!important}
+html[data-theme=dark] .hdd.near{background:#b3202a!important}
+html[data-theme=dark] .hdd::before,html[data-theme=dark] .hdd::after{background:#f2f2f4;border-color:#3a3a3c}
+.hdd.none,.hdd.past{display:inline-flex!important;flex-direction:row!important;margin:0!important;padding:6px 12px!important;min-width:0;background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:none!important;border-radius:10px!important}
+.hdd.none::before,.hdd.none::after,.hdd.past::before,.hdd.past::after{display:none!important}
+.hdd.none .hdn,.hdd.past .hdn{font-size:12.5px!important;font-weight:700!important;color:var(--sub)!important}
+.hdd:active{filter:brightness(1.15)}
