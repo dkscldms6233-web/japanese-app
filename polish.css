@@ -329,3 +329,26 @@ html[data-theme=dark] .kana .kstars i.on{color:#ffc933}
 .hdd .hdl{color:#fff!important}
 /* 단어장: 위쪽 로고·D-day 줄과 검색 줄 사이 간격 */
 header .hin>.bar.list-only{margin-top:12px}
+
+/* ===== 단어장 카드: 형광펜 밑줄 스타일 =====
+   굵은 색 띠·색 알약 대신, 흰 카드에 급수 글자(작게)와 단어 아래 형광펜 색만 써요 */
+#grid .card{border:1px solid var(--line)!important;border-left:1px solid var(--line)!important;border-top:1px solid var(--line)!important;border-radius:16px!important;box-shadow:none}
+#grid .card .lvb{background:transparent!important;color:var(--sub)!important;padding:0!important;font-size:11px!important;font-weight:700;letter-spacing:.04em;display:inline-flex;align-items:center;gap:5px}
+#grid .card .lvb:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--lc,var(--nx))}
+#grid .card .w{display:inline-block;align-self:flex-start;background:linear-gradient(transparent 66%,color-mix(in srgb,var(--lc,var(--nx)) 34%,transparent) 66%);padding:0 3px;border-radius:2px}
+#grid .card .w rt{background:none}
+#grid .card .lvb+.lvb:before{content:"·";width:auto;height:auto;background:none;color:var(--sub);margin:0 -1px}
+#grid .card .ctop{gap:5px;flex-wrap:nowrap}
+#grid .card .ctop .cbtns{flex:none;margin-left:auto}
+#grid .card .ctop .lvb{flex:none;white-space:nowrap}
+#grid .card .ctop{min-width:0}
+#grid .card .ctop .cbtns{display:inline-flex;align-items:center;gap:0;min-width:0}
+#grid .card .ctop .say{width:22px;height:22px;padding:0;justify-content:center}
+#grid .card .ctop .star{width:20px;height:22px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+#grid .card .ctop .say .ic{width:15px;height:15px}
+#grid .card .ctop .star .ic{width:16px;height:16px}
+#grid .card .ctop{gap:2px}
+#grid .card .ctop .wst{margin:0!important}
+#grid .card .ctop .cbtns{padding:0!important;margin-right:-2px}
+#grid .card .lvb{font-size:10.5px!important;gap:4px}
+#grid .card .ctop .say{width:20px}
