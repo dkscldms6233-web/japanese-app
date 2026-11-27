@@ -81,6 +81,12 @@ h1 span{color:var(--accent)}
 }
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 input[type=search]{flex:1;min-width:200px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font-size:16px}
+/* 단어장 필터: 단어 목록에서는 한 줄 요약으로 접어 두고, 누르면 펼쳐요 */
+.fltsum{display:none;align-items:center;justify-content:space-between;gap:8px;width:100%;margin:8px 0 4px;padding:9px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit;font-size:14px;font-weight:700;cursor:pointer;text-align:left}
+.fltsum #fltTxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fltsum .chev{color:var(--sub);transition:transform .15s}.fltsum[aria-expanded=true] .chev{transform:rotate(180deg)}
+[data-view=list]:not([data-stage=pick]) .fltsum{display:flex}
+body[data-view=list]:not([data-stage=pick]):not(.fopen) :is(.levels,.opts){display:none}
+.levels.ov{-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent)}
 .levels{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
 .pill{border:1px solid var(--line);background:var(--card);color:var(--text);padding:7px 14px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600}
 .pill.on{background:var(--accent);border-color:var(--accent);border-bottom:3px solid var(--accent-dk);color:var(--onacc)}
@@ -872,7 +878,7 @@ body.inq .subtabs,body.inr .subtabs,body:has(#quizView .gbox) .subtabs{display:n
 /* ---- 단어장 위쪽 정리: 한 줄씩, 가로로 밀어서 보기 · 켜고 끄는 항목은 칩 ---- */
 .levels{flex-wrap:nowrap!important;overflow-x:auto;gap:6px!important;margin:8px 0 6px!important;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .levels::-webkit-scrollbar{display:none}
-.levels .pill{flex:none;padding:6px 13px!important;font-size:14px!important}
+.levels .pill{flex:none;padding:6px 11px!important;font-size:13.5px!important}
 .opts{flex-wrap:nowrap!important;overflow-x:auto;gap:8px!important;margin:4px 0 8px!important;scrollbar-width:none}
 .opts::-webkit-scrollbar{display:none}
 .opts select{flex:none;font-size:13px;padding:6px 10px;height:auto;border-radius:999px}
@@ -1054,6 +1060,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
     <label class="sbox"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="q" placeholder="단어 · 한자 · 뜻 검색" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="단어 검색"></label>
     <button class="pill add" id="addBtn">＋ 단어 추가</button>
   </div>
+  <button type="button" class="fltsum" id="fltBtn" aria-expanded="false"><span id="fltTxt"></span><span class="chev" aria-hidden="true">▾</span></button>
   <div class="levels" id="levels"></div>
   <div class="opts">
     <button type="button" class="pill kgtog" id="kgBtn" aria-pressed="false" title="존경어·겸양어·정중어만 모아 보기">경어</button>
@@ -1505,6 +1512,12 @@ function renderLevels(){
   const nw=Object.keys(wrong).length;
   const isOn = l => l==="전체" ? (level==="전체"&&!lvSel.size) : LVNUM[l] ? (level==="전체"&&lvSel.has(l)) : l===level;
   $("levels").innerHTML = LEVELS.map(l=>`<button class="pill ${isOn(l)?"on":""}" data-l="${l}" ${LVNUM[l]?'aria-pressed="'+isOn(l)+'"':""}>${l}${l==="오답 노트"&&nw?" ("+nw+")":""}</button>`).join("");
+  fltUpdate();
+}
+/* 필터 한 줄 요약 (예: "N5 · 모든 품사") 과, 칩이 오른쪽에서 잘리면 가장자리를 흐리게 해요 */
+function fltUpdate(){
+  const t=$("fltTxt"); if(t){ const lv=level==="전체"?(lvSel.size?[...lvSel].sort().reverse().join("·"):"전체 급수"):level; t.textContent="필터 · "+lv+" · "+(posf||"모든 품사")+(typeof $("hide")!=="undefined"&&$("hide")&&$("hide").checked?" · 뜻 가리기":""); }
+  const L=$("levels"); if(L){ const on=L.querySelector(".pill.on"); if(on&&on.offsetLeft+on.offsetWidth>L.clientWidth+L.scrollLeft){ L.scrollLeft=Math.max(0,on.offsetLeft-12); } L.classList.toggle("ov",L.scrollWidth>L.clientWidth+4&&L.scrollLeft+L.clientWidth<L.scrollWidth-4); }
 }
 /* 단어장: 먼저 급수를 고르고(pick) → 단어를 파트별(100개씩)로 나눠 보여 줘요(words) */
 const PART=100;
@@ -1533,7 +1546,7 @@ function openList(l){
   else { level=l; lvSel.clear(); }
   posf=""; kgSel=""; kgMode="pair"; $("posf").value=""; $("q").value="";
   if(l==="경어"){ posf="경어"; $("posf").value="경어"; }
-  setStage("words"); listPart=0; listSig=""; renderLevels(); renderGrid(); window.scrollTo(0,0);
+  setStage("words"); document.body.classList.remove("fopen"); { const fb=$("fltBtn"); if(fb) fb.setAttribute("aria-expanded","false"); } listPart=0; listSig=""; renderLevels(); renderGrid(); window.scrollTo(0,0);
 }
 function renderGrid(){
   const pick=listStage==="pick", SMG=LS.get("jp-srs",{});
@@ -3376,7 +3389,10 @@ $("levels").addEventListener("click",e=>{
   else { level=l; lvSel.clear(); }
   renderLevels(); refresh();
 });
-$("posf").addEventListener("change",e=>{ posf=e.target.value; kgSel=""; kgMode="pair"; refresh(); });
+$("posf").addEventListener("change",e=>{ posf=e.target.value; kgSel=""; kgMode="pair"; refresh(); fltUpdate(); });
+$("fltBtn").addEventListener("click",()=>{ const o=document.body.classList.toggle("fopen"); $("fltBtn").setAttribute("aria-expanded",o); fltUpdate(); });
+$("levels").addEventListener("scroll",()=>{ const L=$("levels"); L.classList.toggle("ov",L.scrollLeft+L.clientWidth<L.scrollWidth-4); },{passive:true});
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="hide") fltUpdate(); });
 document.addEventListener("click",e=>{ if(!document.body.classList.contains("nofuri")) return; const r=e.target.closest&&e.target.closest("ruby"); if(r){ r.classList.toggle("fshow"); e.stopPropagation(); e.preventDefault(); } },true);   /* 후리가나를 숨긴 상태에서는 한자를 누르면 읽기가 보여요(핸드폰은 마우스를 올릴 수 없으니까) */
 $("q").addEventListener("input",()=>{ const q=$("q"), v=q.value; if(listStage==="pick"&&v.trim()){ openList("전체"); q.value=v; renderGrid(); q.focus(); } else renderGrid(); });   /* 급수를 고르기 전에 바로 검색하면 모든 급수에서 찾아요 */
 $("hide").addEventListener("change",renderGrid);
