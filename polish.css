@@ -352,3 +352,9 @@ header .hin>.bar.list-only{margin-top:12px}
 #grid .card .ctop .cbtns{padding:0!important;margin-right:-2px}
 #grid .card .lvb{font-size:10.5px!important;gap:4px}
 #grid .card .ctop .say{width:20px}
+
+/* 단어장 카드(다크 모드): 배경과 구분되게 카드를 한 단계 밝게, 테두리·형광펜·글자를 또렷하게 */
+html[data-theme=dark] #grid .card{background:#242b52!important;border-color:rgba(255,255,255,.26)!important;box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
+html[data-theme=dark] #grid .card .w{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--lc,var(--nx)) 55%,transparent) 62%);color:#fff}
+html[data-theme=dark] #grid .card .m{color:#f2f4ff}
+html[data-theme=dark] #grid .card .lvb{color:#c9cfee!important}
