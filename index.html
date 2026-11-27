@@ -1011,6 +1011,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="words-wasei.js?v=7"></script>
 <script src="words-fix.js?v=4"></script>
 <script src="words-multi.js?v=4"></script>
+<script src="words-n3pdf.js?v=1"></script>
 <script src="words-notes2.js?v=4"></script>
 <script src="words-fix3.js?v=4"></script>
 <script src="words-levels.js?v=8"></script>
@@ -1040,6 +1041,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more2.js?v=4"></script>
 <script src="jlpt-more3.js?v=4"></script>
 <script src="jlpt-more4.js?v=4"></script>
+<script src="jlpt-n3pdf.js?v=2"></script>
 <script src="funny-audio.js?v=5"></script>
 <script src="exsay-audio.js?v=3" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
@@ -1281,6 +1283,8 @@ const toKata  = s => s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(
 const E = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const R = s => toRuby(E(s));
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+/* 가중 섞기: pri(가중치)가 있는 문제는 그만큼 더 잘 뽑힙니다 (N3 문제집 빈출 항목) */
+const pshuffle = a => a.map(x=>[Math.pow(Math.random(),1/((x&&x.pri)||1)),x]).sort((p,q)=>q[0]-p[0]).map(p=>p[1]);
 const RAW = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); if(k.endsWith("@"+activeId)&&PER.includes(k.slice(0,k.indexOf("@")))) cloudSchedule(); }catch(e){} },
@@ -2423,7 +2427,7 @@ function jWrite(lv,n){
 }
 /* 용법: 제시된 말을 바르게 쓴 문장 고르기 / 단어 형성: 접두·접미어 고르기 (직접 만든 문제 은행) */
 function jUsage(lv,n){
-  return shuffle((window.JLPT_USAGE||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+  return pshuffle((window.JLPT_USAGE||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
     return {sec:"vocab",kind:"용법",prompt:"다음 말의 사용법으로 가장 알맞은 것은?",stem:`<div class="qw s" style="margin:12px 0"><u>${R(b.w)}</u></div>`,opts:m.o.map(R),a:m.a,exp:`<b>${R(b.w)}</b><br>${R(b.o[0])}<br>${R(b.e||"")}`}; });
 }
 function jWordForm(lv,n){
@@ -2444,20 +2448,20 @@ function jContext(lv,n){
   /* 아직 안 푼 문제부터 냅니다. 다 풀면 처음부터 다시 섞습니다 */
   const all=(window.JLPT_CTX||[]).filter(x=>x.lv===lv), sm=LS.get("jp-ctxseen",{}); let seen=sm[lv]||[];
   let pool=all.filter(x=>!seen.includes(x.q)); if(pool.length<n){ seen=[]; pool=all; }
-  const pick=shuffle(pool).slice(0,n); sm[lv]=seen.concat(pick.map(x=>x.q)); LS.set("jp-ctxseen",sm);
+  const pick=pshuffle(pool).slice(0,n); sm[lv]=seen.concat(pick.map(x=>x.q)); LS.set("jp-ctxseen",sm);
   const own=pick.map(b=>{ const m=jShuf(b.o,0);
     return {sec:"vocab",kind:"문맥 규정",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(b.q.replace("（　）",b.o[0]))}<br>${R(b.e||"")}`}; });
   return own.length>=n?own:own.concat(jContextAuto(lv,n-own.length));
 }
 function jSyn(lv,n){
-  return shuffle(jBank(window.JLPT_SYN||[],lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,b.a);
+  return pshuffle(jBank(window.JLPT_SYN||[],lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,b.a);
     return {sec:"vocab",kind:"유의 표현",prompt:"밑줄 친 말과 뜻이 가장 가까운 것은?",stem:`<div class="jq">${R(b.s).replace(/\{([^}]*)\}/g,"<u>$1</u>")}</div>`,opts:m.o.map(R),a:m.a,exp:E(b.e||"")}; });
 }
 function jGramItem(b){ const m=jShuf(b.o,b.a), sort=b.k==="sort";
   return {sec:"gram",kind:sort?"문장 만들기":"문법 형식",prompt:sort?"★에 들어갈 알맞은 말은?":"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:R(b.e||"")}; }
-function jGram(lv,n){ return shuffle(jBank(window.JLPT_GRAM||[],lv)).slice(0,n).map(jGramItem); }
+function jGram(lv,n){ return pshuffle(jBank(window.JLPT_GRAM||[],lv)).slice(0,n).map(jGramItem); }
 /* 전체 풀기: 문법 형식 nf개 + 문장 만들기(★) ns개 */
-function jGramFull(lv,nf,ns){ const bank=jBank(window.JLPT_GRAM||[],lv); return [...shuffle(bank.filter(b=>b.k!=="sort")).slice(0,nf),...shuffle(bank.filter(b=>b.k==="sort")).slice(0,ns)].map(jGramItem); }
+function jGramFull(lv,nf,ns){ const bank=jBank(window.JLPT_GRAM||[],lv); return [...pshuffle(bank.filter(b=>b.k!=="sort")).slice(0,nf),...pshuffle(bank.filter(b=>b.k==="sort")).slice(0,ns)].map(jGramItem); }
 function jRead(lv,n){
   const arts=(window.ARTICLES||[]).filter(a=>a.body&&a.body.length>=3);
   const qOf=a=>(a.qs&&a.qs.length?a.qs:(window.JLPT_READQ||{})[a.id])||null;
@@ -3672,7 +3676,8 @@ renderLevels(); renderGrid(); setView("home");
 <script src="path.js?v=134"></script>
 <script src="community.js?v=24"></script>
 <script src="review.js?v=10"></script>
-<script src="grammar.js?v=12"></script>
+<script src="grammar-n3pdf.js?v=1"></script>
+<script src="grammar.js?v=13"></script>
 <script src="settings.js?v=10"></script>
 <script src="mrank.js?v=4"></script>
 <script src="plus.js?v=37"></script>

@@ -448,7 +448,7 @@ const G2=[
  tip:"〜にたえない는 '차마 ~할 수 없다'(나쁜 느낌), 〜にたえる는 '~할 가치가 있다'는 반대 뜻이에요. 感謝[かんしゃ]にたえない처럼 감정에 쓰면 '~하기 그지없다'로 정도를 나타냅니다."}
 ];
 const ORD={N5:0,N4:1,N3:2,N2:3,N1:4};
-G.push(...G2); G.sort((a,b)=>ORD[a.lv]-ORD[b.lv]);
+G.push(...G2,...(window.GRAMMAR_EXTRA||[])); G.sort((a,b)=>ORD[a.lv]-ORD[b.lv]);
 
 const A=()=>window.APP, $=id=>document.getElementById(id);
 const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
