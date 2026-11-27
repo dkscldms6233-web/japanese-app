@@ -6,13 +6,13 @@ window.TOUR=(function(){
   const A=()=>window.APP;
   const nav=v=>()=>document.querySelector(`#views .vb[data-view="${v}"]`);
   const STEPS=[
-    {t:()=>document.querySelector(".h2hero .cta")||document.querySelector(".h2begin"),tx:"매일 이 버튼으로 오늘의 학습을 시작해요. 하루 5분이면 충분해요.",mode:"next"},
-    {t:nav("list"),tx:"아래 <b>학습</b> 탭을 눌러 보세요.",mode:"tap"},
-    {t:()=>document.getElementById("subtabs"),tx:"단어장·퀴즈·문법·뉴스를 여기서 골라요.",mode:"next"},
-    {t:nav("exam"),tx:"<b>모의시험</b>도 눌러 보세요. JLPT처럼 연습할 수 있어요.",mode:"tap"},
-    {t:nav("game"),tx:"<b>게임</b>을 눌러 보세요. 놀면서 단어를 외워요.",mode:"tap"},
-    {t:nav("plus"),tx:"<b>플러스</b>에서는 내가 자주 틀리는 단어만 골라 복습해 줘요.",mode:"tap"},
-    {t:nav("home"),tx:"마지막으로 <b>홈</b>을 눌러 돌아와요. 매일 5분, 같이 해요!",mode:"tap"}
+    {t:()=>document.querySelector(".h2hero .cta")||document.querySelector(".h2begin"),tx:"짹짹! 매일 <b>이 버튼</b>으로 오늘의 학습을 시작해요. 하루 5분이면 충분해요!",mode:"next"},
+    {t:nav("list"),tx:"아래 <b>학습</b> 탭을 콕 눌러 보세요!",mode:"tap"},
+    {t:()=>document.getElementById("subtabs"),tx:"여기서 <b>단어장·퀴즈·문법·뉴스</b>를 골라요. 하나씩 둘러보세요.",mode:"next"},
+    {t:nav("exam"),tx:"<b>모의시험</b>도 콕! JLPT처럼 연습할 수 있어요.",mode:"tap"},
+    {t:nav("game"),tx:"<b>게임</b>도 콕! 놀다 보면 단어가 저절로 외워져요.",mode:"tap"},
+    {t:nav("plus"),tx:"<b>플러스</b>는 내가 자주 틀리는 단어만 골라 복습해 줘요. 콕 눌러 보세요!",mode:"tap"},
+    {t:nav("home"),tx:"마지막으로 <b>홈</b>을 콕! 매일 5분, 나랑 같이 해요.",mode:"tap"}
   ];
   let i=-1, after=null, els=null, timer=null, busy=false;
   const done=()=>{ try{ return !!LS.get("jp-tour-done",0); }catch(e){ return true; } };
@@ -41,9 +41,11 @@ window.TOUR=(function(){
   }
   function render(){
     const s=cur(), last=i===STEPS.length-1;
-    els.tip.innerHTML=`<div class="tr-row"><span class="tr-n">${i+1} / ${STEPS.length}</span><button type="button" class="tr-skip" data-tr="skip">건너뛰기</button></div>
+    let bird=""; try{ bird=window.PATH?PATH.birdSvg(null,"trb"):""; }catch(e){}
+    els.tip.innerHTML=`<div class="tr-bird" aria-hidden="true">${bird||"🐦"}</div>
+      <div class="tr-body"><div class="tr-row"><span class="tr-n">${i+1} / ${STEPS.length}</span><button type="button" class="tr-skip" data-tr="skip">건너뛰기</button></div>
       <p>${s.tx}</p>
-      ${s.mode==="next"?`<button type="button" class="cta tr-next" data-tr="next">다음</button>`:`<div class="tr-hint">${last?"홈 버튼을 눌러 주세요":"반짝이는 버튼을 눌러 보세요"}</div>`}`;
+      ${s.mode==="next"?`<button type="button" class="cta tr-next" data-tr="next">알겠어요!</button>`:`<div class="tr-hint">${last?"홈 버튼을 콕 눌러 주세요 ✨":"반짝이는 버튼을 콕 눌러 보세요 ✨"}</div>`}</div>`;
   }
   function place(){
     if(!els||i<0) return; const s=cur(); if(!s) return; const t=s.t(); if(!t||!t.offsetParent) return;
@@ -68,7 +70,7 @@ window.TOUR=(function(){
     clearInterval(timer); timer=null; document.removeEventListener("click",onTap,true);
     window.removeEventListener("resize",place); window.removeEventListener("scroll",place,true);
     if(els){ els.sh.remove(); els.ring.remove(); els.tip.remove(); els=null; }
-    i=-1; mark(); if(ok){ try{ A().toast("둘러보기 끝! 오늘 첫 학습을 시작해 볼까요?"); }catch(e){} }
+    i=-1; mark(); if(ok){ try{ A().toast("짹짹! 둘러보기 끝! 오늘 첫 학습을 시작해 볼까요?"); }catch(e){} }
     const f=after; after=null; if(f) setTimeout(f,300);
   }
   function maybe(cb){ if(done()){ if(cb) cb(); return; } open(cb); }
