@@ -435,3 +435,32 @@ html[data-theme=dark] .jmbtn.jm-save .ic{color:#d6e9fa}html[data-theme=dark] .jm
 .plrow>p{margin:0 0 10px 50px;padding:9px 12px;border-radius:10px;background:var(--accent-soft);font-size:13px;line-height:1.55;color:var(--text)}
 .plhd small{font-size:11.5px;font-weight:600;color:var(--sub);margin-left:6px}
 .plrow>summary:hover b{color:var(--accent-text)}
+
+/* ===== 홈: 힉의 법칙 — 화면마다 눌러야 할 주 버튼은 하나, 나머지는 한 단계 낮춰요 ===== */
+/* 게스트 안내: 눈에 띄는 큰 버튼 대신 조용한 한 줄 + 링크 */
+.gstbar{display:flex!important;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:9px 14px!important;font-size:13px}
+.gstbar>span{flex:1;min-width:0}.gstbar b{font-size:13px!important}
+.gstlink{border:0;background:transparent;color:var(--accent-text,var(--accent));font:inherit;font-size:13px;font-weight:700;text-decoration:underline;padding:4px 0;cursor:pointer;white-space:nowrap}
+/* 처음 쓰는 사람: '일본어 첫걸음'이 주인공이라 '오늘의 학습'은 차분한 카드로 */
+.h2hero.soft{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line);box-shadow:none!important;padding:14px 16px 14px}
+.h2hero.soft::after{display:none}
+.h2hero.soft .h2ring .rt{stroke:var(--line)}.h2hero.soft .h2ring .rf{stroke:var(--accent)}
+.h2hero.soft .h2rw{width:64px;height:64px}.h2hero.soft .h2rw b{font-size:15px;color:var(--text)}
+.h2hero.soft .h2ht small{color:var(--sub);opacity:1}.h2hero.soft .h2ht h3{font-size:19px;color:var(--text)}.h2hero.soft .h2ht p{color:var(--sub);opacity:1}
+.h2hero.soft .cta{background:var(--accent-soft)!important;color:var(--accent-text,var(--accent))!important;border:1px solid var(--line)!important;border-bottom-width:1px!important;box-shadow:none}
+.h2hero.soft .h2qs{display:none}
+.h2hero.soft .h2lvb{background:var(--accent-soft);color:var(--accent-text,var(--accent))}
+.h2hero.soft .h2lvb svg{stroke:currentColor}
+/* 탐색: 대표 4개만 두고 나머지는 '더 보기' */
+.h2more{margin-top:10px}
+.h2more>summary{list-style:none;cursor:pointer;text-align:center;padding:10px;border-radius:12px;border:1px dashed var(--line);color:var(--sub);font-weight:700;font-size:14px}
+.h2more>summary::-webkit-details-marker{display:none}
+.h2more[open]>summary{margin-bottom:10px}
+.h2more .h2grid{margin-top:0}
+
+/* 퀴즈: 범위·급수·품사는 평소엔 한 줄로 접어 두고, 바꾸고 싶을 때만 펼쳐요 */
+.qopt{margin:8px 0 6px}
+.qopt>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;font-size:14px;font-weight:700}
+.qopt>summary::-webkit-details-marker{display:none}
+.qopt>summary em{font-style:normal;font-size:12.5px;color:var(--accent-text,var(--accent));font-weight:700}
+.qopt[open]>summary{margin-bottom:10px}

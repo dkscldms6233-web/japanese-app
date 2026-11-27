@@ -1029,7 +1029,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=103">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=72">
+<link rel="stylesheet" href="polish.css?v=74">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="warmup.js?v=8"></script>
@@ -1887,6 +1887,8 @@ const gfont = () => GFONTS.some(f=>f[0]===prefs.gfont) ? prefs.gfont : "round";
 const QV = v => v==="quiz"||v==="exam"||v==="game";
 function quizTile(act,attr,cls,icon,title,sub){ return `<button class="t2 ${cls}" data-act="${act}" ${attr}><span class="ti">${ic(icon)}</span><b>${title}</b><small>${sub}</small></button>`; }
 function lvRow(jl,label,withAll){ return `<div class="lvrow"><span>${label}</span><div class="jlv">${(withAll?["전체","N5","N4","N3","N2","N1"]:["N5","N4","N3","N2","N1"]).map(l=>`<button class="pill ${l===jl?"on":""}" data-act="jlv" data-l="${l}">${l}</button>`).join("")}</div></div>`; }
+let qOptOpen=false;
+document.addEventListener("toggle",e=>{ if(e.target&&e.target.classList&&e.target.classList.contains("qopt")) qOptOpen=e.target.open; },true);
 function quizSetup(){
   stopG(); document.body.classList.remove("inq","inr");
   level=view==="quiz"&&qscope?qscope:"전체"; lvSel=(view==="quiz"||view==="game")&&jlvQ()==="전체"?new Set():new Set([jlv()]); posf=""; $("posf").value="";
@@ -1894,9 +1896,10 @@ function quizSetup(){
   const n = ALL.filter(inScope).length, no = ALL.filter(w=>inScope(w)&&canOrder(w)).length, jl=jlvQ();
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>퀴즈</h2></div>
+   <details class="qopt"${qOptOpen?" open":""}><summary><span>${qscope||(qpos==="k"?"경어":(jl==="전체"?"전체 급수":jl))} · ${(QPOS.find(x=>x[0]===qpos)||[0,"전체"])[1]}</span><em>범위 바꾸기</em></summary>
    <div class="lvrow"><span>범위</span><div class="jlv">${[["","급수별"],["저장함","저장한 단어"],["오답 노트","오답 노트"]].map(([k,t])=>`<button class="pill ${k===qscope?"on":""}" data-act="qscope" data-s="${k}">${t}</button>`).join("")}</div></div>
    ${qscope||qpos==="k"?"":lvRow(jl,"급수",true)}
-   <div class="lvrow"><span>품사</span><div class="jlv">${QPOS.map(([k,n])=>`<button class="pill ${k===qpos?"on":""}" data-act="qpos" data-p="${k}">${n}</button>`).join("")}</div></div>
+   <div class="lvrow"><span>품사</span><div class="jlv">${QPOS.map(([k,n])=>`<button class="pill ${k===qpos?"on":""}" data-act="qpos" data-p="${k}">${n}</button>`).join("")}</div></div></details>
    <div class="qm-sec">${ic("pencil")}단어 연습<small>${qpos==="k"?"경어 (모든 급수)":qscope||(jl==="전체"?"전체 급수":jl)} 단어 ${n.toLocaleString()}개로 풀어요${qscope&&!n?" · 아직 없어요":""}</small></div>
    <div class="tiles2">
     ${qpos==="k"?quizTile("start",'data-mode="pairq"',"c4","order","경어 짝 맞추기","「言う」의 존경어는?"):""}
@@ -3274,7 +3277,7 @@ function renderHome(){
   if(window.PATH&&PATH.page()){ $("homeView").innerHTML=PATH.pageHtml(); return; }
   const my=myLv(), fn=funnyOn(0)?funnyPick(0):null, qt=fn?null:quotePick(0), p=(fn||qt)?null:todayPick(0), tl=log[today()]||{n:0,c:0}, nw=Object.keys(wrong).length, st=streakDays(), h=new Date().getHours(), g=goalN();
   const nick=(profiles.length>1||curProfile().name!=="기본")?curProfile().name:"";
-  const greet=CHEER.greet(h,tl.n>0);
+  const greet=CHEER.greet(h,tl.n>0), beginHtml=beginnerHtml(), soft=!!beginHtml&&!/h2begin done/.test(beginHtml)&&!tl.n;
   const pc=Math.min(100,Math.round(tl.n/g*100));
   const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
   const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"오늘의 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
@@ -3289,18 +3292,20 @@ function renderHome(){
   const CHK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', DN=["일","월","화","수","목","금","토"]; let wk=0;
   const week=[6,5,4,3,2,1,0].map(i=>{ const d=new Date(Date.now()-i*864e5), e=log[d.toLocaleDateString("sv-SE")], on=!!(e&&e.n>0); if(on) wk++; return `<div class="h2d ${on?"on":""} ${i===0?"now":""}"><i>${on?CHK:""}</i><span>${DN[d.getDay()]}</span></div>`; }).join("");
   const TL=[["data-go=\"list\"","c1","語","단어장","N5~N1 단어"],["data-go=\"quiz\"","c2","問","퀴즈","카드·짝 맞추기"],["data-go=\"grammar\"","c3","文","문법","쉽게 정리"],["data-go=\"news\"","c4","新","뉴스 읽기","매일 새 기사"],["data-ppage=\"path\"","c5","道","단계별 학습","차근차근 따라가기"],["data-ppage=\"basic\"","c6","あ","일본어 글자","히라가나·가타카나 배우기"],["data-hq=\"review\"","c8","復",nw?`오답 노트`:"오답 노트",nw?`${nw}개 다시 보기`:"틀린 문제 모음"],["data-go=\"stats\"","c7","表","학습 리포트","이번 주 기록"]];
-  const tiles=TL.map(t=>`<button type="button" class="h2t" ${t[0]}><span class="h2ti ${t[1]}">${t[2]}</span><span><b>${t[3]}</b><small>${t[4]}</small></span></button>`).join("");
+  const tileHtml=t=>`<button type="button" class="h2t" ${t[0]}><span class="h2ti ${t[1]}">${t[2]}</span><span><b>${t[3]}</b><small>${t[4]}</small></span></button>`;
+  const hasLog=Object.keys(log).some(d=>log[d]&&log[d].n>0);
+  const tiles=TL.slice(0,4).map(tileHtml).join(""), moreTiles=TL.slice(4).filter(t=>!(t[0].includes('"review"')&&!nw)&&!(t[0].includes('"stats"')&&!hasLog)).map(tileHtml).join("");
   const FLAME='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5s5.5 4 5.5 10a5.5 5.5 0 0 1-11 0c0-2.6 1.5-4.3 1.5-4.3s1.1 2.2 2.6 2.2C10.6 7.2 12 2.5 12 2.5z"/></svg>';
   $("homeView").innerHTML=`<div class="home h2">
    <div class="h2top"><div class="h2bird">${window.PATH?PATH.birdHtml():""}${window.PATH?PATH.statusHtml():""}</div><div class="h2hello"><h2>${nick?`<span class="h2nm">${E(nick)}님</span>`:""}<span class="h2gm">${greet}</span></h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div><div class="h2flame ${st?"on":""}" title="${st}일 연속 학습" aria-label="${st}일 연속 학습"><svg class="fl3" viewBox="0 0 48 56" aria-hidden="true"><defs><linearGradient id="flg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffc83a"/></linearGradient></defs><circle cx="24" cy="30" r="22" fill="url(#flg)"/><path d="M24 12c1 6 9 10 9 20a9 9 0 0 1-18 0c0-4 2-6 4-8 0 2 1 3 3 3-1-5-1-10 2-15z" fill="#fff"/></svg><b class="fln">${st}</b></div></div>
    ${window.DEV?DEV.bannerHtml():""}
-   ${curProfile().cloud?"":`<section class="gstbar" role="note"><b>게스트 모드입니다</b><span>학습 기록이 <u>이 기기에만</u> 저장됩니다. 다른 기기로 들어가면 이어지지 않고, 앱 데이터를 지우면 사라집니다. 커뮤니티도 쓸 수 없습니다.</span><button type="button" class="pill sm on" data-guestlogin="1">로그인·가입하고 기록 지키기</button></section>`}
-   ${beginnerHtml()}
-   <section class="h2hero"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있습니다</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
+   ${curProfile().cloud?"":`<section class="gstbar" role="note"><span><b>게스트 모드</b> · 기록이 <u>이 기기에만</u> 저장돼요.</span><button type="button" class="gstlink" data-guestlogin="1">로그인하고 기록 지키기</button></section>`}
+   ${beginHtml}
+   <section class="h2hero${soft?" soft":""}"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있습니다</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
    ${(()=>{ const rv=window.PATH?PATH.reviewHtml():""; return rv?`<div class="h2card h2act">${rv}</div>`:""; })()}
    ${jr}
-   <section><div class="h2sh"><b>탐색</b><small>골라서 공부합니다</small></div><div class="h2grid">${tiles}</div></section>
+   <section><div class="h2sh"><b>탐색</b></div><div class="h2grid">${tiles}</div>${moreTiles?`<details class="h2more"><summary>더 보기</summary><div class="h2grid">${moreTiles}</div></details>`:""}</section>
    ${cultureHtml()}
 </div>`;
   try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){}
