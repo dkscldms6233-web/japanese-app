@@ -246,7 +246,7 @@ function startShiri(){
 }
 function startShiriGo(d){
   SHDIFF=d; const pool=shScope();
-  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 집니다<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없어요)</small>`,()=>shBegin(pool),"wdbox");
+  gCountdown(`${SH_D[d].name} 상대와 끝말잇기!<br>앞 단어의 끝 글자로 시작하는 단어를 직접 입력해요 · 「ん」으로 끝나면 져요<br><small>(「ん」으로 시작하는 단어가 없어서 이을 수 없어요)</small>`,()=>shBegin(pool),"wdbox");
 }
 function shBegin(pool){
   const used=new Set(), cnt=(ch)=>pool.filter(x=>x.r[0]===ch).length, starts=shuffle(pool.filter(x=>lastKana(x.r)!=="ん"&&cnt(lastKana(x.r))>=4)), start=starts[0]||pool.find(x=>lastKana(x.r)!=="ん");
@@ -298,7 +298,7 @@ function shSubmit(){
   if(!ws){ g.msg=`「${r}」는 사전에 없습니다`; return shMiss(); }
   const w=ws.find(x=>g.pool.some(p=>p.w===x))||ws[0];
   g.used.add(r); g.chain.push({who:"me",r,w});
-  if(lastKana(r)==="ん"){ if(!w.extra){ g.seen.set(w.key,{w,st:"ng"}); record(w,false); } sfx("ng"); return shEnd("lose",`「${r}」는 ん으로 끝나요. 「ん」으로 시작하는 단어는 없어서 이을 수 없으니 졌습니다!`); }
+  if(lastKana(r)==="ん"){ if(!w.extra){ g.seen.set(w.key,{w,st:"ng"}); record(w,false); } sfx("ng"); return shEnd("lose",`「${r}」는 ん으로 끝나요. 「ん」으로 시작하는 단어는 없어서 이을 수 없으니 졌어요!`); }
   const hinted=g.hintShown&&g.hintShown.r===r; const pts=Math.round((hinted?5:10+Math.min(g.rounds,10)*2)*SH_D[g.diff].mult);
   if(!w.extra){ g.seen.set(w.key,{w,st:"ok"}); record(w,true); } g.rounds++; g.score+=pts; sfx("ok"); popFx("+"+pts,"pts");
   // 컴퓨터 차례 (난이도에 따라 고르는 방식이 다릅니다)

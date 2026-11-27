@@ -1012,8 +1012,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-strokes.js?v=2"></script>
 <script src="word-audio.js?v=4"></script>
 <script src="kana-audio.js?v=8"></script>
-<script src="kana.js?v=65"></script>
-<script src="games2.js?v=41"></script>
+<script src="kana.js?v=66"></script>
+<script src="games2.js?v=42"></script>
 <script src="bgm.js?v=38"></script>
 <script src="gametheme.js?v=44"></script>
 <script src="quotes.js?v=3"></script>
@@ -1031,7 +1031,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="polish.css?v=72">
 <script src="mascot-flat.js?v=2"></script>
-<script src="cheer.js?v=7"></script>
+<script src="cheer.js?v=8"></script>
 <script src="warmup.js?v=8"></script>
 <script src="install.js?v=5"></script>
 <script src="visits.js?v=4"></script>
@@ -1453,7 +1453,7 @@ const SRS_IV=[10/1440,1,3,7,14,30,60];
 function recordRating(w,grade){
   if(!w||!w.key) return; const ok=grade==="good"||grade==="easy"; questInc("rev"); if(ok&&(w.key in wrong)) questInc("fix");
   const d=today(), e=log[d]||(log[d]={n:0,c:0}); e.n++; if(ok) e.c++;
-  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트에서 제외됐습니다!"); } } }
+  if(ok){ if(w.key in wrong){ wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트에서 제외됐어요!"); } } }
   else if(grade==="again"){ wrong[w.key]=0; miss[w.key]=(miss[w.key]||0)+1; logWrong(w,"review",w.ko,w.ko); }
   LS.set("jp-log",log); LS.set("jp-wrong",wrong); LS.set("jp-miss",miss);
   const sr=LS.get("jp-srs",{}), x=sr[w.key]||{b:0}, b=x.b||0;
@@ -1501,7 +1501,7 @@ function record(w,ok){
   if(window.PATH&&!w.sent) PATH.rec(w,ok);
   const d=today(), e=log[d]||(log[d]={n:0,c:0}); e.n++; if(ok) e.c++;
   if(w.sent){ LS.set("jp-log",log); return; }
-  if(ok){ if(w.key in wrong){ questInc("fix"); wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트에서 제외됐습니다!"); } } }
+  if(ok){ if(w.key in wrong){ questInc("fix"); wrong[w.key]++; if(wrong[w.key]>=2){ delete wrong[w.key]; toast("「"+w.text+"」 오답 노트에서 제외됐어요!"); } } }
   else { wrong[w.key]=0; miss[w.key]=(miss[w.key]||0)+1; }
   LS.set("jp-log",log); LS.set("jp-wrong",wrong); LS.set("jp-miss",miss);
   questCheck(); renderLevels();
@@ -2090,10 +2090,10 @@ function renderResult(){
   try{ if(window.PATH) PATH.quizEnd(Q.score,Q.list.map(w=>w.key)); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.list.length, rsec=Math.max(1,Math.round((Date.now()-(Q.t0||Date.now()))/1000));
-  $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.mode==="card"?(Q.wrong.length?"카드 끝!":"전부 압니다!"):CHEER.result(Math.round(Q.score/t*100)).title}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
+  $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.mode==="card"?(Q.wrong.length?"카드 끝!":"전부 알아요!"):CHEER.result(Math.round(Q.score/t*100)).title}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
    <div class="rst"><div class="rt rxp"><b>+${Q.mode==="order"?0:Q.score*10}</b><span>경험치</span></div><div class="rt racc"><b>${Math.round(Q.score/t*100)}%</b><span>${Q.mode==="card"?"압니다":"정답률"} · ${Q.score}/${t}</span></div><div class="rt rtime"><b>${Math.floor(rsec/60)}:${String(rsec%60).padStart(2,"0")}</b><span>걸린 시간</span></div></div>
    <div class="cheer">${CHEER.result(Math.round(Q.score/t*100)).sub}</div>
-   <div class="sub">${Q.wrong.length?(Q.mode==="card"?"몰라요로 고른 단어는 오답 노트에 담겼습니다. 눌러서 다시 확인해 보세요":"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요"):(Q.mode==="card"?"모든 카드를 알고 있습니다!":"모두 맞혔습니다!")}</div>
+   <div class="sub">${Q.wrong.length?(Q.mode==="card"?"몰라요로 고른 단어는 오답 노트에 담겼습니다. 눌러서 다시 확인해 보세요":"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요"):(Q.mode==="card"?"모든 카드를 알고 있어요!":"모두 맞혔어요!")}</div>
    ${Q.wrong.length?`<div class="rel" style="justify-content:center;margin-top:12px">${Q.wrong.map(w=>`<div class="lnk" data-act="open" data-key="${w.key}">${R(w.f)} <small>${E(w.ko)}</small></div>`).join("")}</div>`:""}
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">
      ${Q.wrong.length?`<button class="cta" data-act="retry">${Q.mode==="card"?"모릅니다 카드만 다시":"틀린 단어만 다시"}</button><button class="cta sec" data-go="home">홈으로</button><button class="pill" data-act="saveWrong">틀린 단어 저장함에 담기</button>`:`<button class="cta" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 퀴즈 하기</button>`}
@@ -3274,7 +3274,7 @@ function renderHome(){
   if(window.PATH&&PATH.page()){ $("homeView").innerHTML=PATH.pageHtml(); return; }
   const my=myLv(), fn=funnyOn(0)?funnyPick(0):null, qt=fn?null:quotePick(0), p=(fn||qt)?null:todayPick(0), tl=log[today()]||{n:0,c:0}, nw=Object.keys(wrong).length, st=streakDays(), h=new Date().getHours(), g=goalN();
   const nick=(profiles.length>1||curProfile().name!=="기본")?curProfile().name:"";
-  const greet=(h<11?"좋은 아침이에요":h<18?"오늘도 한 걸음 가 보시겠습니까?":"오늘 하루도 수고했습니다");
+  const greet=CHEER.greet(h,tl.n>0);
   const pc=Math.min(100,Math.round(tl.n/g*100));
   const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
   const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"오늘의 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
@@ -3284,7 +3284,7 @@ function renderHome(){
   questCheck(); const QL=questList(), nextQ=QL.find(q=>q.n<q.of);
   const RC=2*Math.PI*52, ringSvg=`<svg class="h2ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="rt" cx="60" cy="60" r="52"/>${pc?`<circle class="rf" cx="60" cy="60" r="52" stroke-dasharray="${(RC*pc/100).toFixed(1)} ${RC.toFixed(1)}" transform="rotate(-90 60 60)"/>`:""}</svg>`;
   const heroT=!nextQ?"오늘 목표 완료! 👏":tl.n?`${Math.min(tl.n,g)} / ${g}문제`:`오늘 ${g}문제`;
-  const heroS=!nextQ?"정말 잘했습니다! 더 풀어도 좋아요":(away>=3&&!tl.n)?`${away}일 만에 오셨습니다, 가볍게 시작합니다`:nextQ.id==="n"?CHEER.home(st,h):nextQ.t;
+  const heroS=!nextQ?"정말 잘했어요! 더 풀어도 좋아요":(away>=3&&!tl.n)?`${away}일 만이에요! 가볍게 다시 시작해 봐요`:nextQ.id==="n"?CHEER.home(st,h):nextQ.t;
   const qchips=QL.map(x=>x.n>=x.of?`<span class="h2qc dn"><i>✓</i>${E(x.t)}</span>`:`<button type="button" class="h2qc" data-qgo="${x.id}"><i>${x.n}/${x.of}</i>${E(x.t)}</button>`).join("");
   const CHK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', DN=["일","월","화","수","목","금","토"]; let wk=0;
   const week=[6,5,4,3,2,1,0].map(i=>{ const d=new Date(Date.now()-i*864e5), e=log[d.toLocaleDateString("sv-SE")], on=!!(e&&e.n>0); if(on) wk++; return `<div class="h2d ${on?"on":""} ${i===0?"now":""}"><i>${on?CHK:""}</i><span>${DN[d.getDay()]}</span></div>`; }).join("");
@@ -3309,14 +3309,14 @@ function renderHome(){
 function beginnerHtml(){
   if(!prefs.beginner) return "";
   const d=(LS.get("jp-kana",{done:{}}).done)||{}, cnt=ch=>Object.keys(d).filter(k=>k[0]===ch&&d[k]&&+k.slice(1)<15).length, h=Math.min(15,cnt("h")), k=Math.min(15,cnt("k"));
-  if(h>=15&&k>=15){ return `<section class="h2begin done"><b>🎉 글자 배우기를 모두 마쳤습니다!</b><p>이제 N5 단어와 퀴즈로 이어 갑니다.</p><button type="button" class="pill sm" data-bgn="hide">이 안내 닫기</button></section>`; }
+  if(h>=15&&k>=15){ return `<section class="h2begin done"><b>🎉 글자 배우기를 모두 마쳤어요!</b><p>이제 N5 단어와 퀴즈로 이어 갑니다.</p><button type="button" class="pill sm" data-bgn="hide">이 안내 닫기</button></section>`; }
   const steps=[
     {t:"히라가나 익히기",s:"あ い う え お … 글자 읽기부터",p:h+" / 15",done:h>=15,go:'data-kana="learn" data-k="h"'},
     {t:"가타카나 익히기",s:"ア イ ウ エ オ … 외래어에 많이 써요",p:k+" / 15",done:k>=15,go:'data-kana="learn" data-k="k"'},
     {t:"쉬운 N5 단어 시작",s:"하루 몇 개씩, 예문과 함께",p:"",done:false,go:'data-ppage="path"'},
     {t:"퀴즈로 확인하기",s:"배운 걸 가볍게 풀어 보세요",p:"",done:false,go:'data-go="quiz"'}];
   const now=steps.findIndex(x=>!x.done);
-  return `<section class="h2begin"><div class="hbh"><b>일본어 첫걸음</b><small>이 순서대로 한 칸씩만 해 보세요. 어렵지 않습니다!</small></div>
+  return `<section class="h2begin"><div class="hbh"><b>일본어 첫걸음</b><small>이 순서대로 한 칸씩만 해 보세요. 어렵지 않아요!</small></div>
    <ol>${steps.map((x,i)=>`<li class="${x.done?"dn":i===now?"now":""}"><i>${x.done?"✓":i+1}</i><span><b>${x.t}</b><small>${x.s}${x.p?" · "+x.p:""}</small></span>${i===now?`<button type="button" class="pill on sm" ${x.go}>${(()=>{ const c0=LS.get("jp-kana",{}).cur, cu=c0&&typeof c0.k!=="number"?c0[i===0?"h":"k"]:null; return cu&&(cu.c>0||cu.i>0)?"이어서":"시작"; })()}</button>`:""}</li>`).join("")}</ol>
    <button type="button" class="hbx" data-bgn="hide">나중에 볼게요</button></section>`;
 }
@@ -3528,7 +3528,7 @@ function renderOnb(){
       <button class="cta" data-ob="guestok">이해했습니다, 게스트로 시작</button><button class="cta sec" data-ob="signup">회원가입하고 시작</button><button class="obskip" data-ob="aback">뒤로</button>`;
     o.innerHTML=top(false)+`<div class="ob-sheet">${body}</div>`; o.scrollTop=0; return;
   }
-  if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작합니다.</p>
+  if(obStep===0) o.innerHTML=top(false)+`<div class="ob-sheet"><h2>매일 5분,<br>술술 읽히는 일본어</h2><p class="sub">단어부터 JLPT 모의시험까지, 한 곳에서 가볍게 시작해요.</p>
     <div class="feat">${feat("vocab","단어장",`N5~N1 단어 ${ALL.length.toLocaleString()}개와 예문`)}${feat("pencil","퀴즈와 게임","단어 카드 · 짝 맞추기 · 타임어택")}${feat("target","JLPT 모의시험","문자·어휘, 문법, 독해, 청해")}${feat("news","일본 뉴스 읽기","매일 새 기사가 올라옵니다")}</div>
     <button class="cta" data-ob="next">시작하기</button><button class="obskip" data-ob="skip">이미 써 본 적 있습니다</button></div>`;
   else if(obStep===1) o.innerHTML=top(true)+`<div class="ob-sheet"><div class="ob-nav"><button class="back" data-ob="prev">${ic("back")}이전</button>${dots}<span style="width:70px"></span></div><h2>지금 일본어 실력은 어느 정도예요?</h2><p class="sub">나중에 홈에서 언제든 바꿀 수 있습니다.</p><div class="obopts">${OB_LV.map((x,i)=>`<button class="mode" data-ob="lv" data-i="${i}"><b>${x[0]}</b><small>${x[2]}</small></button>`).join("")}</div></div>`;
@@ -3648,8 +3648,8 @@ lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="billing.js?v=8"></script>
-<script src="path.js?v=133"></script>
-<script src="community.js?v=23"></script>
+<script src="path.js?v=134"></script>
+<script src="community.js?v=24"></script>
 <script src="review.js?v=10"></script>
 <script src="grammar.js?v=12"></script>
 <script src="settings.js?v=7"></script>

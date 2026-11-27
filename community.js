@@ -12,7 +12,7 @@
 const A=()=>window.APP;
 const $=id=>document.getElementById(id);
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const STICKERS=[["👍","최고예요"],["🔥","불타오르네"],["💪","힘내요"],["🎉","축하합니다"],["👏","박수!"],["🌸","예쁩니다"],["😊","반갑습니다"],["⭐","대단합니다"],["🐥","같이 합니다"],["💖","고마워요"]];
+const STICKERS=[["👍","최고예요"],["🔥","불타오르네"],["💪","힘내요"],["🎉","축하해요"],["👏","박수!"],["🌸","예쁩니다"],["😊","반갑습니다"],["⭐","대단해요"],["🐥","같이 합니다"],["💖","고마워요"]];
 const REWARD=[50,30,20];
 /* 1:1 자유 글 대화 스위치. 출시 전에는 꺼 둠 (치은 결정 2026-11-22). 다시 켜려면 true로 바꾸세요.
    꺼져 있으면: 대화 버튼·대화 창·새 메시지 알림이 없어요. 리그·함께 공부·친구·이모티콘 응원·신고는 그대로입니다. */
@@ -178,7 +178,7 @@ function cheerDlg(to,name){
     d.addEventListener("click",async ev=>{ if(ev.target===d||ev.target.closest("[data-cclose]")){ d.close(); return; }
       const s=ev.target.closest("[data-sticker]"); if(!s) return; const to=d.dataset.to, nm=d.dataset.n, day=A().today();
       try{ await db().collection("cheers").doc(uid()+"_"+to+"_"+day).set({from:uid(),fromName:A().curProfile().name,to,sticker:s.dataset.sticker,day,at:Date.now()}); A().toast(nm+" 님에게 응원을 보냈습니다"); }
-      catch(e){ A().toast("오늘은 이미 응원했습니다"); } d.close(); }); }
+      catch(e){ A().toast("오늘은 이미 응원했어요"); } d.close(); }); }
   d.dataset.to=to; d.dataset.n=name;
   d.innerHTML=`<div class="dh"><h2 style="margin:0">${E(name)} 님에게 응원</h2><button class="x" data-cclose aria-label="닫기">×</button></div><div class="db"><div class="stk">${STICKERS.map(([e,l])=>`<button class="stkb" data-sticker="${e}"><span>${e}</span><small>${l}</small></button>`).join("")}</div><p class="sub" style="margin-top:10px">한 명에게는 하루에 한 번만 보낼 수 있습니다.</p></div>`;
   if(!d.open) d.showModal();

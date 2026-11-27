@@ -274,7 +274,7 @@ function renderResult(){
   if(ok&&K.lessonKey){ const d=done(); d.done[K.lessonKey]=true; save(d); try{ if(window.PATH) PATH.kanaDone(K.lessonKey); }catch(e){} }
   const nxt=K.lessonI!=null?LESSONS[K.lessonI+1]:null;
   root().innerHTML=`<div class="kana" style="text-align:center"><h2>${K.title} 결과</h2><div class="score" style="font-size:44px;margin:16px 0">${K.score} / ${n}</div>
-  <div class="sub">${ok?(K.lessonKey?"합격! 이 레슨을 완료로 표시했습니다.":"잘했어요!"):"70% 이상이면 완료로 표시됩니다. 글자표를 한 번 더 보고 다시 도전해 보세요."}</div>
+  <div class="sub">${ok?(K.lessonKey?"합격! 이 레슨을 완료로 표시했어요.":"잘했어요!"):"70% 이상이면 완료로 표시됩니다. 글자표를 한 번 더 보고 다시 도전해 보세요."}</div>
   <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">${ok&&nxt?`<button class="cta" data-kana="lesson" data-i="${nxt.i}">다음 레슨: ${lessonLabel(nxt,K.k)}</button><button class="cta sec" data-kana="again">다시 풀기</button>`:`<button class="cta" data-kana="again">다시 풀기</button>`}<button class="cta sec" data-kana="home">글자표·레슨 목록으로</button></div></div>`;
   if(ok&&typeof sakura==="function") sakura(14);
 }
@@ -322,7 +322,7 @@ async function wAnimate(){
   for(const p of ps){ if(tok!==wTok) return; p.style.opacity="1"; void p.getBoundingClientRect(); p.style.transition="stroke-dashoffset .7s ease"; p.style.strokeDashoffset="0"; await new Promise(r=>setTimeout(r,820)); }
   await new Promise(r=>setTimeout(r,900)); if(tok===wTok) ps.forEach(p=>{ p.style.transition="none"; p.style.strokeDashoffset="1"; p.style.opacity="0"; });
 }
-function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했습니다"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
+function wNav(d){ wTok++; const n=W.i+d; if(n<0) return; if(n>=W.items.length){ toast("다 썼어요! 잘했어요"); wBack(); return; } W.i=n; renderWrite(); window.scrollTo(0,0); }
 function wBack(){ wTok++; const b=W&&W.back; W=null; if(b&&b.i!=null){ renderLesson(LESSONS[b.i],b.k); } else renderHome(); window.scrollTo(0,0); }
 /* 글자별 관련 단어와 그림. 그림은 Google Noto Emoji(Apache License 2.0, img/emoji/LICENSE.txt) */
 const KW={"h":{"あ":["あめ","비","1f327"],"い":["いぬ","개","1f436"],"う":["うさぎ","토끼","1f430"],"え":["えんぴつ","연필","270f"],"お":["おにぎり","주먹밥","1f359"],"か":["かさ","우산","2602"],"き":["きのこ","버섯","1f344"],"く":["くるま","자동차","1f697"],"け":["けいたい","휴대폰","1f4f1"],"こ":["こおり","얼음","1f9ca"],"さ":["さかな","물고기","1f41f"],"し":["しか","사슴","1f98c"],"す":["すし","초밥","1f363"],"せ":["せかい","세계","1f30d"],"そ":["そら","하늘","2601"],"た":["たまご","달걀","1f95a"],"ち":["ちず","지도","1f5fa"],"つ":["つき","달","1f319"],"て":["て","손","270b"],"と":["とり","새","1f426"],"な":["なす","가지","1f346"],"に":["にじ","무지개","1f308"],"ぬ":["ぬいぐるみ","인형","1f9f8"],"ね":["ねこ","고양이","1f431"],"の":["のみもの","음료","1f964"],"は":["はな","꽃","1f338"],"ひ":["ひこうき","비행기","2708"],"ふ":["ふね","배","1f6a2"],"へ":["へび","뱀","1f40d"],"ほ":["ほし","별","2b50"],"ま":["まど","창문","1fa9f"],"み":["みかん","귤","1f34a"],"む":["むし","벌레","1f41b"],"め":["め","눈","1f441"],"も":["もも","복숭아","1f351"],"や":["やま","산","26f0"],"ゆ":["ゆき","눈","2744"],"よ":["よる","밤","1f303"],"ら":["らいおん","사자","1f981"],"り":["りんご","사과","1f34e"],"る":["さる","원숭이","1f412"],"れ":["れもん","레몬","1f34b"],"ろ":["ろうそく","양초","1f56f"],"わ":["わに","악어","1f40a"],"を":["ほんを","책을","1f4d6"],"ん":["ぱん","빵","1f35e"],"が":["がっこう","학교","1f3eb"],"ぎ":["ぎんこう","은행","1f3e6"],"ぐ":["ぐんて","장갑","1f9e4"],"げ":["げんかん","현관","1f6aa"],"ご":["ごはん","밥","1f35a"],"ざ":["ざっし","잡지","1f4f0"],"じ":["じてんしゃ","자전거","1f6b2"],"ず":["ずぼん","바지","1f456"],"ぜ":["かぜ","바람","1f4a8"],"ぞ":["ぞう","코끼리","1f418"],"だ":["だんご","경단","1f361"],"で":["でんしゃ","전철","1f683"],"ど":["どうぶつ","동물","1f43e"],"ば":["ばなな","바나나","1f34c"],"び":["びょういん","병원","1f3e5"],"ぶ":["ぶた","돼지","1f437"],"べ":["べんとう","도시락","1f371"],"ぼ":["ぼうし","모자","1f9e2"],"ぱ":["ぱん","빵","1f35e"],"ぴ":["ぴあの","피아노","1f3b9"],"ぷ":["ぷりん","푸딩","1f36e"],"ぺ":["ぺん","펜","1f58a"],"ぽ":["ぽすと","우체통","1f4ee"]},"k":{"ア":["アイス","아이스크림","1f366"],"イ":["イルカ","돌고래","1f42c"],"ウ":["ウマ","말","1f434"],"エ":["エビ","새우","1f990"],"オ":["オレンジ","오렌지","1f34a"],"カ":["カメラ","카메라","1f4f7"],"キ":["キウイ","키위","1f95d"],"ク":["クッキー","쿠키","1f36a"],"ケ":["ケーキ","케이크","1f370"],"コ":["コーヒー","커피","2615"],"サ":["サッカー","축구","26bd"],"シ":["シャツ","셔츠","1f455"],"ス":["スイカ","수박","1f349"],"セ":["セーター","스웨터","1f9e5"],"ソ":["ソファ","소파","1f6cb"],"タ":["タクシー","택시","1f695"],"チ":["チーズ","치즈","1f9c0"],"ツ":["ツリー","트리","1f384"],"テ":["テレビ","텔레비전","1f4fa"],"ト":["トマト","토마토","1f345"],"ナ":["ナッツ","견과류","1f95c"],"ニ":["ニンジン","당근","1f955"],"ヌ":["ヌードル","국수","1f35c"],"ネ":["ネクタイ","넥타이","1f454"],"ノ":["ノート","공책","1f4d3"],"ハ":["ハート","하트","2764"],"ヒ":["ヒヨコ","병아리","1f425"],"フ":["フルーツ","과일","1f353"],"ヘ":["ヘリコプター","헬리콥터","1f681"],"ホ":["ホテル","호텔","1f3e8"],"マ":["マスク","마스크","1f637"],"ミ":["ミルク","우유","1f95b"],"ム":["ムービー","영화","1f3ac"],"メ":["メロン","멜론","1f348"],"モ":["モモ","복숭아","1f351"],"ヤ":["ヤギ","염소","1f410"],"ユ":["ユニコーン","유니콘","1f984"],"ヨ":["ヨット","요트","26f5"],"ラ":["ラーメン","라면","1f35c"],"リ":["リス","다람쥐","1f43f"],"ル":["ルビー","루비","1f48e"],"レ":["レモン","레몬","1f34b"],"ロ":["ロケット","로켓","1f680"],"ワ":["ワイン","와인","1f377"],"ン":["ペンギン","펭귄","1f427"],"ガ":["ガソリン","휘발유","26fd"],"ギ":["ギター","기타","1f3b8"],"グ":["グラス","유리잔","1f943"],"ゲ":["ゲーム","게임","1f3ae"],"ゴ":["ゴリラ","고릴라","1f98d"],"ザ":["ピザ","피자","1f355"],"ジ":["ジュース","주스","1f9c3"],"ズ":["ズボン","바지","1f456"],"ゾ":["ゾウ","코끼리","1f418"],"ダ":["ダンス","춤","1f483"],"デ":["デザート","디저트","1f368"],"ド":["ドア","문","1f6aa"],"バ":["バナナ","바나나","1f34c"],"ビ":["ビール","맥주","1f37a"],"ブ":["ブドウ","포도","1f347"],"ベ":["ベッド","침대","1f6cf"],"ボ":["ボール","공","1f3c0"],"パ":["パン","빵","1f35e"],"ピ":["ピアノ","피아노","1f3b9"],"プ":["プリン","푸딩","1f36e"],"ペ":["ペン","펜","1f58a"],"ポ":["ポスト","우체통","1f4ee"]}};
@@ -355,11 +355,11 @@ function koRead(w){
 let C=null;
 function startCards(L,k,at){ const chars=lessonChars(L,k); if(!chars.length){ renderLesson(L,k); return; } C={L,k,i:Math.min(Math.max(+at||0,0),chars.length-1),chars,words:lessonWords(L,k)}; renderCard(); }
 const KC=[["#ff8a5c","#ff5a7a"],["#ffb02e","#ff7a2e"],["#4cc9a0","#2a9d8f"],["#5bb6ff","#4a7bff"],["#a07cff","#6c4ff0"],["#ff7eb6","#e0508f"],["#7bd36a","#3fae5a"],["#ffc93c","#ff9a1f"]];
-const CHEER=["따라 해 봐요!","잘하고 있습니다!","소리 내서 읽어 봐요","좋습니다, 한 번 더!","멋져요!"];
+const CHEER=["따라 해 봐요!","잘하고 있어요!","소리 내서 읽어 봐요","좋습니다, 한 번 더!","멋져요!"];
 function renderCard(){
   inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
-  const say1=i===0?`${c[2]}~ 소리 내서 따라 해 보세요!`:last?"마지막 글자예요! 거의 다 왔습니다!":CHEER[i%CHEER.length];
+  const say1=i===0?`${c[2]}~ 소리 내서 따라 해 보세요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
   root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull${i===0?" kfirst":""}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
@@ -368,7 +368,7 @@ function renderCard(){
    <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
    <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
-   ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠습니다! 다음 행으로 ›":"다 배웠어요! 끝났습니다"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
+   ${last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠습니다! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
   </div></div>`;
   try{ const d=done(); d.cur=(d.cur&&typeof d.cur.k!=="number")?d.cur:{}; d.cur[k?"k":"h"]={i:L.i,c:i}; save(d); }catch(e){}
   window.scrollTo(0,0); setTimeout(()=>say(c[0]),150);
@@ -435,7 +435,7 @@ function krPick(side,id){
 }
 function krEnd(){
   const k=KG; KG=null; try{ stopG(); questInc("gm"); questCheck(); }catch(e){}
-  const msg=k.miss===0?"한 번도 안 틀렸어요! 대단합니다":k.miss<=3?"아주 잘했어요":"괜찮습니다, 한 번 더 하면 더 잘 맞춰요";
+  const msg=k.miss===0?"한 번도 안 틀렸어요! 대단해요":k.miss<=3?"아주 잘했어요":"괜찮습니다, 한 번 더 하면 더 잘 맞춰요";
   root().innerHTML=`<div class="qbox gbox gres" style="max-width:480px"><div class="gres-top"><div class="score">${k.pairs}쌍</div><div class="rank">${msg}</div><div class="sub gres-note">틀린 횟수 ${k.miss}번</div></div>
   <div class="gres-acts"><button class="pill on" data-act="gstart" data-g="kmatch">한 번 더</button><button class="pill" data-act="again">처음으로</button></div></div>`;
 }
@@ -454,7 +454,7 @@ const introSeen=()=>{ try{ return !!localStorage.getItem("jp-kana-intro"); }catc
 function learn(k){ k=!!k; K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode");
   if(!introSeen()&&!Object.keys(done().done||{}).length){ renderIntro(k); return; }
   const d=done(), cu=curOf(d,k); /* 중간에 나갔으면 그 글자부터 이어서 */
-  if(cu&&LESSONS[cu.i]&&!d.done[key(LESSONS[cu.i],k)]&&(cu.c>0||cu.i>0)){ try{ toast("지난번에 하던 곳부터 이어서 합니다"); }catch(e){} startCards(LESSONS[cu.i],k,cu.c); return; }
+  if(cu&&LESSONS[cu.i]&&!d.done[key(LESSONS[cu.i],k)]&&(cu.c>0||cu.i>0)){ try{ toast("지난번에 하던 곳부터 이어서 해요"); }catch(e){} startCards(LESSONS[cu.i],k,cu.c); return; }
   const nl=nextLesson(k)||LESSONS[0]; startCards(nl,k); }
 function open(tab){ K={tab:(typeof tab==="string"&&tab)||K.tab||"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderHome(); window.scrollTo(0,0); }
 document.addEventListener("click",e=>{
@@ -478,7 +478,7 @@ document.addEventListener("click",e=>{
   else if(a==="exit"){ inq(false); setView("quiz"); }
   else if(a==="dk") renderDakuten(K.tab==="k");
   else if(a==="yo") renderYoon(K.tab==="k");
-  else if(a==="dkdone"){ const kk=K.tab==="k"; markDone([10,11,12,13,14],kk); try{ toast("탁음·반탁음 완료! 잘했습니다"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
+  else if(a==="dkdone"){ const kk=K.tab==="k"; markDone([10,11,12,13,14],kk); try{ toast("탁음·반탁음 완료! 잘했어요"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
   else if(a==="yodone"){ const kk=K.tab==="k"; markDone([15,16,17],kk); try{ toast("요음 완료! 잘했어요"); }catch(e){} K={tab:kk?"k":"h"}; renderHome(); window.scrollTo(0,0); }
   else if(a==="gohome"){ inq(false); setView("home"); window.scrollTo(0,0); }
   else if(a==="tab"){ K={tab:b.dataset.t}; renderHome(); }
