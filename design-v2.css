@@ -17,7 +17,7 @@
 }
 :root[data-theme=dark]{
   --bg:#1c1c1e; --card:#2c2c2e; --text:#f2f2f4; --sub:#a4a4ab; --line:#3d3d40;
-  --accent:#6aa6ff; --accent-dk:#4f8fe8; --accent-text:#8bb8ff; --accent-soft:#2b3547;
+  --accent:#8e8eff; --accent-dk:#6f6fe8; --accent-text:#a9a9ff; --accent-soft:#32324f;
   --chip:#363638; --onacc:#101012;
   --flame:#ff9a52; --gold:#ffd66b; --ok:#4fdc9c; --bad:#ff7e86;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
@@ -91,7 +91,7 @@ input[type=search]{border-radius:14px;border:1px solid var(--line);background:va
 
 /* 오늘의 학습 (히어로) */
 .h2hero{position:relative;border-radius:24px;padding:20px 18px 18px;color:#fff;background:linear-gradient(140deg,#5b5bf0 0%,#7c5cff 55%,#9a6bff 100%);box-shadow:0 12px 32px rgba(91,91,240,.35);overflow:hidden}
-:root[data-theme=dark] .h2hero{background:linear-gradient(140deg,#2f5fb5 0%,#3a74d4 60%,#4a86e6 100%);box-shadow:0 12px 32px rgba(0,0,0,.45)}
+:root[data-theme=dark] .h2hero{background:linear-gradient(140deg,#3b3bb8 0%,#5a3fc0 60%,#6c45d1 100%);box-shadow:0 12px 32px rgba(0,0,0,.45)}
 .h2hero::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.10);pointer-events:none}
 .h2hrow{display:flex;align-items:center;gap:16px;margin-bottom:16px;position:relative}
 .h2rw{position:relative;width:92px;height:92px;flex:none}
@@ -104,7 +104,7 @@ input[type=search]{border-radius:14px;border:1px solid var(--line);background:va
 .h2ht h3{margin:2px 0 4px;font-size:25px;line-height:1.2;font-weight:800;color:#fff}
 .h2ht p{margin:0;font-size:14px;opacity:.9;line-height:1.4}
 .h2hero .cta{background:#fff!important;color:var(--accent-dk)!important;border-bottom:4px solid rgba(0,0,0,.18)!important;position:relative}
-:root[data-theme=dark] .h2hero .cta{color:#123a7a!important}
+:root[data-theme=dark] .h2hero .cta{color:#2a2a8f!important}
 .h2qs{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative}
 .h2qc{display:inline-flex;align-items:center;gap:6px;border:0;font:inherit;font-size:13.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.18);padding:7px 12px;border-radius:999px;cursor:pointer}
 .h2qc i{font-style:normal;font-size:12.5px;font-weight:800;background:rgba(255,255,255,.25);border-radius:999px;padding:1px 7px}

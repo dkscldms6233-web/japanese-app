@@ -15,7 +15,7 @@ const css=`#instBar{position:fixed;left:12px;right:12px;bottom:calc(84px + env(s
 #instBar button{border:0;border-radius:12px;font:inherit;font-weight:800;cursor:pointer}
 #instBar .go{background:#2f33a8;color:#fff;padding:11px 14px;font-size:14.5px;flex:none}
 #instBar .no{background:none;color:#5a6486;font-size:22px;padding:4px 8px;flex:none}
-:root[data-theme=dark] #instBar{background:#2c2c2e;color:#f1f3fb;border-color:#48484a}:root[data-theme=dark] #instBar .go{background:#6aa6ff;color:#101012}:root[data-theme=dark] #instBar .no{color:#aab2d4}`;
+:root[data-theme=dark] #instBar{background:#2c2c2e;color:#f1f3fb;border-color:#48484a}:root[data-theme=dark] #instBar .go{background:#8e8eff;color:#101012}:root[data-theme=dark] #instBar .no{color:#aab2d4}`;
 function close(){ try{ localStorage.setItem(KEY,String(Date.now())); }catch(e){} if(box){ box.remove(); box=null; } }
 function show(){
   if(box||document.getElementById("onb")&&document.getElementById("onb").offsetParent) { setTimeout(show,4000); return; }
