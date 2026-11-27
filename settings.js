@@ -26,6 +26,7 @@ function render(){
    ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장됩니다",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}
    <details class="stmore"><summary>더 보기 <small>도움 · 기록 지우기</small></summary>
    <h3 class="sth">도움</h3>
+   ${row("앱 둘러보기","주요 기능을 한눈에 보기",`<button type="button" class="pill" data-st="tour">보기</button>`)}
    ${row("친구 초대하기","앱을 아직 안 쓰는 친구에게 링크 보내기",`<button type="button" class="pill" data-st="invite">초대</button>`)}
    ${row("문의하기","오류·제안을 보내 주세요",`<button type="button" class="pill" data-st="inq">문의</button>`)}
    <h3 class="sth">내 기록</h3>
@@ -50,6 +51,7 @@ async function act(b){ const k=b.dataset.st, v=b.dataset.v, a=A();
   else if(k==="goal"){ a.setPref("goal",+v); a.renderHome(); render(); }
   else if(k==="lv"){ let cur=a.myLv().slice(); if(v==="전체") cur=[]; else cur=cur.includes(v)?cur.filter(x=>x!==v):cur.concat(v); a.applyMyLevels(cur); render(); }
   else if(k==="acct"){ $("setDlg").close(); a.openProf(); }
+  else if(k==="tour"){ $("setDlg").close(); if(window.TOUR) TOUR.open(); }
   else if(k==="invite"){ invite(); }
   else if(k==="inq"){ inquiry(); }
   else if(k==="reset"){ if(!confirm("학습 기록과 오답 노트를 모두 지우시겠습니까? 단어와 저장함은 그대로입니다.")) return; if(!confirm("정말 지우시겠습니까? 되돌릴 수 없습니다.")) return; a.resetLearning(); a.toast("기록을 지웠습니다"); a.renderHome(); }
