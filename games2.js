@@ -24,6 +24,7 @@ ST.textContent=`.wd-hint{text-align:center;margin:6px 0 10px}.wd-hint b{font-siz
 .fk.on .fp.l,.fk.on .fp.r,.fk.on .fp.u,.fk.on .fp.d{background:var(--chip)}
 .fk.on .fp.sel{background:var(--accent);color:var(--onacc,#fff);border-color:var(--accent)}
 .fk.on{z-index:31;background:var(--accent-soft)}
+.rkh{text-align:center;font-size:13px;color:var(--sub);margin:8px 0 2px;line-height:1.7}.rkb{display:inline-block;min-width:22px;padding:0 8px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-weight:800}
 .fkh{text-align:center;font-size:12px;color:var(--sub);margin:2px 0 0}
 .wd-act{display:flex;gap:8px;justify-content:center;margin:8px 0}.wd-act .pill{min-width:92px;justify-content:center}
 .sh-chain{display:flex;flex-direction:column;gap:6px;margin:10px 0}.sh-w{border-radius:14px;padding:6px 14px;max-width:85%}.sh-w small{display:block;opacity:.75;font-size:12px}
@@ -54,6 +55,43 @@ const KB={
 const natOn=()=>typeof prefs!=="undefined"&&prefs.gNative===true;
 const setNat=v=>{ prefs.gNative=!!v; LS.set("jp-prefs",prefs); };
 const toKata=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
+/* 컴퓨터(마우스·키보드)에서는 키보드로 로마자를 치면 가나로 바뀌어요: ka→か, shi→し, kka→っか, nn→ん, -→ー */
+const isDesk=()=>{ try{ return matchMedia("(hover:hover) and (pointer:fine)").matches; }catch(e){ return false; } };
+const RMAP=(()=>{ const m={a:"あ",i:"い",u:"う",e:"え",o:"お",la:"ぁ",li:"ぃ",lu:"ぅ",le:"ぇ",lo:"ぉ",xa:"ぁ",xi:"ぃ",xu:"ぅ",xe:"ぇ",xo:"ぉ",wa:"わ",wo:"を",nn:"ん","n'":"ん",
+  shi:"し",chi:"ち",tsu:"つ",fu:"ふ",ji:"じ",si:"し",ti:"ち",tu:"つ",hu:"ふ",zi:"じ",wi:"うぃ",we:"うぇ",xtu:"っ",ltu:"っ",xtsu:"っ",ltsu:"っ",xya:"ゃ",xyu:"ゅ",xyo:"ょ",lya:"ゃ",lyu:"ゅ",lyo:"ょ",xwa:"ゎ",
+  sha:"しゃ",shu:"しゅ",sho:"しょ",she:"しぇ",cha:"ちゃ",chu:"ちゅ",cho:"ちょ",che:"ちぇ",ja:"じゃ",ju:"じゅ",jo:"じょ",je:"じぇ",jya:"じゃ",jyu:"じゅ",jyo:"じょ",tsa:"つぁ",fa:"ふぁ",fi:"ふぃ",fe:"ふぇ",fo:"ふぉ",
+  ya:"や",yu:"ゆ",yo:"よ","-":"ー"};
+  const rows={k:"かきくけこ",s:"さしすせそ",t:"たちつてと",n:"なにぬねの",h:"はひふへほ",m:"まみむめも",r:"らりるれろ",g:"がぎぐげご",z:"ざじずぜぞ",d:"だぢづでど",b:"ばびぶべぼ",p:"ぱぴぷぺぽ"};
+  for(const c in rows){ [..."aiueo"].forEach((v,i)=>{ if(!m[c+v]) m[c+v]=rows[c][i]; }); }
+  const ys={k:"きゃきゅきょ",g:"ぎゃぎゅぎょ",n:"にゃにゅにょ",h:"ひゃひゅひょ",m:"みゃみゅみょ",r:"りゃりゅりょ",b:"びゃびゅびょ",p:"ぴゃぴゅぴょ",s:"しゃしゅしょ",t:"ちゃちゅちょ",d:"ぢゃぢゅぢょ",z:"じゃじゅじょ"};
+  for(const c in ys){ ["a","u","o"].forEach((v,i)=>{ const k=c+"y"+v; if(!m[k]) m[k]=ys[c].slice(i*2,i*2+2); }); }
+  return m; })();
+/* 로마자 버퍼를 가나로 바꿔요. 돌려주는 값: {out: 완성된 가나, rest: 아직 덜 친 로마자} */
+function romaji(buf){
+  let out="",b=buf.toLowerCase();
+  while(b){
+    if(b.length>=2&&b[0]===b[1]&&/[bcdfghjklmpqrstvwxyz]/.test(b[0])){ out+="っ"; b=b.slice(1); continue; }
+    if(b==="nn") break;   /* 다음 글자가 모음이면 こんにちは(konnichiha)처럼 n+な행이 돼요 */
+    if(b[0]==="n"&&b[1]==="n"&&b.length>=3){ out+="ん"; b=/[aiueoy]/.test(b[2])?b.slice(1):b.slice(2); continue; }
+    if(b[0]==="n"&&b.length>=2&&!/[aiueoyn']/.test(b[1])){ out+="ん"; b=b.slice(1); continue; }
+    let hit=0; for(let l=Math.min(4,b.length);l>=1;l--){ if(RMAP[b.slice(0,l)]){ hit=l; break; } }
+    if(hit){ out+=RMAP[b.slice(0,hit)]; b=b.slice(hit); continue; }
+    if(Object.keys(RMAP).some(k=>k.startsWith(b))) break;
+    b=b.slice(1);
+  }
+  return {out,rest:b};
+}
+const rkLine=g=>isDesk()?`<p class="rkh">⌨️ <b>키보드로 로마자</b>를 치면 가나로 바뀌어요 &nbsp;(<b>ka</b>→か · <b>shi</b>→し · <b>kka</b>→っか · <b>nn</b>→ん · <b>-</b>→ー) &nbsp;Enter 확인 · Backspace 지우기${g.rk?` <span class="rkb">${g.rk}</span>`:""}</p>`:"";
+/* 키 하나를 처리해요. 처리했으면 true */
+function rkKey(g,e,max,minLen){
+  if(e.ctrlKey||e.metaKey||e.altKey) return false;
+  if(e.key==="Backspace"){ if(g.rk){ g.rk=g.rk.slice(0,-1); return true; } if(g.cur.length>minLen){ g.cur=g.cur.slice(0,-1); return true; } return true; }
+  if(/^[a-zA-Z'\-]$/.test(e.key)){ if(g.cur.length>=max) return true; const r=romaji((g.rk||"")+e.key); const add=g.kata?toKata(r.out):r.out; g.cur=([...g.cur+add]).slice(0,max).join(""); g.rk=r.rest; return true; }
+  return false;
+}
+/* Enter 직전에 남은 n 은 ん 으로 확정해요 */
+function rkFlush(g,max){ if((g.rk==="n"||g.rk==="nn")&&g.cur.length<max) g.cur+=g.kata?"ン":"ん"; g.rk=""; }
+
 /* 일본어 플릭(밀어서 입력) 글자판: 톡 누르면 あ단, 누른 채 왼쪽 い·위 う·오른쪽 え·아래 お. 폰의 일본어 키보드와 같은 방식이에요 */
 const FLICK=[["あ","い","う","え","お"],["か","き","く","け","こ"],["さ","し","す","せ","そ"],["た","ち","つ","て","と"],["な","に","ぬ","ね","の"],["は","ひ","ふ","へ","ほ"],["ま","み","む","め","も"],["や","","ゆ","","よ"],["ら","り","る","れ","ろ"],["わ","を","ん","ー",""]];
 const FCYC=["かが","きぎ","くぐ","けげ","こご","さざ","しじ","すず","せぜ","そぞ","ただ","ちぢ","つっづ","てで","とど","はばぱ","ひびぴ","ふぶぷ","へべぺ","ほぼぽ","やゃ","ゆゅ","よょ","あぁ","いぃ","うぅ","えぇ","おぉ"];
@@ -117,7 +155,7 @@ function wdBegin(mode){
   const pool=wdPool(WDK);
   if(pool.length<10){ toast(`이 급수에는 ${WDK?"가타카나":"히라가나"} 단어가 부족해요 (다른 급수나 문자를 골라 보세요)`); return; }
   const pick=mode==="daily"?pool[hashStr(today()+"|"+jlvQ()+"|"+(WDK?"k":"h")+"|"+pool.length)%pool.length]:wshuffle(pool,x=>TIER_W[x.w.tier||2])[0];
-  G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map()};
+  G={type:"wordle",mode,kata:WDK,ans:pick.r,w:pick.w,len:pick.r.length,guesses:[],cur:"",tab:"basic",hint:false,keys:{},over:false,seen:new Map(),kbHide:isDesk(),rk:""};
   wdRender(); bgmStart();
 }
 function wdEval(guess,ans){
@@ -144,6 +182,7 @@ function wdRender(){
    <div class="gstat"><span>${g.guesses.length} / 6번</span><button class="pill sm" data-act="gquit">그만하기</button></div>
    <div class="wd-hint"><b>${E(w.ko)}</b>${show}<small>${g.len}글자 · ${(POS[w.pos]||[w.pos])[0]}${w.text!==w.yomi?(g.hint?(g.showKanji?"":" · 한자 힌트 사용함"):` · <a href="#" data-wd="hint" style="color:var(--accent)">한자 힌트 3초 보기(-10점)</a>`):""}</small></div>
    ${wdBlank(w)}
+   ${rkLine(g)}
    <div class="wd-grid">${rows.join("")}</div>
    ${nat?`<input id="wdNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${g.kata?"가타카나":"히라가나"}로 입력해요">
    <div class="wd-act"><button class="pill" data-wd="del">지우기 ⌫</button><button class="pill on" data-wd="enter" ${g.cur.length===g.len?"":"disabled"}>확인</button><button class="pill kbbtn" data-kbbtn="wdNat">⌨️ 키보드 닫기</button></div>
@@ -204,7 +243,7 @@ function startShiriGo(d){
 function shBegin(pool){
   const used=new Set(), cnt=(ch)=>pool.filter(x=>x.r[0]===ch).length, starts=shuffle(pool.filter(x=>lastKana(x.r)!=="ん"&&cnt(lastKana(x.r))>=4)), start=starts[0]||pool.find(x=>lastKana(x.r)!=="ん");
   used.add(start.r);
-  G={type:"shiri",diff:SHDIFF,maxHints:SH_D[SHDIFF].hints,pool,used,chain:[{who:"com",r:start.r,w:start.w}],score:0,rounds:0,lives:3,hints:0,hintShown:null,cur:"",tab:"basic",msg:"",seen:new Map(),over:false,busy:false};
+  G={type:"shiri",diff:SHDIFF,maxHints:SH_D[SHDIFF].hints,pool,used,chain:[{who:"com",r:start.r,w:start.w}],score:0,rounds:0,lives:3,hints:0,hintShown:null,kbHide:isDesk(),rk:"",cur:"",tab:"basic",msg:"",seen:new Map(),over:false,busy:false};
   G.need=lastKana(start.r); G.cur=G.need; shRender(); bgmStart();
 }
 function shNatSync(){
@@ -228,7 +267,7 @@ function shRender(){
    <div class="sh-chain">${chain.map(c=>`<div class="sh-w ${c.who}"><b style="font-size:20px">${E(c.w.text)}</b><small>${c.r} · ${E(c.w.ko)}</small></div>`).join("")}</div>
    <div class="sh-need"><b>${g.need}</b> 로 시작하는 단어를 입력하세요</div>
    <div class="sh-in">${[...g.cur].map((c,i)=>`<span class="${i===0?"lock":""}">${c}</span>`).join("")}<span class="caret"></span></div>
-   <div class="sh-msg">${g.msg||(g.hintShown?`💡 힌트: <b>${E(g.hintShown.ko)}</b> (${g.hintShown.r.slice(0,2)}${"○".repeat(Math.max(0,g.hintShown.r.length-2))})`:"&nbsp;")}</div>
+   ${rkLine(g)}<div class="sh-msg">${g.msg||(g.hintShown?`💡 힌트: <b>${E(g.hintShown.ko)}</b> (${g.hintShown.r.slice(0,2)}${"○".repeat(Math.max(0,g.hintShown.r.length-2))})`:"&nbsp;")}</div>
    <div class="wd-dock ${nat?"nat":""}"><div class="wd-act"><button class="pill" data-sk="del">지우기 ⌫</button><button class="pill on" data-sk="enter" ${g.cur.length>=2?"":"disabled"}>확인</button><button class="pill" data-sk="hint">💡 힌트 (${g.maxHints-g.hints})</button>${nat?`<button class="pill kbbtn" data-kbbtn="shNat">⌨️ 키보드 닫기</button>`:(g.kbHide?`<button class="pill on" data-sk="show">⌨️ 글자판 열기</button>`:`<button class="pill" data-sk="hide">▼ 글자판 접기</button>`)}</div>
    ${nat?`<input id="shNat" class="sh-nat" type="text" lang="ja" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="내 키보드(일본어)로 히라가나 입력">`:`${g.kbHide?"":`${kbTabs(g.tab,"data-sk",false)}
    <div class="wd-kb">${kbHTML(g.tab,{},"data-sk",false)}</div>`}`}</div>
@@ -412,8 +451,8 @@ document.addEventListener("keydown",e=>{
   if(e.target&&e.target.id==="wdNat"){ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); wdNatInput(e.target); wdEnter(); } return; }
   if(e.target&&e.target.id==="shNat"){ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); shNatInput(e.target); shSubmit(); } return; }
   if(G.type==="fall"&&/^[1-4]$/.test(e.key)){ fPick(+e.key-1); }
-  else if(G.type==="shiri"&&!G.over){ if(e.key==="Backspace"){ if(G.cur.length>1){ G.cur=G.cur.slice(0,-1); G.msg=""; shRender(); } } else if(e.key==="Enter") shSubmit(); else if(/^[ぁ-ゖー]$/.test(e.key)&&G.cur.length<9){ G.cur+=e.key; G.msg=""; shRender(); } }
-  else if(G.type==="wordle"&&!G.over&&!G.intro){ if(e.key==="Backspace"){ G.cur=G.cur.slice(0,-1); wdRender(); } else if(e.key==="Enter") wdEnter(); else if((G.kata?/^[ァ-ヶー]$/:/^[ぁ-ゖー]$/).test(e.key)&&G.cur.length<G.len){ G.cur+=e.key; wdRender(); } }
+  else if(G.type==="shiri"&&!G.over){ if(e.key==="Enter"){ rkFlush(G,9); shSubmit(); } else if(rkKey(G,e,9,1)){ e.preventDefault(); G.msg=""; shRender(); } else if(/^[ぁ-ゖー]$/.test(e.key)&&G.cur.length<9){ G.cur+=e.key; G.msg=""; shRender(); } }
+  else if(G.type==="wordle"&&!G.over&&!G.intro){ if(e.key==="Enter"){ rkFlush(G,G.len); wdEnter(); } else if(rkKey(G,e,G.len,0)){ e.preventDefault(); wdRender(); } else if((G.kata?/^[ァ-ヶー]$/:/^[ぁ-ゖー]$/).test(e.key)&&G.cur.length<G.len){ G.cur+=e.key; wdRender(); } }
 });
 window.startWordle=startWordle; window.startShiri=startShiri; window.startFall=startFall;
 })();
