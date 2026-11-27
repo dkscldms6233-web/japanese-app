@@ -32,7 +32,7 @@ async function open(){
     const list=snap.docs.map(x=>({uid:x.id,...x.data()}));
     const mine=list.findIndex(x=>x.uid===me);
     const rows=list.map((x,i)=>`<div class="cmr ${x.uid===me?"me":""}"><span class="cmk">${i+1}</span><span class="cmbw">${window.PATH?PATH.birdSvg(x.eq||{},"cmb"):""}</span><span class="cmn"><b>${E(x.name)}</b></span><span class="cmx">${x.score||0}<small>점</small></span></div>`).join("");
-    d.innerHTML=head(`<p class="sub">이번 주 최고 점수 순위입니다.<br>매주 월요일에 새로 시작합니다.</p>${list.length?`<div class="cmlist">${rows}</div>`:`<p class="sub" style="margin:18px 0">아직 기록이 없습니다. 첫 번째 주인공이 되어 보세요!</p>`}${!verified()?`<p class="sub">이메일 인증을 마치면 내 점수도 올라갑니다.</p>`:(mine<0?`<p class="sub">20위 안에 들면 여기에 이름이 나옵니다.</p>`:"")}`);
+    d.innerHTML=head(`<p class="sub">이번 주 최고 점수 순위예요.<br>매주 월요일에 새로 시작해요.</p>${list.length?`<div class="cmlist">${rows}</div>`:`<p class="sub" style="margin:18px 0">아직 기록이 없어요. 첫 번째 주인공이 되어 보세요!</p>`}${!verified()?`<p class="sub">이메일 인증을 마치면 내 점수도 올라갑니다.</p>`:(mine<0?`<p class="sub">20위 안에 들면 여기에 이름이 나옵니다.</p>`:"")}`);
   }catch(e){ d.innerHTML=head(`<p class="sub">랭킹을 불러오지 못했습니다. 잠시 뒤 다시 해 주세요.</p>`); }
 }
 window.MRANK={submit,open};

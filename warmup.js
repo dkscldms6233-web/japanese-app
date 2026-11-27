@@ -1,8 +1,8 @@
 /* 술술 일본어 · 첫 시작 놀이 "카드 뒤집기 짝 맞추기" (2026-11-22)
    - 완전히 처음 시작하는 사람이 시작 안내(급수·목표 선택)를 끝낸 직후, 딱 한 번만 나옵니다.
-   - 일본어 카드와 한국어 뜻 카드가 뒤집힌 채 섞여 있고, 같은 짝을 찾습니다. 답은 미리 보여 주지 않습니다.
-   - 단어는 처음 고른 급수에서 뽑습니다. '잘 모르겠어요(전체)'를 고른 사람만 가장 쉬운 N5 단어입니다.
-   - 틀려도 점수·시간 제한이 없습니다. 로그인할 때마다 나오지 않습니다. (jp-warm-done 이 저장되면 다시 안 나옵니다) */
+   - 일본어 카드와 한국어 뜻 카드가 뒤집힌 채 섞여 있고, 같은 짝을 찾아요. 답은 미리 보여 주지 않습니다.
+   - 단어는 처음 고른 급수에서 뽑습니다. '잘 모르겠어요(전체)'를 고른 사람만 가장 쉬운 N5 단어예요.
+   - 틀려도 점수·시간 제한이 없습니다. 로그인할 때마다 나오지 않아요. (jp-warm-done 이 저장되면 다시 안 나옵니다) */
 window.WARMUP=(function(){
   const PAIRS=3;
   let st=null, timer=null;
@@ -12,9 +12,9 @@ window.WARMUP=(function(){
   const mark=()=>{ try{ LS.set("jp-warm-done",1); }catch(e){} };
   function say(t){ try{ if(!("speechSynthesis" in window)) return; speakJa(t,.8); }catch(e){} }
   /* 단어 고르기: 처음 고른 급수 안에서 "짧고 자주 쓰는(핵심, tier 1)" 단어를 먼저 씁니다.
-     '잘 모르겠어요(전체)'는 가장 쉬운 N5. 후보가 모자라면 조건을 조금씩 넓힙니다. */
+     '잘 모르겠어요(전체)'는 가장 쉬운 N5. 후보가 모자라면 조건을 조금씩 넓혀요. */
   function pool(){
-    /* 가장 낮은 난이도: 어떤 급수를 골랐든 N5 핵심 단어 중 아주 짧은 것만 (한자엔 읽는 법이 같이 보입니다) */
+    /* 가장 낮은 난이도: 어떤 급수를 골랐든 N5 핵심 단어 중 아주 짧은 것만 (한자엔 읽는 법이 같이 보여요) */
     const base=w=>w.ko&&w.text&&w.key&&!w.sent&&w.lv==="N5"&&!/[(),·\/~]/.test(w.ko);
     const tries=[
       w=>w.tier===1&&w.text.length<=2&&String(w.ko).length<=3,
@@ -37,16 +37,16 @@ window.WARMUP=(function(){
   function intro(){
     dlg().innerHTML=`<div class="wbody"><div class="wmk big">${bird()}</div>
       <h2>환영합니다! 🎉</h2>
-      <p class="wsub">처음에 카드를 3초 동안 보여 줍니다.<br>잘 기억했다가 <b>같은 뜻의 짝</b>을 찾아봅니다.<br>일본어 ↔ 한국어, 틀려도 괜찮습니다 😊</p>
+      <p class="wsub">처음에 카드를 3초 동안 보여 줘요.<br>잘 기억했다가 <b>같은 뜻의 짝</b>을 찾아봅니다.<br>일본어 ↔ 한국어, 틀려도 괜찮아요 😊</p>
       <button class="cta" data-w="go">▶ 놀이 시작</button>
-      <button class="wlater" data-w="later">나중에 하겠습니다</button></div>`;
+      <button class="wlater" data-w="later">나중에 할게요</button></div>`;
   }
   function start(){
     const cards=build(); if(!cards){ mark(); dlg().close(); return; }
     st={cards,open:[],matched:0,lock:false,tries:0};
     dlg().innerHTML=`<div class="wbody">
       <div class="wstars" id="wst">${stars(0)}</div>
-      <div class="wq" id="wmsg">카드를 눌러 뒤집어 보세요!</div>
+      <div class="wq" id="wmsg">카드를 눌러 뒤집어 봐요!</div>
       <div class="wgrid">${cards.map((c,i)=>`<button type="button" class="wc" data-w="flip" data-i="${i}" data-p="${c.p}" aria-label="카드 ${i+1}"><span class="wcin"><span class="wback"><svg class="wbk" viewBox="0 0 64 64" width="58" height="58" aria-hidden="true"><rect x="6" y="10" width="52" height="38" rx="14" fill="#fff"/><path d="M20 46L14 58L30 48Z" fill="#fff"/><text x="32" y="37" font-size="22" font-weight="800" text-anchor="middle" fill="#5b5bf0">すら</text><circle cx="52" cy="10" r="4" fill="#ffd54f"/><circle cx="10" cy="54" r="2.5" fill="#ffd54f" opacity=".8"/></svg></span><span class="wfront ${c.t}">${c.t==="jp"?R(c.w.f):E(c.w.ko)}</span></span></button>`).join("")}</div>
       <p class="wsub small">일본어와 뜻이 같은 카드를 찾습니다</p></div>`;
     /* 가장 쉽게: 시작할 때 카드를 3초 동안 모두 펼쳐서 보여 줍니다 */
@@ -87,7 +87,7 @@ window.WARMUP=(function(){
     dlg().innerHTML=`<div class="wbody"><div class="wmk big">${bird()}</div>
       <h2>やったー! 🎉</h2>
       <div class="wstars big">${stars(PAIRS)}</div>
-      <p class="wsub"><b>짝을 다 찾았습니다!</b><br>${m.sub}</p>
+      <p class="wsub"><b>짝을 다 찾았어요!</b><br>${m.sub}</p>
       <div class="wxp">+${xp} XP · 🌱 씨앗 ${seeds}개</div>
       <button class="cta" data-w="end">오늘 첫 학습 하러 가기</button>${confetti()}</div>`;
   }

@@ -4,18 +4,18 @@
  * - 친구: 친구 코드로 추가하고(서로 추가하면 맞친구) 이번 주 경험치를 봅니다
  * - 대화: 맞친구끼리만 1:1 메시지(chats/{두 uid}/msgs). 친구를 지우면 대화도 막힙니다  ※ 현재 CHAT_ON=false 로 꺼져 있습니다
  * - 응원: 정해진 이모티콘 10개만 보낼 수 있어요(자유 글 없음). 한 사람에게 하루 한 번
- * - 신고: 이상한 닉네임은 신고할 수 있습니다
+ * - 신고: 이상한 닉네임은 신고할 수 있어요
  * 저장 위치(Firestore): leagues/{주 시작일}/members/{uid}, codes/{코드}, cheers/{id}, reports/{id}
- * 로그인(계정)한 사람만 쓸 수 있습니다. 게스트는 로그인 안내가 보입니다.
+ * 로그인(계정)한 사람만 쓸 수 있어요. 게스트는 로그인 안내가 보입니다.
  */
 (function(){
 const A=()=>window.APP;
 const $=id=>document.getElementById(id);
 const E=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const STICKERS=[["👍","최고입니다"],["🔥","불타오르네"],["💪","힘내세요"],["🎉","축하합니다"],["👏","박수!"],["🌸","예쁩니다"],["😊","반갑습니다"],["⭐","대단합니다"],["🐥","같이 합니다"],["💖","고맙습니다"]];
+const STICKERS=[["👍","최고예요"],["🔥","불타오르네"],["💪","힘내요"],["🎉","축하합니다"],["👏","박수!"],["🌸","예쁩니다"],["😊","반갑습니다"],["⭐","대단합니다"],["🐥","같이 합니다"],["💖","고마워요"]];
 const REWARD=[50,30,20];
 /* 1:1 자유 글 대화 스위치. 출시 전에는 꺼 둠 (치은 결정 2026-11-22). 다시 켜려면 true로 바꾸세요.
-   꺼져 있으면: 대화 버튼·대화 창·새 메시지 알림이 없습니다. 리그·함께 공부·친구·이모티콘 응원·신고는 그대로입니다. */
+   꺼져 있으면: 대화 버튼·대화 창·새 메시지 알림이 없어요. 리그·함께 공부·친구·이모티콘 응원·신고는 그대로입니다. */
 const CHAT_ON=false;
 const lg=()=>A().LS.get("jp-league",{joined:false,code:"",claimed:{}});
 const saveLg=v=>A().LS.set("jp-league",v);
@@ -189,7 +189,7 @@ async function report(target){
 }
 async function addFriend(code){
   code=(code||"").trim().toUpperCase(); if(code.length!==6){ A().toast("친구 코드는 6자리입니다"); return; }
-  if(code===lg().code){ A().toast("내 코드입니다"); return; }
+  if(code===lg().code){ A().toast("내 코드예요"); return; }
   try{ const d=await db().collection("codes").doc(code).get(); if(!d.exists){ A().toast("없는 코드입니다"); return; }
     const f=friends(); if(f.some(x=>x.uid===d.data().uid)){ A().toast("이미 친구입니다"); return; }
     try{ await db().collection("follows").doc(uid()+"_"+d.data().uid).set({from:uid(),to:d.data().uid,at:Date.now()}); }catch(e){}
@@ -275,7 +275,7 @@ document.addEventListener("click",async e=>{
     else if(a==="resend"){ try{ await cloud().auth.currentUser.sendEmailVerification(); A().toast("인증 메일을 다시 보냈습니다"); }catch(err){ A().toast("잠시 후 다시 해 주세요"); } }
     else if(a==="join") join(); else if(a==="leave") leave(); else if(a==="reload") render();
     else if(a==="copy"){ try{ await navigator.clipboard.writeText(lg().code); A().toast("복사했습니다"); }catch(err){ A().toast("코드: "+lg().code); } } }
-  else if(cl){ cl.disabled=true; try{ const ref=db().collection("gifts").doc(cl.dataset.claim), snap=await ref.get(); const g=snap.data(); if(!snap.exists||g.to!==uid()||g.claimed) throw 0; await ref.update({claimed:true}); const got=window.PATH.gift.receive(g); A().toast(got?got+"를 받았습니다!":"받았습니다"); }catch(err){ A().toast("받지 못했습니다. 잠시 후 다시 해 주세요"); } render(); }
+  else if(cl){ cl.disabled=true; try{ const ref=db().collection("gifts").doc(cl.dataset.claim), snap=await ref.get(); const g=snap.data(); if(!snap.exists||g.to!==uid()||g.claimed) throw 0; await ref.update({claimed:true}); const got=window.PATH.gift.receive(g); A().toast(got?got+"를 받았어요!":"받았습니다"); }catch(err){ A().toast("받지 못했어요. 잠시 후 다시 해 주세요"); } render(); }
   else if(gf) giftDlg(gf.dataset.gift,gf.dataset.n);
   else if(ct) chatDlg(ct.dataset.chat,ct.dataset.n);
   else if(ch) cheerDlg(ch.dataset.cheer,ch.dataset.n);
