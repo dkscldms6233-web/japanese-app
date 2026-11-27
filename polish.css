@@ -713,3 +713,11 @@ html[data-theme=dark] .hdd.near{border-color:#ff6b6b!important}html[data-theme=d
 .hdd,header .hdd,.hdd.soon,.hdd.near{height:38px!important;padding-top:11px!important}
 .hdd::before{top:9px}
 .hdd.none,.hdd.past,html[data-theme=dark] .hdd.none,html[data-theme=dark] .hdd.past{height:auto!important;padding:5px 10px!important}
+/* D-day 달력에 JLPT 표시 */
+.hdd,header .hdd,.hdd.soon,.hdd.near{width:46px!important;min-width:46px!important;height:42px!important;padding-top:15px!important}
+.hdd::before{top:12px}
+.hdd .hdl{display:block!important;position:absolute;top:2.5px;left:0;right:0;text-align:center;font-size:7.5px!important;font-weight:800!important;letter-spacing:.06em!important;line-height:1!important;margin:0!important;color:var(--text)!important}
+.hdd.near .hdl{color:#d83a3a!important}
+html[data-theme=dark] .hdd .hdl{color:var(--text)!important}html[data-theme=dark] .hdd.near .hdl{color:#ff8a8a!important}
+.hdd.none,.hdd.past,html[data-theme=dark] .hdd.none,html[data-theme=dark] .hdd.past{width:auto!important;min-width:0!important;height:auto!important;padding:5px 10px!important}
+.hdd.none .hdl,.hdd.past .hdl{display:none!important}
