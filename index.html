@@ -1019,7 +1019,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more3.js?v=1"></script>
 <script src="jlpt-more4.js?v=1"></script>
 <script src="funny-audio.js?v=4"></script>
-<script src="exsay-audio.js?v=1" defer></script>
+<script src="exsay-audio.js?v=2" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
@@ -1071,7 +1071,6 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
   <section id="quizView" hidden></section>
   <section id="grammarView" hidden></section>
   <section id="newsView" hidden></section>
-  <section id="animeView" hidden></section>
   <section id="communityView" hidden></section>
   <section id="readView" hidden></section>
   <section id="statsView" hidden></section>
@@ -1603,7 +1602,6 @@ function refresh(){
   else if(view==="list") renderGrid();
   else if(view==="grammar"){ if(window.GRAMMAR_UI) GRAMMAR_UI.render(); }
   else if(view==="news") renderNews();
-  else if(view==="anime") renderAnime();
   else if(view==="community"){ if(window.COMMUNITY) COMMUNITY.render(); }
   else if(view==="stats") renderStats();
   else if(view==="plus"){ if(window.PLUS) PLUS.renderTab(); }
@@ -3221,7 +3219,7 @@ function setView(v,opt){
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 꺼요 */
   if(!QV(v)) quizFrom=null;
   view=v; document.body.dataset.view=v; try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){} hideSel(); document.body.classList.remove("inq","inr","kanamode","kcardmode","inpaper"); paperStop();
-  const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","anime","community","read","stats","plus"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
+  const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","community","read","stats","plus"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
     document.querySelectorAll(".vb[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.grp?b.dataset.grp===g:b.dataset.view===eff)); renderSub(eff); }
   refresh(); window.scrollTo(0,0);
@@ -3630,7 +3628,6 @@ applyTheme();
 lvSel=new Set(myLv());
 renderLevels(); renderGrid(); setView("home");
 </script>
-<script src="anime.js?v=14"></script>
 <script src="billing.js?v=5"></script>
 <script src="path.js?v=130"></script>
 <script src="community.js?v=20"></script>
