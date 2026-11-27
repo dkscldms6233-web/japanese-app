@@ -454,11 +454,15 @@ const A=()=>window.APP, $=id=>document.getElementById(id);
 const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let lv="N5", q="";
 const R=s=>A().R(s);
+/* 예문 듣기: 마이크로소프트(Azure) 음성 파일이 있는 예문에만 버튼을 보여 줘요 (오늘의 문장과 같은 파일 키) */
+const fKey=ja=>{ let h=5381,g=7; const s="fun1|"+ja.replace(/\[[^\]]*\]/g,""); for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+const sayB=ja=>{ const k=fKey(ja); return (window.FUNNY_AUDIO&&FUNNY_AUDIO[k])?` <button type="button" class="say sm" data-gsay="${k}" title="발음 듣기" aria-label="발음 듣기">${A().ic("sound")}</button>`:""; };
+let gAud=null;
 
 function card(g,i){
   return `<details class="gr"><summary><b class="grt">${R(g.t)}${(lv==="전체"||q.trim())?` <em class="grlvb">${g.lv}</em>`:""}</b><span class="grm">${E(g.m)}</span></summary><div class="grb">
    ${g.c?`<div class="grc"><small>만드는 법</small><span>${R(g.c)}</span></div>`:""}
-   <div class="grex">${g.ex.map(([ja,ko])=>`<div class="gre"><div class="grj">${R(ja)}</div><div class="grk">${E(ko)}</div></div>`).join("")}</div>
+   <div class="grex">${g.ex.map(([ja,ko])=>`<div class="gre"><div class="grj">${R(ja)}${sayB(ja)}</div><div class="grk">${E(ko)}</div></div>`).join("")}</div>
    ${g.tip?`<div class="grtip"><b>헷갈리는 점</b><p>${R(g.tip)}</p></div>`:""}
    ${g.cmp?`<div class="grcmp"><b>비교</b><p>${R(g.cmp)}</p></div>`:""}</div></details>`;
 }
@@ -481,6 +485,7 @@ function render(){
 }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-grlv]"); if(!b||!$("grammarView").contains(b)||b.disabled) return; lv=b.dataset.grlv; render(); });
 document.addEventListener("input",e=>{ if(e.target.id!=="grq") return; q=e.target.value; renderList(); });
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-gsay]"); if(!b) return; e.preventDefault(); try{ speechSynthesis.cancel(); }catch(x){} if(gAud){ try{ gAud.pause(); }catch(x){} } gAud=new Audio("audio/funny/"+b.dataset.gsay+".m4a"); gAud.play().catch(()=>{}); });
 window.GRAMMAR_UI={render,count:()=>G.length,all:()=>G};
 
 const ST=document.createElement("style");

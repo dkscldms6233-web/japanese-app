@@ -8,12 +8,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
 <meta name="theme-color" content="#fbfaf7">
 <style>
-#splash{position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#3b3fb6,#2a2d86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;transition:opacity .35s ease}
+#splash{position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#3b3fb6,#2a2d86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;color:#fff;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;transition:opacity .35s ease}
 #splash.out{opacity:0;pointer-events:none}
-#splash img{width:104px;height:104px;border-radius:24px;outline:2px solid rgba(255,255,255,.28);box-shadow:0 10px 28px rgba(10,10,60,.35);animation:spPop .6s ease both}
-#splash b{font-size:20px;letter-spacing:.02em;font-weight:800}
-#splash small{display:block;font-size:13px;font-weight:600;opacity:.75;margin-top:2px}
-#splash i{display:block;width:84px;height:4px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
+#splash img{width:112px;height:112px;border-radius:26px;animation:spPop .6s ease both}
+#splash i{display:block;width:56px;height:3px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
 #splash i:after{content:"";position:absolute;top:0;bottom:0;width:36%;border-radius:99px;background:#ffc93c;animation:spBar 1.1s ease-in-out infinite}
 @keyframes spPop{from{transform:scale(.86);opacity:0}to{transform:none;opacity:1}}
 @keyframes spBar{0%{left:-36%}100%{left:100%}}
@@ -22,7 +20,7 @@
 <script>
 /* 로딩 화면: 앱 스크립트가 다 불러와질 때까지 보여 주고, 준비되면 부드럽게 사라짐 */
 (function(){var t0=Date.now(),d=document.createElement("div");d.id="splash";
-d.innerHTML='<img src="icon-192.png?v=8" alt=""><div style="text-align:center"><b>すらすら日本語</b><small>술술 일본어</small></div><i></i>';
+d.innerHTML='<img src="icon-192.png?v=8" alt=""><i></i>';
 document.documentElement.appendChild(d);
 function bye(){var w=Math.max(0,500-(Date.now()-t0));setTimeout(function(){d.classList.add("out");setTimeout(function(){d.remove()},400)},w)}
 addEventListener("load",bye);setTimeout(bye,9000);})();
@@ -1004,7 +1002,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-reading.js?v=3"></script>
 <script src="jlpt-listen.js?v=2"></script>
 <script src="listen-audio.js?v=5"></script>
-<script src="news-audio.js?v=1"></script>
+<script src="news-audio.js?v=2"></script>
 <script src="kana-strokes.js?v=1"></script>
 <script src="word-audio.js?v=3"></script>
 <script src="kana-audio.js?v=7"></script>
@@ -1020,7 +1018,8 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more2.js?v=1"></script>
 <script src="jlpt-more3.js?v=1"></script>
 <script src="jlpt-more4.js?v=1"></script>
-<script src="funny-audio.js?v=3"></script>
+<script src="funny-audio.js?v=4"></script>
+<script src="exsay-audio.js?v=1" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=102">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
@@ -2949,7 +2948,23 @@ function whenVoices(cb){
   let done=false; const f=()=>{ if(done) return; done=true; try{ ss.removeEventListener("voiceschanged",f); }catch(e){} cb(); };
   try{ ss.addEventListener("voiceschanged",f); }catch(e){} setTimeout(f,800);
 }
-function speakJa(t,rate){ try{ const ss=speechSynthesis; ss.cancel();
+/* 폰 음성 대신 미리 만든 마이크로소프트(Azure) 음성을 먼저 찾아요. 없을 때만 폰 음성으로 읽어요.
+   찾는 순서: 예문/문장(fun1) → 천천히 듣기(slo1) → 뉴스 문장 → 단어 */
+const azKey=(pre,t)=>{ let h=5381,g=7; const s=pre+"|"+t; for(let i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; g=(g*131+s.charCodeAt(i))>>>0; } return h.toString(36)+g.toString(36); };
+function azFind(t,rate){
+  t=String(t||"").replace(/\[[^\]]*\]/g,""); if(!t) return "";
+  const F=window.FUNNY_AUDIO||{}, X=window.EXSAY_AUDIO||{}, N=window.NEWS_AUDIO||{}, W=window.WORD_AUDIO||{};
+  if(rate&&rate<=.65){ const k=azKey("slo1",t); if(F[k]||X[k]) return "audio/funny/"+k+".m4a"; }
+  let k=azKey("fun1",t); if(F[k]||X[k]) return "audio/funny/"+k+".m4a";
+  for(const v of ["N9","N11"]){ k=jAudioKey(v,t,1); if(N[k]) return "audio/news/"+k+".m4a"; }
+  k=wordKey(t); if(W[k]) return "audio/word/"+k+".m4a";
+  return ""; }
+let azAud=null;
+function speakJa(t,rate){ try{
+  const u=azFind(t,rate);
+  if(u){ try{ speechSynthesis.cancel(); }catch(e){} if(azAud){ try{ azAud.pause(); }catch(e){} } azAud=new Audio(u); azAud.play().catch(()=>deviceSpeak(t,rate)); return; }
+  deviceSpeak(t,rate); }catch(e){} }
+function deviceSpeak(t,rate){ try{ const ss=speechSynthesis; ss.cancel();
   whenVoices(()=>setTimeout(()=>{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=rate||.9; const v=bestJa(); if(v) u.voice=v; ss.speak(u); },60)); }catch(e){} }
 /* 단어 발음: 한 글자짜리 읽기(は·て·き 등)는 히라가나만 주면 뭉개지거나 조사처럼(は→와) 읽혀서, 한자 표기를 같이 줘서 정확히 읽게 해요 */
 /* 단어 발음: 미리 만든 또렷한 음성(audio/word, VOICEVOX)이 있으면 그걸 틀고, 없으면 폰 음성으로 읽어요 */
@@ -3620,7 +3635,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="path.js?v=130"></script>
 <script src="community.js?v=20"></script>
 <script src="review.js?v=7"></script>
-<script src="grammar.js?v=8"></script>
+<script src="grammar.js?v=9"></script>
 <script src="settings.js?v=4"></script>
 <script src="mrank.js?v=1"></script>
 <script src="plus.js?v=28"></script>

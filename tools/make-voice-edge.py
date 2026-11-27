@@ -8,7 +8,7 @@ import asyncio,json,os,subprocess,sys,tempfile,array,math,audioop,wave
 import sys as _sys; _sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import tts_backend
 ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
 NEWS_MODE="--news-recent" in sys.argv   # 매일 뉴스 갱신: 이미 있는 파일은 건너뛰고, 목록(news-audio.js)을 다시 쓰고, 안 쓰는 옛 음성은 지워요
-J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=3
+J=json.load(open([a for a in sys.argv[1:] if not a.startswith("--")][0],encoding="utf-8")); TARGET=-19.0; CONC=int(os.environ.get("VOICE_CONC","3"))
 NANAMI="ja-JP-NanamiNeural"; KEITA="ja-JP-KeitaNeural"
 KFIX={"を":"オ","は":"ハ","へ":"ヘ","ぢ":"ジ","づ":"ズ","ぢゃ":"ジャ","ぢゅ":"ジュ","ぢょ":"ジョ","ヲ":"オ","ハ":"ハ","ヘ":"ヘ","ヂ":"ジ","ヅ":"ズ","ヂャ":"ジャ","ヂュ":"ジュ","ヂョ":"ジョ"}
 def norm(raw,pre,post):
@@ -40,8 +40,10 @@ def tasks():
         yield ("news",j["key"],j["text"],NANAMI,"-5%",32000,6,12)
     for j in J.get("funny",[]):
         yield ("funny",j["key"],j["text"],NANAMI,"-8%",32000,6,12)
+    for j in J.get("slow",[]):   # 애니 대사 '천천히 듣기' (파일은 audio/funny, 키는 slo1|)
+        yield ("funny",j["key"],j["text"],NANAMI,"-40%",32000,6,12)
 print("음성:",tts_backend.backend_name(),flush=True)
-T=[t for t in tasks() if not (NEWS_MODE and os.path.exists(os.path.join(ROOT,"audio",t[0],t[1]+".m4a")))]; print("만들 것",len(T),flush=True)
+T=[t for t in tasks() if not ((NEWS_MODE or "--skip-existing" in sys.argv) and os.path.exists(os.path.join(ROOT,"audio",t[0],t[1]+".m4a")))]; print("만들 것",len(T),flush=True)
 async def main():
     sem=asyncio.Semaphore(CONC); loop=asyncio.get_running_loop(); tmpd=tempfile.mkdtemp(); fail=[]; done=0
     os.makedirs(os.path.join(ROOT,"audio","funny"),exist_ok=True)
