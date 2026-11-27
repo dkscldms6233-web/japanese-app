@@ -661,3 +661,13 @@ html[data-theme=dark] .hdd::before,html[data-theme=dark] .hdd::after{background:
 .hdd.none::before,.hdd.none::after,.hdd.past::before,.hdd.past::after{display:none!important}
 .hdd.none .hdn,.hdd.past .hdn{font-size:12.5px!important;font-weight:700!important;color:var(--sub)!important}
 .hdd:active{filter:brightness(1.15)}
+
+/* D-day 달력: 더 크고 읽기 쉽게 (라벨 10px, 숫자 26px, 링도 키움) */
+.hdd,header .hdd,.hdd.soon,.hdd.near{margin:10px 8px 4px!important;padding:6px 14px 6px!important;min-width:76px!important;border-radius:8px!important;box-shadow:0 0 0 3px #fff,0 0 0 5.5px #1d1f2b!important}
+.hdd::before,.hdd::after{top:-12px;width:7px;height:14px;border-width:2.5px}
+.hdd::before{left:15px}.hdd::after{right:15px}
+.hdd .hdl{font-size:10.5px!important;letter-spacing:.16em!important;color:#d9dcef!important;font-weight:800!important}
+.hdd .hdn{font-size:27px!important;font-weight:900!important;padding-top:2px!important}
+html[data-theme=dark] .hdd,html[data-theme=dark] .hdd.soon,html[data-theme=dark] .hdd.near{box-shadow:0 0 0 3px #f2f2f4,0 0 0 5.5px #3a3a3c!important}
+.hdd.near .hdl{color:#ffe1e3!important}
+.hdd.none .hdn,.hdd.past .hdn{font-size:13px!important}
