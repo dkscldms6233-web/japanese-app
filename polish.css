@@ -188,7 +188,7 @@ body.inq.inpaper{background:#d7dbe6!important}
 .eptop{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .eptop .epsec{font-weight:800;background:#fffefa;border:1px solid #cfc8b4;padding:3px 10px;color:#25263a;font-size:14px}
 .eptop .eppg{margin-left:auto;font-size:12.5px;font-weight:700;color:#4a4f66}
-:root[data-theme=dark] .eptop .eppg{color:#aeb4d0}
+:root[data-theme=dark] .eptop .eppg{color:#b6b6bd}
 .epstage{position:relative;perspective:1500px}
 .epsheet{position:relative;background:#fffefa;color:#25263a;border:1px solid #cfc8b4;box-shadow:0 10px 24px rgba(40,40,60,.25),3px 0 0 #eae4d0;padding:16px 14px 44px 16px;min-height:62vh;transform-origin:left center;overflow:hidden}
 .epcurl{position:absolute;right:0;bottom:0;width:46px;height:46px;background:linear-gradient(135deg,transparent 50%,#e4dcc3 50%,#f4efde 62%,#d8d0b4 100%);box-shadow:-3px -3px 6px rgba(0,0,0,.1);pointer-events:none}
@@ -212,7 +212,7 @@ body.inq.inpaper{background:#d7dbe6!important}
 .epplay{max-width:240px;margin:6px 0}
 .epnav{display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin-top:16px}
 .ephint{margin-top:10px;text-align:center;font-size:12px;font-weight:700;color:#4a4f66}
-:root[data-theme=dark] .ephint{color:#aeb4d0}
+:root[data-theme=dark] .ephint{color:#b6b6bd}
 @media(max-width:380px){.eopts{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.epflip,.epback{animation:none}.epflip{display:none}}
 
@@ -234,7 +234,7 @@ body.inq.inpaper{background:#d7dbe6!important}
 .eptm.warn{color:#fff;background:#d9302a;border-color:#d9302a;animation:eptmb 1s steps(2,end) infinite}
 @keyframes eptmb{50%{opacity:.55}}
 .epinfo{display:flex;justify-content:space-between;margin:0 2px 8px;font-size:12.5px;font-weight:700;color:#4a4f66}
-:root[data-theme=dark] .epinfo{color:#aeb4d0}
+:root[data-theme=dark] .epinfo{color:#b6b6bd}
 .epcover{min-height:auto;text-align:center;padding:26px 18px 22px}
 .epcv-k{font-size:13px;letter-spacing:.3em;color:#6a6650}
 .epcv-t{margin:6px 0 2px;font-size:20px;font-weight:900;letter-spacing:-.01em}.epcv-t small{font-size:13px;font-weight:700;color:#6a6650}
@@ -354,7 +354,7 @@ header .hin>.bar.list-only{margin-top:12px}
 #grid .card .ctop .say{width:20px}
 
 /* 단어장 카드(다크 모드): 배경과 구분되게 카드를 한 단계 밝게, 테두리·형광펜·글자를 또렷하게 */
-html[data-theme=dark] #grid .card{background:#242b52!important;border-color:rgba(255,255,255,.26)!important;box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
+html[data-theme=dark] #grid .card{background:#2c2c2e!important;border-color:rgba(255,255,255,.26)!important;box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
 html[data-theme=dark] #grid .card .w{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--lc,var(--nx)) 55%,transparent) 62%);color:#fff}
 html[data-theme=dark] #grid .card .m{color:#f2f4ff}
 html[data-theme=dark] #grid .card .lvb{color:#c9cfee!important}
@@ -385,10 +385,10 @@ body[data-view=exam] .tiles2 .t2:hover b,body[data-view=exam] .tiles2 .t2:focus-
 body[data-view=exam] .tiles2 .t2:hover small,body[data-view=exam] .tiles2 .t2:focus-visible small{color:var(--psub)}
 body[data-view=exam] .tiles2 .t2:hover::before{background:var(--pc);color:#fff}
 /* 다크 모드: 카드는 살짝 밝은 남색, 호버는 같은 색의 어두운 파스텔, 글자는 밝게 */
-html[data-theme=dark] body[data-view=exam] .tiles2 .t2{--pbg:color-mix(in srgb,var(--pc) 26%,#1c2142);--ptx:#fff;--psub:#e3e7ff;background:#1c2142!important;border-color:rgba(255,255,255,.2)!important}
+html[data-theme=dark] body[data-view=exam] .tiles2 .t2{--pbg:color-mix(in srgb,var(--pc) 26%,#2c2c2e);--ptx:#fff;--psub:#ececf0;background:#2c2c2e!important;border-color:rgba(255,255,255,.2)!important}
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2 b{color:#fff}
-html[data-theme=dark] body[data-view=exam] .tiles2 .t2 small{color:#c3c9ee}
-html[data-theme=dark] body[data-view=exam] .tiles2 .t2::before{background:color-mix(in srgb,var(--pc) 40%,#1c2142);color:#fff}
+html[data-theme=dark] body[data-view=exam] .tiles2 .t2 small{color:#c4c4cb}
+html[data-theme=dark] body[data-view=exam] .tiles2 .t2::before{background:color-mix(in srgb,var(--pc) 40%,#2c2c2e);color:#fff}
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover{background:var(--pbg)!important;border-color:var(--pc)!important}
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover small{color:#fff}
 html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover::before{background:var(--pc);color:#111}
@@ -406,11 +406,11 @@ html[data-theme=dark] body[data-view=exam] .tiles2 .t2:hover::before{background:
 .jmrow .jmbtn b{font-size:15px}.jmrow .jmbtn span{font-size:12.5px}
 .jmbtn.jm-save:hover,.jmbtn.jm-redo:hover,.jmbtn.jm-quit:hover{filter:brightness(.97)}
 .jmbtn.jm-keep:hover{filter:brightness(1.07)}
-html[data-theme=dark] .jmbtn.jm-save{background:color-mix(in srgb,#3aa6e8 24%,#1c2142);border-color:rgba(120,190,245,.5)}
+html[data-theme=dark] .jmbtn.jm-save{background:color-mix(in srgb,#3aa6e8 24%,#2c2c2e);border-color:rgba(120,190,245,.5)}
 html[data-theme=dark] .jmbtn.jm-save b{color:#fff}html[data-theme=dark] .jmbtn.jm-save span{color:#d6e9fa}
-html[data-theme=dark] .jmbtn.jm-redo{background:#1c2142;border-color:rgba(255,255,255,.22)}
-html[data-theme=dark] .jmbtn.jm-redo b{color:#fff}html[data-theme=dark] .jmbtn.jm-redo span{color:#c3c9ee}
-html[data-theme=dark] .jmbtn.jm-quit{background:color-mix(in srgb,#e5484d 26%,#1c2142);border-color:rgba(255,140,140,.5)}
+html[data-theme=dark] .jmbtn.jm-redo{background:#2c2c2e;border-color:rgba(255,255,255,.22)}
+html[data-theme=dark] .jmbtn.jm-redo b{color:#fff}html[data-theme=dark] .jmbtn.jm-redo span{color:#c4c4cb}
+html[data-theme=dark] .jmbtn.jm-quit{background:color-mix(in srgb,#e5484d 26%,#2c2c2e);border-color:rgba(255,140,140,.5)}
 html[data-theme=dark] .jmbtn.jm-quit b{color:#ffe1e1}html[data-theme=dark] .jmbtn.jm-quit span{color:#ffc4c4}
 @media(max-width:360px){.jmrow{grid-template-columns:1fr}}
 
@@ -513,13 +513,13 @@ html[data-theme=dark] .tr-tip{--tr-line:rgba(255,255,255,.26);box-shadow:0 12px 
 .tr-next{width:100%;margin:0;padding:10px}
 .tr-hint{font-size:13px;font-weight:700;color:var(--accent-text,var(--accent))}
 
-html[data-theme=dark] .tr-tip{background:#252c55}
-html[data-theme=dark] .tr-tip::after{background:#252c55}
+html[data-theme=dark] .tr-tip{background:#3a3a3c}
+html[data-theme=dark] .tr-tip::after{background:#3a3a3c}
 html[data-theme=dark] .tr-dots i{background:rgba(255,255,255,.25)}
 
 /* 말풍선이 어두워진 배경과 구분되게: 배경을 더 어둡게, 말풍선은 앱 강조색 테두리 + 은은한 빛 */
 .tr-sh{background:rgba(8,10,28,.74)}
 .tr-tip{border:2px solid var(--accent);--tr-line:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent),0 14px 34px rgba(0,0,0,.45)}
 .tr-tip.up::after{border-left-width:2px;border-top-width:2px}.tr-tip.down::after{border-right-width:2px;border-bottom-width:2px}
-html[data-theme=dark] .tr-tip{background:#323a72;--tr-line:#a9a9ff;border-color:#a9a9ff;box-shadow:0 0 0 4px rgba(169,169,255,.2),0 14px 34px rgba(0,0,0,.6)}
-html[data-theme=dark] .tr-tip::after{background:#323a72}
+html[data-theme=dark] .tr-tip{background:#3a3a3c;--tr-line:#8bb8ff;border-color:#8bb8ff;box-shadow:0 0 0 4px rgba(139,184,255,.2),0 14px 34px rgba(0,0,0,.6)}
+html[data-theme=dark] .tr-tip::after{background:#3a3a3c}

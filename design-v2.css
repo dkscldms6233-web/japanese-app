@@ -16,9 +16,9 @@
   --font:"JP Kanji","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
 }
 :root[data-theme=dark]{
-  --bg:#0d0f1e; --card:#161a2f; --text:#f1f3fb; --sub:#9aa3c4; --line:#262b47;
-  --accent:#8e8eff; --accent-dk:#6f6fe8; --accent-text:#a9a9ff; --accent-soft:#222550;
-  --chip:#1e2240; --onacc:#0d0f1e;
+  --bg:#1c1c1e; --card:#2c2c2e; --text:#f2f2f4; --sub:#a4a4ab; --line:#3d3d40;
+  --accent:#6aa6ff; --accent-dk:#4f8fe8; --accent-text:#8bb8ff; --accent-soft:#2b3547;
+  --chip:#363638; --onacc:#101012;
   --flame:#ff9a52; --gold:#ffd66b; --ok:#4fdc9c; --bad:#ff7e86;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
 }
@@ -91,7 +91,7 @@ input[type=search]{border-radius:14px;border:1px solid var(--line);background:va
 
 /* 오늘의 학습 (히어로) */
 .h2hero{position:relative;border-radius:24px;padding:20px 18px 18px;color:#fff;background:linear-gradient(140deg,#5b5bf0 0%,#7c5cff 55%,#9a6bff 100%);box-shadow:0 12px 32px rgba(91,91,240,.35);overflow:hidden}
-:root[data-theme=dark] .h2hero{background:linear-gradient(140deg,#3b3bb8 0%,#5a3fc0 60%,#6c45d1 100%);box-shadow:0 12px 32px rgba(0,0,0,.45)}
+:root[data-theme=dark] .h2hero{background:linear-gradient(140deg,#2f5fb5 0%,#3a74d4 60%,#4a86e6 100%);box-shadow:0 12px 32px rgba(0,0,0,.45)}
 .h2hero::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.10);pointer-events:none}
 .h2hrow{display:flex;align-items:center;gap:16px;margin-bottom:16px;position:relative}
 .h2rw{position:relative;width:92px;height:92px;flex:none}
@@ -104,7 +104,7 @@ input[type=search]{border-radius:14px;border:1px solid var(--line);background:va
 .h2ht h3{margin:2px 0 4px;font-size:25px;line-height:1.2;font-weight:800;color:#fff}
 .h2ht p{margin:0;font-size:14px;opacity:.9;line-height:1.4}
 .h2hero .cta{background:#fff!important;color:var(--accent-dk)!important;border-bottom:4px solid rgba(0,0,0,.18)!important;position:relative}
-:root[data-theme=dark] .h2hero .cta{color:#2a2a8f!important}
+:root[data-theme=dark] .h2hero .cta{color:#123a7a!important}
 .h2qs{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative}
 .h2qc{display:inline-flex;align-items:center;gap:6px;border:0;font:inherit;font-size:13.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.18);padding:7px 12px;border-radius:999px;cursor:pointer}
 .h2qc i{font-style:normal;font-size:12.5px;font-weight:800;background:rgba(255,255,255,.25);border-radius:999px;padding:1px 7px}
@@ -155,7 +155,7 @@ body[data-view=home]::before,body[data-view=home]::after{display:none!important}
 .h2t small{display:block;font-size:13.5px;color:var(--sub);margin-top:2px;line-height:1.35}
 .c1{background:#5b5bf0}.c2{background:#ff8a3d}.c3{background:#1fb673}.c4{background:#2aa3f0}
 .c5{background:#9b5cf6}.c6{background:#ef5b8b}.c7{background:#14b8a6}.c8{background:#f0525a}
-:root[data-theme=dark] .h2ti{color:#0d0f1e}
+:root[data-theme=dark] .h2ti{color:#101012}
 
 /* 오늘의 문장 */
 .h2sent{display:block;width:100%;text-align:left;font:inherit;color:var(--text);cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow)}
@@ -259,7 +259,7 @@ body[data-view=home]::before,body[data-view=home]::after{display:none!important}
 @media(prefers-reduced-motion:reduce){.wdlg .wmk,.wdlg .wc,.wdlg .wconf i{animation:none!important}.wdlg .wcin{transition:none}}
 
 /* 다크 모드 보정 */
-:root[data-theme=dark] .h2d i svg{stroke:#0d0f1e}
+:root[data-theme=dark] .h2d i svg{stroke:#101012}
 :root[data-theme=dark] .h2flame.on{background:#2a1d14}
 
 /* 작은 화면 */
@@ -441,7 +441,7 @@ body:has(#quizView .gbox) #quizView .gbox .pill:not(.on) small{color:var(--text)
 
 /* ===== 게임 화면 깔끔하게 (v3): 구름·두꺼운 버튼·둥근 글꼴 걷어내고 앱 본문과 같은 글꼴·카드 ===== */
 html body:has(#quizView .gbox){background:linear-gradient(180deg,#eef1fb 0,#f6f7fc 60%,#f6f7fc 100%) fixed!important}
-html[data-theme=dark] body:has(#quizView .gbox){background:linear-gradient(180deg,#12152b 0,#0d0f1e 100%) fixed!important}
+html[data-theme=dark] body:has(#quizView .gbox){background:linear-gradient(180deg,#262628 0,#1c1c1e 100%) fixed!important}
 html body:has(#quizView .gbox)::after{display:none!important;content:none!important;background:none!important}
 html body:has(#quizView .gbox) #quizView .gbox{--gfont:var(--font);font-family:var(--font)!important;background:transparent!important;box-shadow:none!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:6px 2px 18px!important}
 html body:has(#quizView .gbox) #quizView .gbox *{font-family:var(--font)!important;font-weight:600}
@@ -708,22 +708,22 @@ html body .gc .best{margin-top:0;font-size:12px;font-weight:700;color:var(--acce
 :root:not([data-theme=dark]) .h2ti.c4{background:#1a82cc}
 :root:not([data-theme=dark]) .h2ti.c7{background:#0d8f84}
 html body .h2flame .fln{color:#c2410c!important}
-html[data-theme=dark] body .pill.on{color:#0d0f1e!important}
+html[data-theme=dark] body .pill.on{color:#101012!important}
 /* 급수 선택 버튼: 글자 대비 4.5 이상 */
 html body .jlv .pill.on[data-l]{color:#fff!important}
 html:not([data-theme=dark]) body .jlv .pill.on[data-l=N5]{background:#2a7a4d!important}
 html:not([data-theme=dark]) body .jlv .pill.on[data-l=N4]{background:#2573b8!important}
 html:not([data-theme=dark]) body .jlv .pill.on[data-l=N3]{background:#946700!important}
 html:not([data-theme=dark]) body .jlv .pill.on[data-l=N2]{background:#c2540e!important}
-html[data-theme=dark] body .jlv .pill.on[data-l]{color:#0d0f1e!important}
+html[data-theme=dark] body .jlv .pill.on[data-l]{color:#101012!important}
 
 /* 학습 길 단원 띠·시험 태그: 글자 대비 보강 */
 html:not([data-theme=dark]) body .puh[data-lv=N5]{--lc:#2a7a4d}
 html:not([data-theme=dark]) body .puh[data-lv=N4]{--lc:#2573b8}
 html:not([data-theme=dark]) body .puh[data-lv=N3]{--lc:#946700}
 html:not([data-theme=dark]) body .puh[data-lv=N2]{--lc:#c2540e}
-html[data-theme=dark] body .puh b,html[data-theme=dark] body .puh small,html[data-theme=dark] body .puh .pun{color:#0d0f1e!important}
+html[data-theme=dark] body .puh b,html[data-theme=dark] body .puh small,html[data-theme=dark] body .puh .pun{color:#101012!important}
 html[data-theme=dark] body .puh .pun{background:rgba(13,15,30,.16)!important}
 html[data-theme=dark] body .puh .pbar{background:rgba(13,15,30,.2)}
-html[data-theme=dark] body .puh .pbar i{background:#0d0f1e}
+html[data-theme=dark] body .puh .pbar i{background:#101012}
 html:not([data-theme=dark]) body .jtag{color:#4338ca}
