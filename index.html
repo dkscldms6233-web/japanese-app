@@ -1045,7 +1045,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=95">
+<link rel="stylesheet" href="polish.css?v=96">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=4"></script>
@@ -3619,9 +3619,9 @@ function openProf(){
   const hero=window.PATH?PATH.profileHtml():"";
   $("profDlg").innerHTML=`<div class="dh"><h2 style="margin:0">내 계정</h2><button class="x" data-close aria-label="닫기">×</button></div>
   <div class="db pfdb">${hero}${acct}
-   <div class="pfbtns">${window.PATH?`<button class="pill on" data-pa="shop">참새 꾸미기</button>`:""}<button class="pill ${window.PATH?"":"on"}" data-pa="stats">${ic("chart")} 학습 기록</button></div>
+   <div class="pfbtns">${window.PATH?`<button class="pill" data-pa="shop">참새 꾸미기</button>`:""}<button class="pill" data-pa="stats">${ic("chart")} 학습 기록</button></div>
    ${p.cloud?`<button class="pfout" data-pa="logout">로그아웃</button><button class="pfout pfdel" data-pa="delacct">계정 삭제</button>`
-     :`<div class="qbtns" style="margin:0"><button class="pill" data-pa="login">로그인</button><button class="pill" data-pa="signup">회원가입</button></div>`}
+     :`<div class="pflogin"><button class="pill on" data-pa="login">로그인</button><button class="pill" data-pa="signup">회원가입</button></div>`}
    ${!p.cloud&&others.length?`<p class="sub" style="margin-top:14px">이 기기의 다른 프로필</p>${others.map(x=>`<div class="prow"><button class="pill" data-pa="use" data-id="${x.id}">${ic("user")} ${E(profName(x))}</button></div>`).join("")}`:""}<p class="sub" style="text-align:center;margin:16px 0 0;font-size:12px"><a href="privacy.html" target="_blank" rel="noopener" style="color:var(--sub)">개인정보처리방침</a></p></div>`;
   if(!$("profDlg").open) $("profDlg").showModal();
 }
@@ -3673,7 +3673,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="community.js?v=24"></script>
 <script src="review.js?v=10"></script>
 <script src="grammar.js?v=12"></script>
-<script src="settings.js?v=9"></script>
+<script src="settings.js?v=10"></script>
 <script src="mrank.js?v=4"></script>
 <script src="plus.js?v=35"></script>
 <script>

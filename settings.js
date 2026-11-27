@@ -16,19 +16,22 @@ function render(){
   const d=dlg(), P=A().prefs(), my=A().myLv(), prof=A().curProfile(), th=A().theme();
   const lvs=["전체","N5","N4","N3","N2","N1"].map(l=>{ const on=l==="전체"?!my.length:my.includes(l); return `<button type="button" class="pill sm ${on?"on":""}" data-st="lv" data-v="${l}" aria-pressed="${on}">${l}</button>`; }).join("");
   d.innerHTML=`<div class="dh"><h2 style="margin:0">설정</h2><button class="x" data-stx aria-label="닫기">×</button></div><div class="db stdb">
+   <h3 class="sth">화면</h3><div class="stcard">
    ${row("화면 모드","",seg("theme",[["auto","자동"],["light","라이트"],["dark","다크"]],th))}
    ${row("글자 크기","",seg("scale",SCALES.map(x=>[x[0],x[1]]),scaleOf()[0]))}
    ${row("후리가나","한자 위의 읽기",`<label class="stsw"><input type="checkbox" data-st="furi" ${P.nofuri?"":"checked"}><span>보이기</span></label>`)}
+   </div><h3 class="sth">학습</h3><div class="stcard">
    ${row("하루 목표",null,seg("goal",[[10,"10문제"],[20,"20문제"],[30,"30문제"]],A().goalN()))}
    ${row("내 급수","홈·퀴즈의 기본 범위",`<div class="stchips">${lvs}</div>`)}
    ${row("게임 소리","배경음악과 효과음",`<label class="stsw"><input type="checkbox" data-st="sound" ${P.sound===false?"":"checked"}><span>켜기</span></label>`)}
-   <h3 class="sth">계정</h3>
-   ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장됩니다",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}
+   </div>
+   <h3 class="sth">계정</h3><div class="stcard">
+   ${row(prof.cloud?E(prof.name):"게스트",prof.cloud?"로그인됨":"기록이 이 기기에만 저장됩니다",`<button type="button" class="pill" data-st="acct">${prof.cloud?"계정 열기":"로그인·가입"}</button>`)}</div>
    <details class="stmore"><summary>더 보기 <small>도움 · 기록 지우기</small></summary>
-   <h3 class="sth">도움</h3>
+   <h3 class="sth">도움</h3><div class="stcard">
    ${row("앱 둘러보기","주요 기능을 한눈에 보기",`<button type="button" class="pill" data-st="tour">보기</button>`)}
    ${row("친구 초대하기","앱을 아직 안 쓰는 친구에게 링크 보내기",`<button type="button" class="pill" data-st="invite">초대</button>`)}
-   ${row("문의하기","오류·제안을 보내 주세요",`<button type="button" class="pill" data-st="inq">문의</button>`)}
+   ${row("문의하기","오류·제안을 보내 주세요",`<button type="button" class="pill" data-st="inq">문의</button>`)}</div>
    <h3 class="sth">내 기록</h3>
    <div class="stbtns"><button type="button" class="pill dng" data-st="reset">학습 기록 지우기</button></div>
    </details>
