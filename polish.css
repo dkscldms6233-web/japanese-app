@@ -413,3 +413,14 @@ html[data-theme=dark] .jmbtn.jm-redo b{color:#fff}html[data-theme=dark] .jmbtn.j
 html[data-theme=dark] .jmbtn.jm-quit{background:color-mix(in srgb,#e5484d 26%,#1c2142);border-color:rgba(255,140,140,.5)}
 html[data-theme=dark] .jmbtn.jm-quit b{color:#ffe1e1}html[data-theme=dark] .jmbtn.jm-quit span{color:#ffc4c4}
 @media(max-width:360px){.jmrow{grid-template-columns:1fr}}
+
+/* 시험 중간 메뉴: 글자는 줄이고 아이콘으로 한눈에 */
+.jmbtn[data-jq]{display:flex;align-items:center;gap:12px;padding:15px 16px}
+.jmbtn[data-jq] .ic{width:24px;height:24px;flex:none;stroke:currentColor}
+.jmbtn[data-jq] b{margin:0;font-size:16.5px}.jmbtn[data-jq] span{margin-top:1px;font-size:12.5px}
+.jmbtn.jm-keep{padding:18px 18px;justify-content:center}.jmbtn.jm-keep b{font-size:19px}
+.jmbtn.jm-keep .ic{color:var(--onacc,#fff)}
+.jmbtn.jm-save .ic{color:#0b4f82}.jmbtn.jm-quit .ic{color:#a32323}.jmbtn.jm-redo .ic{color:var(--text)}
+.jmrow .jmbtn[data-jq]{padding:14px 12px;gap:9px}.jmrow .jmbtn[data-jq] b{font-size:15px}
+.jmbtn.jm-redo{justify-content:center}
+html[data-theme=dark] .jmbtn.jm-save .ic{color:#d6e9fa}html[data-theme=dark] .jmbtn.jm-quit .ic{color:#ffd0d0}html[data-theme=dark] .jmbtn.jm-redo .ic{color:#fff}
