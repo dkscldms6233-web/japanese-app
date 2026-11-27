@@ -226,7 +226,7 @@ body.inq.inpaper{background:#d7dbe6!important}
 .ewks{display:flex;flex-wrap:wrap;gap:6px}.ewk{padding:5px 10px;border-radius:999px;background:var(--accent-soft);font-weight:700;font-size:14px}.ewk small{color:var(--sub);font-weight:600}
 
 /* 배경: 연한 크림 아이보리 (라이트 모드만) */
-:root:not([data-theme=dark]){--bg:#f7f7f8;--line:#e6e6ea;--chip:#efeff2}
+:root:not([data-theme=dark]){--bg:#ffffff;--line:#e6e6ea;--chip:#efeff2}
 .pcell:nth-child(4) .pbub{animation-delay:-1.7s;animation-duration:5.2s}.pcell:nth-child(5) .pbub{animation-delay:-2.6s;animation-duration:4.6s}.pcell:nth-child(6) .pbub{animation-delay:-3.9s;animation-duration:5.6s}
 
 /* 시험지 모드: 표지·시간표·교시 안내·타이머 */
