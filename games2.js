@@ -11,6 +11,20 @@ ST.textContent=`.wd-hint{text-align:center;margin:6px 0 10px}.wd-hint b{font-siz
 .wd-tabs{display:flex;gap:6px;justify-content:center;margin:8px 0}.wd-tabs .pill{padding:4px 12px}
 .wd-kb{display:grid;gap:4px;margin:6px auto;max-width:420px}.wd-k{border:1px solid var(--line);background:var(--card);border-radius:8px;height:38px;font:inherit;font-size:17px;font-weight:700;color:var(--text);cursor:pointer;padding:0}
 .wd-k.ok{background:#4c9a62;color:#fff;border-color:#4c9a62}.wd-k.pos{background:#d8a83c;color:#fff;border-color:#d8a83c}.wd-k.no{background:#8a8d93;color:#fff;border-color:#8a8d93}.wd-k.sp{visibility:hidden}
+.fkb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:420px;box-sizing:border-box;padding:0 4px;margin:6px auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.fk{position:relative;height:50px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:21px;font-weight:700;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer;padding:0}
+.fk.fn{background:var(--chip);font-size:16px}
+.fk .fh{position:absolute;font-size:10px;font-weight:600;opacity:.5;font-style:normal;line-height:1}
+.fk .fh.l{left:6px;top:50%;transform:translateY(-50%)}.fk .fh.r{right:6px;top:50%;transform:translateY(-50%)}.fk .fh.u{top:4px;left:50%;transform:translateX(-50%)}.fk .fh.d{bottom:4px;left:50%;transform:translateX(-50%)}
+.fk .ok,.fk .pos,.fk .no{border-radius:4px;padding:0 2px;color:#fff;opacity:1}.fk .ok{background:#4c9a62}.fk .pos{background:#d8a83c}.fk .no{background:#8a8d93}
+.fk .fp{display:none;position:absolute;width:100%;height:100%;z-index:30;align-items:center;justify-content:center;border-radius:12px;background:var(--card);border:2px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.25);font-size:24px;font-weight:800;color:var(--text);pointer-events:none}
+.fk.on .fp{display:flex}.fk .fp.c{left:0;top:-110%;width:100%;height:100%;display:none}
+.fk.on .fp.c{display:flex;top:-115%}
+.fk.on .fp.l{left:-105%;top:0}.fk.on .fp.r{left:105%;top:0}.fk.on .fp.u{left:0;top:-105%}.fk.on .fp.d{left:0;top:105%}
+.fk.on .fp.l,.fk.on .fp.r,.fk.on .fp.u,.fk.on .fp.d{background:var(--chip)}
+.fk.on .fp.sel{background:var(--accent);color:var(--onacc,#fff);border-color:var(--accent)}
+.fk.on{z-index:31;background:var(--accent-soft)}
+.fkh{text-align:center;font-size:12px;color:var(--sub);margin:2px 0 0}
 .wd-act{display:flex;gap:8px;justify-content:center;margin:8px 0}.wd-act .pill{min-width:92px;justify-content:center}
 .sh-chain{display:flex;flex-direction:column;gap:6px;margin:10px 0}.sh-w{border-radius:14px;padding:6px 14px;max-width:85%}.sh-w small{display:block;opacity:.75;font-size:12px}
 .sh-w.com{background:var(--chip);align-self:flex-start}.sh-w.me{background:var(--accent-soft);align-self:flex-end;text-align:right}
@@ -37,20 +51,45 @@ const KB={
 };
 
 /* 입력 방식: 기본은 내 핸드폰의 일본어 키보드. 일본어 키보드가 없으면 화면 키보드로 바꿀 수 있어요 (워들·しりとり 공통, 선택은 기억해요) */
-const natOn=()=>!(typeof prefs!=="undefined"&&prefs.gNative===false);
+const natOn=()=>typeof prefs!=="undefined"&&prefs.gNative===true;
 const setNat=v=>{ prefs.gNative=!!v; LS.set("jp-prefs",prefs); };
 const toKata=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
+/* 일본어 플릭(밀어서 입력) 글자판: 톡 누르면 あ단, 누른 채 왼쪽 い·위 う·오른쪽 え·아래 お. 폰의 일본어 키보드와 같은 방식이에요 */
+const FLICK=[["あ","い","う","え","お"],["か","き","く","け","こ"],["さ","し","す","せ","そ"],["た","ち","つ","て","と"],["な","に","ぬ","ね","の"],["は","ひ","ふ","へ","ほ"],["ま","み","む","め","も"],["や","","ゆ","","よ"],["ら","り","る","れ","ろ"],["わ","を","ん","ー",""]];
+const FCYC=["かが","きぎ","くぐ","けげ","こご","さざ","しじ","すず","せぜ","そぞ","ただ","ちぢ","つっづ","てで","とど","はばぱ","ひびぴ","ふぶぷ","へべぺ","ほぼぽ","やゃ","ゆゅ","よょ","あぁ","いぃ","うぅ","えぇ","おぉ"];
+/* 마지막 글자를 ゛ ゜ 작은 글자로 바꿔요 (か→が, は→ば→ぱ, つ→っ→づ, や→ゃ …) */
+function kbMod(str,kata){ if(!str) return str; const last=str.slice(-1).replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); const c=FCYC.find(x=>x.includes(last)); if(!c) return str; const n=c[(c.indexOf(last)+1)%c.length]; return str.slice(0,-1)+(kata?toKata(n):n); }
+const FKEYS=[0,1,2,3,4,5,6,7,8];
 function kbHTML(tab,state,attr,kata){
-  const rows=KB[tab]||[];
-  const cv=c=>kata?toKata(c):c;
-  const keyBtn=c=>c?`<button class="wd-k ${state[c]||""}" ${attr}="key" data-c="${cv(c)}">${cv(c)}</button>`:`<span class="wd-k sp"></span>`;
-  return rows.map(r=>`<div class="wd-row" style="grid-template-columns:repeat(${r.length},1fr)">${r.map(keyBtn).join("")}</div>`).join("");
+  const cv=c=>kata?toKata(c):c, st=c=>state[c]||"";
+  const pos=["c","l","u","r","d"], hpos=[null,"l","u","r","d"];
+  const key=(i)=>{ const f=FLICK[i]; const hs=f.map((c,k)=>c&&k?`<i class="fh ${hpos[k]}"><span class="${st(c)}">${cv(c)}</span></i>`:"").join(""); const ps=f.map((c,k)=>c?`<span class="fp ${pos[k]}" data-i="${k}">${cv(c)}</span>`:"").join("");
+    return `<button type="button" class="fk" data-fi="${i}"><span class="${st(f[0])}">${cv(f[0])}</span>${hs}${ps}</button>`; };
+  const fn=(lab,act)=>`<button type="button" class="fk fn" data-fa="${act}">${lab}</button>`;
+  return `<div class="fkb" data-kba="${attr}" data-kata="${kata?1:0}">${[0,1,2,3,4,5,6,7,8].map(key).join("")}${fn(kata?"゛゜小":"゛゜小","mod")}${key(9)}${fn("⌫","del")}</div>
+  ${(()=>{ try{ return LS.get("jp-fk-used",0)?"":`<p class="fkh">글자를 누른 채 <b>왼쪽·위·오른쪽·아래</b>로 밀면 い·う·え·お가 입력돼요</p>`; }catch(e){ return ""; } })()}`;
 }
+/* 플릭 입력: 눌렀을 때 주변에 후보가 뜨고, 밀어서 손을 떼면 그 글자가 입력돼요 */
+(function(){
+  let cur=null;
+  const $q=()=>document.getElementById("quizView");
+  const fire=(attr,act,c)=>{ const q=$q(); if(!q) return; const b=document.createElement("button"); b.setAttribute(attr,act); if(c!=null) b.dataset.c=c; q.appendChild(b); b.click(); b.remove(); };
+  const dirOf=(dx,dy)=>{ const t=16; if(Math.hypot(dx,dy)<t) return 0; return Math.abs(dx)>Math.abs(dy)?(dx<0?1:3):(dy<0?2:4); };
+  const mark=()=>{ if(!cur) return; const f=cur.f, d=f[cur.d]?cur.d:0; cur.el.querySelectorAll(".fp").forEach(p=>p.classList.toggle("sel",+p.dataset.i===d)); };
+  document.addEventListener("pointerdown",e=>{ const k=e.target.closest&&e.target.closest(".fk"); if(!k) return; const box=k.closest(".fkb"); if(!box) return; e.preventDefault();
+    const attr=box.dataset.kba, kata=box.dataset.kata==="1";
+    if(k.dataset.fa){ try{ navigator.vibrate&&navigator.vibrate(6); }catch(x){} fire(attr,k.dataset.fa==="mod"?"mod":"del"); try{ LS.set("jp-fk-used",1); }catch(x){} return; }
+    const f=FLICK[+k.dataset.fi]; cur={el:k,attr,kata,f,x:e.clientX,y:e.clientY,d:0}; k.classList.add("on"); try{ k.setPointerCapture(e.pointerId); }catch(x){} mark(); try{ navigator.vibrate&&navigator.vibrate(5); }catch(x){} });
+  document.addEventListener("pointermove",e=>{ if(!cur) return; const d=dirOf(e.clientX-cur.x,e.clientY-cur.y); if(d!==cur.d){ cur.d=d; mark(); } });
+  const end=(e,ok)=>{ if(!cur) return; const c=cur; cur=null; c.el.classList.remove("on"); c.el.querySelectorAll(".fp").forEach(p=>p.classList.remove("sel")); if(!ok) return; const ch=c.f[c.d]||c.f[0]; if(!ch) return; try{ LS.set("jp-fk-used",1); }catch(x){} fire(c.attr,"key",c.kata?toKata(ch):ch); };
+  document.addEventListener("pointerup",e=>end(e,true)); document.addEventListener("pointercancel",e=>end(e,false));
+  document.addEventListener("contextmenu",e=>{ if(e.target.closest&&e.target.closest(".fkb")) e.preventDefault(); });
+})();
 /* 타자판을 화면 아래에 고정하고, 그만큼 위쪽 내용이 가리지 않게 여백을 줘요 */
 function dockPad(){ const d=document.querySelector(".wd-dock"); if(d&&d.parentElement) d.parentElement.style.paddingBottom=d.classList.contains("nat")?"":(d.offsetHeight+14)+"px";
   /* 지금 쓰는 줄이 고정 타자판에 가려지면 위로 올려 줘요 */
   if(d&&!d.classList.contains("nat")){ const c=document.querySelector(".wd-c.cur"), top=d.getBoundingClientRect().top; if(c){ const b=c.getBoundingClientRect().bottom; if(b>top-12) window.scrollBy(0,b-top+16); } } }
-const kbTabs=(tab,attr,kata)=>`<div class="wd-tabs">${[["basic",kata?"ア〜ワ":"あ〜わ"],["dak","゛ ゜"],["etc","ん·작은 글자"]].map(([k,l])=>`<button class="pill sm ${tab===k?"on":""}" ${attr}="tab" data-t="${k}">${l}</button>`).join("")}</div>`;
+const kbTabs=()=>"";
 let WDK=false; // 마지막에 고른 문자: false=히라가나, true=가타카나
 function wdPool(kata){
   const re=kata?/^[ァ-ヶー]+$/:/^[ぁ-ゖー]+$/;
@@ -331,6 +370,7 @@ document.addEventListener("click",e=>{
     else if(G&&G.type==="wordle"&&!G.over){
       if(a==="key"){ try{ navigator.vibrate&&navigator.vibrate(6); }catch(e){} if(G.cur.length<G.len){ G.cur+=wd.dataset.c; wdRender(); } }
       else if(a==="del"){ G.cur=G.cur.slice(0,-1); wdRender(); }
+      else if(a==="mod"){ G.cur=kbMod(G.cur,G.kata); wdRender(); }
       else if(a==="native"){ setNat(!natOn()); wdRender(); }
       else if(a==="hide"){ G.kbHide=true; wdRender(); }
       else if(a==="show"){ G.kbHide=false; wdRender(); }
@@ -342,6 +382,7 @@ document.addEventListener("click",e=>{
   const sk=e.target.closest("[data-sk]"); if(sk){ const a=sk.dataset.sk; if(!G||G.type!=="shiri"||G.over) return;
     if(a==="key"){ try{ navigator.vibrate&&navigator.vibrate(6); }catch(e){} if(G.cur.length<9){ G.cur+=sk.dataset.c; G.msg=""; shRender(); } }
     else if(a==="del"){ if(G.cur.length>1){ G.cur=G.cur.slice(0,-1); G.msg=""; shRender(); } }
+    else if(a==="mod"){ if(G.cur.length>1){ G.cur=G.cur[0]+kbMod(G.cur.slice(1),false); G.msg=""; shRender(); } }
     else if(a==="native"){ setNat(!natOn()); shRender(); }
     else if(a==="hide"){ G.kbHide=true; shRender(); }
     else if(a==="show"){ G.kbHide=false; shRender(); }
