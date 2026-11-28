@@ -1045,12 +1045,16 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more3.js?v=4"></script>
 <script src="jlpt-more4.js?v=4"></script>
 <script src="jlpt-n3pdf.js?v=3"></script>
+<script src="jlpt-ctx3.js?v=1"></script>
+<script src="jlpt-more5.js?v=1"></script>
+<script src="jlpt-listen2.js?v=1"></script>
+<script src="jlpt-reading2.js?v=1"></script>
 <script src="funny-audio.js?v=5"></script>
 <script src="exsay-audio.js?v=3" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=193">
+<link rel="stylesheet" href="polish.css?v=194">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2437,20 +2441,35 @@ function jWrite(lv,n){
     return {sec:"vocab",kind:"표기",prompt:"밑줄 친 말을 한자로 쓰면?",stem:`<div class="jq">${sent}</div>`,opts:m.o.map(E),a:m.a,exp:`${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)} · ${E(w.yomi)} = ${E(w.text)} (${E(w.ko)})`,w};
   }).filter(Boolean);
 }
+/* 같은 문제가 되풀이되지 않게: 아직 안 푼 문제부터 내고, 다 풀면 처음부터 다시 섞어요 (급수·유형별로 기록) */
+function pickFresh(arr,n,bucket,keyFn,sh){
+  sh=sh||pshuffle; if(!n||!arr.length) return [];
+  const sm=LS.get("jp-eseen",{}); let seen=new Set(sm[bucket]||[]);
+  const pool=arr.filter(x=>!seen.has(keyFn(x))); let pick;
+  if(pool.length>=n) pick=sh(pool).slice(0,n);
+  else { const rest=sh(arr.filter(x=>seen.has(keyFn(x)))).slice(0,n-pool.length); pick=pool.concat(rest); seen=new Set(rest.map(keyFn)); }
+  pick.forEach(x=>seen.add(keyFn(x)));
+  sm[bucket]=[...seen].slice(-1500); try{ LS.set("jp-eseen",sm); }catch(e){}
+  return pick;
+}
 /* 용법: 제시된 말을 바르게 쓴 문장 고르기 / 단어 형성: 접두·접미어 고르기 (직접 만든 문제 은행) */
 function jUsage(lv,n){
-  return pshuffle((window.JLPT_USAGE||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+  return pickFresh((window.JLPT_USAGE||[]).filter(x=>x.lv===lv),n,"u"+lv,x=>x.w+x.o[0]).map(b=>{ const m=jShuf(b.o,0);
     return {sec:"vocab",kind:"용법",prompt:"다음 말의 사용법으로 가장 알맞은 것은?",stem:`<div class="qw s" style="margin:12px 0"><u>${R(b.w)}</u></div>`,opts:m.o.map(R),a:m.a,exp:`<b>${R(b.w)}</b><br>${R(b.o[0])}<br>${R(b.e||"")}`}; });
 }
 function jWordForm(lv,n){
-  return shuffle((window.JLPT_WF||[]).filter(x=>x.lv===lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,0);
+  return pickFresh((window.JLPT_WF||[]).filter(x=>x.lv===lv),n,"w"+lv,x=>x.q,shuffle).map(b=>{ const m=jShuf(b.o,0);
     return {sec:"vocab",kind:"단어 형성",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(b.q.replace("（　）",b.o[0]))}<br>${R(b.e||"")}`}; });
 }
 function jContextAuto(lv,n){
   const pool=jWords(lv).filter(w=>w.ex&&w.ex[0]&&["名詞","副詞","い形容詞","な形容詞"].includes(w.pos)&&w.text.length>=2&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=16);
   return wshuffle(pool).slice(0,n).map(w=>{
     const sj=plain(w.ex[0].ja);
-    const same=shuffle(jWords(lv).filter(x=>x.pos===w.pos&&x.text!==w.text&&!sj.includes(x.text))).slice(0,3);
+    /* 보기는 정답과 비슷한 말(같은 한자·같은 글자로 시작/끝나는 말·비슷한 길이)을 먼저 고르고, 뜻이 같은 말은 빼요 */
+    const gl=s=>String(s||"").split(/[·,\/\(\)\s]+/).filter(t=>t.length>=2), wg=new Set(gl(w.ko)), isK=c=>/[\u4e00-\u9fff]/.test(c);
+    const cand=jWords(lv).filter(x=>x.pos===w.pos&&x.text!==w.text&&!sj.includes(x.text)&&!gl(x.ko).some(t=>wg.has(t))).map(x=>{ let sc=Math.random();
+      sc+=4*[...x.text].filter(c=>isK(c)&&w.text.includes(c)).length; if(x.text[0]===w.text[0]) sc+=2; if(x.text.at(-1)===w.text.at(-1)) sc+=2; if(x.text.length===w.text.length) sc+=1; return {x,sc}; }).sort((a,b)=>b.sc-a.sc);
+    const same=cand.slice(0,3).map(c=>c.x);
     if(same.length<3) return null;
     const m=jShuf([w.f,...same.map(x=>x.f)],0);
     return {sec:"vocab",kind:"문맥 규정",prompt:"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(w.ex[0].ja.replace(jRe(w),"（　　）"))}</div>`,opts:m.o.map(R),a:m.a,exp:`${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)} · ${E(w.text)} = ${E(w.ko)}`,w};
@@ -2466,14 +2485,14 @@ function jContext(lv,n){
   return own.length>=n?own:own.concat(jContextAuto(lv,n-own.length));
 }
 function jSyn(lv,n){
-  return pshuffle(jBank(window.JLPT_SYN||[],lv)).slice(0,n).map(b=>{ const m=jShuf(b.o,b.a);
+  return pickFresh(jBank(window.JLPT_SYN||[],lv),n,"s"+lv,x=>x.s).map(b=>{ const m=jShuf(b.o,b.a);
     return {sec:"vocab",kind:"유의 표현",prompt:"밑줄 친 말과 뜻이 가장 가까운 것은?",stem:`<div class="jq">${R(b.s).replace(/\{([^}]*)\}/g,"<u>$1</u>")}</div>`,opts:m.o.map(R),a:m.a,exp:E(b.e||"")}; });
 }
 function jGramItem(b){ const m=jShuf(b.o,b.a), sort=b.k==="sort";
   return {sec:"gram",kind:sort?"문장 만들기":"문법 형식",prompt:sort?"★에 들어갈 알맞은 말은?":"（　）에 들어갈 알맞은 말은?",stem:`<div class="jq">${R(b.q)}</div>`,opts:m.o.map(R),a:m.a,exp:R(b.e||"")}; }
-function jGram(lv,n){ return pshuffle(jBank(window.JLPT_GRAM||[],lv)).slice(0,n).map(jGramItem); }
+function jGram(lv,n){ return pickFresh(jBank(window.JLPT_GRAM||[],lv),n,"g"+lv,x=>x.q).map(jGramItem); }
 /* 전체 풀기: 문법 형식 nf개 + 문장 만들기(★) ns개 */
-function jGramFull(lv,nf,ns){ const bank=jBank(window.JLPT_GRAM||[],lv); return [...pshuffle(bank.filter(b=>b.k!=="sort")).slice(0,nf),...pshuffle(bank.filter(b=>b.k==="sort")).slice(0,ns)].map(jGramItem); }
+function jGramFull(lv,nf,ns){ const bank=jBank(window.JLPT_GRAM||[],lv); return [...pickFresh(bank.filter(b=>b.k!=="sort"),nf,"gf"+lv,x=>x.q),...pickFresh(bank.filter(b=>b.k==="sort"),ns,"gs"+lv,x=>x.q)].map(jGramItem); }
 function jRead(lv,n){
   const arts=(window.ARTICLES||[]).filter(a=>a.body&&a.body.length>=3);
   const qOf=a=>(a.qs&&a.qs.length?a.qs:(window.JLPT_READQ||{})[a.id])||null;
@@ -2548,14 +2567,41 @@ function jSpeakDlg(lines,meta){
   };
   next();
 }
-function jListen(lv,n){
-  const sc=shuffle(jBank(window.JLPT_LISTEN||[],lv)); /* 한 시험에 같은 지문은 한 번만: 지문마다 문항 1개 */
-  return sc.slice(0,n).map(d=>[d,shuffle(d.qs)[0]]).map(([d,q])=>{
-    const m=jShuf(q.o,0), news=d.type==="news";
-    const script=`<div class="jscript"><b>스크립트</b>${d.lines.map(([w,t])=>`<div>${news?"":`<span class="jwho">${w==="F"?"여":"남"}</span> `}${R(t)}</div>`).join("")}</div>`;
-    return {sec:"listen",kind:news?"뉴스 듣기":"대화 듣기",prompt:R(q.q),ph:1,dlg:d.lines,dmeta:{lv:d.lv,news},script,opts:m.o.map(R),a:m.a,exp:E(q.e||"")};
-  });
+/* 청해: 실제 JLPT처럼 유형 순서(과제 이해 → 포인트 이해 → 개요 이해 → 발화 표현 → 즉시 응답)와 문항 수를 맞춰요.
+ * N3 기준 6·6·3·4·9문항(총 28). 같은 문제가 되풀이되지 않게 안 푼 것부터 냅니다. */
+const LCAT_PLAN={N5:[["task",7],["point",6],["hatsu",5],["sokuji",6]],N4:[["task",8],["point",7],["hatsu",5],["sokuji",8]],N3:[["task",6],["point",6],["gaiyo",3],["hatsu",4],["sokuji",9]],N2:[["task",5],["point",6],["gaiyo",5],["sokuji",12]],N1:[["task",6],["point",7],["gaiyo",6],["sokuji",14]]};
+const LCAT_NAME={task:"과제 이해",point:"포인트 이해",gaiyo:"개요 이해",hatsu:"발화 표현",sokuji:"즉시 응답"};
+const LCAT_INTRO={task:"먼저 질문을 들어요. 그다음 대화를 듣고, 해야 할 일로 알맞은 것을 하나 골라요.",point:"먼저 질문을 듣고, 선택지를 읽어 볼 시간이 있어요. 그다음 대화를 듣고 이유·핵심으로 알맞은 것을 골라요.",gaiyo:"질문 없이 이야기를 먼저 듣고, 전체 내용으로 알맞은 것을 골라요. (이 앱에서는 질문이 화면에 함께 보여요)",hatsu:"상황을 읽고, 화살표 사람이 할 말로 알맞은 것을 골라요. (실제 시험은 그림이에요)",sokuji:"짧은 말을 듣고, 알맞은 대답을 골라요."};
+function lcatOf(d,q){
+  if(d.cat) return d.cat;
+  const Q=plain(q.q), ls=d.lines;
+  if(d.type==="news") return "gaiyo";
+  if(ls.length===1){ const t=plain(ls[0][1]); return t.length<60?"sokuji":"gaiyo"; }
+  if(/どうして|なぜ|理由|何が|どんな|どのよう|何について|について/.test(Q)) return "point";
+  return "task";
 }
+function jListenExam(lv,k){
+  const entries=[]; jBank(window.JLPT_LISTEN||[],lv).forEach(d=>d.qs.forEach(q=>entries.push({d,q,cat:lcatOf(d,q)})));
+  const plan=LCAT_PLAN[lv]||LCAT_PLAN.N4, used=new Set(), items=[];
+  const eKey=e=>(e.d.situ||plain((e.d.lines[0]||["",""])[1])).slice(0,36)+"|"+plain(e.q.q).slice(0,24);
+  plan.forEach(([c,n0],gi)=>{
+    const n=k<1?Math.max(1,Math.round(n0*k)):n0;
+    const avail=cat=>entries.filter(e=>e.cat===cat&&!used.has(e.d));
+    let got=pickFresh(avail(c),n,"L"+lv+c,eKey);
+    if(got.length<n){ const alt=(c==="gaiyo"?["point","task"]:c==="hatsu"?["sokuji"]:c==="sokuji"?["hatsu"]:["task","point","gaiyo"]).flatMap(avail).filter(e=>!got.includes(e)); got=got.concat(pshuffle(alt).slice(0,n-got.length)); }
+    got.forEach(e=>used.add(e.d));
+    got.forEach((e,i)=>{
+      const three=c==="sokuji"||c==="hatsu", opts=three&&e.q.o.length>3?[e.q.o[0],...shuffle(e.q.o.slice(1)).slice(0,2)]:e.q.o;
+      const m=jShuf(opts,0), news=e.d.type==="news", kind=`청해 문제${gi+1} · ${LCAT_NAME[c]}`;
+      const script=e.d.lines&&e.d.lines.length?`<div class="jscript"><b>스크립트</b>${e.d.lines.map(([w,t])=>`<div>${news?"":`<span class="jwho">${w==="F"?"여":"남"}</span> `}${R(t)}</div>`).join("")}</div>`:"";
+      const base={sec:"listen",kind,lintro:i===0?LCAT_INTRO[c]:"",prompt:R(e.q.q),ph:1,opts:m.o.map(R),a:m.a,exp:E(e.q.e||"")};
+      if(e.d.situ) items.push({...base,stem:`<div class="jsit"><b>상황</b>${E(e.d.situ)}</div>`,script});
+      else items.push({...base,dlg:e.d.lines,dmeta:{lv:e.d.lv,news},script});
+    });
+  });
+  return items;
+}
+function jListen(lv,n){ return jListenExam(lv,1); }
 /* 전체 풀기 문항 수: 실제 JLPT 구성(한자 읽기·표기·문맥·유의·문법)을 따르되, 문제 은행이 있는 만큼만 냅니다 */
 const FULLPLAN={N5:{rd:12,wr:8,cx:10,sy:5,pr:3,gf:16,gs:5},N4:{rd:9,wr:6,cx:10,sy:5,pr:3,gf:15,gs:5},N3:{rd:8,wr:6,cx:11,sy:5,us:5,pr:3,gf:13,gs:5},N2:{rd:5,wr:5,wf:5,cx:7,sy:5,us:5,pr:3,gf:12,gs:5},N1:{rd:6,wr:0,cx:7,sy:5,us:6,pr:3,gf:10,gs:5}};
 /* 같은 지문의 문제는 함께 두고, 지문 단위로 무작위로 덜어 내서 전체의 ratio만큼만 남깁니다 */
@@ -2573,11 +2619,11 @@ function jStart(sec,opt){
   else if(sec==="read") items=jRdg(lv,"all");
   else if(sec==="rnews") items=jRead(lv,5);
   else if(/^r(short|mid|long|integ|search)$/.test(sec)){ const k=sec.slice(1); if(!(RDG_PLAN[lv]||{})[k]){ toast(lv+" 시험에는 "+RDG_NAME[k]+" 유형이 없습니다"); return; } items=jRdg(lv,k); }
-  else if(sec==="listen") items=jListen(lv,8);
+  else if(sec==="listen") items=jListenExam(lv,1);
   else { const P=FULLPLAN[lv]||FULLPLAN.N4, k=(opt&&opt.paper)?1:.7;   /* 연습 모드는 실제 시험의 약 70% 분량 */
     const sc=n=>n?Math.max(1,Math.round(n*k)):0, LN={N5:24,N4:28,N3:28,N2:31,N1:33};
     const rdg=jRdg(lv,"all",true), rdgK=k<1?trimGroups(rdg,k):rdg;
-    items=[...jReading(lv,sc(P.rd)),...jWrite(lv,sc(P.wr)),...jWordForm(lv,sc(P.wf||0)),...jContext(lv,sc(P.cx)),...jSyn(lv,sc(P.sy)),...jUsage(lv,sc(P.us||0)),...jPair(lv,sc(P.pr)),...jGramFull(lv,sc(P.gf),sc(P.gs)),...rdgK,...jListen(lv,k<1?Math.round((LN[lv]||24)*k):40)]; }
+    items=[...jReading(lv,sc(P.rd)),...jWrite(lv,sc(P.wr)),...jWordForm(lv,sc(P.wf||0)),...jContext(lv,sc(P.cx)),...jSyn(lv,sc(P.sy)),...jUsage(lv,sc(P.us||0)),...jPair(lv,sc(P.pr)),...jGramFull(lv,sc(P.gf),sc(P.gs)),...rdgK,...jListenExam(lv,1)]; }
   if(!items.length){ toast("이 급수에는 아직 이 문제가 없어요"); return; }
   if(opt&&opt.paper&&sec==="all"){ paperStart(lv,items); return; }
   Q={mode:"jlpt",lv,sec,items,i:0,score:0,sel:null,done:false,by:{},wrong:[]};
@@ -2588,7 +2634,7 @@ function renderJ(){
   document.body.classList.add("inq"); window.scrollTo(0,0);
   const it=Q.items[Q.i], done=Q.sel!==null, ok=done&&Q.sel===it.a;
   const head=`<div class="qtop"><button class="qx" data-act="qquit" aria-label="그만하기">×</button><div class="prog"><div style="width:${Math.round(Q.i/Q.items.length*100)}%"></div></div></div>
-   <div class="sub"><span class="jtag">${JSEC[it.sec]}</span>${it.kind} · ${Q.i+1} / ${Q.items.length}</div>`;
+   <div class="sub"><span class="jtag">${JSEC[it.sec]}</span>${it.kind} · ${Q.i+1} / ${Q.items.length}</div>${it.lintro?`<div class="jlintro">${E(it.lintro)}</div>`:""}`;
   let mid=it.stem;
   if(it.dlg){
     mid=jListenOk()?`<button class="cta sec" data-act="jplay" style="max-width:260px;margin:18px auto">소리 듣기 ▶</button><div style="text-align:center;margin:-6px 0 8px">${spdHtml()}</div><div class="sub">${done?"":"몇 번이든 다시 들을 수 있습니다"}</div>`
@@ -2826,21 +2872,25 @@ function rdgDoc(lines){
 }
 function rdgStem(p){
   const paras=s=>s.split(/\n+/).filter(Boolean).map(x=>`<p>${R(x)}</p>`).join("");
+  const len=t=>String(t).replace(/\[[^\]]*\]/g,"").length;
   if(p.type==="search") return rdgDoc(p.doc);
-  if(p.type==="integ") return p.texts.map((s,i)=>`<div class="jpass"><span class="ab">${"AB"[i]}</span>${paras(s)}</div>`).join("");
-  return `<div class="jpass">${paras(p.text)}</div>`;
+  if(p.type==="integ") return `<div class="jpassw">`+p.texts.map((s,i)=>`<div class="jpass${len(s)>230?" long":""}"><span class="ab">${"AB"[i]}</span>${paras(s)}</div>`).join("")+`</div>`;
+  const kk={short:"단문",mid:"중문",long:"장문"}[p.type]||"지문";
+  return `<div class="jpassw"><div class="jpl">${kk} · 글을 읽고 질문에 답하세요</div><div class="jpass${len(p.text)>230?" long":""}">${paras(p.text)}</div></div>`;
 }
 function rdgItems(p){
   const cloze=p.type==="cloze", kind=cloze?"글의 문법":(p.lv==="N2"&&p.type==="long")?"주장 이해(主張理解)":RDG_KIND[p.type], stem=rdgStem(p);
   return p.qs.map(q=>{ const m=jShuf(q.o,0);
     return {sec:cloze?"gram":"read",kind,prompt:R(q.q),ph:1,stem,opts:m.o.map(R),a:m.a,exp:E(q.e||""),cloze:cloze||undefined}; });
 }
+const RDG_FULL={N5:{short:3,mid:1,search:1},N4:{short:4,mid:2,search:1},N3:{short:4,mid:2,long:1,search:1},N2:{short:5,mid:2,integ:1,long:1,search:1},N1:{short:4,mid:3,integ:1,long:1,search:1}};
 function jRdg(lv,type,full){
-  const bank=(window.JLPT_RDG||[]).filter(p=>p.lv===lv), pl=RDG_PLAN[lv]||RDG_PLAN.N5;
+  const bank=(window.JLPT_RDG||[]).filter(p=>p.lv===lv), pl=full?(RDG_FULL[lv]||RDG_FULL.N5):(RDG_PLAN[lv]||RDG_PLAN.N5);
   const order=["cloze","short","mid","long","integ","search"], out=[];
   const types=type==="all"?order.filter(k=>pl[k]||(full&&k==="cloze")):[type];
-  types.forEach(k=>{ const n=full?99:type==="all"?pl[k]:(k==="short"?2:1);
-    pshuffle(bank.filter(p=>p.type===k)).slice(0,n).forEach(p=>out.push(...rdgItems(p))); });
+  const pKey=p=>String(p.text||(p.doc||[]).join("")||(p.texts||[]).join("")).slice(0,50);
+  types.forEach(k=>{ const n=full?(k==="cloze"?2:(pl[k]||0)):type==="all"?pl[k]:(k==="short"?2:1);
+    pickFresh(bank.filter(p=>p.type===k),n,"r"+lv+k,pKey).forEach(p=>out.push(...rdgItems(p))); });
   return out;
 }
 

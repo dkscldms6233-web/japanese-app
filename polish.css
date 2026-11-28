@@ -1486,3 +1486,16 @@ html[data-px] body[data-view=game] header,html[data-px] body:has(#quizView .gbox
 #grid .card .w .wh{background:linear-gradient(transparent 66%,color-mix(in srgb,var(--lc,var(--nx)) 34%,transparent) 66%);padding:0 3px;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 html[data-theme=dark] #grid .card .w .wh{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--lc,var(--nx)) 55%,transparent) 62%);color:#fff}
 #grid .card .w rt{background:none}
+
+/* ===== 모의시험: 청해 유형 안내·상황 카드, 독해 지문을 보기 편하게 ===== */
+.jlintro{margin:8px 2px 2px;padding:9px 12px;border-radius:12px;background:var(--ivory);font-size:12.5px;line-height:1.6;color:var(--sub);text-align:left}
+.jsit{margin:12px 0;padding:13px 15px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);font-size:15px;line-height:1.75;text-align:left}
+.jsit b{display:block;font-size:11.5px;font-weight:800;color:var(--sakura,#b03a57);margin-bottom:4px}
+.jpassw{margin:10px 0}
+.jpl{font-size:12px;font-weight:800;color:var(--accent-text);margin:0 2px 6px;text-align:left}
+.jpass{font-size:16.5px;line-height:2;padding:14px 16px;background:var(--ivory)!important;border:0!important;border-radius:16px!important}
+.jpass p{text-indent:1em;margin:0 0 .5em}
+.jpass .ab+p{text-indent:0}
+.jpass.long{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:inset 0 -16px 12px -14px rgba(0,0,0,.2)}
+.jpassw .jpass+.jpass{margin-top:8px}
+.jprompt.jq2{font-size:16px!important;line-height:1.75!important;background:none!important;border-left:4px solid var(--accent);border-radius:0!important;padding:4px 0 4px 12px!important;margin:14px 2px 10px!important}
