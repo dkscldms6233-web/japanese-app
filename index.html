@@ -1050,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=147">
+<link rel="stylesheet" href="polish.css?v=149">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2211,6 +2211,9 @@ function bgmNav(d){
   if(SND.previewId){ bgmStop(); clearTimeout(SND.pvT); SND.previewId=id; bgmStart({id,force:true}); }
   updPrev();
 }
+/* 점수가 바뀔 때 숫자가 톡 튀게 */
+(function(){ const q=document.getElementById("quizView"); if(!q||!window.MutationObserver) return; let last="";
+  new MutationObserver(()=>{ const b=q.querySelector(".gsc b"); if(!b){ last=""; return; } const v=b.textContent; if(last&&v!==last){ b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); } last=v; }).observe(q,{subtree:true,childList:true,characterData:true}); })();
 function updPrev(){ const b=$("bgmplay"); if(b){ const on=!!SND.timer; b.textContent=on?"■ 정지":"▶ 듣기"; } }
 function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; updPrev(); }
 function sfx(kind){

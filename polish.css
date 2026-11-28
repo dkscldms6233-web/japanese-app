@@ -1038,3 +1038,21 @@ details.plfold[open]>summary::after{transform:rotate(90deg)}
 details.plfold>*:not(summary){margin-left:16px;margin-right:16px}
 details.plfold>*:last-child{margin-bottom:14px}
 .eplan [data-pplan]{margin-top:10px}
+
+/* 게임 중 점수판: 칠판 같은 어두운 초록 화면 + 노란 도트 숫자 (카운트다운과 같은 느낌) */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat{display:flex!important;align-items:stretch!important;justify-content:space-between!important;gap:10px!important;margin:2px 0 12px!important;padding-right:0!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat #gt{display:flex;flex-direction:column;justify-content:center;min-width:96px;padding:6px 14px 7px;background:#243b2a!important;border:3px solid var(--px)!important;box-shadow:inset 0 0 0 2px #3e6a4a,0 3px 0 var(--px);background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 4px)!important;color:#9bff7a!important;font-family:var(--pxf);font-size:26px!important;line-height:1.1;text-shadow:0 0 6px rgba(155,255,122,.45)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat #gt::before{content:"TIME";font-size:10px;letter-spacing:.24em;color:#7fc48a;text-shadow:none}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc{display:flex!important;flex-direction:column!important;align-items:flex-end!important;justify-content:center;min-width:120px;padding:6px 14px 7px!important;background:#243b2a!important;border:3px solid var(--px)!important;border-radius:0!important;box-shadow:inset 0 0 0 2px #3e6a4a,0 3px 0 var(--px)!important;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 4px)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc small{display:block!important;font-size:10px!important;letter-spacing:.24em;color:#e6c24a!important;line-height:1;font-size:0!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc small::before{content:"SCORE";font-size:10px;letter-spacing:.24em;color:#e6c24a}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc b{font-family:var(--pxf)!important;font-size:30px!important;line-height:1.1!important;color:#ffd84a!important;text-shadow:2px 2px 0 #7a4b0d!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc b.bump{animation:pxbump .3s steps(3)}
+@keyframes pxbump{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-5px) scale(1.25)}100%{transform:translateY(0) scale(1)}}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .prog{height:18px!important;background:#243b2a!important;border:3px solid var(--px)!important;border-radius:0!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .prog>div{background-color:#9bff7a!important;background-image:repeating-linear-gradient(90deg,transparent 0 8px,rgba(0,0,0,.18) 8px 10px)!important;border-radius:0!important}
+@media(prefers-reduced-motion:reduce){html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc b.bump{animation:none}}
+html[data-px] body:has(#quizView .gbox) #quizView #gbar{border-radius:0!important;background-color:#9bff7a!important;background-image:repeating-linear-gradient(90deg,transparent 0 8px,rgba(0,0,0,.2) 8px 10px)!important}
+html[data-px] body:has(#quizView .gbox) #quizView #gbar.mid{background-color:#ffd84a!important}
+html[data-px] body:has(#quizView .gbox) #quizView #gbar.low{background-color:#ff6b6b!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat #gt{border-radius:0!important}
