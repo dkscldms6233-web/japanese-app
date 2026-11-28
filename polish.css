@@ -1056,3 +1056,36 @@ html[data-px] body:has(#quizView .gbox) #quizView #gbar{border-radius:0!importan
 html[data-px] body:has(#quizView .gbox) #quizView #gbar.mid{background-color:#ffd84a!important}
 html[data-px] body:has(#quizView .gbox) #quizView #gbar.low{background-color:#ff6b6b!important}
 html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat #gt{border-radius:0!important}
+
+/* ===== 도트 풍경 배경 (img/gamebg-*.svg): 하늘·구름·산·언덕·나무·울타리·꽃밭 / 다크: 별·달 ===== */
+html[data-px] body:has(#quizView .gbox){background:#8bd3fb fixed!important}
+html[data-px] body:has(#quizView .gbox)::after{background-color:transparent!important;background-image:url("img/gamebg-day.svg")!important;background-size:cover!important;background-position:center bottom!important;background-repeat:no-repeat!important;image-rendering:pixelated;animation:none!important;opacity:1!important}
+html[data-theme=dark][data-px] body:has(#quizView .gbox){background:#0c1438 fixed!important}
+html[data-theme=dark][data-px] body:has(#quizView .gbox)::after{background-image:url("img/gamebg-night.svg")!important}
+
+/* ===== 하트: 칠판 칸 안에 가운데 정렬 (바깥 둥근 칸 없앰) ===== */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.hp{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;padding:7px 12px!important;min-width:0;background:#243b2a!important;border:3px solid var(--px)!important;border-radius:0!important;box-shadow:inset 0 0 0 2px #3e6a4a,0 3px 0 var(--px)!important;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 4px)!important;filter:none!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .hp svg{width:26px!important;height:23px!important;display:block;shape-rendering:crispEdges}
+
+/* ===== 게임 종료(결과) 화면: 칠판 점수판 + 도트 버튼 ===== */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-top{background:#243b2a;border:3px solid var(--px);box-shadow:inset 0 0 0 2px #3e6a4a,0 4px 0 var(--px);background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 4px);padding:16px 10px 14px;margin:2px 0 14px}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gstars{font-family:var(--pxf);text-shadow:2px 2px 0 #7a4b0d!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gstars i{color:#3b5a42}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gstars i.on{color:#ffd84a}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .score{font-family:var(--pxf)!important;color:#ffd84a!important;font-size:46px!important;text-shadow:3px 3px 0 #7a4b0d!important;letter-spacing:0}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .rank{font-family:var(--pxf);color:#9bff7a!important;text-shadow:0 0 6px rgba(155,255,122,.45);letter-spacing:.06em}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .newbest{border-radius:0!important;border:3px solid var(--px);background:#ffd84a!important;color:#3a2600!important;font-family:var(--pxf);box-shadow:0 3px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gnext,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-note{color:#b6dcae!important;font-family:var(--pxf)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts{gap:12px;margin:6px 0 10px}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill{font-family:var(--pxf);border-radius:0!important;border:3px solid var(--px)!important;box-shadow:0 4px 0 var(--px);background:var(--pxcard)!important;color:var(--text)!important;padding:13px 8px;font-size:15px}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{background:#5cc24a!important;color:#fff!important;text-shadow:0 2px 0 rgba(0,0,0,.28)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill:active{transform:translateY(3px);box-shadow:0 1px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-link{font-family:var(--pxf)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-words{background:var(--pxcard)!important;border:3px solid var(--px)!important;border-radius:0!important;box-shadow:0 3px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gwh b{font-family:var(--pxf)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .grow{border-radius:0!important;border-bottom:2px dashed color-mix(in srgb,var(--px) 40%,transparent)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gtag{border-radius:0!important;font-family:var(--pxf)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .rank{display:inline-block;background:transparent!important;border-radius:0!important;padding:0 !important;margin-top:4px}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{border-bottom-color:var(--px)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border-radius:0!important;border:2px solid var(--px)!important;font-family:var(--pxf);box-shadow:0 2px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{box-shadow:0 4px 0 var(--px)!important}
