@@ -102,10 +102,10 @@ function cardHtml(){
   const n=monthCount(now.getFullYear(),now.getMonth(),L);
   setTimeout(markShown,1200);
   const G=window.PATH&&PATH.giftInfo?PATH.giftInfo():null;
-  let foot=`<p class="dmsg">${got?"오늘 스티커를 받았어요! 내일도 만나요":"오늘 공부하면 스티커를 받아요"}</p>`;
+  let foot=`<p class="dmsg">${got?"스티커를 받았어요! 내일도 만나요":"공부하면 스티커를 받아요"}</p>`;
   if(G){
     if(G.pending) foot=`<div class="dgiftrow"><span>7일 연속 달성! 선물이 도착했어요</span><button type="button" class="dgift" data-gift="open">선물 받기</button></div>`;
-    else { const left=Math.max(0,7-G.pos); foot=`<div class="dgoal"><div class="dgt"><span>${got?"오늘 스티커를 받았어요!":"오늘 공부하면 스티커를 받아요"}</span><b>${G.pos>=7?"선물 완주":"선물까지 "+left+"일"}</b></div><div class="dgbar"><i style="width:${Math.min(100,G.pos/7*100).toFixed(0)}%"></i></div></div>`; }
+    else { const left=Math.max(0,7-G.pos); foot=`<div class="dgoal"><div class="dgt"><span>${got?"스티커를 받았어요!":"공부하면 스티커를 받아요"}</span><b>${G.pos>=7?"선물 완주":"선물까지 "+left+"일"}</b></div><div class="dgbar"><i style="width:${Math.min(100,G.pos/7*100).toFixed(0)}%"></i></div></div>`; }
     if(G.titles) foot+=`<button type="button" class="dtit" data-gift="box">내 칭호 모음 ${G.titles}개 ›</button>`;
   }
   const streakChip=G&&G.s>0?`<span class="dstreak">연속 ${G.s}일</span>`:"";

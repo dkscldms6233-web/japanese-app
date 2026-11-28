@@ -1457,7 +1457,7 @@ function questCheck(){ try{ const L=questList(); let q=questState(); q.got=q.got
     if(ch) LS.set("jp-quest",q); }catch(e){} }
 function nextQuestBtn(){
   const L=questList(), g=goalN(), x=L.find(q=>q.n<q.of);
-  if(!x) return `<button class="cta" data-hq="today">오늘 ${g}문제 더 풀기</button>`;
+  if(!x) return `<button class="cta" data-hq="today">${g}문제 더 풀기</button>`;
   if(x.id==="n") return `<button class="cta" data-hq="today">오늘 ${g}문제 시작</button>`;
   return `<button class="cta" data-qgo="${x.id}">${E(x.t)}</button>`;
 }
@@ -3329,13 +3329,13 @@ function renderHome(){
   const greet=CHEER.greet(h,tl.n>0), beginHtml=beginnerHtml(), soft=!!beginHtml&&!/h2begin done/.test(beginHtml)&&!tl.n;
   const pc=Math.min(100,Math.round(tl.n/g*100));
   const lastDay=Object.keys(log).filter(d=>log[d]&&log[d].n>0&&d<today()).sort().pop(), away=lastDay?Math.round((new Date(today()+"T00:00:00")-new Date(lastDay+"T00:00:00"))/864e5):0;
-  const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"오늘의 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"오늘의 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"오늘의 문장"}:null;
+  const sent=fn?{ja:fn.ja,ko:fn.ko,lab:"한 문장"}:qt?{ja:qt.ja,ko:qt.ko,lab:"한 문장"}:p?{ja:p.ex[0].ja,ko:p.ex[0].ko,lab:"한 문장"}:null;
   /* 홈 v2: 인사·연속 출석 → 오늘의 학습(히어로) → 이어서/복습 → 이번 주 출석 → 탐색 → 오늘의 문장 (기능은 그대로, 7일 여정은 '더 보기'로) */
   const jr=window.PATH?PATH.journeyHtml():"", jrPending=jr.includes('data-gift="open"');
   let moreOpen=false; try{ moreOpen=localStorage.getItem("jp-homemore")==="1"; }catch(e){}
   questCheck(); const QL=questList(), nextQ=QL.find(q=>q.n<q.of);
   const RC=2*Math.PI*52, ringSvg=`<svg class="h2ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="rt" cx="60" cy="60" r="52"/>${pc?`<circle class="rf" cx="60" cy="60" r="52" stroke-dasharray="${(RC*pc/100).toFixed(1)} ${RC.toFixed(1)}" transform="rotate(-90 60 60)"/>`:""}</svg>`;
-  const heroT=!nextQ?"오늘 목표 완료! 👏":tl.n?`${Math.min(tl.n,g)} / ${g}문제`:`오늘 ${g}문제`;
+  const heroT=!nextQ?"목표 달성! 👏":tl.n?`${Math.min(tl.n,g)} / ${g}문제`:`${g}문제`;
   const heroS=!nextQ?"정말 잘했어요! 더 풀어도 좋아요":(away>=3&&!tl.n)?`${away}일 만이에요! 가볍게 다시 시작해 봐요`:nextQ.id==="n"?CHEER.home(st,h):nextQ.t;
   const qchips=QL.map(x=>x.n>=x.of?`<span class="h2qc dn"><i>✓</i>${E(x.t)}</span>`:`<button type="button" class="h2qc" data-qgo="${x.id}"><i>${x.n}/${x.of}</i>${E(x.t)}</button>`).join("");
   const CHK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', DN=["일","월","화","수","목","금","토"]; let wk=0;
@@ -3350,7 +3350,7 @@ function renderHome(){
    ${window.DEV?DEV.bannerHtml():""}
    ${curProfile().cloud?"":`<section class="gstbar" role="note"><span><b>게스트 모드</b> · 기록이 <u>이 기기에만</u> 저장돼요.</span><button type="button" class="gstlink" data-guestlogin="1">로그인하고 기록 지키기</button></section>`}
    ${window.NEXT?NEXT.homeHtml():beginHtml}
-   <section class="h2hero${soft?" soft":""}${(window.NEXT&&NEXT.kanaPhase()&&!tl.n)?" nxhide":""}"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있습니다</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 목표</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
+   <section class="h2hero${soft?" soft":""}${(window.NEXT&&NEXT.kanaPhase()&&!tl.n)?" nxhide":""}"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있습니다</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>하루 목표</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
    ${(()=>{ const rv=window.PATH?PATH.reviewHtml():""; return rv?`<div class="h2card h2act">${rv}</div>`:""; })()}
    ${window.DIARY?DIARY.cardHtml():jr}
@@ -3382,7 +3382,7 @@ function renderToday(){
     $("todayView").innerHTML=`<div class="today">
      <button class="back" data-go="home">${ic("back")}홈으로</button>
      <div class="tbox">
-       <div class="lab">${todayOff?"다른 문장":"오늘의 문장"} · ${E(fn.lv)}</div>
+       <div class="lab">${todayOff?"다른 문장":"한 문장"} · ${E(fn.lv)}</div>
        <div class="tja">${R(fn.ja)}</div>
        <div class="tko">${E(fn.ko)}</div>
        <div class="qbtns" style="justify-content:flex-start;margin-top:8px">
@@ -3398,7 +3398,7 @@ function renderToday(){
     $("todayView").innerHTML=`<div class="today">
      <button class="back" data-go="home">${ic("back")}홈으로</button>
      <div class="tbox">
-       <div class="lab">${todayOff?"다른 문장":"오늘의 문장"} · ${E(qt.by)}</div>
+       <div class="lab">${todayOff?"다른 문장":"한 문장"} · ${E(qt.by)}</div>
        <div class="tja">${R(qt.ja)}</div>
        <div class="tko">${E(qt.ko)}</div>
        <div class="qbtns" style="justify-content:flex-start;margin-top:8px">
@@ -3415,7 +3415,7 @@ function renderToday(){
   $("todayView").innerHTML=`<div class="today">
    <button class="back" data-go="home">${ic("back")}홈으로</button>
    <div class="tbox">
-     <div class="lab">${todayOff?"다른 문장":"오늘의 문장"}</div>
+     <div class="lab">${todayOff?"다른 문장":"한 문장"}</div>
      <div class="tja">${R(e.ja)}</div>
      <div class="tko">${E(e.ko)}</div>
      <div class="qbtns" style="justify-content:flex-start;margin-top:8px">
@@ -3704,8 +3704,8 @@ renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="billing.js?v=8"></script>
 <script src="path.js?v=140"></script>
-<script src="next.js?v=8"></script>
-<script src="diary.js?v=18"></script>
+<script src="next.js?v=9"></script>
+<script src="diary.js?v=19"></script>
 <script src="community.js?v=27"></script>
 <script src="review.js?v=10"></script>
 <script src="grammar-n3pdf.js?v=1"></script>

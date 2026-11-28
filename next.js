@@ -49,17 +49,17 @@ function homeHtml(){
   const steps=kanaPhase()?(()=>{ const h=kcount("h"),k=kcount("k"); const st=[["히라가나",h,15],["가타카나",k,15],["단어",0,1],["퀴즈",0,1]]; const cur=h<15?0:k<15?1:2;
     return `<div class="nxr" aria-label="공부 순서">${st.map((x,i)=>`<span class="${i<cur||(i<2&&x[1]>=x[2])?"dn":i===cur?"now":""}"><i>${i<cur?"✓":i+1}</i>${x[0]}</span>`).join("")}</div>`; })():"";
   const due=window.PATH&&PATH.due?PATH.due():0, kp=kanaPhase();
-  const say=all?"오늘 코스 끝! 정말 잘했어요":dn===2?"마지막 한 칸이에요, 거의 다 왔어요!":dn===1?"벌써 한 칸 했어요! 하나만 더 해 볼까요?":kp?"오늘은 한 행, 다섯 글자만 해요. 금방 끝나요!":due>0?`복습할 단어 ${due}개가 기다리고 있어요`:"딱 10분만, 같이 해 봐요!";
+  const say=all?"코스 끝! 정말 잘했어요":dn===2?"마지막 한 칸이에요, 거의 다 왔어요!":dn===1?"벌써 한 칸 했어요! 하나만 더 해 볼까요?":kp?"한 행, 다섯 글자만 해요. 금방 끝나요!":due>0?`복습할 단어 ${due}개가 기다리고 있어요`:"딱 10분만, 같이 해 봐요!";
   const cur=S.findIndex(x=>!x.done);
   const path=S.map((x,i)=>`${i?`<span class="nxln${S[i-1].done?" dn":""}"></span>`:""}<button type="button" class="nxn${x.done?" dn":i===cur?" now":""}" data-nxt="${x.key}"><i>${x.done?"✓":i+1}</i><span>${x.label}</span></button>`).join("");
   /* 시험 일주일 전부터 매일 다른 응원 한마디 (시험 다음 날에는 수고했다는 말) */
-  const CHEER={7:"시험이 일주일 남았어요. 지금까지 쌓아 온 것도 이미 꽤 많아요 ㅎㅎ 오늘은 틀렸던 단어부터 가볍게 훑어봐요.",6:"6일 남았어요. 새로운 걸 욱여넣기보다, 아는 걸 확실히 하는 게 점수로 이어져요. 오늘도 한 걸음씩!",5:"5일 남았어요. 문법에서 헷갈렸던 것만 골라 다시 봐요. 오늘 하루치만 해도 충분해요.",4:"4일 남았어요. 듣기도 하루 10분만 귀를 열어 줘요. 잘 안 들려도 괜찮아요, 귀는 금방 익숙해져요.",3:"3일 남았어요. 이제 모의시험 한 번으로 시간 배분을 느껴 봐요. 점수보다 흐름을 익히는 게 중요해요.",2:"2일 남았어요. 밤새우지 말고 푹 자요. 잠도 공부예요. 컨디션이 실력만큼 중요하거든요.",1:"내일이 시험이에요. 오늘은 가볍게 복습만 하고 일찍 쉬어요. 준비물(수험표, 신분증)도 꼭 챙기고요!",0:"오늘이 시험날이에요! 여기까지 온 것만으로도 정말 대단해요. 아는 만큼만 차분히 풀면 돼요. 응원하고 있어요."};
+  const CHEER={7:"시험이 일주일 남았어요. 지금까지 쌓아 온 것도 이미 꽤 많아요 ㅎㅎ 틀렸던 단어부터 가볍게 훑어봐요.",6:"6일 남았어요. 새로운 걸 욱여넣기보다, 아는 걸 확실히 하는 게 점수로 이어져요. 오늘도 한 걸음씩!",5:"5일 남았어요. 문법에서 헷갈렸던 것만 골라 다시 봐요. 하루치만 해도 충분해요.",4:"4일 남았어요. 듣기도 하루 10분만 귀를 열어 줘요. 잘 안 들려도 괜찮아요, 귀는 금방 익숙해져요.",3:"3일 남았어요. 이제 모의시험 한 번으로 시간 배분을 느껴 봐요. 점수보다 흐름을 익히는 게 중요해요.",2:"2일 남았어요. 밤새우지 말고 푹 자요. 잠도 공부예요. 컨디션이 실력만큼 중요하거든요.",1:"내일이 시험이에요. 가볍게 복습만 하고 일찍 쉬어요. 준비물(수험표, 신분증)도 꼭 챙기고요!",0:"오늘이 시험날이에요! 여기까지 온 것만으로도 정말 대단해요. 아는 만큼만 차분히 풀면 돼요. 응원하고 있어요."};
   const di=(window.PLUS&&PLUS.ddayInfo&&PLUS.ddayInfo()); let ck="";
-  try{ if(di&&((di.d>=0&&di.d<=7)||di.d===-1)&&localStorage.getItem("jp-cheerx")!==A().today()){ const msg=di.d===-1?"시험 보느라 정말 수고했어요. 오늘은 푹 쉬어요. 결과가 어떻든 여기까지 해낸 건 그대로 남아요 ㅎㅎ":CHEER[di.d];
+  try{ if(di&&((di.d>=0&&di.d<=7)||di.d===-1)&&localStorage.getItem("jp-cheerx")!==A().today()){ const msg=di.d===-1?"시험 보느라 정말 수고했어요. 푹 쉬어요. 결과가 어떻든 여기까지 해낸 건 그대로 남아요 ㅎㅎ":CHEER[di.d];
     ck=`<section class="nxcheer"><div class="nxch"><b>${di.d===-1?"수고했어요":`시험 ${di.d===0?"D-DAY":"D-"+di.d} · 응원 도착!`}</b><button type="button" data-ckx aria-label="오늘은 닫기">×</button></div><p>${E(msg)}</p></section>`; } }catch(e){}
   return `${ck}<section class="h2next${all?" all":""}">
    <div class="nxsay"><img src="img/coach.png?v=5" alt="" width="30" height="30"><span>${E(say)}</span></div>
-   <div class="nxcard"><small>${all?"오늘 코스 완료":"오늘 할 한 칸"}</small><h3>${E(all?"정말 잘했어요!":nx.title)}</h3><p>${E(all?"더 하고 싶으면 이어서 해요":nx.sub)}</p>
+   <div class="nxcard"><small>${all?"코스 완료":"오늘 할 한 칸"}</small><h3>${E(all?"정말 잘했어요!":nx.title)}</h3><p>${E(all?"더 하고 싶으면 이어서 해요":nx.sub)}</p>
     <button type="button" class="nxgo" data-nxt="go">${all?"더 해 볼까요?":"시작하기"}</button></div>
    <div class="nxpath" aria-label="오늘의 코스 ${dn}/3">${path}</div>${steps}</section>`;
 }
