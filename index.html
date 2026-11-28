@@ -3048,9 +3048,11 @@ function renderNews(){
     const total=list.length, shown=list.slice(0,newsLimit);
     body = list.length ? (()=>{
       const meta=x=>`<div class="nmeta">${lvb(x.a.lv)} <span class="tag">${catOf(x.a)}</span>${x.a.date?` <span class="sub">${E(x.a.date)}</span>`:""}${x.read?` <span class="sub">읽음</span>`:""}</div>`;
-      const tops=shown.slice(0,4), rest=shown.slice(4);
+      const my=myLv(), score=x=>(x.read?-1e6:0)+(my.length&&my.includes(x.a.lv)?1e4:0)+x.hit.size*10;
+      const tops=[...list].sort((p,q)=>score(q)-score(p)||String(q.a.date||"").localeCompare(String(p.a.date||""))).slice(0,4);
+      const topIds=new Set(tops.map(x=>x.a.id)), rest=shown.filter(x=>!topIds.has(x.a.id));
       const today=new Date(), dstr=`${today.getMonth()+1}월 ${today.getDate()}일`;
-      const topHtml=`<div class="ntophd"><span class="nlive"><i></i>주요 뉴스</span><small>${dstr} 기준</small></div>
+      const topHtml=`<div class="ntophd"><span class="nlive"><i></i>오늘의 추천</span><small>내 급수·내 단어 기준</small></div>
        <div class="ntop">${tops.map((h,k)=>`<div class="ntc ${k===0?"first":""} ${h.read?"read":""}" data-art="${h.a.id}" tabindex="0" role="button">
         <div class="nhimg">${illus(h.a.topic)}</div><div class="nhshade"></div>
         <span class="nrank">${k+1}</span>
