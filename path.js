@@ -232,7 +232,7 @@ function profileHtml(){
    ${earnedTitles().length?`<div class="pftt"><small>대표 칭호</small><select data-reptitle aria-label="대표 칭호">${["",...earnedTitles()].map(t=>`<option value="${E(t)}" ${t===repTitle()?"selected":""}>${t?"「"+E(t)+"」":"없음"}</option>`).join("")}</select></div>`:""}
    <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;
 }
-function reviewHtml(){ const n=dueKeys().length; if(!n){ const c=window.REVIEW?REVIEW.counts():null; if(!c||!c.tom) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>오늘 복습 끝 · 내일 <b style="color:var(--accent-text)">${c.tom}개</b></span><i>›</i></button>`; } return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${n}개</b>`:"복습할 단어가 아직 없습니다"}</span><i>›</i></button>`; }
+function reviewHtml(){ const n=dueKeys().length; if(!n){ const c=window.REVIEW?REVIEW.counts():null; if(!c||!c.tom) return ""; return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>오늘 복습 끝 · 내일 <b style="color:var(--accent-text)">${c.tom}개</b></span><i>›</i></button>`; } return `<button class="lrow" data-pr="1" style="border-top:1px solid var(--line);margin-top:12px"><span>${n?`복습할 단어 <b style="color:var(--accent-text)">${Math.min(n,10)}개</b>`:"복습할 단어가 아직 없습니다"}</span><i>›</i></button>`; }
 function pathHtml(full){
   const st=state(), cur=current(), all=vis(); if(cur) openUnits.add(cur.u.id);
   const offs=[0,26,44,26,0,-26,-44,-26];

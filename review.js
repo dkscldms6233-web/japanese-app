@@ -4,7 +4,7 @@
  * 기존 기록(jp-wrong·jp-miss·jp-srs)의 형식은 바꾸지 않았어요. */
 (function(){
 const A=()=>window.APP, $=id=>document.getElementById(id), E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const IV=[10/1440,1,3,7,14,30,60], DAY=864e5, PER_SESSION=20;
+const IV=[10/1440,1,3,7,14,30,60], DAY=864e5, PER_SESSION=10;
 const TYPE={meaning:"뜻 고르기",reading:"읽기 고르기",card:"카드",review:"복습",order:"문장 순서"};
 
 /* ---------- 복습 일정 계산 ---------- */

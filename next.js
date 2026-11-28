@@ -24,7 +24,7 @@ function learnT(){
 /* 확인하기: 복습할 단어가 있으면 복습, 글자 단계면 방금 배운 글자 퀴즈, 아니면 퀴즈 */
 function practiceT(){
   const due=window.PATH&&PATH.due?PATH.due():0;
-  if(due>0) return {kind:"review",icon:"復",title:`복습 ${due}개`,sub:"잊기 전에 한 번 더 봐요"};
+  if(due>0) return {kind:"review",icon:"復",title:`복습 ${Math.min(due,10)}개`,sub:"잊기 전에 한 번 더 봐요"};
   if(kanaPhase()&&window.KANA&&KANA.check) return {kind:"kcheck",icon:"✓",title:"배운 글자 확인하기",sub:"6문제, 1분이면 끝나요"};
   return {kind:"quiz",icon:"問",title:"퀴즈로 확인하기",sub:"배운 걸 가볍게 풀어 봐요"};
 }
@@ -49,7 +49,7 @@ function homeHtml(){
   const steps=kanaPhase()?(()=>{ const h=kcount("h"),k=kcount("k"); const st=[["히라가나",h,15],["가타카나",k,15],["단어",0,1],["퀴즈",0,1]]; const cur=h<15?0:k<15?1:2;
     return `<div class="nxr" aria-label="공부 순서">${st.map((x,i)=>`<span class="${i<cur||(i<2&&x[1]>=x[2])?"dn":i===cur?"now":""}"><i>${i<cur?"✓":i+1}</i>${x[0]}</span>`).join("")}</div>`; })():"";
   const due=window.PATH&&PATH.due?PATH.due():0, kp=kanaPhase();
-  const say=all?"코스 끝! 정말 잘했어요":dn===2?"마지막 한 칸이에요, 거의 다 왔어요!":dn===1?"벌써 한 칸 했어요! 하나만 더 해 볼까요?":kp?"한 행, 다섯 글자만 해요. 금방 끝나요!":due>0?`복습할 단어 ${due}개가 기다리고 있어요`:"딱 10분만, 같이 해 봐요!";
+  const say=all?"코스 끝! 정말 잘했어요":dn===2?"마지막 한 칸이에요, 거의 다 왔어요!":dn===1?"벌써 한 칸 했어요! 하나만 더 해 볼까요?":kp?"한 행, 다섯 글자만 해요. 금방 끝나요!":due>0?(due>10?"복습할 단어가 기다리고 있어요":`복습할 단어 ${due}개가 기다리고 있어요`):"딱 10분만, 같이 해 봐요!";
   const cur=S.findIndex(x=>!x.done);
   const path=S.map((x,i)=>`${i?`<span class="nxln${S[i-1].done?" dn":""}"></span>`:""}<button type="button" class="nxn${x.done?" dn":i===cur?" now":""}" data-nxt="${x.key}"><i>${x.done?"✓":i+1}</i><span>${x.label}</span></button>`).join("");
   /* 시험 일주일 전부터 매일 다른 응원 한마디 (시험 다음 날에는 수고했다는 말) */
