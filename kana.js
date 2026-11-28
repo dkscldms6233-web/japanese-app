@@ -180,6 +180,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcard .khint{margin-top:clamp(6px,1.6dvh,14px)}
 .kfull .kcb{margin-top:auto}
 .ktrace{display:block!important}.ktrace .kwbox{max-width:min(300px,78vw)!important;margin:6px auto}.ktrace .ktbar{grid-template-columns:repeat(4,1fr);margin:8px 0 0}
+.kmn{margin-top:8px;max-width:100%;font-size:13px;line-height:1.5;font-weight:700;color:#2b2f55;background:rgba(255,255,255,.78);border-radius:14px;padding:7px 12px;text-align:left}
 .ktlinks{display:flex;justify-content:center;gap:18px;margin:10px 0 4px}.ktlinks button,.ktoff{border:0;background:none;color:var(--sub);font:inherit;font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer;padding:6px}.ktoff{display:block;margin:4px auto 0}
 .krest{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:10px 4px}.krbig{font-size:56px;line-height:1}
 .krchars{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}.krchars button{border:0;background:#fff;color:var(--k2);font:inherit;font-size:34px;font-weight:700;width:56px;height:62px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer}
@@ -365,6 +366,13 @@ let C=null;
 function startCards(L,k,at){ const chars=lessonChars(L,k); if(!chars.length){ renderLesson(L,k); return; } C={L,k,i:Math.min(Math.max(+at||0,0),chars.length-1),chars,words:lessonWords(L,k)}; renderCard(); }
 const KC=[["#ff8a5c","#ff5a7a"],["#ffb02e","#ff7a2e"],["#4cc9a0","#2a9d8f"],["#5bb6ff","#4a7bff"],["#a07cff","#6c4ff0"],["#ff7eb6","#e0508f"],["#7bd36a","#3fae5a"],["#ffc93c","#ff9a1f"]];
 const CHEER=["따라 해 봐요!","잘하고 있어요!","소리 내서 읽어 봐요","좋습니다, 한 번 더!","멋져요!"];
+/* 글자 모양 힌트: kana-mnemo.js의 한 줄 설명, 탁음·반탁음은 규칙으로 만듭니다 */
+function mnemo(c,k){
+  const t=((window.KANA_MNEMO||{})[k?"k":"h"]||{})[c]; if(t) return t;
+  const hc=toH(c), di=D.findIndex(x=>x[0]===hc); if(di<0) return "";
+  const r=DKROWS.find(x=>di>=x[3]&&di<x[3]+5); if(!r) return ""; const b=H[r[2]+(di-r[3])], T=x=>k?toK(x):x;
+  return `${T(b[0])}(${b[2]})에 ${r[3]===20?"동그라미(゜)":"점 두 개(゛)"}를 붙인 글자예요. 소리가 '${D[di][2]}'로 바뀝니다.`;
+}
 const traceOn=()=>{ try{ return localStorage.getItem("jp-ktrace")!=="0"; }catch(e){ return true; } };
 const canTrace=c=>traceOn()&&!!SK()[c];
 /* 카드 안에서 바로 따라 쓰기: 듣고 → 획순을 보고 → 한 번 써 보기 */
@@ -395,13 +403,14 @@ function cFinish(){ const {L,k}=C, d=done(); d.done[key(L,k)]=true; if(d.cur&&ty
   toast(lessonLabel(L,k)+" 완료! 잘했어요"); if(L.i===9) autoDk(k); const nx=L.i<9?LESSONS[L.i+1]:null; if(nx){ renderRowDone(); } else { C=null; K={tab:k?"k":"h"}; renderHome(); window.scrollTo(0,0); } }
 function renderCard(){
   inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
-  if(C.step===1&&canTrace(c[0])) return renderTrace(); C.step=0; const tr=canTrace(c[0]);
+  if(C.step===1&&canTrace(c[0])) return renderTrace(); C.step=0; const tr=canTrace(c[0]), mn=mnemo(c[0],k);
   const kv=(KW[k?"k":"h"]||{})[c[0]], ex=kv?{w:kv[0],m:kv[1],img:kv[2]}:C.words.find(x=>x.w.includes(c[0])||toH(x.w).includes(toH(c[0])));
   const say1=i===0?`${c[2]}~ 소리 내서 따라 해 보세요!`:last?"마지막 글자예요! 거의 다 왔어요!":CHEER[i%CHEER.length];
   root().innerHTML=`<div class="kana" style="--k1:${col[0]};--k2:${col[1]}"><div class="kfull${i===0?" kfirst":""}"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button><span class="kstars" aria-label="${i+1}번째 글자">${chars.map((_,j)=>`<i class="${j<=i?"on":""}">★</i>`).join("")}</span></div>
   <div class="kbird"><img src="img/coach.png?v=5" alt=""><div class="kbub">${say1}</div></div>
   <div class="kcard"><button type="button" class="kch" data-kana="csay" aria-label="${c[2]} 소리 듣기">${c[0]}</button>
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
+   ${mn?`<div class="kmn">💡 ${mn}</div>`:""}
    ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span>${koRead(ex.w)?`<i class="kexp">${koRead(ex.w)}</i>`:""}</span></button>`:""}
    <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${traceOn()?"":`<button type="button" class="ktoff" data-kana="ctron">✍ 따라쓰기 다시 켜기</button>`}${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
