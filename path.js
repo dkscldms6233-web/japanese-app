@@ -381,6 +381,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
+    giftInfo:()=>{ const J=journey(); let t=0; try{ t=earnedTitles().length; }catch(e){} return {s:J.s,pos:J.pos,pending:J.pending,titles:t}; },
     due:()=>dueKeys().length,nextNode:()=>{ const c=current(); return c?{id:c.n.id,L:c.n.L,label:c.n.label}:null; },startNode,
     frameStyle,frameFx,
   equip:()=>charState().equip||{},gift:{
