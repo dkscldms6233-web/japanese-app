@@ -184,13 +184,15 @@ function renderTab(){
     <tr><td>합격 코치·맞춤 플랜</td><td>-</td><td class="plp">✓</td></tr>
     <tr><td>실전 시험지 모드</td><td>-</td><td class="plp">✓</td></tr></tbody></table></div>
    <details class="pllist"><summary class="plhd">플러스 기능 ${BEN.length}가지 보기</summary>${GROUPS.map(([g,ids])=>`<h5 class="plgh">${g}</h5>${ids.map(row).join("")}`).join("")}</details>`;
+  /* 구독자 화면: 길이가 긴 카드는 제목만 보이게 접어 두고, 누르면 펼쳐요 */
+  const fold=h=>{ const m=/^\s*<div class="panel plusp([^"]*)"><h3>([\s\S]*?)<\/h3>([\s\S]*)<\/div>\s*$/.exec(h||""); if(!m) return h||""; const t=m[2].replace(/<em[^>]*>[\s\S]*?<\/em>/g,"").trim(); return `<details class="panel plusp plfold${m[1]}"><summary>${t}</summary>${m[3]}</details>`; };
   const free=!plus&&freeUsed();
   el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>
    <p>${plus?`이용 중입니다 · ${ymd(until())}까지 (${daysLeft()}일 남음)`:"JLPT 합격까지, 내 약점에 맞춰 연습합니다"}</p></div>
    <p class="sub" style="margin:0 2px 12px">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>입니다. 플러스는 JLPT 합격 준비를 더 깊게 도와주는 선택 기능입니다.</p>
    ${why==="paper"?`<p class="sub plusnote">모의시험 <b>시험지 모드</b>는 플러스 기능입니다. 플러스를 시작하면 실제 시험처럼 교시별 시간표와 종이 넘기기로 풀 수 있습니다. 연습 모드는 계속 무료입니다.</p>`:""}${why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼습니다. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있습니다.</p>`:""}
    <div class="pluscta"><button class="pill on plusgo" data-plus="weak">${plus?"맞춤 복습 시작 · 약한 단어 10문제":free?"오늘 무료 체험은 끝났습니다":"맞춤 복습 무료 체험 (하루 1번)"}</button>${rk.length<4?`<small>틀린 단어가 4개 이상 쌓이면 시작할 수 있습니다</small>`:""}</div>
-   ${plus?(planHtml()+weeklyHtml()+coachHtml()+(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없습니다. 퀴즈를 풀면 여기에 약점이 쌓입니다.</div></div>`)):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
+   ${plus?(planHtml()+weeklyHtml()+fold(coachHtml())+fold(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없습니다. 퀴즈를 풀면 여기에 약점이 쌓입니다.</div></div>`)):`${ben}<h3 class="plusst">이용권</h3>${passesHtml()}`}
    ${plus?`<h3 class="plusst">이용권 연장</h3>${passesHtml()}`:""}</div>`;
 }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-pplan]"); if(b){ e.preventDefault(); startPlan(); } });

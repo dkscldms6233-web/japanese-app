@@ -1050,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=142">
+<link rel="stylesheet" href="polish.css?v=147">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2211,16 +2211,6 @@ function bgmNav(d){
   if(SND.previewId){ bgmStop(); clearTimeout(SND.pvT); SND.previewId=id; bgmStart({id,force:true}); }
   updPrev();
 }
-/* 게임 화면에서 바로 소리를 끄고 켜는 버튼 */
-function gmuteEnsure(){
-  const inG=!!document.querySelector("#quizView .gbox"); let b=$("gmute");
-  if(!inG){ if(b) b.remove(); return; }
-  const SP='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/>', ON=SP+'<path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>', OFF=SP+'<path d="m16 9 5 6"/><path d="m21 9-5 6"/></svg>';
-  if(!b){ b=document.createElement("button"); b.id="gmute"; b.type="button"; document.body.appendChild(b);
-    b.addEventListener("click",()=>{ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); if(!soundOn()) bgmStop(); else bgmStart(); gmuteEnsure(); }); }
-  b.innerHTML=soundOn()?ON:OFF; b.setAttribute("aria-label",soundOn()?"소리 끄기":"소리 켜기"); b.setAttribute("aria-pressed",soundOn()?"false":"true"); b.title=b.getAttribute("aria-label");
-}
-(function(){ const q=document.getElementById("quizView"); if(q&&window.MutationObserver) new MutationObserver(()=>gmuteEnsure()).observe(q,{childList:true}); })();
 function updPrev(){ const b=$("bgmplay"); if(b){ const on=!!SND.timer; b.textContent=on?"■ 정지":"▶ 듣기"; } }
 function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; updPrev(); }
 function sfx(kind){
@@ -2294,7 +2284,7 @@ function gCountdown(rule,go,extraCls){
   stopG(); Q=null; G={type:"cd"}; let n=3;
   const tick=()=>{
     if(!G||G.type!=="cd"||!QV(view)) return;
-    $("quizView").innerHTML=`<div class="qbox gbox cdbox ${extraCls||""}"><div class="cdmk">${MONKEY}</div><div class="sub">준비하세요</div><div class="cdnum">${n>0?n:"시작!"}</div><p class="sub">${rule}</p><div class="qbtns"><button class="pill" data-act="gquit">취소</button></div></div>`;
+    $("quizView").innerHTML=`<div class="qbox gbox cdbox ${extraCls||""}"><div class="cdmk">${MONKEY}</div><div class="cdlab">${n>0?"READY?":"GO!"}</div><div class="sub cdsub">준비하세요</div><div class="cdscreen"><div class="cdnum${n>0?"":" go"}">${n>0?n:"시작!"}</div></div><div class="cdbar" aria-hidden="true">${[3,2,1].map(k=>`<i class="${n<=k?"on":""}"></i>`).join("")}</div><p class="sub">${rule}</p><div class="qbtns"><button class="pill" data-act="gquit">취소</button></div></div>`;
     sfx(n>0?"tick":"go");
     if(n===0){ gFlash=setTimeout(()=>{ if(G&&G.type==="cd") go(); },600); return; }
     n--; gFlash=setTimeout(tick,850);
@@ -3703,7 +3693,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar.js?v=13"></script>
 <script src="settings.js?v=10"></script>
 <script src="mrank.js?v=4"></script>
-<script src="plus.js?v=39"></script>
+<script src="plus.js?v=40"></script>
 <script>
 /* 짝 맞추기·경어 짝 맞추기 카드의 긴 글자: 카드 안에 안 들어가면 글자를 한 단계씩 줄입니다 */
 (function(){
