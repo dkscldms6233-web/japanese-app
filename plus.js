@@ -82,7 +82,7 @@ function ddayHtml(){
     if(d<0){ big="끝"; top="시험일이 지났습니다"; sub="눌러서 새 시험 날짜 정하기"; cls=" past"; }
     else { dsm=(+pl.date.slice(5,7))+"/"+(+pl.date.slice(8,10)); big=d===0?"D-DAY":"D-"+d; top="JLPT "+lv+" 시험까지"; sub=md+(off?" · 공식 시험일":"")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":d<=30?" soon":""; pct=Math.max(4,Math.min(100,Math.round((1-d/100)*100))); } }
   else { big="날짜 설정"; top=""; sub="눌러서 날짜 고르기"; cls=" none"; }
-  return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT${dsm?" "+lv:""}</span>${dsm?`<span class="hdm">${dsm}</span>`:""}<span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
+  return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT</span>${dsm?`<span class="hdm">${dsm}</span>`:""}<span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
 function ddayInfo(){
   const pl0=plan(), lv=LVS.includes(pl0.lv)?pl0.lv:((A().myLv()[0])||"N4"), today=new Date().toLocaleDateString("sv-SE");
@@ -186,6 +186,7 @@ function renderTab(){
    <div class="plcmp"><h3>무료와 플러스</h3><table><thead><tr><th></th><th>무료</th><th class="plp">플러스</th></tr></thead><tbody>
     <tr><td>단어·퀴즈·게임·문법·뉴스</td><td>✓</td><td class="plp">✓</td></tr>
     <tr><td>모의시험 연습 모드</td><td>✓</td><td class="plp">✓</td></tr>
+    <tr><td>뉴스 읽기</td><td>하루 2편</td><td class="plp">무제한</td></tr>
     <tr><td>맞춤 복습</td><td>하루 1번</td><td class="plp">무제한</td></tr>
     <tr><td>합격 코치·맞춤 플랜</td><td>-</td><td class="plp">✓</td></tr>
     <tr><td>실전 시험지 모드</td><td>-</td><td class="plp">✓</td></tr></tbody></table></div>
@@ -194,7 +195,7 @@ function renderTab(){
   const fold=h=>{ const m=/^\s*<div class="panel plusp([^"]*)"><h3>([\s\S]*?)<\/h3>([\s\S]*)<\/div>\s*$/.exec(h||""); if(!m) return h||""; const t=m[2].replace(/<em[^>]*>[\s\S]*?<\/em>/g,"").trim(); return `<details class="panel plusp plfold${m[1]}"><summary>${t}</summary>${m[3]}</details>`; };
   const free=!plus&&freeUsed();
   const cta=`<div class="pluscta"><button class="pill on plusgo" data-plus="weak">${plus?"맞춤 복습 시작 · 약한 단어 10문제":free?"오늘 무료 체험은 끝났습니다":"맞춤 복습 무료 체험 (하루 1번)"}</button>${rk.length<4?`<small>틀린 단어가 4개 이상 쌓이면 시작할 수 있습니다</small>`:""}</div>`;
-  const note=(why==="paper"?`<p class="sub plusnote">모의시험 <b>시험지 모드</b>는 플러스 기능입니다. 플러스를 시작하면 실제 시험처럼 교시별 시간표와 종이 넘기기로 풀 수 있습니다. 연습 모드는 계속 무료입니다.</p>`:"")+(why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼습니다. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있습니다.</p>`:"");
+  const note=(why==="news"?`<p class="sub plusnote">무료는 뉴스를 <b>하루 2편</b>까지 읽을 수 있어요. 플러스를 시작하면 뉴스를 무제한으로 읽을 수 있어요.</p>`:"")+(why==="paper"?`<p class="sub plusnote">모의시험 <b>시험지 모드</b>는 플러스 기능입니다. 플러스를 시작하면 실제 시험처럼 교시별 시간표와 종이 넘기기로 풀 수 있습니다. 연습 모드는 계속 무료입니다.</p>`:"")+(why==="weak"?`<p class="sub plusnote">오늘의 무료 체험(1번)을 썼습니다. 내일 다시 체험하거나, 플러스로 무제한으로 쓸 수 있습니다.</p>`:"");
   if(plus){
    el.innerHTML=`<div class="plustab"><div class="plushero on"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2><p>이용 중입니다 · ${ymd(until())}까지 (${daysLeft()}일 남음)</p></div>
    ${note}${cta}${planHtml()+weeklyHtml()+fold(coachHtml())+fold(statsHtml()||`<div class="panel plusp"><div class="sub">아직 분석할 오답이 없습니다. 퀴즈를 풀면 여기에 약점이 쌓입니다.</div></div>`)}
@@ -208,7 +209,7 @@ function renderTab(){
     <span class="plx-crown"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.500 4L12 4l4.500 8L21 8l-2 11H5z" fill="#ffd54a" stroke="#fff3b8" stroke-width="1.200" stroke-linejoin="round"/></svg>PLUS</span>
     <h2>합격까지,<br>내 약점에 딱 맞춰서</h2>
     <p>시험 날짜만 정하면 매일 할 양을 계산하고, 틀린 것만 골라 다시 풀게 해 드려요.</p>
-    <div class="plx-chips"><span>D-day 플랜</span><span>약점 집중</span><span>실전 시험지</span></div></div>
+    <div class="plx-chips"><span>D-day 플랜</span><span>약점 집중</span><span>뉴스 무제한</span></div></div>
    ${note}
    <div class="plx-pv"><div class="plx-pvh"><b>플러스를 쓰면 이런 화면이 열려요</b></div>
     <div class="plx-card"><div class="plx-dd">D-87</div><div><b>오늘은 새 단어 12개</b><small>하루 12개씩이면 시험 전에 끝나요</small></div></div>
@@ -220,7 +221,7 @@ function renderTab(){
     <tr><td>맞춤 복습</td><td>하루 1번</td><td class="plp">무제한</td></tr>
     <tr><td>합격 코치·맞춤 플랜</td><td>-</td><td class="plp">✓</td></tr>
     <tr><td>실전 시험지 모드</td><td>-</td><td class="plp">✓</td></tr></tbody></table></div>
-   <p class="sub plx-free">단어·퀴즈·게임·문법·뉴스·모의시험은 <b>계속 무료</b>예요. 플러스는 합격 준비를 더 깊게 돕는 선택 기능이에요.</p>
+   <p class="sub plx-free">단어·퀴즈·게임·문법·모의시험은 <b>계속 무료</b>예요. 뉴스는 하루 2편까지 무료예요. 플러스는 합격 준비를 더 깊게 돕는 선택 기능이에요.</p>
    <h3 class="plx-h">이용권 고르기</h3>${passesHtml()}
    ${cta}</div>`;
 }

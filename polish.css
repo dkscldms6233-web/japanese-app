@@ -1382,35 +1382,9 @@ html body[data-view=game] .jlv .pill.on::before{content:"✓ ";font-weight:800}
 .ntc .nhc h3 rt{font-size:8px}
 .ntc .nmeta{display:flex;align-items:center;gap:6px}
 
-/* ===== D-day 칩: 채워진 알약으로 눈에 띄게 ===== */
-html body .hdd:not(.none):not(.past){background:var(--accent)!important;border-radius:14px!important;padding:5px 12px 6px!important;margin:0 2px!important;box-shadow:0 3px 0 rgba(0,0,0,.2)!important;border:0!important}
-html body .hdd:not(.none):not(.past) .hdl{color:rgba(255,255,255,.85)!important;font-size:9px!important;letter-spacing:.08em!important;text-indent:0!important;margin-bottom:1px!important}
-html body .hdd:not(.none):not(.past) .hdn{color:var(--onacc)!important;font-size:21px!important;border-bottom:0!important;padding:0!important;letter-spacing:-.01em}
-html body .hdd.soon:not(.none):not(.past){background:#b03a57!important}
-html body .hdd.near:not(.none):not(.past){background:#d83a3a!important;animation:ddp 1.8s ease-in-out infinite}
-html body .hdd.soon .hdn,html body .hdd.near .hdn{color:#fff!important}
-html body .hdd.soon .hdl,html body .hdd.near .hdl{color:rgba(255,255,255,.9)!important}
-html[data-theme=dark] body .hdd:not(.none):not(.past) .hdl,html[data-theme=dark] .hdd:not(.none):not(.past) .hdl{color:rgba(17,21,31,.75)!important}
-html[data-theme=dark] .hdd.soon:not(.none):not(.past),html[data-theme=dark] .hdd.near:not(.none):not(.past){background:#ff7a8a!important}
-html[data-theme=dark] .hdd.soon .hdn,html[data-theme=dark] .hdd.near .hdn{color:#2a0d12!important}
-html[data-theme=dark] .hdd.soon .hdl,html[data-theme=dark] .hdd.near .hdl{color:rgba(42,13,18,.8)!important}
-@keyframes ddp{50%{transform:scale(1.05)}}
-@media(prefers-reduced-motion:reduce){html body .hdd.near{animation:none!important}}
 
-/* ===== D-day v2: 흰 칩 + 남색 테두리, 7일 이내만 빨강 ===== */
-html body .hdd:not(.none):not(.past),html body .hdd.soon:not(.none):not(.past),html body .hdd.near:not(.none):not(.past),html[data-theme=dark] .hdd.soon:not(.none):not(.past),html[data-theme=dark] .hdd.near:not(.none):not(.past){background:var(--card)!important;border:2px solid var(--accent)!important;box-shadow:0 2px 0 var(--accent)!important;animation:none!important;padding:4px 11px 5px!important}
-html body .hdd:not(.none):not(.past) .hdl,html body .hdd.soon .hdl,html body .hdd.near .hdl,html[data-theme=dark] .hdd .hdl,html[data-theme=dark] .hdd.soon .hdl,html[data-theme=dark] .hdd.near .hdl{color:var(--sub)!important}
-html body .hdd:not(.none):not(.past) .hdn,html body .hdd.soon .hdn,html[data-theme=dark] .hdd .hdn,html[data-theme=dark] .hdd.soon .hdn{color:var(--accent-text)!important;font-size:20px!important}
-html body .hdd.near:not(.none):not(.past),html[data-theme=dark] .hdd.near:not(.none):not(.past){border-color:#d83a3a!important;box-shadow:0 2px 0 #d83a3a!important}
-html body .hdd.near .hdn,html body .hdd.near .hdl{color:#d83a3a!important}
-html[data-theme=dark] .hdd.near:not(.none):not(.past){border-color:#ff8a8a!important;box-shadow:0 2px 0 #ff8a8a!important}
-html[data-theme=dark] .hdd.near .hdn,html[data-theme=dark] .hdd.near .hdl{color:#ff8a8a!important}
-.nxdd{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:10px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
-.nxdd b{font-size:18px;font-weight:900;color:var(--accent-text);min-width:52px}
-.nxdd span{font-size:12.5px;font-weight:700;color:var(--sub);white-space:nowrap}
-.nxdd i{flex:1;height:8px;border-radius:99px;background:var(--track,#e0dccf);overflow:hidden}.nxdd i em{display:block;height:100%;border-radius:99px;background:var(--accent)}
-.nxdd.near b{color:#d83a3a}.nxdd.near i em{background:#d83a3a}
-html[data-theme=dark] .nxdd.near b{color:#ff8a8a}html[data-theme=dark] .nxdd.near i em{background:#ff8a8a}
+
+
 
 /* 표지 추가 */
 .h2dia[data-cover=craft],#diaDlg .dcal[data-cover=craft],.h2dia[data-cover=sunset],#diaDlg .dcal[data-cover=sunset],.h2dia[data-cover=washi],#diaDlg .dcal[data-cover=washi],.h2dia[data-cover=cloud],#diaDlg .dcal[data-cover=cloud]{--text:#2b2f3a;--sub:#5d6070;--card:#fffdf7;--accent-text:#1f3a5f;--line:#d6cfbd;--track:#e3dcc7;color:#2b2f3a}
@@ -1462,3 +1436,9 @@ html[data-theme=dark] body .h2flame.on,html[data-theme=dark] .h2flame.on{border-
 html body .h2flame,html body .h2flame.on{width:auto!important;height:auto!important;position:relative}
 html body .h2flame .fln{position:static!important;min-width:0!important;height:auto!important;padding:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;display:block!important;right:auto!important;bottom:auto!important}
 html body .h2flame .fl3{flex:none}
+
+.nquota{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 10px;padding:9px 12px;border-radius:12px;background:var(--ivory);font-size:13px;color:var(--sub);font-weight:700}
+.nquota b{color:var(--accent-text);font-weight:900}
+.nquota button{border:0;background:var(--accent);color:var(--onacc);font:inherit;font-size:12px;font-weight:800;border-radius:999px;padding:5px 11px;cursor:pointer}
+.nquota.out{background:#fdecec;color:#a02020}.nquota.out b{color:#a02020}
+.nquota.plus{background:#fff4cf;color:#8a5a00}.nquota.plus b{background:#e0a82e;color:#fff;border-radius:6px;padding:1px 6px;margin-right:4px}
