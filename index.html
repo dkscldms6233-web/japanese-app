@@ -1056,7 +1056,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=197">
+<link rel="stylesheet" href="polish.css?v=198">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2007,6 +2007,7 @@ function gameSetup(){
 }
 const posGrp=p=>p.startsWith("名詞")?"n":p.includes("動詞")?"v":p.includes("形容詞")?"a":"d";
 function choices(w,key){
+  if(key==="yomi"){ try{ const sm=simYomi(w,w.lv); if(sm) return sm; }catch(e){} }   /* 읽기 보기는 정답과 발음이 비슷한 것으로 */
   /* 보기도 같은 품사끼리 (동사 문제에는 동사 뜻만) — 같은 품사가 모자라면 전체에서 */
   let base=ALL.filter(x=>x.key!==w.key && x[key]!==w[key] && (key!=="yomi"||x.text!==x.yomi)); const same=base.filter(x=>posGrp(x.pos)===posGrp(w.pos)); if(same.length>=30) base=same;
   const others = shuffle(base);
@@ -2419,11 +2420,28 @@ function jBank(bank,lv){
   if(L.length<3){ const order=["N5","N4","N3","N2","N1"], k=order.indexOf(lv); const near=bank.filter(x=>Math.abs(order.indexOf(x.lv)-k)===1); L=L.concat(near); }
   return L;
 }
+/* 한자 읽기 보기: 정답과 발음이 비슷한 것(탁음·장음·촉음·비슷한 글자가 다른 읽기)으로 만들어 헷갈리게 해요 */
+function simYomi(w,lv){
+  const y=String(w.yomi||""); if(y.length<2||/[ァ-ヶー]/.test(y)||!/^[ぁ-ゖ]+$/.test(y)) return null;
+  const V={か:"が",き:"ぎ",く:"ぐ",け:"げ",こ:"ご",さ:"ざ",し:"じ",す:"ず",せ:"ぜ",そ:"ぞ",た:"だ",ち:"ぢ",つ:"づ",て:"で",と:"ど",は:"ば",ひ:"び",ふ:"ぶ",へ:"べ",ほ:"ぼ"}, U={}; Object.keys(V).forEach(k=>U[V[k]]=k);
+  const P={は:"ぱ",ひ:"ぴ",ふ:"ぷ",へ:"ぺ",ほ:"ぽ",ば:"ぱ",び:"ぴ",ぶ:"ぷ",べ:"ぺ",ぼ:"ぽ"};
+  const out=new Set(), add=t=>{ if(t&&t!==y&&t.length>=2) out.add(t); };
+  for(let i=0;i<y.length;i++){ const c=y[i]; if(V[c]) add(y.slice(0,i)+V[c]+y.slice(i+1)); if(U[c]) add(y.slice(0,i)+U[c]+y.slice(i+1)); if(P[c]) add(y.slice(0,i)+P[c]+y.slice(i+1)); }
+  [["おう","お"],["ゅう","ゅ"],["ょう","ょ"],["えい","え"],["いい","い"],["おお","お"],["お","おう"],["ゅ","ゅう"],["ょ","ょう"],["え","えい"],["ゃ","ゃあ"]].forEach(([a,b])=>{ let k=y.indexOf(a); while(k>=0){ add(y.slice(0,k)+b+y.slice(k+a.length)); k=y.indexOf(a,k+1); } });
+  if(y.includes("っ")) add(y.replace("っ","")); else for(let i=1;i<y.length-1;i++){ if("かきくけこさしすせそたちつてとぱぴぷぺぽ".includes(y[i])) add(y.slice(0,i)+"っ"+y.slice(i)); }
+  [["し","ち"],["ち","し"],["じ","ぢ"],["ず","づ"],["つ","す"],["す","つ"],["ぬ","め"],["め","ぬ"],["ろ","る"],["る","ろ"],["ね","れ"],["れ","ね"],["わ","ゆ"]].forEach(([a,b])=>{ const k=y.indexOf(a); if(k>=0) add(y.slice(0,k)+b+y.slice(k+1)); });
+  for(let i=0;i<y.length-1;i++){ if(!/[ゃゅょっう]/.test(y[i])&&!/[ゃゅょっ]/.test(y[i+1])) add(y.slice(0,i)+y[i+1]+y[i]+y.slice(i+2)); }
+  /* 같은 급수의 실제 단어 중 비슷하게 읽히는 것도 후보에 넣어요 (앞이나 뒤 두 글자가 같은 것) */
+  const real=jWords(lv).filter(x=>x.key!==w.key&&x.yomi&&x.yomi!==y&&/^[ぁ-ゖ]+$/.test(x.yomi)&&Math.abs(x.yomi.length-y.length)<=1&&(x.yomi.slice(0,2)===y.slice(0,2)||x.yomi.slice(-2)===y.slice(-2))&&!(x.ko&&w.ko&&x.ko===w.ko)).map(x=>x.yomi);
+  const sim=shuffle([...out]), pool=shuffle(real);
+  const pick=[...sim.slice(0,2),...pool.slice(0,1),...sim.slice(2),...pool.slice(1)].filter((t,i,a)=>a.indexOf(t)===i).slice(0,3);
+  return pick.length<3?null:shuffle([y,...pick]);
+}
 function jReading(lv,n){
   /* 실제 시험처럼: 문장 속 밑줄 친 한자어의 읽기를 고르는 문제. 예문이 없는 단어만 낱말 형식으로 */
   const kw=jWords(lv).filter(w=>w.text!==w.yomi), withSent=kw.filter(w=>w.ex&&w.ex[0]&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=8&&plain(w.ex[0].ja).length<=40);
   const pick=wshuffle(withSent).slice(0,n); if(pick.length<n){ const have=new Set(pick.map(w=>w.key)); pick.push(...wshuffle(kw.filter(w=>!have.has(w.key))).slice(0,n-pick.length)); }
-  return pick.map(w=>{ const o=choices(w,"yomi"), hasS=w.ex&&w.ex[0]&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=8&&plain(w.ex[0].ja).length<=40;
+  return pick.map(w=>{ const o=simYomi(w,lv)||choices(w,"yomi"), hasS=w.ex&&w.ex[0]&&jRe(w).test(w.ex[0].ja)&&plain(w.ex[0].ja).length>=8&&plain(w.ex[0].ja).length<=40;
     const stem=hasS?`<div class="jq">${E(plain(w.ex[0].ja.replace(jRe(w),"§"))).replace("§",`<u>${E(w.text)}</u>`)}</div>`:`<div class="qw">${E(w.text)}</div>`;
     return {sec:"vocab",kind:"한자 읽기",prompt:"밑줄 친 말의 읽는 법은?",stem,opts:o.map(E),a:o.indexOf(w.yomi),exp:`${R(w.f)} · ${E(w.ko)}${hasS?`<br>${R(w.ex[0].ja)}<br>${E(w.ex[0].ko)}`:""}`,w}; });
 }
