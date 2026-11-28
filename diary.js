@@ -109,7 +109,7 @@ function cardHtml(){
     if(G.titles) foot+=`<button type="button" class="dtit" data-gift="box">내 칭호 모음 ${G.titles}개 ›</button>`;
   }
   const streakChip=G&&G.s>0?`<span class="dstreak">연속 ${G.s}일</span>`:"";
-  return `<section class="h2dia" data-cover="${deco().cover}"><div class="dhd"><b>공부 다이어리</b>${streakChip}<button type="button" class="dmore" data-dia="open">${now.getMonth()+1}월 스티커 ${n}장 ›</button></div>
+  return `<section class="h2dia" data-cover="${deco().cover}"><div class="dhd"><b>공부 다이어리</b><button type="button" class="dmore" data-dia="open">${now.getMonth()+1}월 스티커 ${n}장 ›</button></div>
    <div class="dweek">${cells.join("")}</div>${foot}</section>`;
 }
 const shown=()=>{ try{ return localStorage.getItem("jp-dia-seen")===todayS(); }catch(e){ return false; } };
