@@ -1396,3 +1396,18 @@ html[data-theme=dark] .hdd.soon .hdn,html[data-theme=dark] .hdd.near .hdn{color:
 html[data-theme=dark] .hdd.soon .hdl,html[data-theme=dark] .hdd.near .hdl{color:rgba(42,13,18,.8)!important}
 @keyframes ddp{50%{transform:scale(1.05)}}
 @media(prefers-reduced-motion:reduce){html body .hdd.near{animation:none!important}}
+
+/* ===== D-day v2: 흰 칩 + 남색 테두리, 7일 이내만 빨강 ===== */
+html body .hdd:not(.none):not(.past),html body .hdd.soon:not(.none):not(.past),html body .hdd.near:not(.none):not(.past),html[data-theme=dark] .hdd.soon:not(.none):not(.past),html[data-theme=dark] .hdd.near:not(.none):not(.past){background:var(--card)!important;border:2px solid var(--accent)!important;box-shadow:0 2px 0 var(--accent)!important;animation:none!important;padding:4px 11px 5px!important}
+html body .hdd:not(.none):not(.past) .hdl,html body .hdd.soon .hdl,html body .hdd.near .hdl,html[data-theme=dark] .hdd .hdl,html[data-theme=dark] .hdd.soon .hdl,html[data-theme=dark] .hdd.near .hdl{color:var(--sub)!important}
+html body .hdd:not(.none):not(.past) .hdn,html body .hdd.soon .hdn,html[data-theme=dark] .hdd .hdn,html[data-theme=dark] .hdd.soon .hdn{color:var(--accent-text)!important;font-size:20px!important}
+html body .hdd.near:not(.none):not(.past),html[data-theme=dark] .hdd.near:not(.none):not(.past){border-color:#d83a3a!important;box-shadow:0 2px 0 #d83a3a!important}
+html body .hdd.near .hdn,html body .hdd.near .hdl{color:#d83a3a!important}
+html[data-theme=dark] .hdd.near:not(.none):not(.past){border-color:#ff8a8a!important;box-shadow:0 2px 0 #ff8a8a!important}
+html[data-theme=dark] .hdd.near .hdn,html[data-theme=dark] .hdd.near .hdl{color:#ff8a8a!important}
+.nxdd{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:10px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.nxdd b{font-size:18px;font-weight:900;color:var(--accent-text);min-width:52px}
+.nxdd span{font-size:12.5px;font-weight:700;color:var(--sub);white-space:nowrap}
+.nxdd i{flex:1;height:8px;border-radius:99px;background:var(--track,#e0dccf);overflow:hidden}.nxdd i em{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.nxdd.near b{color:#d83a3a}.nxdd.near i em{background:#d83a3a}
+html[data-theme=dark] .nxdd.near b{color:#ff8a8a}html[data-theme=dark] .nxdd.near i em{background:#ff8a8a}

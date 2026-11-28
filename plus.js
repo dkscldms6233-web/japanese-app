@@ -84,6 +84,12 @@ function ddayHtml(){
   else { big="날짜 설정"; top=""; sub="눌러서 날짜 고르기"; cls=" none"; }
   return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT${dsm?" "+lv:""}</span>${dsm?`<span class="hdm">${dsm}</span>`:""}<span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
+function ddayInfo(){
+  const pl0=plan(), lv=LVS.includes(pl0.lv)?pl0.lv:((A().myLv()[0])||"N4"), today=new Date().toLocaleDateString("sv-SE");
+  const date=pl0.date||["2026-12-06"].find(d=>d>=today)||""; if(!date) return null;
+  const d=Math.ceil((new Date(date+"T00:00:00")-new Date(new Date().toDateString()))/864e5); if(d<0) return null;
+  return {d,lv,md:(+date.slice(5,7))+"월 "+(+date.slice(8,10))+"일"};
+}
 function renderDday(){ try{ const el=document.getElementById("hdDday"); if(el) el.innerHTML=ddayHtml(); }catch(e){} }
 
 /* ---- 오늘의 맞춤 플랜: 약점 + 복습할 단어 + 새 단어(시험까지 남은 날에 맞춰 개수 조절) ---- */
@@ -222,5 +228,5 @@ document.addEventListener("click",e=>{ const b=e.target.closest("[data-pplan]");
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-pbuy]"); if(b&&window.SEEDPAY) SEEDPAY.buy(b.dataset.pbuy,renderTab); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-plus]"); if(!b) return; e.preventDefault(); const k=b.dataset.plus; if(k==="weak") startWeak(); else open(); });
 window.addEventListener("load",()=>{ setTimeout(sync,2500); });
-window.PLUS={ddayHtml,renderDday,isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
+window.PLUS={ddayInfo,ddayHtml,renderDday,isPlus,open,startWeak,tileHtml,statsHtml,shopHtml,renderTab,recordExam,sync,setUntil,PASSES};
 })();
