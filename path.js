@@ -227,7 +227,7 @@ function statusHtml(){
 /* 내 계정 화면: 내 참새 + 레벨·연속 출석·씨앗 */
 function profileHtml(){
   const x=xpState(), l=lvOf(x.t), pc=lvPct(x.t,l), st=A().streakDays();
-  return `<div class="pfbird frm" style="${frameStyle(charState().equip)}">${frameFx(charState().equip)}${birdSvg(null,"big")}</div>
+  return `${window.DIARY&&DIARY.profAvatar?DIARY.profAvatar():""}
    <div class="pfchips"><span><b>Lv.${l}</b> ${titleOf(l)}</span><span><b>${st}</b>일 연속</span><span>${seedIc(15)} <b>${charState().seeds||0}</b></span></div>
    ${earnedTitles().length?`<div class="pftt"><small>대표 칭호</small><select data-reptitle aria-label="대표 칭호">${["",...earnedTitles()].map(t=>`<option value="${E(t)}" ${t===repTitle()?"selected":""}>${t?"「"+E(t)+"」":"없음"}</option>`).join("")}</select></div>`:""}
    <div class="pfxp"><div class="prog"><div style="width:${pc}%"></div></div><small>${x.t} XP · ${l>=MAXLV?"최고 레벨이에요!":`다음 레벨까지 ${lvFloor(l+1)-x.t} XP`}</small></div>`;

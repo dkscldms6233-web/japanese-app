@@ -154,5 +154,33 @@ function paint(){
 }
 function open(){ const n=new Date(); vy=n.getFullYear(); vm=n.getMonth(); decoOpen=false; paint(); const d=dlg(); if(!d.open) d.showModal(); }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-dia=open]"); if(b){ e.preventDefault(); open(); } });
-window.DIARY={cardHtml,open,catalog:()=>({buyable:[...Object.entries(COVERS),...Object.entries(PACKS)].filter(([k,v])=>v.price>0&&!v.lv&&!v.clr).map(x=>x[0])})};
+
+/* ---------- 프로필 아바타: 내가 가진 스티커 + 배경색 ---------- */
+const BGS=["#fde8ef","#e3ecfb","#e4f5ea","#fff3d6","#ece3ff","#ffe6d6","#dff3f3","#ece8df"];
+const AVK="jp-av";
+const avConf=()=>{ try{ const a=A().LS.get(AVK,null)||{}; return {id:avSvg(a.id)?a.id:"",bg:Number.isInteger(a.bg)?((a.bg%BGS.length)+BGS.length)%BGS.length:0}; }catch(e){ return {id:"",bg:0}; } };
+function avSvg(id){ const [pk,i]=String(id||"").split(":"); const p=PACKS[pk]; return p&&p.st[+i]?p.st[+i]:""; }
+function avatarHtml(o,big,fallback){ const svg=avSvg(o&&o.av); if(!svg) return ""; const bg=BGS[((+(o&&o.bg)||0)%BGS.length+BGS.length)%BGS.length];
+  return `<span class="cmav av${big?" big":""}" style="background:${bg}"><span class="avi">${svg}</span>${fallback||""}</span>`; }
+function avDlg(done){
+  let dl=document.getElementById("avDlg"); if(!dl){ dl=document.createElement("dialog"); dl.id="avDlg"; document.body.appendChild(dl); }
+  const draw=()=>{ const c=avConf(), D=deco(), nm=(A().curProfile&&A().curProfile().name)||"나";
+    const prev=avatarHtml({av:c.id,bg:c.bg},true)||`<span class="cmav big" style="--h:210">${String(nm).trim().slice(0,1).toUpperCase()||"?"}</span>`;
+    dl.innerHTML=`<div class="dh"><h2 style="margin:0">내 아바타</h2><button class="x" data-avx aria-label="닫기">×</button></div><div class="avb"><div class="avpv">${prev}</div>
+     <p class="dlab">배경색</p><div class="avbgs">${BGS.map((b,i)=>`<button type="button" class="avbg${i===c.bg?" on":""}" data-avbg="${i}" style="background:${b}" aria-label="배경색 ${i+1}"></button>`).join("")}</div>
+     <p class="dlab">그림 <small>(스티커 팩을 사면 늘어나요)</small></p>
+     ${Object.entries(PACKS).map(([pid,p])=>{ const own=owns(D,pid); return `<div class="avpk${own?"":" lock"}"><b>${p.name}${own?"":` <small>${p.clr?"클리어 보상":p.lv?"Lv."+p.lv:"씨앗 "+p.price}</small>`}</b><div class="avg">${p.st.map((s,i)=>`<button type="button" class="avs${c.id===pid+":"+i?" on":""}" data-avs="${pid}:${i}" aria-label="${p.name} ${i+1}"><span class="dst art">${s}</span></button>`).join("")}</div></div>`; }).join("")}
+     <button type="button" class="avnone" data-avs="">그림 없이 이름 첫 글자로 보이기</button></div>`; };
+  if(!dl._b){ dl._b=1; dl.addEventListener("click",e=>{ if(e.target===dl||e.target.closest("[data-avx]")){ dl.close(); if(dl._done) dl._done(); return; }
+    const bg=e.target.closest("[data-avbg]"); if(bg){ const c=avConf(); A().LS.set(AVK,{id:c.id,bg:+bg.dataset.avbg}); draw(); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(x){} return; }
+    const s=e.target.closest("[data-avs]"); if(s){ const id=s.dataset.avs, c=avConf();
+      if(id){ const pid=id.split(":")[0]; if(!owns(deco(),pid)){ try{ A().toast("이 팩은 아직 없어요. 다이어리 꾸미기에서 열 수 있어요"); }catch(x){} return; } }
+      A().LS.set(AVK,{id,bg:c.bg}); draw(); try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(x){} } }); }
+  dl._done=done; draw(); if(!dl.open) dl.showModal(); }
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-avpick]"); if(b) avDlg(()=>{ try{ A().openProf(); }catch(x){} }); });
+function profAvatar(){ const c=avConf(), nm=(A().curProfile&&A().curProfile().name)||"나";
+  const a=avatarHtml({av:c.id,bg:c.bg},true)||`<span class="cmav big" style="--h:210">${String(nm).trim().slice(0,1).toUpperCase()||"?"}</span>`;
+  return `<button type="button" class="pfav" data-avpick aria-label="아바타 바꾸기">${a}<span class="pfavb">아바타 바꾸기</span></button>`; }
+
+window.DIARY={avatarHtml,avConf,avDlg,profAvatar,cardHtml,open,catalog:()=>({buyable:[...Object.entries(COVERS),...Object.entries(PACKS)].filter(([k,v])=>v.price>0&&!v.lv&&!v.clr).map(x=>x[0])})};
 })();

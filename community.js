@@ -38,7 +38,7 @@ function touch(){ if(!lg().joined) return; clearTimeout(pubT); pubT=setTimeout(p
 async function publish(){
   if(!signedIn()||!verified()||!lg().joined) return;
   const p=A().curProfile();
-  try{ await members(weekKey()).doc(uid()).set({name:p.name,title:(window.PATH&&PATH.repTitle&&PATH.repTitle())||"",xp:weekXp(),streak:A().streakDays(),day:A().today(),lv:(window.PATH&&PATH.level&&PATH.level())||1,at:Date.now()}); }catch(e){}
+  try{ await members(weekKey()).doc(uid()).set({name:p.name,title:(window.PATH&&PATH.repTitle&&PATH.repTitle())||"",xp:weekXp(),streak:A().streakDays(),day:A().today(),lv:(window.PATH&&PATH.level&&PATH.level())||1,av:(window.DIARY&&DIARY.avConf&&DIARY.avConf().id)||"",bg:(window.DIARY&&DIARY.avConf&&DIARY.avConf().bg)||0,at:Date.now()}); }catch(e){}
 }
 const genCode=()=>{ const al="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<6;i++) s+=al[Math.floor(Math.random()*al.length)]; return s; };
 async function join(){
@@ -119,7 +119,7 @@ const rangeText=()=>{ const a=new Date(weekKey()+"T12:00:00"), b=new Date(a); b.
 let busy=false;
 const hueOf=u=>{ let h=0; String(u).split("").forEach(c=>{ h=(h*31+c.charCodeAt(0))%360; }); return h; };
 const initial=n=>{ const t=String(n||"?").trim(); return E(t?Array.from(t)[0].toUpperCase():"?"); };
-const avatar=(x,big)=>`<span class="cmav${big?" big":""}" style="--h:${hueOf(x.uid)}">${initial(x.name)}${x.lv&&!big?`<i>${x.lv}</i>`:""}</span>`;
+const avatar=(x,big)=>{ const lvb=x.lv&&!big?`<i>${x.lv}</i>`:""; const a=window.DIARY&&DIARY.avatarHtml?DIARY.avatarHtml(x,big,lvb):""; return a||`<span class="cmav${big?" big":""}" style="--h:${hueOf(x.uid)}">${initial(x.name)}${lvb}</span>`; };
 function row(x,rank,me,isFr,mutual){
   ROWS[x.uid]=Object.assign({mutual:!!mutual,isFr:!!isFr},x);
   const mine=x.uid===(signedIn()?uid():"");
@@ -334,6 +334,14 @@ html[data-theme=dark] .cmav{background:hsl(var(--h) 35% 24%);color:hsl(var(--h) 
 .pfc{text-align:center;padding:4px 18px 18px}.pfc h3{margin:10px 0 4px;font-size:20px;border:0;padding:0;background:none}.pfc h3::before{display:none}.pfc h3 em.me{font-style:normal;font-size:11px;font-weight:800;background:var(--accent);color:var(--onacc);border-radius:6px;padding:2px 7px;vertical-align:3px}
 .pfst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.pfst div{background:var(--ivory,var(--chip));border-radius:12px;padding:10px 4px}.pfst small{display:block;font-size:11px;color:var(--sub);font-weight:700}.pfst b{font-size:15px}
 .pfmore{display:flex;justify-content:center;gap:16px;margin-top:14px}.pfmore button{border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer}`;
+ST.textContent+=`.cmav.av{background-clip:padding-box}.cmav .avi{display:block;width:78%;height:78%}.cmav .avi svg{width:100%;height:100%;display:block}.cmav.av{color:inherit}
+.pfav{display:block;margin:0 auto 10px;border:0;background:none;cursor:pointer;text-align:center;font:inherit}.pfav .cmav.big{width:104px;height:104px;margin:0 auto}.pfavb{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:800;color:var(--accent-text);background:var(--accent-soft);border-radius:999px;padding:5px 12px}
+#avDlg{border:0;border-radius:18px;padding:0;max-width:420px;width:calc(100% - 24px);max-height:88vh;background:var(--card);color:var(--text)}#avDlg[open]{display:flex;flex-direction:column}#avDlg::backdrop{background:rgba(0,0,0,.45)}#avDlg .dh{flex:0 0 auto}
+.avb{overflow-y:auto;padding:0 16px 18px}.avpv{text-align:center;margin:6px 0 10px}.avpv .cmav.big{width:96px;height:96px;margin:0 auto}
+.avbgs{display:flex;gap:8px;flex-wrap:wrap}.avbg{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}.avbg.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.avpk{margin-top:10px}.avpk b{font-size:13px}.avpk b small{color:var(--sub);font-weight:700}.avpk.lock .avg{opacity:.4}
+.avg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}.avs{border:2px solid transparent;background:var(--ivory,var(--chip));border-radius:12px;padding:4px;cursor:pointer}.avs.on{border-color:var(--accent)}.avs .dst{display:block;width:100%;transform:none!important}
+.avnone{display:block;margin:14px auto 0;border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer}`;
 document.head.appendChild(ST);
 
 try{ const au=A().cloud&&A().cloud.ok&&A().cloud.auth; if(au) au.onAuthStateChanged(()=>{ wKey=""; startWatch(); }); }catch(e){}
