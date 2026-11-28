@@ -856,3 +856,15 @@ body[data-view=quiz] .tiles2 .t2{background:color-mix(in srgb,var(--pbg) 38%,var
 html[data-theme=dark] body[data-view=quiz] .tiles2 .t2{background:color-mix(in srgb,var(--pc) 12%,#2c2c2e)!important}
 /* 단어장 급수 카드도 급수 색으로 은은하게 */
 .pk{background:color-mix(in srgb,var(--lvc,var(--accent)) 7%,var(--card))!important}
+
+/* 문법(민트) · 뉴스(하늘색) 색감 */
+.grwrap .gr{background:color-mix(in srgb,#12915a 6%,var(--card));border:1px solid color-mix(in srgb,#12915a 20%,var(--line));border-radius:14px;margin-bottom:8px;padding:2px 12px}
+.grwrap .gr>summary{padding:12px 0}
+.grwrap .gr .grt{color:#0f7a4c}.grwrap .gr[open]{background:color-mix(in srgb,#12915a 9%,var(--card))}
+.grwrap .grlv .pill.on{background:#12915a;border-color:#12915a;color:#fff}
+html[data-theme=dark] .grwrap .gr{background:color-mix(in srgb,#3fcf8e 9%,var(--card));border-color:color-mix(in srgb,#3fcf8e 22%,var(--line))}
+html[data-theme=dark] .grwrap .gr .grt{color:#6fe0ac}
+html[data-theme=dark] .grwrap .grlv .pill.on{background:#3fcf8e;border-color:#3fcf8e;color:#0b2a1c}
+.news-wrap .nrow{background:color-mix(in srgb,#1a82cc 6%,var(--card));border:1px solid color-mix(in srgb,#1a82cc 18%,var(--line));border-radius:16px}
+html[data-theme=dark] .news-wrap .nrow{background:color-mix(in srgb,#5bb6ff 9%,var(--card));border-color:color-mix(in srgb,#5bb6ff 22%,var(--line))}
+.news-wrap .ntitle{color:var(--text)}
