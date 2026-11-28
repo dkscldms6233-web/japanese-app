@@ -158,7 +158,7 @@ function birdSvg(equip,cls){
 }
 function birdHtml(){
   const s=charState(), cheapest=Math.min(...ITEMS.filter(x=>!s.owned.includes(x.id)).map(x=>x.price),Infinity), can=cheapest<=(s.seeds||0);
-  return `<div class="hbw"><button class="hbird frm" style="${frameStyle(charState().equip)}" data-shop="1" aria-label="${E(birdTitle())} 꾸미기">${frameFx(charState().equip)}${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">${seedIc(16)} ${s.seeds||0} ›</button></div>`;
+  return `<div class="hbw"><button class="hbird frm" style="${frameStyle(charState().equip)}" data-prof="1" aria-label="내 프로필 열기">${frameFx(charState().equip)}${birdSvg(null)}</button><button class="hbtag ${can?"hot":""}" data-shop="1">${seedIc(16)} ${s.seeds||0} ›</button></div>`;
 }
 const birdTitle=()=>{ try{ const p=A().curProfile(); return p&&p.cloud?p.name+"님의 참새":"내 참새"; }catch(e){ return "내 참새"; } };
 let shopSlot="head", shopPrev={};
@@ -418,6 +418,7 @@ document.addEventListener("click",e=>{
   else if(pn) startNode(pn.dataset.pn);
   else if(sk){ const u=build().find(x=>x.id===sk.dataset.pskip); if(u&&confirm("「"+u.title+"」 유닛을 이미 알고 있는 것으로 표시하시겠습니까? 경험치는 오르지 않습니다.")){ u.nodes.forEach(n=>markDone(n.id,true)); A().renderHome(); } }
   else if(pr) window.PATH.review();
+  else if(e.target.closest("[data-prof]")) { try{ A().openProf(); }catch(x){} }
   else if(e.target.closest("[data-shop]")) openShop();
   else if(e.target.closest("[data-ppage]")){ const v=e.target.closest("[data-ppage]").dataset.ppage; page=v==="home"?null:v; A().renderHome(); window.scrollTo(0,0); }
   else if(e.target.closest("[data-bkana]")){ window.KANA&&window.KANA.open(e.target.closest("[data-bkana]").dataset.bkana); }

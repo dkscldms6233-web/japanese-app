@@ -1262,3 +1262,31 @@ html[data-theme=dark] .h2ti.c1{color:var(--accent)!important}
 .h2dia .dgiftrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:13px;font-weight:700}
 .h2dia .dgift{border:0;background:var(--accent);color:var(--onacc);font:inherit;font-size:14px;font-weight:800;border-radius:12px;padding:9px 16px;border-bottom:3px solid rgba(0,0,0,.2);cursor:pointer}
 .h2dia .dtit{display:block;margin:10px auto 0;border:0;background:none;color:var(--accent-text);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+
+/* ===== 다이어리 표지 + 꾸미기 패널 ===== */
+.h2dia[data-cover=paper],#diaDlg .dcal[data-cover=paper],.dcsw[data-cover=paper]{background-color:#efe3c8;background-image:linear-gradient(rgba(120,90,40,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(120,90,40,.12) 1px,transparent 1px);background-size:14px 14px}
+.h2dia[data-cover=blossom],#diaDlg .dcal[data-cover=blossom],.dcsw[data-cover=blossom]{background-color:#fbe8ec;background-image:radial-gradient(circle at 20% 25%,#f4b6c6 0 3px,transparent 3.5px),radial-gradient(circle at 70% 60%,#f4b6c6 0 2.5px,transparent 3px),radial-gradient(circle at 45% 85%,#f8cdd8 0 3px,transparent 3.5px);background-size:46px 46px}
+.h2dia[data-cover=night],#diaDlg .dcal[data-cover=night],.dcsw[data-cover=night]{background-color:#1f3a5f;background-image:radial-gradient(circle at 15% 20%,#fff 0 1px,transparent 1.5px),radial-gradient(circle at 60% 40%,#cfe0ff 0 1.2px,transparent 1.7px),radial-gradient(circle at 85% 75%,#fff 0 1px,transparent 1.5px),radial-gradient(circle at 35% 80%,#ffe9a8 0 1.2px,transparent 1.7px);background-size:70px 60px}
+.h2dia[data-cover=night]{color:#fff}.h2dia[data-cover=night] .dhd b,.h2dia[data-cover=night] .dwk b,.h2dia[data-cover=night] .dmsg,.h2dia[data-cover=night] .dgt span,.h2dia[data-cover=night] .dgt b,.h2dia[data-cover=night] .dtit{color:#fff}
+.h2dia[data-cover=night] .dgbar{background:rgba(255,255,255,.22)}
+.h2dia[data-cover=night] .dst.none{background:rgba(255,255,255,.14)!important;box-shadow:none;color:#fff}
+#diaDlg .dcal[data-cover=night] .ddow{color:#c8d3e8}#diaDlg .dcal[data-cover=night] .dst.none{background:rgba(255,255,255,.14)!important;color:#fff;box-shadow:none}
+.dcobtn{display:block;width:100%;margin:10px 0 0;border:0;border-radius:12px;padding:11px;background:var(--accent-soft);color:var(--accent-text);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.dcobtn.on{background:var(--chip);color:var(--text)}
+.ddeco{background:var(--ivory);border-radius:16px;padding:12px;margin-top:10px}
+.ddeco .ddh{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.ddeco .ddh b{font-size:15px}
+.ddeco .dseed{font-size:12.5px;font-weight:800;color:var(--accent-text);background:var(--card);border-radius:999px;padding:4px 10px}
+.ddeco .dlab{margin:10px 2px 6px;font-size:12px;font-weight:800;color:var(--sub)}
+.dcos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.dco{border:2px solid transparent;background:var(--card);border-radius:12px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;cursor:pointer;color:var(--text)}
+.dco.on{border-color:var(--accent)}
+.dco b{font-size:12px}.dco small{font-size:10.5px;color:var(--sub);font-weight:700}
+.dcsw{display:block;width:100%;height:34px;border-radius:8px;border:1px solid var(--line);background-color:var(--ivory)}
+.dpks2{display:flex;flex-direction:column;gap:6px}
+.dpk{display:flex;align-items:center;gap:10px;border:2px solid transparent;background:var(--card);border-radius:12px;padding:8px 10px;font:inherit;cursor:pointer;color:var(--text);text-align:left}
+.dpk.on{border-color:var(--accent)}
+.dpks{display:flex;gap:3px}.dpks .dst{width:24px;height:24px;box-shadow:none}
+.dpkt{display:flex;flex-direction:column}.dpkt b{font-size:13px}.dpkt small{font-size:11px;color:var(--sub);font-weight:700}
+.dpk em{margin-left:auto;font-style:normal;font-size:12px;font-weight:800;color:var(--accent-text);background:var(--accent-soft);border-radius:999px;padding:4px 10px}
+.dpk.on em{background:var(--ok);color:#fff}
+#profDlg .pfbtns{grid-template-columns:1fr!important}
