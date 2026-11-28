@@ -1473,3 +1473,11 @@ html body .h2flame .fl3{flex:none}
 @keyframes nxtyp{0%{opacity:0}10%{opacity:1}85%{opacity:1}100%{opacity:0;visibility:hidden}}
 @keyframes nxin{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.nxcheer.msg .nxbub{animation:none}.nxcheer.msg .nxtyp{display:none}}
+
+/* 응원 카드: 간단하게 (아이콘 + 한 줄 제목 + 메시지) */
+.nxcheer.msg{display:flex;align-items:flex-start;gap:10px;margin:0 0 12px;padding:12px 10px 12px 12px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:none}
+.nxcheer.msg .nxav{width:36px;height:36px;border-radius:10px;flex:none;box-shadow:none}
+.nxcheer.msg .nxbody{flex:1;min-width:0}
+.nxcheer.msg .nxbody small{display:block;font-size:12px;font-weight:800;color:var(--sakura,#b03a57)}
+.nxcheer.msg .nxbody p{margin:3px 0 0;font-size:14px;line-height:1.55;color:var(--text)}
+.nxcheer.msg button{border:0;background:none;color:var(--sub);font-size:18px;line-height:1;cursor:pointer;padding:0 2px;flex:none}
