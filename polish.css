@@ -963,3 +963,44 @@ html body .gc .gt b em{background:color-mix(in srgb,var(--gc,#534AB7) 14%,var(--
 .gbox .opt.correct,.gbox .gopt.ok,.gbox button.ok{animation:gpop .35s ease}
 .gbox .opt.wrong,.gbox .gopt.ng,.gbox button.wrong,.gbox button.ng{animation:gshake .35s ease}
 @media(prefers-reduced-motion:reduce){.gbox .opt.correct,.gbox .opt.wrong{animation:none}}
+
+/* ======== 게임 탭 · 도트(오락실·농장 마을) 테마 — 마음에 안 들면 이 덩어리만 지우면 돼요 ======== */
+body[data-view=game],body:has(#quizView .gbox){--px:#4a2f17;--pxs:#2b1a0b;--pxf:"Galmuri11","DotGothic16","Pretendard",system-ui,sans-serif;--pxbg:#e4f1c8;--pxcard:#fff6dc}
+html[data-theme=dark] body[data-view=game],html[data-theme=dark] body:has(#quizView .gbox){--px:#d9b98a;--pxs:#0e0a05;--pxbg:#1c2a1e;--pxcard:#2a2418}
+body[data-view=game]{background-color:var(--pxbg)!important;background-image:linear-gradient(rgba(0,0,0,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.045) 1px,transparent 1px)!important;background-size:12px 12px!important}
+body[data-view=game] #quizView{font-family:var(--pxf)}
+body[data-view=game] .qm-h h2{font-family:var(--pxf);font-size:26px;letter-spacing:.02em;color:var(--text)}
+body[data-view=game] .qm-h h2::before{content:"★ ARCADE ★";display:block;font-size:11px;letter-spacing:.22em;color:#c4573a;margin-bottom:4px}
+body[data-view=game] .qm-h{border-bottom:3px solid var(--px)!important}
+body[data-view=game] .lvrow .pill,body[data-view=game] .jlv .pill{border-radius:0!important;border:2px solid var(--px)!important;font-family:var(--pxf);background:var(--pxcard)!important;box-shadow:0 2px 0 var(--px)}
+body[data-view=game] .jlv .pill.on{background:#ffd86b!important;color:#3a2600!important}
+/* 게임 카드: 나무 판자 느낌 */
+html body[data-view=game] .gc{border:3px solid var(--px)!important;border-bottom-width:3px!important;border-radius:0!important;background:var(--pxcard)!important;box-shadow:0 5px 0 var(--px),inset 0 0 0 2px rgba(255,255,255,.55)!important}
+html body[data-view=game] .gc:active{transform:translateY(3px)!important;box-shadow:0 2px 0 var(--px)!important}
+html body[data-view=game] .gc .gi{border-bottom:3px solid var(--px)!important;background-image:repeating-conic-gradient(rgba(255,255,255,.3) 0 25%,transparent 0 50%)!important;background-size:20px 20px!important}
+html body[data-view=game] .gc .gt b{font-family:var(--pxf);font-size:15px}
+html body[data-view=game] .gc .best{border-radius:0!important;font-family:var(--pxf);font-size:11.5px}
+html body[data-view=game] .gc .gt b em{border-radius:0!important;font-family:var(--pxf)}
+html body[data-view=game] .gc .gplay{border-radius:0!important;border:3px solid var(--px);box-shadow:0 3px 0 var(--px);font-family:var(--pxf);font-size:14px;letter-spacing:.06em;margin:4px 12px 12px;padding:8px 0}
+html body[data-view=game] .gc .gplay::after{content:" ▶";animation:pxblink 1s steps(2) infinite}
+@keyframes pxblink{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){html body[data-view=game] .gc .gplay::after{animation:none}}
+/* 게임 안 화면: 같은 도트 느낌의 글꼴·테두리 */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox{font-family:var(--pxf)}
+html[data-px] html[data-px] body:has(#quizView .gbox) #quizView .gbox button,html[data-px] body:has(#quizView .gbox) #quizView .gbox .opt,html[data-px] body:has(#quizView .gbox) #quizView .gbox .pill{font-family:var(--pxf)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc{border-radius:0!important;border:3px solid var(--px)!important;background:var(--pxcard)!important;box-shadow:0 3px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .prog{border-radius:0!important;border:3px solid var(--px)!important;height:16px!important;background:var(--pxcard)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .prog>div{border-radius:0!important;background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(255,255,255,.35) 6px 8px)}
+html[data-px] .gres .gstars,html[data-px] .gres.gbox .score{font-family:var(--pxf)}
+html body[data-view=game] .g-match .gi{background-color:#cfe9d6!important}
+html body[data-view=game] .g-wordle .gi{background-color:#ffe6a8!important}
+html body[data-view=game] .g-shiri .gi{background-color:#cfe3f3!important}
+html body[data-view=game] .g-fall .gi{background-color:#f6d3c4!important}
+
+/* 도트 농장(게임 배경): 하늘 + 풀밭 + 도트 격자, 판자 같은 패널 */
+.gbgsw[data-sw=farm] i{background:linear-gradient(180deg,#8fd3ff 55%,#79c25a 55%)}
+html[data-px] body:has(#quizView .gbox){background:linear-gradient(180deg,#8fd3ff 0,#cfeeff 52%,#86cf5c 52%,#6bb43f 100%) fixed!important}
+html[data-px] body:has(#quizView .gbox)::after{background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px)!important;background-size:12px 12px!important;background-color:transparent!important;animation:none!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox{border:3px solid var(--px)!important;border-radius:0!important;background:var(--pxcard)!important;box-shadow:0 6px 0 var(--px)!important;font-family:var(--pxf)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .opt{border-radius:0!important;border:2px solid var(--px)!important;box-shadow:0 3px 0 var(--px)!important}
+html[data-theme=dark][data-px] body:has(#quizView .gbox){background:linear-gradient(180deg,#0d1b3d 0,#17305e 52%,#2c5a2a 52%,#23481f 100%) fixed!important}

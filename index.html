@@ -47,6 +47,8 @@ addEventListener("load",bye);setTimeout(bye,9000);})();
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="술술 일본어">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=M+PLUS+Rounded+1c:wght@500;800&family=Gaegu&family=Yusei+Magic&family=Gowun+Dodum&family=Zen+Maru+Gothic&family=Hi+Melody&family=Kiwi+Maru&family=Mochiy+Pop+One&family=Do+Hyeon&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 /* 한자는 한국식 자형이 아니라 JLPT 시험지와 같은 일본식 자형으로 보이게: 기기의 일본어 글꼴을 먼저 쓰고, 없으면 Noto Sans JP */
@@ -1032,7 +1034,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-mnemo.js?v=1"></script>
 <script src="kana.js?v=73"></script>
 <script src="games2.js?v=42"></script>
-<script src="bgm.js?v=38"></script>
+<script src="bgm.js?v=39"></script>
 <script src="gametheme.js?v=44"></script>
 <script src="quotes.js?v=3"></script>
 <script src="funny.js?v=6"></script>
@@ -1048,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=136">
+<link rel="stylesheet" href="polish.css?v=140">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -1966,9 +1968,11 @@ const GART={
  shiri:`<svg viewBox="0 0 120 80" aria-hidden="true">${[[5,6,"りんご","#ffffff"],[63,30,"ごりら","#ffe9ad"],[5,54,"らっぱ","#ffffff"]].map(([x,y,t,f])=>`<rect x="${x}" y="${y+2.5}" width="52" height="20" rx="10" fill="#4646e0" opacity=".16"/><rect x="${x}" y="${y}" width="52" height="20" rx="10" fill="${f}"/><text x="${x+26}" y="${y+14.5}" font-size="12" font-weight="800" text-anchor="middle" fill="#4646e0">${t}</text>`).join("")}<path d="M36 28q2 12 24 12" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M54 36l7 4-6 5" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 52q-2 12-24 12" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M74 60l-7 4 6 5" stroke="#7c5cff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${pS(108,12,"#7c5cff",.8)}</svg>`,
  fall:`<svg viewBox="0 0 160 104" aria-hidden="true">${[[34,6],[46,0],[126,4]].map(([x,y])=>`<path d="M${x} ${y+8}v24" stroke="#e0507a" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>`).join("")}${pT(14,14,44,34,"ねこ","#fff","#e0507a",10,18,-6)}${pT(96,8,44,34,"さくら","#fff","#4646e0",10,15,7)}<rect x="10" y="84" width="140" height="10" rx="5" fill="#e0507a" opacity=".3"/>${pT(58,52,44,34,"海","#fff","#e0507a",10,24,2)}</svg>`
 };
-const GBGS=[["pcloud","구름별"],["sakura","벚꽃"],["night","밤하늘"]];
-const gbg=()=>GBGS.some(x=>x[0]===prefs.gbg)?prefs.gbg:"pcloud";
-document.documentElement.dataset.gbg=gbg();
+const GBGS=[["farm","도트 농장"],["pcloud","구름별"],["sakura","벚꽃"],["night","밤하늘"]];
+const gbg=()=>GBGS.some(x=>x[0]===prefs.gbg)?prefs.gbg:"farm";
+/* 도트 농장은 구름별 바탕 위에 도트 꾸밈(data-px)을 얹은 것 */
+function gbgApply(){ const g=gbg(); document.documentElement.dataset.gbg=g==="farm"?"pcloud":g; if(g==="farm") document.documentElement.dataset.px="1"; else delete document.documentElement.dataset.px; }
+gbgApply();
 function gameSetup(){
   const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">최고 기록 ${v}점</span>`:""; };
   const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?`<span class="best none">첫 기록에 도전해요</span>`:`<span class="best">최고 기록 ${v}점</span>`; };
@@ -1984,7 +1988,7 @@ function gameSetup(){
    </div>
    <div class="bgmbar"><span class="bgml">${ic("sound")}배경음악</span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="-1" aria-label="이전 음악">‹</button>
-    <span class="bgmname"><b id="bgmnm">${BGM_TRACKS[prefs.bgm||"basic"].name}</b><span class="bgmdots" id="bgmdots">${Object.keys(BGM_TRACKS).map(id=>`<i class="${(prefs.bgm||"basic")===id?"on":""}"></i>`).join("")}</span></span>
+    <span class="bgmname"><b id="bgmnm">${BGM_TRACKS[prefs.bgm||"farm"].name}</b><span class="bgmdots" id="bgmdots">${Object.keys(BGM_TRACKS).map(id=>`<i class="${(prefs.bgm||"farm")===id?"on":""}"></i>`).join("")}</span></span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="1" aria-label="다음 음악">›</button>
     <button type="button" class="pill sm on" id="bgmplay" data-act="bgmplay">▶ 듣기</button></div>
    <details class="qset"><summary>${ic("gear")}게임 설정</summary>
@@ -2144,7 +2148,7 @@ function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer
 
 /* 소리: 외부 파일 없이 브라우저가 직접 만드는 배경음악과 효과음입니다 (저작권 걱정 없음) */
 const SND={ctx:null,timer:null,step:0,next:0};
-if(!BGM_TRACKS[prefs.bgm||"basic"]){ prefs.bgm="basic"; LS.set("jp-prefs",prefs); }   /* 빠진 음악을 고르고 있던 사람은 기본 음악으로 */
+if(!BGM_TRACKS[prefs.bgm||"farm"]){ prefs.bgm="farm"; LS.set("jp-prefs",prefs); }   /* 빠진 음악을 고르고 있던 사람은 기본 음악으로 */
 const soundOn = () => prefs.sound!==false;
 /* 아이폰: 무음(진동) 모드에서도 게임 소리가 나도록 오디오 세션을 '재생'으로 전환 */
 function mediaUnlock(){
@@ -2199,7 +2203,7 @@ function bgmPreview(id){
   if(!sndInit()) return; SND.previewId=id; bgmStart({id,force:true}); updPrev();
 }
 function bgmNav(d){
-  const ids=Object.keys(BGM_TRACKS); let i=ids.indexOf(prefs.bgm||"basic"); i=(i+d+ids.length)%ids.length; const id=ids[i];
+  const ids=Object.keys(BGM_TRACKS); let i=ids.indexOf(prefs.bgm||"farm"); i=(i+d+ids.length)%ids.length; const id=ids[i];
   prefs.bgm=id; LS.set("jp-prefs",prefs);
   const nm=$("bgmnm"); if(nm) nm.textContent=BGM_TRACKS[id].name;
   document.querySelectorAll("#bgmdots i").forEach((x,n)=>x.classList.toggle("on",n===i));
@@ -2860,10 +2864,10 @@ $("quizView").addEventListener("click",e=>{
   if(a==="gm"){ matchPick(b.dataset.side,b.dataset.key); return; }
   if(a==="gopt"){ timePick(+b.dataset.i); return; }
   if(a==="gstop"){ if(!G||G.over) return; if(G.type==="match"){ G.over=true; G.stopped=1; endMatchNow(); } else if(G.type==="time"){ G.over=true; G.stopped=1; endTimeNow(); } return; }   /* 떨어지는 단어는 games2.js가 처리합니다 */
-  if(a==="gbg"){ prefs.gbg=b.dataset.id; LS.set("jp-prefs",prefs); document.documentElement.dataset.gbg=prefs.gbg; document.querySelectorAll(".gbgsw").forEach(x=>x.classList.toggle("on",x===b)); return; }
+  if(a==="gbg"){ prefs.gbg=b.dataset.id; LS.set("jp-prefs",prefs); gbgApply(); document.querySelectorAll(".gbgsw").forEach(x=>x.classList.toggle("on",x===b)); return; }
   if(a==="gquit"){ stopG(); quizSetup(); return; }
   if(a==="bgmnav"){ bgmNav(+b.dataset.d); return; }
-  if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
+  if(a==="bgmplay"){ bgmPreview(prefs.bgm||"farm"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
   if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="qquit"&&Q&&Q.mode==="jlpt"&&!Q.done&&!Q.paper){ jQuitMenu(); return; }
