@@ -1048,10 +1048,10 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=112">
+<link rel="stylesheet" href="polish.css?v=113">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
-<script src="tour.js?v=4"></script>
+<script src="tour.js?v=5"></script>
 <script src="install.js?v=7"></script>
 <script src="visits.js?v=4"></script>
 </head>
@@ -2112,6 +2112,7 @@ function sakura(n){
 }
 function renderResult(){
   try{ if(window.PATH) PATH.quizEnd(Q.score,Q.list.map(w=>w.key)); }catch(e){}
+  try{ window.NEXT&&NEXT.mark("practice"); }catch(e){}
   Q.done=true; document.body.classList.remove("inq"); document.body.classList.add("inr"); window.scrollTo(0,0);
   const t=Q.list.length, rsec=Math.max(1,Math.round((Date.now()-(Q.t0||Date.now()))/1000));
   $("quizView").innerHTML = `<div class="qbox"><div class="rmk">${MONKEY}</div><h2>${Q.mode==="card"?(Q.wrong.length?"카드 끝!":"전부 알아요!"):CHEER.result(Math.round(Q.score/t*100)).title}</h2><div class="hanko lg" aria-hidden="true"><b>${Q.wrong.length?"修了":"満点"}</b></div>
@@ -2120,7 +2121,7 @@ function renderResult(){
    <div class="sub">${Q.wrong.length?(Q.mode==="card"?"몰라요로 고른 단어는 오답 노트에 담겼습니다. 눌러서 다시 확인해 보세요":"틀린 단어는 오답 노트에 자동으로 저장됐어요. 눌러서 복습해 보세요"):(Q.mode==="card"?"모든 카드를 알고 있어요!":"모두 맞혔어요!")}</div>
    ${Q.wrong.length?`<div class="rel" style="justify-content:center;margin-top:12px">${Q.wrong.map(w=>`<div class="lnk" data-act="open" data-key="${w.key}">${R(w.f)} <small>${E(w.ko)}</small></div>`).join("")}</div>`:""}
    <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">
-     ${Q.wrong.length?`<button class="cta" data-act="retry">${Q.mode==="card"?"모릅니다 카드만 다시":"틀린 단어만 다시"}</button><button class="cta sec" data-go="home">홈으로</button><button class="pill" data-act="saveWrong">틀린 단어 저장함에 담기</button>`:`<button class="cta" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 퀴즈 하기</button>`}
+     ${Q.wrong.length?`<button class="cta" data-act="retry">${Q.mode==="card"?"모릅니다 카드만 다시":"틀린 단어만 다시"}</button>${window.NEXT?NEXT.btnHtml(1):""}<button class="cta sec" data-go="home">홈으로</button><button class="pill" data-act="saveWrong">틀린 단어 저장함에 담기</button>`:`${window.NEXT?NEXT.btnHtml():`<button class="cta" data-go="home">홈으로</button>`}<button class="cta sec" data-go="home">홈으로</button><button class="cta sec" data-act="again">다른 퀴즈 하기</button>`}
    </div></div>`;
   if(Q.score/t>=.7) sakura(Q.wrong.length?14:26);
 }
@@ -3321,7 +3322,7 @@ function renderHome(){
    <div class="h2top"><div class="h2bird">${window.PATH?PATH.birdHtml():""}${window.PATH?PATH.statusHtml():""}</div><div class="h2hello"><h2>${nick?`<span class="h2nm">${E(nick)}님</span>`:""}<span class="h2gm">${greet}</span></h2><div class="sub">${new Date().toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"long"})}</div></div><div class="h2flame ${st?"on":""}" title="${st}일 연속 학습" aria-label="${st}일 연속 학습"><svg class="fl3" viewBox="0 0 48 56" aria-hidden="true"><defs><linearGradient id="flg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffc83a"/></linearGradient></defs><circle cx="24" cy="30" r="22" fill="url(#flg)"/><path d="M24 12c1 6 9 10 9 20a9 9 0 0 1-18 0c0-4 2-6 4-8 0 2 1 3 3 3-1-5-1-10 2-15z" fill="#fff"/></svg><b class="fln">${st}</b></div></div>
    ${window.DEV?DEV.bannerHtml():""}
    ${curProfile().cloud?"":`<section class="gstbar" role="note"><span><b>게스트 모드</b> · 기록이 <u>이 기기에만</u> 저장돼요.</span><button type="button" class="gstlink" data-guestlogin="1">로그인하고 기록 지키기</button></section>`}
-   ${beginHtml}
+   ${window.NEXT?NEXT.homeHtml():beginHtml}
    <section class="h2hero${soft?" soft":""}"><button type="button" class="h2lvb" data-lvpop aria-label="급수 바꾸기" aria-expanded="${lvPop}">${myLv().length?lvText(myLv()):"전체"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>${lvPop?`<div class="h2lvpop" role="group" aria-label="급수 고르기"><b>공부할 급수</b><div>${["전체","N5","N4","N3","N2","N1"].map(l=>`<button type="button" class="${(l==="전체"?!myLv().length:myLv().includes(l))?"on":""}" data-mylv="${l}">${l}</button>`).join("")}</div><small>여러 개를 함께 고를 수 있습니다</small></div>`:""}<div class="h2hrow"><div class="h2rw">${ringSvg}<b>${pc}%</b></div><div class="h2ht"><small>오늘의 학습</small><h3>${heroT}</h3><p>${heroS}</p></div></div>${nextQuestBtn()}<div class="h2qs">${qchips}</div></section>
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
    ${(()=>{ const rv=window.PATH?PATH.reviewHtml():""; return rv?`<div class="h2card h2act">${rv}</div>`:""; })()}
@@ -3347,6 +3348,7 @@ function beginnerHtml(){
    <button type="button" class="hbx" data-bgn="hide">나중에 볼게요</button></section>`;
 }
 function renderToday(){
+  try{ window.NEXT&&NEXT.mark("sentence"); }catch(e){}
   const fn=funnyOn(todayOff)?funnyPick(todayOff):null;
   if(fn){
     todayJa=plain(fn.ja); todayFk=funnyKey(fn.ja);
@@ -3675,6 +3677,7 @@ renderLevels(); renderGrid(); setView("home");
 </script>
 <script src="billing.js?v=8"></script>
 <script src="path.js?v=134"></script>
+<script src="next.js?v=1"></script>
 <script src="community.js?v=24"></script>
 <script src="review.js?v=10"></script>
 <script src="grammar-n3pdf.js?v=1"></script>

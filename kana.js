@@ -276,12 +276,12 @@ function renderQ(){
   if(!dn&&q.t==="hear") setTimeout(()=>{ if(K&&K.qs&&K.qs[K.i]===q&&K.sel===null) say(q.say); },200);
 }
 function renderResult(){
-  inq(false); const n=K.qs.length, pct=Math.round(K.score/n*100), ok=pct>=70;
+  inq(false); try{ window.NEXT&&NEXT.mark("practice"); }catch(e){} const n=K.qs.length, pct=Math.round(K.score/n*100), ok=pct>=70;
   if(ok&&K.lessonKey){ const d=done(); d.done[K.lessonKey]=true; save(d); try{ if(window.PATH) PATH.kanaDone(K.lessonKey); }catch(e){} }
   const nxt=K.lessonI!=null?LESSONS[K.lessonI+1]:null;
   root().innerHTML=`<div class="kana" style="text-align:center"><h2>${K.title} 결과</h2><div class="score" style="font-size:44px;margin:16px 0">${K.score} / ${n}</div>
   <div class="sub">${ok?(K.lessonKey?"합격! 이 레슨을 완료로 표시했어요.":"잘했어요!"):"70% 이상이면 완료로 표시됩니다. 글자표를 한 번 더 보고 다시 도전해 보세요."}</div>
-  <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">${ok&&nxt?`<button class="cta" data-kana="lesson" data-i="${nxt.i}">다음 레슨: ${lessonLabel(nxt,K.k)}</button><button class="cta sec" data-kana="again">다시 풀기</button>`:`<button class="cta" data-kana="again">다시 풀기</button>`}<button class="cta sec" data-kana="home">글자표·레슨 목록으로</button></div></div>`;
+  <div class="qbtns" style="flex-direction:column;align-items:stretch;max-width:380px;margin:18px auto 0">${ok&&window.NEXT?`${NEXT.btnHtml()}<button class="cta sec" data-kana="again">다시 풀기</button>`:ok&&nxt?`<button class="cta" data-kana="lesson" data-i="${nxt.i}">다음 레슨: ${lessonLabel(nxt,K.k)}</button><button class="cta sec" data-kana="again">다시 풀기</button>`:`<button class="cta" data-kana="again">다시 풀기</button>`}<button class="cta sec" data-kana="home">글자표·레슨 목록으로</button></div></div>`;
   if(ok&&typeof sakura==="function") sakura(14);
 }
 
@@ -400,7 +400,7 @@ function renderRowDone(){
   window.scrollTo(0,0); try{ if(typeof sakura==="function") sakura(10); }catch(e){}
 }
 function cFinish(){ const {L,k}=C, d=done(); d.done[key(L,k)]=true; if(d.cur&&typeof d.cur.k!=="number") delete d.cur[k?"k":"h"]; save(d); try{ if(window.PATH) PATH.kanaDone(key(L,k)); }catch(e){}
-  toast(lessonLabel(L,k)+" 완료! 잘했어요"); if(L.i===9) autoDk(k); const nx=L.i<9?LESSONS[L.i+1]:null; if(nx){ renderRowDone(); } else { C=null; K={tab:k?"k":"h"}; renderHome(); window.scrollTo(0,0); } }
+  toast(lessonLabel(L,k)+" 완료! 잘했어요"); try{ window.NEXT&&NEXT.mark("learn"); }catch(e){} if(L.i===9) autoDk(k); const nx=L.i<9?LESSONS[L.i+1]:null; if(nx){ renderRowDone(); } else { C=null; K={tab:k?"k":"h"}; renderHome(); window.scrollTo(0,0); } }
 function renderCard(){
   inq(false); document.body.classList.add("kcardmode"); const {L,k,chars,i}=C, c=chars[i], last=i===chars.length-1, col=KC[L.i%KC.length];
   if(C.step===1&&canTrace(c[0])) return renderTrace(); C.step=0; const tr=canTrace(c[0]), mn=mnemo(c[0],k);
@@ -555,5 +555,6 @@ document.addEventListener("click",e=>{
   else if(a==="again"){ if(K.lessonI!=null) startLesson(LESSONS[K.lessonI],K.k); else startFinal(K.k); window.scrollTo(0,0); }
 });
 function openLesson(i,k){ K={tab:k?"k":"h"}; setView("quiz"); document.body.classList.add("kanamode"); renderLesson(LESSONS[i],k); window.scrollTo(0,0); }
-window.KANA={open,openLesson,learn,kgame};
+function kcheck(){ const k=K.tab==="k"||(!done().done["h0"]&&!!done().done["k0"]); const d=done().done; let L=null; LESSONS.slice(0,CORE).forEach(x=>{ if(d[key(x,k)]) L=x; }); if(!L) L=LESSONS[0]; K={tab:k?"k":"h"}; startLesson(L,k,6); window.scrollTo(0,0); }
+window.KANA={open,openLesson,learn,kgame,check:kcheck};
 })();

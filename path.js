@@ -281,7 +281,7 @@ function go(mode){
   active=mode==="quiz"?{id,keys:new Set(ws.map(w=>w.key))}:null;
   A().setView("quiz"); A().startQuiz(mode==="quiz"?"meaning":"card",ws,ws.length);
 }
-function markDone(id,skip){ const st=state(); st.done=st.done||{}; if(!st.done[id]) st.done[id]=skip?2:1; set("jp-path",st); if(!skip) checkSpecial(); }
+function markDone(id,skip){ const st=state(); st.done=st.done||{}; if(!st.done[id]) st.done[id]=skip?2:1; set("jp-path",st); if(!skip){ checkSpecial(); try{ window.NEXT&&NEXT.mark("learn"); }catch(e){} } }
 
 /* ---------- 7일 연속 여정 · 선물 ---------- */
 const GIFT_TITLES=["새싹 참새","날갯짓 참새","하늘 참새","한 달 참새"];
@@ -381,6 +381,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
+    due:()=>dueKeys().length,nextNode:()=>{ const c=current(); return c?{id:c.n.id,L:c.n.L,label:c.n.label}:null; },startNode,
     frameStyle,frameFx,
   equip:()=>charState().equip||{},gift:{
     seeds:()=>charState().seeds||0,

@@ -6,7 +6,7 @@ window.TOUR=(function(){
   const A=()=>window.APP;
   const nav=v=>()=>document.querySelector(`#views .vb[data-view="${v}"]`);
   const STEPS=[
-    {t:()=>document.querySelector(".h2hero .cta")||document.querySelector(".h2begin"),tx:"매일 <b>이 버튼</b>으로 오늘의 학습을 시작해요. 하루 5분이면 충분해요.",mode:"next"},
+    {t:()=>document.querySelector(".h2next .nxgo")||document.querySelector(".h2hero .cta")||document.querySelector(".h2begin"),tx:"뭘 할지 몰라도 괜찮아요. <b>이 버튼</b>만 누르면 오늘 할 일이 차례로 나와요.",mode:"next"},
     {t:nav("list"),tx:"아래 <b>학습</b> 탭을 눌러 보세요.",mode:"tap"},
     {t:()=>document.getElementById("subtabs"),tx:"<b>단어장·퀴즈·문법·뉴스</b>를 여기서 골라요.",mode:"next"},
     {t:nav("exam"),tx:"<b>모의시험</b>도 눌러 보세요. JLPT처럼 연습할 수 있어요.",mode:"tap"},
