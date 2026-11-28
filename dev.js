@@ -14,7 +14,7 @@ function bannerHtml(){ if(!notice) return ""; const d=noticeAt?new Date(noticeAt
   return `<div class="devnote" role="note"><div class="nh"><span class="nbadge">공지</span>${ds?`<small>${ds}</small>`:""}</div><div class="nt">${E(notice)}</div></div>`; }
 
 function btn(){ let b=$("devBtn"); if(!isDev){ if(b) b.remove(); return; } if(b) return;
-  b=document.createElement("button"); b.id="devBtn"; b.textContent="🛠"; b.setAttribute("aria-label","개발자 모드"); b.onclick=open; document.body.appendChild(b); }
+  b=document.createElement("button"); b.id="devBtn"; b.textContent="DEV"; b.setAttribute("aria-label","개발자 모드"); b.onclick=open; document.body.appendChild(b); }
 
 async function check(u){ isDev=false; me=u||null;
   try{ if(u){ const s=await db().collection("admins").doc(u.uid).get(); isDev=s.exists; } }catch(e){}
@@ -119,7 +119,7 @@ async function act(b){ const a=b.dataset.d, P=ps();
   }catch(e){ A().toast("실패했어요(권한·네트워크 확인)"); return; }
   refresh(); if(A().view&&A().view()==="home") A().renderHome(); }
 
-const ST=document.createElement("style"); ST.textContent=`#devBtn{position:fixed;left:10px;bottom:76px;z-index:60;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);opacity:.55;font-size:16px;cursor:pointer}
+const ST=document.createElement("style"); ST.textContent=`#devBtn{position:fixed;left:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;width:42px;height:42px;border-radius:50%;border:0;background:#1f3a5f;color:#fff;font-size:11px;font-weight:900;letter-spacing:.03em;box-shadow:0 2px 8px rgba(0,0,0,.3);opacity:.92;cursor:pointer}
 #devDlg{border:0;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 20px);max-height:90vh;background:var(--card);color:var(--text);overflow:hidden}#devDlg[open]{display:flex;flex-direction:column}#devDlg::backdrop{background:rgba(0,0,0,.45)}
 #devDlg .dh{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
 .dvtabs{flex:0 0 auto;display:flex;gap:4px;padding:0 12px 10px;border-bottom:1px solid var(--line);overflow-x:auto}.dvtabs button{flex:1 0 auto;flex-shrink:0;border:0;background:var(--chip);color:var(--sub);font:inherit;font-size:13.5px;font-weight:800;border-radius:10px;padding:8px 10px;cursor:pointer;white-space:nowrap}.dvtabs button.on{background:var(--accent);color:var(--onacc)}.dvtabs i{font-style:normal;background:#d83a3a;color:#fff;border-radius:999px;font-size:11px;padding:1px 6px;margin-left:3px}

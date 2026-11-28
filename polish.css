@@ -1477,3 +1477,6 @@ html body .h2flame .fl3{flex:none}
 /* 안내 한 줄(참새): 박스 없이 깔끔하게 */
 .h2next .nxsay{background:none!important;border-radius:0!important;padding:0 2px!important;margin:0 0 8px!important}
 .h2next .nxsay img{background:none!important}
+
+/* 게임 화면: 맨 위 배너가 혼자 흰색이던 것을 게임 배경과 이어지게 */
+html[data-px] body[data-view=game] header,html[data-px] body:has(#quizView .gbox) header,html[data-px] body[data-view=game] .top,html[data-px] body:has(#quizView .gbox) .top{background:transparent!important;box-shadow:none!important;border-bottom-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
