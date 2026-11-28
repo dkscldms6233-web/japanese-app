@@ -931,3 +931,18 @@ html[data-theme=dark] .kpis .k4 :is(b,strong,.v){color:#ff9ab9}
 .wcol:not(.today) .tr{outline:1px solid color-mix(in srgb,var(--text) 10%,transparent)}
 .h2hero.soft .h2ring .rt{stroke:var(--track)!important}
 .lvring{box-shadow:0 0 0 2px var(--accent)}
+
+/* 게임 탭: 그림은 크게 두고, 점수와 '플레이' 버튼을 더해 게임답게 */
+.g-match{--gc:#0e7a4b}.g-wordle{--gc:#a66a00}.g-shiri{--gc:#1370b3}.g-fall{--gc:#b84a2b}
+html body .gc{border:1.5px solid color-mix(in srgb,var(--gc,#534AB7) 35%,var(--line))!important;border-bottom-width:4px!important}
+html body .gc .gi svg{max-height:118px}
+html body .gc .gt{padding:10px 14px 8px}
+html body .gc .gt b{font-size:16.5px}
+html body .gc .best{color:var(--gc,var(--accent-text));background:color-mix(in srgb,var(--gc,#534AB7) 12%,var(--card))}
+html body .gc .best.none{color:var(--sub);background:var(--chip)}
+html body .gc .gplay{display:block;margin:2px 12px 12px;text-align:center;border-radius:999px;padding:9px 0;font-weight:800;font-size:14px;color:#fff;background:var(--gc,#534AB7)}
+html body .gc .gplay::after{content:" ▶";font-size:11px}
+html body .gc:active .gplay{filter:brightness(.92)}
+html[data-theme=dark] .gc .gplay{color:#101012}
+html[data-theme=dark] .g-match{--gc:#4fd49b}html[data-theme=dark] .g-wordle{--gc:#f0b84a}html[data-theme=dark] .g-shiri{--gc:#6fc0ff}html[data-theme=dark] .g-fall{--gc:#ff9a7a}
+html body .gc .gt b em{background:color-mix(in srgb,var(--gc,#534AB7) 14%,var(--card))!important;color:var(--gc,var(--accent-text))!important;font-weight:800}

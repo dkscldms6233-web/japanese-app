@@ -1048,7 +1048,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=133">
+<link rel="stylesheet" href="polish.css?v=135">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -1971,16 +1971,16 @@ const gbg=()=>GBGS.some(x=>x[0]===prefs.gbg)?prefs.gbg:"pcloud";
 document.documentElement.dataset.gbg=gbg();
 function gameSetup(){
   const bm=ks=>{ const v=Math.max(...ks.map(k=>getBest(k)||0)); return v?`<span class="best">최고 기록 ${v}점</span>`:""; };
-  const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?"":`<span class="best">최고 기록 ${v}점</span>`; };
+  const jl=jlvQ(), bb=k=>{ const v=getBest(k); return v==null?`<span class="best none">첫 기록에 도전해요</span>`:`<span class="best">최고 기록 ${v}점</span>`; };
   $("quizView").innerHTML = `<div class="qbox" style="max-width:640px">
    <div class="qm-h"><h2>게임</h2></div>
    ${lvRow(jl,"급수",true)}
    <div class="gcards">
-    <button class="gc g-match" data-act="gstart" data-g="kmatch"><span class="gi"><svg viewBox="0 0 160 104" aria-hidden="true"><rect x="22" y="18" width="52" height="62" rx="12" fill="#fff" stroke="#3d8f66" stroke-width="3"/><text x="48" y="62" font-size="38" font-weight="800" text-anchor="middle" fill="#3d8f66">あ</text><rect x="88" y="26" width="52" height="62" rx="12" fill="#fff" stroke="#e0507a" stroke-width="3"/><text x="114" y="68" font-size="34" font-weight="800" text-anchor="middle" fill="#e0507a">아</text></svg></span><span class="gt"><b>글자 맞추기 <em style="font-style:normal;font-size:12px;font-weight:700;background:var(--accent-soft);color:var(--accent-text);border-radius:999px;padding:2px 8px;margin-left:4px;white-space:nowrap">왕초보 추천</em></b><span class="best">글자 하나와 소리 짝 맞추기</span></span></button>
-    <button class="gc g-match" data-act="gstart" data-g="match"><span class="gi">${GART.match}</span><span class="gt"><b>짝 맞추기</b>${bb("match2")}</span></button>
-    <button class="gc g-wordle" data-act="gstart" data-g="wordle"><span class="gi">${GART.wordle}</span><span class="gt"><b>일본어 워들</b>${bb("wordle")}</span></button>
-    <button class="gc g-shiri" data-act="gstart" data-g="shiri"><span class="gi">${GART.shiri}</span><span class="gt"><b>しりとり (끝말잇기)</b>${bm(["shiri1","shiri2","shiri3"])}</span></button>
-    <button class="gc g-fall" data-act="gstart" data-g="fall"><span class="gi">${GART.fall}</span><span class="gt"><b>떨어지는 단어</b>${bb("fall")}</span></button>
+    <button class="gc g-match" data-act="gstart" data-g="kmatch"><span class="gi"><svg viewBox="0 0 160 104" aria-hidden="true"><rect x="22" y="18" width="52" height="62" rx="12" fill="#fff" stroke="#3d8f66" stroke-width="3"/><text x="48" y="62" font-size="38" font-weight="800" text-anchor="middle" fill="#3d8f66">あ</text><rect x="88" y="26" width="52" height="62" rx="12" fill="#fff" stroke="#e0507a" stroke-width="3"/><text x="114" y="68" font-size="34" font-weight="800" text-anchor="middle" fill="#e0507a">아</text></svg></span><span class="gt"><b>글자 맞추기 <em style="font-style:normal;font-size:12px;font-weight:700;background:var(--accent-soft);color:var(--accent-text);border-radius:999px;padding:2px 8px;margin-left:4px;white-space:nowrap">왕초보 추천</em></b><span class="best">글자 하나와 소리 짝 맞추기</span></span><span class="gplay">플레이</span></button>
+    <button class="gc g-match" data-act="gstart" data-g="match"><span class="gi">${GART.match}</span><span class="gt"><b>짝 맞추기</b>${bb("match2")}</span><span class="gplay">플레이</span></button>
+    <button class="gc g-wordle" data-act="gstart" data-g="wordle"><span class="gi">${GART.wordle}</span><span class="gt"><b>일본어 워들</b>${bb("wordle")}</span><span class="gplay">플레이</span></button>
+    <button class="gc g-shiri" data-act="gstart" data-g="shiri"><span class="gi">${GART.shiri}</span><span class="gt"><b>しりとり (끝말잇기)</b>${bm(["shiri1","shiri2","shiri3"])}</span><span class="gplay">플레이</span></button>
+    <button class="gc g-fall" data-act="gstart" data-g="fall"><span class="gi">${GART.fall}</span><span class="gt"><b>떨어지는 단어</b>${bb("fall")}</span><span class="gplay">플레이</span></button>
    </div>
    <div class="bgmbar"><span class="bgml">${ic("sound")}배경음악</span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="-1" aria-label="이전 음악">‹</button>
