@@ -1050,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=162">
+<link rel="stylesheet" href="polish.css?v=164">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -3338,6 +3338,7 @@ function renderHome(){
    ${sent?`<button type="button" class="h2sent" data-go="today"><span class="lab">${E(sent.lab)}</span><span class="ja">${R(sent.ja)}</span><span class="ko">${E(sent.ko)}</span></button>`:""}
    ${(()=>{ const rv=window.PATH?PATH.reviewHtml():""; return rv?`<div class="h2card h2act">${rv}</div>`:""; })()}
    ${jr}
+   ${window.DIARY?DIARY.cardHtml():""}
    <section><div class="h2sh"><b>탐색</b></div><div class="h2grid">${tiles}</div>${moreTiles?`<details class="h2more"><summary>더 보기</summary><div class="h2grid">${moreTiles}</div></details>`:""}</section>
    ${cultureHtml()}
 </div>`;
@@ -3689,6 +3690,7 @@ renderLevels(); renderGrid(); setView("home");
 <script src="billing.js?v=8"></script>
 <script src="path.js?v=135"></script>
 <script src="next.js?v=4"></script>
+<script src="diary.js?v=1"></script>
 <script src="community.js?v=24"></script>
 <script src="review.js?v=10"></script>
 <script src="grammar-n3pdf.js?v=1"></script>
