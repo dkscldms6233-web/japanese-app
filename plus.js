@@ -82,7 +82,7 @@ function ddayHtml(){
     if(d<0){ big="끝"; top="시험일이 지났습니다"; sub="눌러서 새 시험 날짜 정하기"; cls=" past"; }
     else { dsm=(+pl.date.slice(5,7))+"/"+(+pl.date.slice(8,10)); big=d===0?"D-DAY":"D-"+d; top="JLPT "+lv+" 시험까지"; sub=md+(off?" · 공식 시험일":"")+(d<=7&&d>0?" · 마무리 주간":""); cls=d<=7?" near":d<=30?" soon":""; pct=Math.max(4,Math.min(100,Math.round((1-d/100)*100))); } }
   else { big="날짜 설정"; top=""; sub="눌러서 날짜 고르기"; cls=" none"; }
-  return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT</span>${dsm?`<span class="hdm">${dsm}</span>`:""}<span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
+  return `<label class="hdd${cls}" title="JLPT 시험까지 남은 날 (누르면 시험 날짜 바꾸기)"><span class="hdl">JLPT${dsm?" "+lv:""}</span>${dsm?`<span class="hdm">${dsm}</span>`:""}<span class="hdn">${big}</span><input type="date" id="hmDate" value="${pl.date||""}" min="${today}" aria-label="JLPT 시험 날짜 고르기"></label>`;
 }
 function renderDday(){ try{ const el=document.getElementById("hdDday"); if(el) el.innerHTML=ddayHtml(); }catch(e){} }
 

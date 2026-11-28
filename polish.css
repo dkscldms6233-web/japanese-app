@@ -1381,3 +1381,18 @@ html body[data-view=game] .jlv .pill.on::before{content:"✓ ";font-weight:800}
 .ntc .nhc h3{font-size:17px!important;line-height:1.4!important}
 .ntc .nhc h3 rt{font-size:8px}
 .ntc .nmeta{display:flex;align-items:center;gap:6px}
+
+/* ===== D-day 칩: 채워진 알약으로 눈에 띄게 ===== */
+html body .hdd:not(.none):not(.past){background:var(--accent)!important;border-radius:14px!important;padding:5px 12px 6px!important;margin:0 2px!important;box-shadow:0 3px 0 rgba(0,0,0,.2)!important;border:0!important}
+html body .hdd:not(.none):not(.past) .hdl{color:rgba(255,255,255,.85)!important;font-size:9px!important;letter-spacing:.08em!important;text-indent:0!important;margin-bottom:1px!important}
+html body .hdd:not(.none):not(.past) .hdn{color:var(--onacc)!important;font-size:21px!important;border-bottom:0!important;padding:0!important;letter-spacing:-.01em}
+html body .hdd.soon:not(.none):not(.past){background:#b03a57!important}
+html body .hdd.near:not(.none):not(.past){background:#d83a3a!important;animation:ddp 1.8s ease-in-out infinite}
+html body .hdd.soon .hdn,html body .hdd.near .hdn{color:#fff!important}
+html body .hdd.soon .hdl,html body .hdd.near .hdl{color:rgba(255,255,255,.9)!important}
+html[data-theme=dark] body .hdd:not(.none):not(.past) .hdl,html[data-theme=dark] .hdd:not(.none):not(.past) .hdl{color:rgba(17,21,31,.75)!important}
+html[data-theme=dark] .hdd.soon:not(.none):not(.past),html[data-theme=dark] .hdd.near:not(.none):not(.past){background:#ff7a8a!important}
+html[data-theme=dark] .hdd.soon .hdn,html[data-theme=dark] .hdd.near .hdn{color:#2a0d12!important}
+html[data-theme=dark] .hdd.soon .hdl,html[data-theme=dark] .hdd.near .hdl{color:rgba(42,13,18,.8)!important}
+@keyframes ddp{50%{transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){html body .hdd.near{animation:none!important}}
