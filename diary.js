@@ -6,38 +6,42 @@
 (function(){
 const A=()=>window.APP;
 const E=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const P=(d)=>`<svg viewBox="0 0 24 24" width="62%" height="62%" aria-hidden="true">${d}</svg>`;
-/* 스티커 팩: 팩마다 6종 [색, 그림] (흰 그림이 잘 보이는 진한 색) */
+/* 스티커: 흰 테두리(다이컷) + 부드러운 그림자의 일러스트 스티커. art(그림)를 흰 테두리 층 + 색 층으로 겹쳐서 만들어요 */
+const art=g=>{ const o=g.replace(/\s(fill|stroke|stroke-width|opacity)="[^"]*"/g,""); return `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true"><g fill="#fff" stroke="#fff" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round">${o}</g>${g}</svg>`; };
+const bird=(eyes,extra,cap)=>`<ellipse cx="24" cy="29" rx="15" ry="13" fill="#a39d95"/><ellipse cx="24" cy="32" rx="9" ry="8" fill="#f6f0e6"/><circle cx="24" cy="18" r="11" fill="#b0aaa2"/><path d="M13 16a11 11 0 0 1 22 0c-4-3-18-3-22 0z" fill="#6f6a63"/><path d="M22 20.500h4l-2 3.500z" fill="#f2a33a"/>${eyes}<circle cx="16.500" cy="22.500" r="2.400" fill="#f4a3a8"/><circle cx="31.500" cy="22.500" r="2.400" fill="#f4a3a8"/><path d="M19 41v3M29 41v3" stroke="#e59a3a" stroke-width="2" stroke-linecap="round" fill="none"/>${extra||""}`;
+const eyeDot='<circle cx="19.500" cy="18" r="1.900" fill="#222"/><circle cx="28.500" cy="18" r="1.900" fill="#222"/>';
+const eyeLove='<path d="M17.500 17.500c0-1.600 2.500-1.600 2.500 0 0-1.600 2.500-1.600 2.500 0 0 1.800-2.500 3-2.500 3s-2.500-1.200-2.500-3z" fill="#e0525e"/><path d="M26 17.500c0-1.600 2.500-1.600 2.500 0 0-1.600 2.500-1.600 2.500 0 0 1.800-2.500 3-2.500 3s-2.500-1.200-2.500-3z" fill="#e0525e"/>';
+const eyeSleep='<path d="M17.500 18q2 1.800 4 0M26.500 18q2 1.800 4 0" stroke="#222" stroke-width="1.800" fill="none" stroke-linecap="round"/>';
 const PACKS={
- basic:{name:"기본 팩",price:0,st:[
-  ["#d9577a",P('<path fill="#fff" d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>')],
-  ["#4f86c6",P('<path fill="#fff" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>')],
-  ["#d99a2b",P('<g fill="#fff"><circle cx="12" cy="6.5" r="3.3"/><circle cx="17.3" cy="10.4" r="3.3"/><circle cx="15.3" cy="16.6" r="3.3"/><circle cx="8.7" cy="16.6" r="3.3"/><circle cx="6.7" cy="10.4" r="3.3"/></g><circle cx="12" cy="12" r="2.6" fill="#d99a2b"/>')],
-  ["#3e8e6a",P('<path fill="#fff" d="M5 19C5 10 10 5 19 5c0 9-5 14-14 14z"/><path d="M5 19l7-7" stroke="#3e8e6a" stroke-width="1.6" fill="none"/>')],
-  ["#7b72c9",P('<path fill="#fff" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>')],
-  ["#d9704f",P('<path fill="#fff" d="M7 18a4 4 0 0 1-.6-7.96A5.5 5.5 0 0 1 17 9.5 4.3 4.3 0 0 1 17 18z"/>')]]},
- blossom:{name:"벚꽃 팩",price:120,st:[
-  ["#d9577a",P('<g fill="#fff"><circle cx="12" cy="6.5" r="3.3"/><circle cx="17.3" cy="10.4" r="3.3"/><circle cx="15.3" cy="16.6" r="3.3"/><circle cx="8.7" cy="16.6" r="3.3"/><circle cx="6.7" cy="10.4" r="3.3"/></g><circle cx="12" cy="12" r="2.4" fill="#d9577a"/>')],
-  ["#c74b86",P('<g fill="#fff"><circle cx="12" cy="6.2" r="3.6"/><circle cx="17.8" cy="12" r="3.6"/><circle cx="12" cy="17.8" r="3.6"/><circle cx="6.2" cy="12" r="3.6"/></g><circle cx="12" cy="12" r="2.2" fill="#c74b86"/>')],
-  ["#e0678a",P('<path fill="#fff" d="M12 20C6 20 6 11 6 8c3 1 4.500 1 6-1 1.500 2 3 2 6 1 0 3 0 12-6 12z"/>')],
-  ["#b84a78",P('<g fill="#fff"><circle cx="12" cy="7.800" r="3.800"/><circle cx="8" cy="14.500" r="3.800"/><circle cx="16" cy="14.500" r="3.800"/></g>')],
-  ["#d96c8a",P('<ellipse cx="12" cy="12" rx="4.200" ry="8.200" transform="rotate(35 12 12)" fill="#fff"/>')],
-  ["#cf5a74",P('<circle cx="12" cy="9" r="4.500" fill="#fff"/><path d="M12 13.500v7M12 17.500l-3-2M12 16l3-2" stroke="#fff" stroke-width="1.800" stroke-linecap="round" fill="none"/>')]]},
- sky:{name:"하늘 팩",price:120,st:[
-  ["#e0a82e",P('<circle cx="12" cy="12" r="4.500" fill="#fff"/><g stroke="#fff" stroke-width="1.800" stroke-linecap="round" fill="none"><path d="M12 2.500v3M12 18.500v3M2.500 12h3M18.500 12h3M5.300 5.300l2.100 2.100M16.600 16.600l2.100 2.100M18.700 5.300l-2.100 2.100M7.400 16.600l-2.100 2.100"/></g>')],
-  ["#4f86c6",P('<path fill="#fff" d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/>')],
-  ["#3a9bb8",P('<g stroke="#fff" stroke-width="1.800" stroke-linecap="round" fill="none"><path d="M12 3v18M4.200 7.500l15.600 9M4.200 16.500l15.600-9"/></g>')],
-  ["#7b72c9",P('<g fill="none" stroke="#fff" stroke-width="2.200" stroke-linecap="round"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M7.200 17a4.800 4.800 0 0 1 9.600 0"/></g>')],
-  ["#6f8fd8",P('<path fill="#fff" d="M13 2L5 13h6l-1 9 8-11h-6z"/>')],
-  ["#3e8e6a",P('<path fill="#fff" d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v6a2 2 0 0 0 4 0" stroke="#fff" stroke-width="1.800" fill="none"/>')]]}
+ study:{name:"공부 팩",desc:"연필·책·커피 같은 공부 친구들",price:0,fx:false,st:[
+  art('<g transform="rotate(-40 24 24)"><rect x="19" y="5" width="10" height="30" rx="2" fill="#f4c542"/><rect x="19" y="5" width="10" height="6" rx="2" fill="#e57373"/><path d="M19 35h10l-5 9z" fill="#f2d3a3"/><path d="M22 41.500h4l-2 3.500z" fill="#444"/></g>'),
+  art('<rect x="8" y="9" width="32" height="30" rx="3" fill="#5c7cba"/><rect x="12" y="9" width="26" height="30" rx="2" fill="#7d9bd6"/><rect x="16" y="15" width="16" height="3" rx="1.500" fill="#fff"/><rect x="16" y="21" width="12" height="3" rx="1.500" fill="#fff"/>'),
+  art('<path d="M10 16h24v12a10 10 0 0 1-10 10h-4a10 10 0 0 1-10-10z" fill="#e8d3b0"/><path d="M34 19h3a5 5 0 0 1 0 10h-3" fill="none" stroke="#e8d3b0" stroke-width="3.500"/><path d="M10 16h24v4H10z" fill="#c9a574"/><path d="M17 6c-2 3 2 4 0 7M24 6c-2 3 2 4 0 7" stroke="#9aa5b8" stroke-width="2.200" fill="none" stroke-linecap="round"/>'),
+  art('<circle cx="24" cy="20" r="12" fill="#ffd54f"/><rect x="19" y="31" width="10" height="8" rx="2" fill="#b0b8c4"/><path d="M20 39h8l-1 4h-6z" fill="#8a93a3"/><path d="M20 17a5 5 0 0 1 5-5" stroke="#fff" stroke-width="2.400" fill="none" stroke-linecap="round"/>'),
+  art('<path d="M24 5l5.600 11.600 12.400 1.800-9 8.800 2.200 12.600L24 33.800l-11.200 6 2.200-12.600-9-8.800 12.400-1.800z" fill="#ffca28"/><circle cx="19" cy="23" r="1.800" fill="#5d4037"/><circle cx="29" cy="23" r="1.800" fill="#5d4037"/><path d="M20 28q4 3.500 8 0" stroke="#5d4037" stroke-width="1.800" fill="none" stroke-linecap="round"/><circle cx="15.500" cy="27" r="2" fill="#ff8a80"/><circle cx="32.500" cy="27" r="2" fill="#ff8a80"/>'),
+  art('<rect x="9" y="8" width="30" height="34" rx="3" fill="#fff3b0"/><rect x="9" y="8" width="30" height="8" rx="3" fill="#ffb74d"/><path d="M15 24h18M15 30h18M15 36h10" stroke="#c9b458" stroke-width="2.200" stroke-linecap="round" fill="none"/>')]},
+ japan:{name:"일본 감성 팩",desc:"주먹밥·도리이·라멘·다루마·부채·벚꽃",price:150,fx:true,st:[
+  art('<path d="M24 6c5 0 16 24 16 29 0 5-5 7-16 7S8 40 8 35C8 30 19 6 24 6z" fill="#fafafa"/><path d="M13 31h22l3 8c0 2-4 3-14 3s-14-1-14-3z" fill="#2f4f45"/><circle cx="20" cy="24" r="1.700" fill="#333"/><circle cx="28" cy="24" r="1.700" fill="#333"/><circle cx="16.500" cy="27" r="2" fill="#f7b6bd"/><circle cx="31.500" cy="27" r="2" fill="#f7b6bd"/>'),
+  art('<rect x="6" y="9" width="36" height="5" rx="2" fill="#d94a3a"/><rect x="9" y="17" width="30" height="4" fill="#d94a3a"/><rect x="12" y="14" width="4" height="29" fill="#d94a3a"/><rect x="32" y="14" width="4" height="29" fill="#d94a3a"/><rect x="21" y="14" width="6" height="7" fill="#b73a2d"/>'),
+  art('<circle cx="24" cy="26" r="17" fill="#e04b3d"/><ellipse cx="24" cy="22" rx="11" ry="9" fill="#fde7d3"/><circle cx="20" cy="22" r="2.200" fill="#333"/><circle cx="28" cy="22" r="2.200" fill="#333"/><path d="M19 17q5-3 10 0" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M19 34c3 3 7 3 10 0" stroke="#f5c542" stroke-width="2.400" fill="none" stroke-linecap="round"/>'),
+  art('<path d="M6 22h36c0 11-7 19-18 19S6 33 6 22z" fill="#e8584a"/><ellipse cx="24" cy="22" rx="18" ry="5" fill="#ffd77a"/><path d="M14 22q3-6 6 0M22 21q3-6 6 0" stroke="#f1a33a" stroke-width="2" fill="none"/><circle cx="31" cy="21" r="3.500" fill="#fff"/><circle cx="31" cy="21" r="1.600" fill="#f5b942"/><path d="M12 10c-1 3 2 4 0 7M20 8c-1 3 2 4 0 8" stroke="#a9b3c4" stroke-width="2" fill="none" stroke-linecap="round"/>'),
+  art('<path d="M24 40L6 17a26 26 0 0 1 36 0z" fill="#f48fb1"/><path d="M24 40L15 14M24 40l9-26M24 40V12" stroke="#fff" stroke-width="1.600" fill="none"/><circle cx="24" cy="40" r="3" fill="#8d6e63"/>'),
+  art('<g transform="translate(24 24)"><ellipse rx="6" ry="10" cy="-9" fill="#f8a8c2"/><ellipse rx="6" ry="10" cy="-9" transform="rotate(72)" fill="#f8a8c2"/><ellipse rx="6" ry="10" cy="-9" transform="rotate(144)" fill="#f8a8c2"/><ellipse rx="6" ry="10" cy="-9" transform="rotate(216)" fill="#f8a8c2"/><ellipse rx="6" ry="10" cy="-9" transform="rotate(288)" fill="#f8a8c2"/><circle r="4" fill="#ec6f94"/></g>')]},
+ sparrow:{name:"참새 팩",desc:"우리 참새의 여러 표정",price:150,fx:true,st:[
+  art(bird(eyeDot,'')),
+  art(bird(eyeLove,'<path d="M36 8c0-2.500 3.500-2.500 3.500 0 0-2.500 3.500-2.500 3.500 0 0 2.800-3.500 4.500-3.500 4.500S36 10.800 36 8z" fill="#ff7a8a"/>')),
+  art(bird(eyeSleep,'<text x="33" y="10" font-size="9" font-weight="700" fill="#6b7fd7" font-family="sans-serif">z</text><text x="38" y="6" font-size="6" font-weight="700" fill="#6b7fd7" font-family="sans-serif">z</text>')),
+  art(bird(eyeDot,'<circle cx="19.500" cy="18" r="4.400" fill="none" stroke="#3a4a6b" stroke-width="1.500"/><circle cx="28.500" cy="18" r="4.400" fill="none" stroke="#3a4a6b" stroke-width="1.500"/><path d="M23.900 18h.2" stroke="#3a4a6b" stroke-width="1.500"/><rect x="15" y="36" width="18" height="8" rx="1.500" fill="#5c7cba"/><rect x="24" y="36" width="1.500" height="8" fill="#fff"/>')),
+  art(bird(eyeDot,'<ellipse cx="7" cy="25" rx="3.800" ry="8" transform="rotate(-25 7 25)" fill="#a39d95"/><ellipse cx="41" cy="25" rx="3.800" ry="8" transform="rotate(25 41 25)" fill="#a39d95"/><path d="M24 2l1.400 2.900 3.200.4-2.300 2.200.6 3.100L24 9l-2.900 1.600.6-3.100-2.300-2.200 3.200-.4z" fill="#ffca28"/>')),
+  art(bird(eyeDot,'<path d="M16 34h12v5a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6z" fill="#e8d3b0"/><path d="M28 36h2a3 3 0 0 1 0 6h-2" fill="none" stroke="#e8d3b0" stroke-width="2.200"/>'))]}
 };
-/* 표지: 홈 카드와 달력 바탕 */
-const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},blossom:{name:"벚꽃",price:80},night:{name:"밤하늘",price:80}};
+/* 표지: 문구 노트 느낌 (종이·줄·모눈·테이프·스프링) */
+const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:0},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100}};
 const KEY="jp-dia-deco";
-const deco=()=>{ try{ const d=A().LS.get(KEY,null)||{}; return {cover:d.cover||"basic",pack:d.pack||"basic",own:Array.isArray(d.own)?d.own:[]}; }catch(e){ return {cover:"basic",pack:"basic",own:[]}; } };
+const deco=()=>{ try{ const d=A().LS.get(KEY,null)||{}; return {cover:COVERS[d.cover]?d.cover:"basic",pack:PACKS[d.pack]?d.pack:"study",own:Array.isArray(d.own)?d.own:[]}; }catch(e){ return {cover:"basic",pack:"study",own:[]}; } };
 const saveDeco=d=>{ try{ A().LS.set(KEY,d); }catch(e){} };
-const owns=(d,id)=>PACKS[id]&&PACKS[id].price===0||COVERS[id]&&COVERS[id].price===0||d.own.includes(id);
-const ST=()=>PACKS[deco().pack]?PACKS[deco().pack].st:PACKS.basic.st;
+const owns=(d,id)=>(PACKS[id]&&PACKS[id].price===0)||(COVERS[id]&&COVERS[id].price===0)||d.own.includes(id);
+const ST=()=>PACKS[deco().pack].st;
 const pad=n=>String(n).padStart(2,"0");
 const ds=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const hash=s=>{ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h; };
@@ -45,7 +49,7 @@ const sticker=d=>{ const S=ST(); return S[hash(d)%S.length]; };
 const log=()=>{ try{ return A().LS.get("jp-log",{})||{}; }catch(e){ return {}; } };
 const studied=(d,L)=>{ const e=(L||log())[d]; return !!(e&&e.n>0); };
 const todayS=()=>ds(new Date());
-const stk=(d,cls)=>{ const [c,svg]=sticker(d); return `<span class="dst ${cls||""}" style="background:${c}">${svg}</span>`; };
+const stk=(d,cls)=>`<span class="dst art ${PACKS[deco().pack].fx?"fx ":""}${cls||""}">${sticker(d)}</span>`;
 const DOW=["월","화","수","목","금","토","일"];
 function monday(d){ const x=new Date(d); x.setHours(12); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; }
 function monthCount(y,m,L){ let n=0; const last=new Date(y,m+1,0).getDate(); for(let i=1;i<=last;i++) if(studied(y+"-"+pad(m+1)+"-"+pad(i),L)) n++; return n; }
@@ -97,7 +101,7 @@ function paint(){
   const n=monthCount(vy,vm,L), isNow=vy===new Date().getFullYear()&&vm===new Date().getMonth(), D=deco();
   const seeds=()=>{ try{ return PATH.gift.seeds(); }catch(e){ return 0; } };
   const coverRow=Object.entries(COVERS).map(([id,c])=>{ const own=owns(D,id), on=D.cover===id; return `<button type="button" class="dco${on?" on":""}" data-diacover="${id}"><span class="dcsw" data-cover="${id}"></span><b>${c.name}</b><small>${on?"사용 중":own?"사용":"씨앗 "+c.price}</small></button>`; }).join("");
-  const packRow=Object.entries(PACKS).map(([id,p])=>{ const own=owns(D,id), on=D.pack===id; return `<button type="button" class="dpk${on?" on":""}" data-diapack="${id}"><span class="dpks">${p.st.slice(0,4).map(x=>`<span class="dst" style="background:${x[0]}">${x[1]}</span>`).join("")}</span><span class="dpkt"><b>${p.name}</b><small>스티커 6종</small></span><em>${on?"사용 중":own?"사용":"씨앗 "+p.price}</em></button>`; }).join("");
+  const packRow=Object.entries(PACKS).map(([id,p])=>{ const own=owns(D,id), on=D.pack===id; return `<button type="button" class="dpk${on?" on":""}" data-diapack="${id}"><span class="dpks">${p.st.map(x=>`<span class="dst art">${x}</span>`).join("")}</span><span class="dpkt"><b>${p.name}</b><small>${p.desc}</small></span><em>${on?"사용 중":own?"사용":"씨앗 "+p.price}</em></button>`; }).join("");
   const decoPanel=decoOpen?`<div class="ddeco"><div class="ddh"><b>꾸미기</b><span class="dseed">씨앗 ${seeds()}개</span></div><p class="dlab">표지</p><div class="dcos">${coverRow}</div><p class="dlab">스티커 팩</p><div class="dpks2">${packRow}</div><p class="sub" style="margin:8px 2px 0;font-size:12px">씨앗은 공부하고 연속 출석·주간 리그로 모을 수 있어요</p></div>`:"";
   d.innerHTML=`<div class="dh"><h2 style="margin:0">공부 다이어리</h2><button class="x" data-diax aria-label="닫기">×</button></div>
    <div class="db"><div class="dnav"><button type="button" data-diam="-1" aria-label="지난 달">‹</button><b>${vy}년 ${vm+1}월</b><button type="button" data-diam="1" aria-label="다음 달" ${isNow?"disabled":""}>›</button></div>
