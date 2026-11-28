@@ -1050,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=140">
+<link rel="stylesheet" href="polish.css?v=142">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2193,6 +2193,7 @@ function bgmStart(o){
   const force=o&&o.force; if((!soundOn()&&!force)||SND.timer||!sndInit()) return;
   const tr=BGM_TRACKS[(o&&o.id)||prefs.bgm]||BGM_TRACKS.basic;
   SND.step=0; SND.next=SND.ctx.currentTime+.08;
+  try{ const g=SND.bgm.gain, now=SND.ctx.currentTime; g.cancelScheduledValues(now); g.setValueAtTime(.0001,now); g.linearRampToValueAtTime(.12,now+1.8); }catch(_){}   /* 갑자기 크게 나오지 않게 서서히 커져요 */
   SND.timer=setInterval(()=>{
     while(SND.next<SND.ctx.currentTime+1.2){ tr.play(SND.step,SND.next); SND.step=(SND.step+1)%tr.len; SND.next+=60/tr.bpm/tr.div; }
   },100);
@@ -2210,6 +2211,16 @@ function bgmNav(d){
   if(SND.previewId){ bgmStop(); clearTimeout(SND.pvT); SND.previewId=id; bgmStart({id,force:true}); }
   updPrev();
 }
+/* 게임 화면에서 바로 소리를 끄고 켜는 버튼 */
+function gmuteEnsure(){
+  const inG=!!document.querySelector("#quizView .gbox"); let b=$("gmute");
+  if(!inG){ if(b) b.remove(); return; }
+  const SP='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/>', ON=SP+'<path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>', OFF=SP+'<path d="m16 9 5 6"/><path d="m21 9-5 6"/></svg>';
+  if(!b){ b=document.createElement("button"); b.id="gmute"; b.type="button"; document.body.appendChild(b);
+    b.addEventListener("click",()=>{ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); if(!soundOn()) bgmStop(); else bgmStart(); gmuteEnsure(); }); }
+  b.innerHTML=soundOn()?ON:OFF; b.setAttribute("aria-label",soundOn()?"소리 끄기":"소리 켜기"); b.setAttribute("aria-pressed",soundOn()?"false":"true"); b.title=b.getAttribute("aria-label");
+}
+(function(){ const q=document.getElementById("quizView"); if(q&&window.MutationObserver) new MutationObserver(()=>gmuteEnsure()).observe(q,{childList:true}); })();
 function updPrev(){ const b=$("bgmplay"); if(b){ const on=!!SND.timer; b.textContent=on?"■ 정지":"▶ 듣기"; } }
 function bgmStop(){ clearInterval(SND.timer); SND.timer=null; SND.previewId=null; updPrev(); }
 function sfx(kind){
