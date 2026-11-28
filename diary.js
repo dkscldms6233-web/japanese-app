@@ -128,12 +128,25 @@ function pick(kind,id){
   if(!owns(D,id)){
     if(item.clr){ try{ A().toast((item.clr==="ALL"?"N5~N1을 모두":item.clr+"을(를)")+" 클리어하면 열려요"); }catch(e){} return; }
     if(item.lv){ try{ A().toast("레벨 "+item.lv+"이 되면 열려요 (지금 레벨 "+lvNow()+")"); }catch(e){} return; }
-    let ok=false; try{ ok=PATH.gift.spendSeeds(item.price); }catch(e){}
-    if(!ok){ try{ A().toast("씨앗이 모자라요. 공부하면 씨앗을 모을 수 있어요"); }catch(e){} return; }
-    D.own.push(id); try{ A().toast(item.name+"을 샀어요!"); }catch(e){}
+    buyAsk(kind,id,item); return;
   }
   D[kind]=id; saveDeco(D); paint(); try{ A().renderHome(); }catch(e){}
 }
+/* 사기 전에 한 번 더 물어봐요 (실수로 눌러서 씨앗이 나가지 않게) */
+function buyAsk(kind,id,item){
+  let bd=document.getElementById("diaBuy"); if(!bd){ bd=document.createElement("dialog"); bd.id="diaBuy"; document.body.appendChild(bd);
+    bd.addEventListener("click",e=>{ if(e.target===bd||e.target.closest("[data-buyno]")){ bd.close(); return; }
+      if(e.target.closest("[data-buyyes]")){ const k=bd.dataset.k, i=bd.dataset.i, it=(k==="cover"?COVERS:PACKS)[i]; bd.close(); if(!it) return;
+        let ok=false; try{ ok=PATH.gift.spendSeeds(it.price); }catch(x){}
+        if(!ok){ try{ A().toast("씨앗이 모자라요. 공부하면 씨앗을 모을 수 있어요"); }catch(x){} return; }
+        const D=deco(); if(!D.own.includes(i)) D.own.push(i); D[k]=i; saveDeco(D); try{ A().toast(it.name+"을(를) 샀어요!"); }catch(x){}
+        paint(); try{ A().renderHome(); }catch(x){} } }); }
+  const have=(()=>{ try{ return PATH.gift.seeds(); }catch(e){ return 0; } })(), enough=have>=item.price;
+  bd.dataset.k=kind; bd.dataset.i=id;
+  const prev=kind==="cover"?`<span class="dcsw big" data-cover="${id}"></span>`:`<span class="dpks">${item.st.slice(0,6).map(x=>`<span class="dst art">${x}</span>`).join("")}</span>`;
+  bd.innerHTML=`<div class="buyb"><div class="buypv">${prev}</div><h3>${item.name}</h3><p>${kind==="cover"?"표지":"스티커 팩"}를 씨앗 <b>${item.price}개</b>로 살까요?</p><p class="buyhv">내 씨앗 ${have}개${enough?` → 사고 나면 ${have-item.price}개`:" · 씨앗이 모자라요"}</p>
+   <div class="buybt"><button type="button" class="pill" data-buyno>아니요</button><button type="button" class="pill on" data-buyyes ${enough?"":"disabled"}>${enough?"살게요":"씨앗 부족"}</button></div></div>`;
+  if(!bd.open) bd.showModal(); }
 function streak(){ try{ return A().streakDays(); }catch(e){ return 0; } }
 function paint(){
   const d=dlg(), L=log(), t=todayS(), first=new Date(vy,vm,1), lead=(first.getDay()+6)%7, last=new Date(vy,vm+1,0).getDate(), cells=[];
