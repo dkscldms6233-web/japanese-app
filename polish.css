@@ -1089,3 +1089,38 @@ html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .rank{display:inlin
 html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{border-bottom-color:var(--px)!important}
 html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border-radius:0!important;border:2px solid var(--px)!important;font-family:var(--pxf);box-shadow:0 2px 0 var(--px)}
 html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{box-shadow:0 4px 0 var(--px)!important}
+
+/* ===== 도트 테마를 앱 디자인과 어우러지게: 갈색 → 앱의 남보라, 크림 → 앱 카드색, 모서리 살짝 둥글게, 본문 글꼴은 앱 글꼴 ===== */
+body[data-view=game],body:has(#quizView .gbox){--px:#3b3770;--pxs:#241f4a;--pxcard:#fffdf9}
+html[data-theme=dark] body[data-view=game],html[data-theme=dark] body:has(#quizView .gbox){--px:#9c97e6;--pxs:#0f0e22;--pxcard:#2c2c2e}
+/* 게임 탭 */
+body[data-view=game] .qm-h h2::before{color:var(--accent-text)}
+body[data-view=game] .qm-h{border-bottom:2px solid var(--px)!important}
+body[data-view=game] .lvrow .pill,body[data-view=game] .jlv .pill{border-radius:6px!important;border-width:2px!important;font-family:inherit;font-weight:700;box-shadow:0 2px 0 var(--px)}
+body[data-view=game] .jlv .pill.on{background:var(--accent-soft)!important;color:var(--accent-text)!important;border-color:var(--accent)!important;box-shadow:0 2px 0 var(--accent)}
+html body[data-view=game] .gc{border:2px solid var(--px)!important;border-bottom-width:2px!important;border-radius:10px!important;box-shadow:0 4px 0 var(--px)!important;overflow:hidden}
+html body[data-view=game] .gc .gi{border-bottom:2px solid var(--px)!important;background-image:repeating-conic-gradient(rgba(255,255,255,.22) 0 25%,transparent 0 50%)!important}
+html body[data-view=game] .gc .gt b{font-family:inherit;font-weight:800;font-size:16px}
+html body[data-view=game] .gc .best,html body[data-view=game] .gc .gt b em{border-radius:6px!important;font-family:inherit;font-weight:700}
+html body[data-view=game] .gc .gplay{border-radius:8px!important;border:2px solid var(--px);box-shadow:0 3px 0 var(--px);font-family:inherit;font-weight:800}
+/* 게임 안 화면: 판은 앱 카드색, 보기 칸은 앱 글꼴로 */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox{border:2px solid var(--px)!important;border-radius:12px!important;box-shadow:0 5px 0 var(--px)!important;background:var(--card)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox button,html[data-px] body:has(#quizView .gbox) #quizView .gbox .opt,html[data-px] body:has(#quizView .gbox) #quizView .gbox .pill{font-family:inherit}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox{font-family:inherit}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .opt{border-radius:8px!important;border:2px solid var(--px)!important;box-shadow:0 3px 0 var(--px)!important}
+/* 점수판·시간·하트·막대: 칠판은 유지하되 테두리를 남보라로, 모서리 살짝 둥글게 */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat #gt,html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.gsc,html[data-px] body:has(#quizView .gbox) #quizView .gbox .gstat span.hp{border:2px solid var(--px)!important;border-radius:8px!important;box-shadow:inset 0 0 0 2px #3e6a4a,0 3px 0 var(--px)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .prog{border:2px solid var(--px)!important;border-radius:8px!important}
+html[data-px] body:has(#quizView .gbox) #quizView #gbar{border-radius:4px!important}
+/* 카운트다운·결과 */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.cdbox .cdscreen,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-top{border:2px solid var(--px)!important;border-radius:12px!important;box-shadow:inset 0 0 0 2px #3e6a4a,0 4px 0 var(--px)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.cdbox .cdlab{color:var(--accent-text)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.cdbox .cdbar i{border:2px solid var(--px);border-radius:3px;background:var(--card)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.cdbox .cdbar i.on{background:#ffd84a}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{border:2px solid var(--px)!important;border-radius:10px!important;box-shadow:0 4px 0 var(--px)!important;font-family:inherit;font-weight:800}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill{background:var(--card)!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-acts .pill.on{background:var(--accent)!important;color:var(--onacc,#fff)!important;text-shadow:none}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .newbest{border:2px solid var(--px);border-radius:8px!important;box-shadow:0 2px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-words{background:var(--card)!important;border:2px solid var(--px)!important;border-radius:12px!important;box-shadow:0 3px 0 var(--px)}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gtag,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border-radius:6px!important;font-family:inherit}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border:2px solid var(--px)!important}
