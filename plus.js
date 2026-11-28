@@ -87,7 +87,7 @@ function ddayHtml(){
 function ddayInfo(){
   const pl0=plan(), lv=LVS.includes(pl0.lv)?pl0.lv:((A().myLv()[0])||"N4"), today=new Date().toLocaleDateString("sv-SE");
   const date=pl0.date||["2026-12-06"].find(d=>d>=today)||""; if(!date) return null;
-  const d=Math.ceil((new Date(date+"T00:00:00")-new Date(new Date().toDateString()))/864e5); if(d<0) return null;
+  const d=Math.ceil((new Date(date+"T00:00:00")-new Date(new Date().toDateString()))/864e5); if(d<-1) return null;
   return {d,lv,md:(+date.slice(5,7))+"월 "+(+date.slice(8,10))+"일"};
 }
 function renderDday(){ try{ const el=document.getElementById("hdDday"); if(el) el.innerHTML=ddayHtml(); }catch(e){} }
