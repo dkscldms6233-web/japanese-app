@@ -868,3 +868,30 @@ html[data-theme=dark] .grwrap .grlv .pill.on{background:#3fcf8e;border-color:#3f
 .news-wrap .nrow{background:color-mix(in srgb,#1a82cc 6%,var(--card));border:1px solid color-mix(in srgb,#1a82cc 18%,var(--line));border-radius:16px}
 html[data-theme=dark] .news-wrap .nrow{background:color-mix(in srgb,#5bb6ff 9%,var(--card));border-color:color-mix(in srgb,#5bb6ff 22%,var(--line))}
 .news-wrap .ntitle{color:var(--text)}
+
+/* 글자 대비 보강(라이트): 평소·마우스를 올렸을 때 모두 읽기 쉽게 */
+:root:not([data-theme=dark]) .vb.plus,:root:not([data-theme=dark]) .vb.plus *{color:#b34a0b}
+:root:not([data-theme=dark]) .h2next .nxi{background:rgba(255,255,255,.28);color:#fff;font-weight:800}
+:root:not([data-theme=dark]) .h2ti{color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.18)}
+:root:not([data-theme=dark]) .h2ti.c2{background:#c9540f}
+:root:not([data-theme=dark]) .h2ti.c3{background:#0e7a4b}
+:root:not([data-theme=dark]) .h2ti.c4{background:#1370b3}
+:root:not([data-theme=dark]) .h2ti.c5,:root:not([data-theme=dark]) .h2ti.c6,:root:not([data-theme=dark]) .h2ti.c7{filter:brightness(.88)}
+:root:not([data-theme=dark]) .lvb.lv-N5{background:#2f6fb0;color:#fff}
+:root:not([data-theme=dark]) .lvb.lv-N4{background:#6a4fc4;color:#fff}
+:root:not([data-theme=dark]) .lvb.lv-N3{background:#9a6a00;color:#fff}
+:root:not([data-theme=dark]) .lvb.lv-N2{background:#b2503c;color:#fff}
+:root:not([data-theme=dark]) .lvb.lv-N1{background:#7a3a73;color:#fff}
+:root[data-theme=dark] .vb.plus.on,:root[data-theme=dark] .vb.plus.on *{color:#ffb27a}
+:root:not([data-theme=dark]) .h2next .nxi{background:rgba(255,255,255,.94);color:var(--accent-dk)}
+:root:not([data-theme=dark]) .h2next.all .nxi{background:var(--card);color:var(--accent-text)}
+:root:not([data-theme=dark]) .h2ti.c2{background:#b84a0a}
+:root:not([data-theme=dark]) .h2ti.c5,:root:not([data-theme=dark]) .h2ti.c6,:root:not([data-theme=dark]) .h2ti.c7{filter:brightness(.72)}
+html[data-theme=dark] .h2t small{color:#cfcbd0}
+:root:not([data-theme=dark]) .h2ti.c5,:root:not([data-theme=dark]) .h2ti.c6,:root:not([data-theme=dark]) .h2ti.c7{filter:none}
+:root:not([data-theme=dark]) .h2ti.c5{background:#7a3fd6}
+:root:not([data-theme=dark]) .h2ti.c6{background:#c23a69}
+:root:not([data-theme=dark]) .h2ti.c7{background:#0b7a70}
+.h2next .nxt small{opacity:1}
+:root:not([data-theme=dark]) .h2next .nxgo .nxt small{color:rgba(255,255,255,.96)}
+:root[data-theme=dark] .h2next .nxgo .nxt small{color:var(--onacc,#101012)}
