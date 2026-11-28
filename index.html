@@ -1034,7 +1034,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="kana-mnemo.js?v=1"></script>
 <script src="kana.js?v=73"></script>
 <script src="games2.js?v=42"></script>
-<script src="bgm.js?v=40"></script>
+<script src="bgm.js?v=41"></script>
 <script src="gametheme.js?v=44"></script>
 <script src="quotes.js?v=3"></script>
 <script src="funny.js?v=6"></script>
@@ -1988,7 +1988,7 @@ function gameSetup(){
    </div>
    <div class="bgmbar"><span class="bgml">${ic("sound")}배경음악</span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="-1" aria-label="이전 음악">‹</button>
-    <span class="bgmname"><b id="bgmnm">${BGM_TRACKS[prefs.bgm||"farm"].name}</b><span class="bgmdots" id="bgmdots">${Object.keys(BGM_TRACKS).map(id=>`<i class="${(prefs.bgm||"farm")===id?"on":""}"></i>`).join("")}</span></span>
+    <span class="bgmname"><b id="bgmnm">${BGM_TRACKS[prefs.bgm||"basic"].name}</b><span class="bgmdots" id="bgmdots">${Object.keys(BGM_TRACKS).map(id=>`<i class="${(prefs.bgm||"basic")===id?"on":""}"></i>`).join("")}</span></span>
     <button type="button" class="pill sm" data-act="bgmnav" data-d="1" aria-label="다음 음악">›</button>
     <button type="button" class="pill sm on" id="bgmplay" data-act="bgmplay">▶ 듣기</button></div>
    <details class="qset"><summary>${ic("gear")}게임 설정</summary>
@@ -2148,7 +2148,7 @@ function stopG(){ if(G&&G.raf) cancelAnimationFrame(G.raf); clearInterval(gTimer
 
 /* 소리: 외부 파일 없이 브라우저가 직접 만드는 배경음악과 효과음입니다 (저작권 걱정 없음) */
 const SND={ctx:null,timer:null,step:0,next:0};
-if(!BGM_TRACKS[prefs.bgm||"farm"]){ prefs.bgm="farm"; LS.set("jp-prefs",prefs); }   /* 빠진 음악을 고르고 있던 사람은 기본 음악으로 */
+if(!BGM_TRACKS[prefs.bgm||"basic"]){ prefs.bgm="basic"; LS.set("jp-prefs",prefs); }   /* 빠진 음악을 고르고 있던 사람은 기본 음악으로 */
 const soundOn = () => prefs.sound!==false;
 /* 아이폰: 무음(진동) 모드에서도 게임 소리가 나도록 오디오 세션을 '재생'으로 전환 */
 function mediaUnlock(){
@@ -2203,7 +2203,7 @@ function bgmPreview(id){
   if(!sndInit()) return; SND.previewId=id; bgmStart({id,force:true}); updPrev();
 }
 function bgmNav(d){
-  const ids=Object.keys(BGM_TRACKS); let i=ids.indexOf(prefs.bgm||"farm"); i=(i+d+ids.length)%ids.length; const id=ids[i];
+  const ids=Object.keys(BGM_TRACKS); let i=ids.indexOf(prefs.bgm||"basic"); i=(i+d+ids.length)%ids.length; const id=ids[i];
   prefs.bgm=id; LS.set("jp-prefs",prefs);
   const nm=$("bgmnm"); if(nm) nm.textContent=BGM_TRACKS[id].name;
   document.querySelectorAll("#bgmdots i").forEach((x,n)=>x.classList.toggle("on",n===i));
@@ -2867,7 +2867,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="gbg"){ prefs.gbg=b.dataset.id; LS.set("jp-prefs",prefs); gbgApply(); document.querySelectorAll(".gbgsw").forEach(x=>x.classList.toggle("on",x===b)); return; }
   if(a==="gquit"){ stopG(); quizSetup(); return; }
   if(a==="bgmnav"){ bgmNav(+b.dataset.d); return; }
-  if(a==="bgmplay"){ bgmPreview(prefs.bgm||"farm"); return; }
+  if(a==="bgmplay"){ bgmPreview(prefs.bgm||"basic"); return; }
   if(a==="gmusic"){ prefs.sound=!soundOn(); LS.set("jp-prefs",prefs); soundOn()?bgmStart():bgmStop(); b.textContent="소리 "+(soundOn()?"끄기":"켜기"); return; }
   if(a==="jlv"){ prefs.jl=b.dataset.l; LS.set("jp-prefs",prefs); level="전체"; lvSel=b.dataset.l==="전체"?new Set():new Set([b.dataset.l]); renderLevels(); quizSetup(); return; }
   if(a==="qquit"&&Q&&Q.mode==="jlpt"&&!Q.done&&!Q.paper){ jQuitMenu(); return; }
