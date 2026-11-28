@@ -48,7 +48,10 @@ function homeHtml(){
   const S=slots(), nx=get_(), dn=S.filter(x=>x.done).length, all=dn===3;
   const steps=kanaPhase()?(()=>{ const h=kcount("h"),k=kcount("k"); const st=[["히라가나",h,15],["가타카나",k,15],["단어",0,1],["퀴즈",0,1]]; const cur=h<15?0:k<15?1:2;
     return `<div class="nxr" aria-label="공부 순서">${st.map((x,i)=>`<span class="${i<cur||(i<2&&x[1]>=x[2])?"dn":i===cur?"now":""}"><i>${i<cur?"✓":i+1}</i>${x[0]}</span>`).join("")}</div>`; })():"";
+  const due=window.PATH&&PATH.due?PATH.due():0, kp=kanaPhase();
+  const say=all?"오늘 코스 끝! 정말 잘했어요":dn===2?"마지막 한 칸이에요, 거의 다 왔어요!":dn===1?"벌써 한 칸 했어요! 하나만 더 해 볼까요?":kp?"오늘은 한 행, 다섯 글자만 해요. 금방 끝나요!":due>0?`복습할 단어 ${due}개가 기다리고 있어요`:"딱 10분만, 같이 해 봐요!";
   return `<section class="h2next${all?" all":""}"><div class="nxh"><b>오늘의 코스</b><small>${dn} / 3 · 약 10분</small></div>
+   <div class="nxsay"><img src="img/coach.png?v=5" alt="" width="30" height="30"><span>${E(say)}</span></div>
    <button type="button" class="nxgo" data-nxt="go"><span class="nxi" aria-hidden="true">${E(nx.icon)}</span><span class="nxt"><b>${E(all?"오늘 코스 완료! 더 해 볼까요?":nx.title)}</b><small>${E(all?nx.title.replace("더 공부하기: ",""):nx.sub)}</small></span><i>›</i></button>
    <div class="nxs">${S.map((x,i)=>`<button type="button" class="${x.done?"dn":""}" data-nxt="${x.key}"><i>${x.done?"✓":i+1}</i>${x.label}</button>`).join("")}</div>${steps}</section>`;
 }

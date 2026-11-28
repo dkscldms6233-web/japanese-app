@@ -811,3 +811,16 @@ html[data-theme=dark] .hdd.near .hdn{border-bottom-color:#ff6b6b!important}
 .plcmp th{font-weight:700;font-size:12px;color:var(--sub);padding:6px 4px;text-align:center}.plcmp th:first-child,.plcmp td:first-child{text-align:left}
 .plcmp td{padding:10px 4px;border-top:1px solid var(--line);text-align:center}
 .plcmp .plp{background:var(--accent-soft);color:var(--accent-text);font-weight:700}.plcmp th.plp{border-radius:10px 10px 0 0}.plcmp tr:last-child td.plp{border-radius:0 0 10px 10px}
+
+/* 홈에 생기 되살리기: 참새 한마디 + 탐색 카드마다 부드러운 색 */
+.h2next .nxsay{display:flex;align-items:center;gap:10px;margin:0 0 10px;background:var(--chip);border-radius:14px;padding:8px 12px 8px 8px;font-size:13.5px;font-weight:600;line-height:1.4}
+.h2next .nxsay img{flex:none;width:30px;height:30px;object-fit:contain;border-radius:50%;background:var(--card)}
+.h2t:has(.h2ti.c1){background:color-mix(in srgb,#5b5bf0 9%,var(--card));border-color:color-mix(in srgb,#5b5bf0 24%,var(--line))}
+.h2t:has(.h2ti.c2){background:color-mix(in srgb,#e0641a 9%,var(--card));border-color:color-mix(in srgb,#e0641a 26%,var(--line))}
+.h2t:has(.h2ti.c3){background:color-mix(in srgb,#12915a 9%,var(--card));border-color:color-mix(in srgb,#12915a 26%,var(--line))}
+.h2t:has(.h2ti.c4){background:color-mix(in srgb,#1a82cc 9%,var(--card));border-color:color-mix(in srgb,#1a82cc 26%,var(--line))}
+html[data-theme=dark] .h2t:has(.h2ti.c1){background:color-mix(in srgb,#8e8eff 14%,var(--card))}
+html[data-theme=dark] .h2t:has(.h2ti.c2){background:color-mix(in srgb,#ff9a5c 13%,var(--card))}
+html[data-theme=dark] .h2t:has(.h2ti.c3){background:color-mix(in srgb,#3fcf8e 12%,var(--card))}
+html[data-theme=dark] .h2t:has(.h2ti.c4){background:color-mix(in srgb,#5bb6ff 13%,var(--card))}
+.h2sent{background:color-mix(in srgb,#f2a93b 8%,var(--card))}
