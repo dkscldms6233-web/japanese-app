@@ -1048,7 +1048,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=135">
+<link rel="stylesheet" href="polish.css?v=136">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2260,16 +2260,19 @@ function gResult({title,big,note,isNew,seen,marks,type,score}){
   const nm=marks.size, nng=items.filter(x=>x.st==="ng").length;
   const segs=String(note||"").split(" · "), keep=[segs[0],...segs.filter(x=>/최고 기록/.test(x))].filter(Boolean);
   $("quizView").innerHTML=`<div class="qbox gbox gres">
-   <div class="gres-top"><div class="score">${big}</div>
+   <div class="gres-top">${(()=>{ const ri=Math.max(0,RANKS.indexOf(rk.name)), n=ri>=3?3:ri>=1?2:1; return `<div class="gstars" role="img" aria-label="별 ${n}개">${[0,1,2].map(i=>`<i class="${i<n?"on":""}" style="--d:${i*.18+.15}s">★</i>`).join("")}</div>`; })()}
+   <div class="score" data-count="${/^\d+점$/.test(String(big))?parseInt(big,10):""}">${big}</div>
    <div class="rank">${rk.name}</div>
-   ${isNew?`<div><span class="newbest">최고 기록!</span></div>`:""}
+   ${isNew?`<div><span class="newbest">새 기록!</span></div>`:""}
+   ${rk.next?`<div class="gnext">다음 등급 「${E(rk.next.name)}」까지 ${rk.next.gap}점</div>`:`<div class="gnext">최고 등급이에요!</div>`}
    <div class="sub gres-note">${keep.map(E).join(" · ")}</div></div>
-   <div class="gres-acts"><button class="pill on" data-act="gstart" data-g="${type}">한 번 더</button><button class="pill" data-act="again">처음으로</button></div>
+   <div class="gres-acts"><button class="pill on" data-act="gstart" data-g="${type}">한 판 더 ▶</button><button class="pill" data-act="again">처음으로</button></div>
    ${type==="match"?`<button class="gres-link" data-act="mrank">주간 랭킹 보기 ›</button>`:""}
    <div class="gres-words"><div class="gwh"><b>이번 게임에 나온 단어 <span>${items.length}개</span></b><button class="pill xs" data-act="gsaveall">모두 저장</button></div>
    <div class="glist">${items.map(({w,st})=>`<div class="grow" data-act="open" data-key="${w.key}">
       <span class="gw">${R(w.f)}</span><span class="gk">${marks.has(w.key)?`<span class="gtag q">궁금</span>`:""}<span class="gtag ${st}">${TXT[st]}</span>${E(w.ko)}</span>
       <button class="star ${stars.has(w.key)?"on":""}" data-act="gstar" data-key="${w.key}" title="저장함에 담기" aria-label="저장함에 담기">${ic("star")}</button></div>`).join("")}</div></div></div>`;
+  try{ const sc=document.querySelector(".gres .score[data-count]"), t=sc&&+sc.dataset.count; if(t>0){ const t0=Date.now(), dur=Math.min(900,300+t*2); const tk=()=>{ const p=Math.min(1,(Date.now()-t0)/dur); sc.textContent=Math.round(t*(1-Math.pow(1-p,3)))+"점"; if(p<1&&document.body.contains(sc)) requestAnimationFrame(tk); }; tk(); } if(typeof sakura==="function"&&score>0) sakura(isNew?26:10); }catch(e){}
 }
 /* 게임 시작 전 3-2-1 카운트다운 (끝나면 시간이 흐르기 시작해요) */
 function gCountdown(rule,go,extraCls){
