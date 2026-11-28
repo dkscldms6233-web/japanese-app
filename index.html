@@ -1041,7 +1041,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more2.js?v=4"></script>
 <script src="jlpt-more3.js?v=4"></script>
 <script src="jlpt-more4.js?v=4"></script>
-<script src="jlpt-n3pdf.js?v=2"></script>
+<script src="jlpt-n3pdf.js?v=3"></script>
 <script src="funny-audio.js?v=5"></script>
 <script src="exsay-audio.js?v=3" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
@@ -2828,7 +2828,7 @@ function jRdg(lv,type,full){
   const order=["cloze","short","mid","long","integ","search"], out=[];
   const types=type==="all"?order.filter(k=>pl[k]||(full&&k==="cloze")):[type];
   types.forEach(k=>{ const n=full?99:type==="all"?pl[k]:(k==="short"?2:1);
-    shuffle(bank.filter(p=>p.type===k)).slice(0,n).forEach(p=>out.push(...rdgItems(p))); });
+    pshuffle(bank.filter(p=>p.type===k)).slice(0,n).forEach(p=>out.push(...rdgItems(p))); });
   return out;
 }
 
