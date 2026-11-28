@@ -15,7 +15,10 @@ const MAXLV=50;
 
 /* ---------- 경험치 ---------- */
 const xpState=()=>get("jp-xp",{t:0,d:{}});
-function addXp(n){ if(!n) return; const s=xpState(); s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s);  try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
+/* 레벨업 보상: 레벨마다 씨앗 5개, 5의 배수 레벨은 +15개. 이미 받은 레벨은 다시 주지 않습니다 */
+const lvSeeds=l=>5+(l%5===0?15:0);
+function lvReward(l){ try{ let g=get("jp-lvrw",null); if(g==null) g=1; if(l<=g) return; let n=0; for(let i=g+1;i<=l;i++) n+=lvSeeds(i); set("jp-lvrw",l); addSeeds(n); A().toast("레벨 "+l+"! 씨앗 "+n+"개를 받았어요"); }catch(e){} }
+function addXp(n){ if(!n) return; const s=xpState(); const l0=lvOf(s.t||0); try{ if(get("jp-lvrw",null)==null) set("jp-lvrw",l0); }catch(e){} s.t=(s.t||0)+n; s.d=s.d||{}; const d=A().today(); s.d[d]=(s.d[d]||0)+n; set("jp-xp",s); lvReward(lvOf(s.t));  try{ if(window.COMMUNITY) COMMUNITY.touch(); }catch(e){} }
 /* 레벨이 오를수록 필요한 경험치가 점점 커집니다. 50레벨까지 약 20,800 XP(= N5·N4를 거의 다 공부했을 때) */
 const lvFloor=l=>Math.round(50*Math.pow(l-1,1.55));
 const lvOf=t=>{ let l=1; while(l<MAXLV&&(t||0)>=lvFloor(l+1)) l++; return l; };
@@ -381,7 +384,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-    giftInfo:()=>{ const J=journey(); let t=0; try{ t=earnedTitles().length; }catch(e){} return {s:J.s,pos:J.pos,pending:J.pending,titles:t}; },
+    level:()=>lvOf(xpState().t||0),giftInfo:()=>{ const J=journey(); let t=0; try{ t=earnedTitles().length; }catch(e){} return {s:J.s,pos:J.pos,pending:J.pending,titles:t}; },
     due:()=>dueKeys().length,nextNode:()=>{ const c=current(); return c?{id:c.n.id,L:c.n.L,label:c.n.label}:null; },startNode,
     frameStyle,frameFx,
   equip:()=>charState().equip||{},gift:{

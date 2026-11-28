@@ -54,15 +54,24 @@ const PACKS={
   art('<circle cx="24" cy="24" r="9" fill="#ffc83d"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.500 10.500l4 4M33.500 33.500l4 4M37.500 10.500l-4 4M14.500 33.500l-4 4" stroke="#ffc83d" stroke-width="3.200" stroke-linecap="round"/><circle cx="21" cy="23" r="1.300" fill="#7a4a00"/><circle cx="27" cy="23" r="1.300" fill="#7a4a00"/><path d="M21 27q3 2.500 6 0" stroke="#7a4a00" stroke-width="1.500" fill="none" stroke-linecap="round"/>'),
   art('<path d="M30 5a17 17 0 1 0 13 26A14 14 0 0 1 30 5z" fill="#ffd96a"/><circle cx="20" cy="26" r="2.200" fill="#e0b24a"/><circle cx="27" cy="35" r="1.800" fill="#e0b24a"/><path d="M36 8l1 2.500 2.500 1-2.500 1-1 2.500-1-2.500-2.500-1 2.500-1z" fill="#ffe9a8"/>'),
   art('<path d="M14 38a8 8 0 0 1 0-16 11 11 0 0 1 21-3 9 9 0 0 1 1 19z" fill="#cfe4f7"/><path d="M14 38a8 8 0 0 1 0-16 11 11 0 0 1 21-3 9 9 0 0 1 1 19z" fill="none" stroke="#a9c8e8" stroke-width="1.500"/><path d="M18 43l-2 4M26 43l-2 4M34 43l-2 4" stroke="#5b8de0" stroke-width="2.500" stroke-linecap="round"/>'),
-  art('<path d="M6 26a18 18 0 0 1 36 0z" fill="#f48fb1"/><path d="M24 8v34" stroke="#8d6e63" stroke-width="2.500" stroke-linecap="round"/><path d="M24 42a4 4 0 0 1-8 0" fill="none" stroke="#8d6e63" stroke-width="2.500" stroke-linecap="round"/><path d="M15 26a9 9 0 0 1 9-7M33 26a9 9 0 0 0-9-7" stroke="#fff" stroke-width="1.500" fill="none"/>'),
-  art('<path d="M24 4l5.500 12 13 1.500-9.700 8.800 2.800 12.800L24 32.400 12.400 39.100l2.800-12.800L5.500 17.500 18.500 16z" fill="#ffd54a"/><path d="M24 11l3 7 7.500.8-5.600 5 1.600 7.400L24 27.200" fill="#ffe58a"/>')]}
+  art('<path d="M6 26a18 18 0 0 1 36 0z" fill="#f48fb1"/><path d="M24 5v3.500" stroke="#8d6e63" stroke-width="2.500" stroke-linecap="round"/><path d="M24 26v16a4 4 0 0 1-8 0" fill="none" stroke="#8d6e63" stroke-width="2.500" stroke-linecap="round"/><path d="M15 26a9 9 0 0 1 9-7M33 26a9 9 0 0 0-9-7" stroke="#fff" stroke-width="1.500" fill="none"/>'),
+  art('<path d="M24 4l5.500 12 13 1.500-9.700 8.800 2.800 12.800L24 32.400 12.400 39.100l2.800-12.800L5.500 17.500 18.500 16z" fill="#ffd54a"/><path d="M24 11l3 7 7.500.8-5.600 5 1.600 7.400L24 27.200" fill="#ffe58a"/>')]},
+ legend:{name:"합격 기원 팩",desc:"레벨 20에서 열려요 · 부적·학사모·붓·트로피",price:0,lv:20,fx:true,st:[
+  art('<rect x="13" y="5" width="22" height="38" rx="3" fill="#e5484d"/><rect x="16" y="9" width="16" height="30" rx="2" fill="#fff3d6"/><path d="M24 13v22M20 19h8M20 27h8" stroke="#c0392b" stroke-width="2.200" stroke-linecap="round"/><circle cx="24" cy="5" r="2.500" fill="#ffd54a"/>'),
+  art('<path d="M24 8L4 18l20 10 20-10z" fill="#2b2f4a"/><path d="M12 23v9c0 4 6 7 12 7s12-3 12-7v-9l-12 6z" fill="#3a4064"/><path d="M40 20v14" stroke="#ffd54a" stroke-width="2.200" stroke-linecap="round"/><circle cx="40" cy="36" r="2.800" fill="#ffd54a"/>'),
+  art('<path d="M30 4l14 14-4 4-14-14z" fill="#8d6e63"/><path d="M26 8L8 36c-2 5 0 8 3 8 5-1 8-4 12-12z" fill="#2b2b33"/>'),
+  art('<path d="M14 6h20v12a10 10 0 0 1-20 0z" fill="#ffd54a"/><path d="M14 9H8c0 6 2 9 7 10M34 9h6c0 6-2 9-7 10" fill="none" stroke="#ffd54a" stroke-width="3"/><rect x="21" y="27" width="6" height="8" fill="#e0b13a"/><rect x="14" y="35" width="20" height="6" rx="2" fill="#8d6e63"/>'),
+  art('<rect x="6" y="14" width="36" height="22" rx="3" fill="#fff3d6"/><rect x="6" y="14" width="5" height="22" rx="2.500" fill="#e0b13a"/><rect x="37" y="14" width="5" height="22" rx="2.500" fill="#e0b13a"/><path d="M16 21h20M16 25h20M16 29h13" stroke="#b8a070" stroke-width="2" stroke-linecap="round"/><circle cx="35" cy="31" r="3" fill="#e5484d"/>'),
+  art('<path d="M5 34L9 14l9 9 6-13 6 13 9-9 4 20z" fill="#ffd54a"/><rect x="5" y="34" width="38" height="6" rx="2" fill="#e0b13a"/><circle cx="9" cy="14" r="2.500" fill="#e5484d"/><circle cx="24" cy="10" r="2.500" fill="#5b8de0"/><circle cx="39" cy="14" r="2.500" fill="#5cb87a"/>')]}
 };
 /* 표지: 문구 노트 느낌 (종이·줄·모눈·테이프·스프링) */
-const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},cloud:{name:"구름 파스텔",price:120}};
+const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},cloud:{name:"구름 파스텔",price:120},gold:{name:"황금 노트",price:0,lv:10}};
 const KEY="jp-dia-deco";
 const deco=()=>{ try{ const d=A().LS.get(KEY,null)||{}; return {cover:COVERS[d.cover]?d.cover:"basic",pack:PACKS[d.pack]?d.pack:"study",own:Array.isArray(d.own)?d.own:[]}; }catch(e){ return {cover:"basic",pack:"study",own:[]}; } };
 const saveDeco=d=>{ try{ A().LS.set(KEY,d); }catch(e){} };
-const owns=(d,id)=>(PACKS[id]&&PACKS[id].price===0)||(COVERS[id]&&COVERS[id].price===0)||d.own.includes(id);
+const lvNow=()=>{ try{ return PATH.level(); }catch(e){ return 1; } };
+const needLv=id=>((PACKS[id]||COVERS[id]||{}).lv)||0;
+const owns=(d,id)=>needLv(id)?lvNow()>=needLv(id):((PACKS[id]&&PACKS[id].price===0)||(COVERS[id]&&COVERS[id].price===0)||d.own.includes(id));
 const ST=()=>PACKS[deco().pack].st;
 const pad=n=>String(n).padStart(2,"0");
 const ds=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -108,6 +117,7 @@ function dlg(){ let d=document.getElementById("diaDlg"); if(!d){ d=document.crea
 function pick(kind,id){
   const D=deco(), item=(kind==="cover"?COVERS:PACKS)[id]; if(!item) return;
   if(!owns(D,id)){
+    if(item.lv){ try{ A().toast("레벨 "+item.lv+"이 되면 열려요 (지금 레벨 "+lvNow()+")"); }catch(e){} return; }
     let ok=false; try{ ok=PATH.gift.spendSeeds(item.price); }catch(e){}
     if(!ok){ try{ A().toast("씨앗이 모자라요. 공부하면 씨앗을 모을 수 있어요"); }catch(e){} return; }
     D.own.push(id); try{ A().toast(item.name+"을 샀어요!"); }catch(e){}
@@ -122,8 +132,8 @@ function paint(){
     cells.push(`<div class="dday${isT?" t":""}">${on?stk(s,""):`<span class="dst none${isT?" today":""}">${i}</span>`}</div>`); }
   const n=monthCount(vy,vm,L), isNow=vy===new Date().getFullYear()&&vm===new Date().getMonth(), D=deco();
   const seeds=()=>{ try{ return PATH.gift.seeds(); }catch(e){ return 0; } };
-  const coverRow=Object.entries(COVERS).map(([id,c])=>{ const own=owns(D,id), on=D.cover===id; return `<button type="button" class="dco${on?" on":""}" data-diacover="${id}"><span class="dcsw" data-cover="${id}"></span><b>${c.name}</b><small>${on?"사용 중":own?"사용":"씨앗 "+c.price}</small></button>`; }).join("");
-  const packRow=Object.entries(PACKS).map(([id,p])=>{ const own=owns(D,id), on=D.pack===id; return `<button type="button" class="dpk${on?" on":""}" data-diapack="${id}"><span class="dpks">${p.st.map(x=>`<span class="dst art">${x}</span>`).join("")}</span><span class="dpkt"><b>${p.name}</b><small>${p.desc}</small></span><em>${on?"사용 중":own?"사용":"씨앗 "+p.price}</em></button>`; }).join("");
+  const coverRow=Object.entries(COVERS).map(([id,c])=>{ const own=owns(D,id), on=D.cover===id; return `<button type="button" class="dco${on?" on":""}" data-diacover="${id}"><span class="dcsw" data-cover="${id}"></span><b>${c.name}</b><small>${on?"사용 중":own?"사용":c.lv?"Lv."+c.lv+"에 열려요":"씨앗 "+c.price}</small></button>`; }).join("");
+  const packRow=Object.entries(PACKS).map(([id,p])=>{ const own=owns(D,id), on=D.pack===id; return `<button type="button" class="dpk${on?" on":""}" data-diapack="${id}"><span class="dpks">${p.st.map(x=>`<span class="dst art">${x}</span>`).join("")}</span><span class="dpkt"><b>${p.name}</b><small>${p.desc}</small></span><em>${on?"사용 중":own?"사용":p.lv?"Lv."+p.lv:"씨앗 "+p.price}</em></button>`; }).join("");
   const decoPanel=decoOpen?`<div class="ddeco"><div class="ddh"><b>꾸미기</b><span class="dseed">씨앗 ${seeds()}개</span></div><p class="dlab">표지</p><div class="dcos">${coverRow}</div><p class="dlab">스티커 팩</p><div class="dpks2">${packRow}</div><p class="sub" style="margin:8px 2px 0;font-size:12px">씨앗은 공부하고 연속 출석·주간 리그로 모을 수 있어요</p></div>`:"";
   d.innerHTML=`<div class="dh"><h2 style="margin:0">공부 다이어리</h2><button class="x" data-diax aria-label="닫기">×</button></div>
    <div class="db"><div class="dnav"><button type="button" data-diam="-1" aria-label="지난 달">‹</button><b>${vy}년 ${vm+1}월</b><button type="button" data-diam="1" aria-label="다음 달" ${isNow?"disabled":""}>›</button></div>
