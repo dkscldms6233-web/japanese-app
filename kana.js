@@ -433,7 +433,7 @@ function renderDakuten(k){
   <div class="ktip"><b>゛(점 두 개)</b>를 붙이면 소리가 부드럽게 탁해져요. か(카) → が(가), さ(사) → ざ(자), た(타) → だ(다), は(하) → ば(바).<br><b>゜(동그라미)</b>는 は행에만 붙습니다. は(하) → ぱ(파), 소리가 ㅍ으로 바뀌어요.</div>
   ${rows}
   <div class="ktip">알아 두면 좋아요: じ와 ぢ, ず와 づ는 소리가 같습니다. ぢ·づ는 거의 쓰지 않아서 じ·ず만 기억하면 돼요.</div>
-  <div class="kbtns"><button class="cta kgo" data-kana="dkdone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠습니다! 다 봤어요</button></div></div>`;
+  <div class="kbtns"><button class="cta kgo" data-kana="dkdone" style="--k1:var(--accent);--k2:var(--accent-dk)">알겠습니다! 다 봤어요</button></div></div>`;
   window.scrollTo(0,0);
 }
 function renderYoon(k){
@@ -442,7 +442,7 @@ function renderYoon(k){
   <h2>${k?"가타카나":"히라가나"} · 요음</h2><div class="sub">큰 글자 뒤에 <b>작은 ゃ ゅ ょ</b>를 붙이면, 두 글자가 <b>한 소리</b>로 합쳐져요.</div>
   <div class="ktip">き(키) + ゃ = きゃ(캬), し(시) + ゅ = しゅ(슈), ち(치) + ょ = ちょ(쵸). 작은 글자는 앞 글자와 붙여서 <b>한 박자</b>로 읽습니다. 예) ひゃく(백), びょういん(병원)</div>
   <div class="kgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${Y.map(([c,r,ko])=>cellBtn([T(c),r,ko])).join("")}</div>
-  <div class="kbtns"><button class="cta kgo" data-kana="yodone" style="--k1:#5b5bf0;--k2:#8a63ff">알겠습니다! 다 봤어요</button></div></div>`;
+  <div class="kbtns"><button class="cta kgo" data-kana="yodone" style="--k1:var(--accent);--k2:var(--accent-dk)">알겠습니다! 다 봤어요</button></div></div>`;
   window.scrollTo(0,0);
 }
 const markDone=(ids,k)=>{ const d=done(); ids.forEach(i=>{ d.done[key(LESSONS[i],k)]=true; try{ if(window.PATH) PATH.kanaDone(key(LESSONS[i],k)); }catch(e){} }); save(d); };
@@ -496,7 +496,7 @@ function renderIntro(k){
   ${row(2,"히라가나부터","동글동글한 기본 글자 46개. 가타카나는 그다음에 해요.")}
   ${row(3,"하루 한 줄이면 충분","5글자씩 카드로 보고, 듣고, 따라 써요. 나가도 이어서 할 수 있어요.")}</div>
   <details class="kdet" style="margin-top:14px"><summary>글자 종류가 더 궁금해요</summary><div style="padding:0 0 10px;font-size:14px;line-height:1.7"><b>히라가나</b> あ い う — 일본어의 기본 글자<br><b>가타카나</b> ア イ ウ — 외국어·외래어를 적을 때<br><b>한자</b> 日 本 語 — 뜻을 가진 글자<br><span style="color:var(--sub)">あ い う え お(아 이 우 에 오)가 모음이고, か き く け こ처럼 자음이 붙어 한 줄씩 늘어나요.</span></div></details>
-  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:#5b5bf0;--k2:#8a63ff">시작하기</button></div></div>`;
+  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:var(--accent);--k2:var(--accent-dk)">시작하기</button></div></div>`;
   window.scrollTo(0,0);
 }
 const introSeen=()=>{ try{ return !!localStorage.getItem("jp-kana-intro"); }catch(e){ return true; } };

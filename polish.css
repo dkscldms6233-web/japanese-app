@@ -1160,3 +1160,68 @@ html[data-theme=dark] .h2hero .h2qc.dn{color:#8fe8c0!important}
 html[data-theme=dark] .h2hero .h2qc.dn i{background:#3fcf8e;color:#0b2a1c}
 /* 오늘의 코스(보라)와 확실히 구분: 코스 카드 위쪽에 보라 띠 */
 .h2next{border-top:4px solid var(--accent)}
+
+/* ======================================================================
+   새 색: 남색 + 벚꽃 (흰 바탕). 되돌리려면 이 덩어리를 지우면 예전 보라로 돌아가요.
+   ====================================================================== */
+:root:not([data-theme=dark]){--accent:#1f3a5f;--accent-dk:#14284a;--accent-text:#1f3a5f;--accent-soft:#e9eef6;--onacc:#ffffff;--sakura:#c9506b;--sakura-soft:#fbe8ec;--ivory:#f4f1ea;--ok:#3e8e6a;--ok-dk:#2f7456}
+:root[data-theme=dark]{--accent:#9db8e8;--accent-dk:#7c9bd1;--accent-text:#b5c9ee;--accent-soft:#232c44;--onacc:#0f1b33;--sakura:#f29bb0;--sakura-soft:#3a2230;--ivory:#1b2233;--ok:#5fc59a;--ok-dk:#4fb088}
+/* 하드코딩돼 있던 보라 그라데이션을 새 색으로 */
+.c1{background:var(--accent)}
+.plushero.on{background:var(--accent)!important}
+.plic{background:var(--accent)!important}
+.ewbars i.on{background:var(--accent)!important}
+.h2 .pstat .prog div{background:var(--accent)!important}
+.wdlg .wback{background:var(--accent)!important}
+.rplay{background:var(--accent)!important;color:var(--onacc)!important}
+html body:has(#quizView .gbox) #quizView .gbox .opt.sel{background:var(--accent)!important;color:var(--onacc)!important}
+html body:has(#quizView .gbox) #quizView .gres .score{background:none!important;-webkit-text-fill-color:currentColor!important;color:var(--accent)!important}
+.h2hero .h2lvpop div button{color:var(--accent-text)!important}
+.h2hero .h2lvpop div button.on{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--onacc)!important}
+.t2.c1:hover{background:var(--accent)!important}
+
+/* ===== 홈: 오늘 할 한 칸 (큰 남색 카드) + 진행 길 ===== */
+.h2next{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 14px!important}
+.h2next .nxsay{display:flex;align-items:center;gap:10px;margin:0 0 10px;background:var(--ivory);border-radius:14px;padding:8px 12px 8px 8px;font-size:13.5px;font-weight:600;line-height:1.4}
+.h2next .nxsay img{flex:none;width:30px;height:30px;object-fit:contain;border-radius:50%;background:var(--card)}
+.h2next .nxcard{background:var(--accent);color:var(--onacc);border-radius:22px;padding:16px 16px 16px;margin:0 0 12px}
+.h2next .nxcard small{display:block;font-size:12px;font-weight:700;opacity:.82}
+.h2next .nxcard h3{margin:3px 0 2px;font-size:23px;font-weight:800;line-height:1.25;color:var(--onacc)}
+.h2next .nxcard p{margin:0 0 14px;font-size:13px;opacity:.9;color:var(--onacc)}
+.h2next .nxgo{display:block!important;width:100%!important;min-height:0!important;text-align:center;background:var(--onacc)!important;color:var(--accent)!important;border:0!important;border-bottom:4px solid rgba(0,0,0,.18)!important;border-radius:14px!important;padding:12px!important;font:inherit;font-size:16px;font-weight:800;cursor:pointer}
+.h2next .nxgo:active{transform:translateY(2px);border-bottom-width:2px!important}
+.h2next .nxpath{display:flex;align-items:flex-start;justify-content:center;padding:2px 0 4px}
+.h2next .nxn{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font:inherit;font-size:11.5px;font-weight:700;color:var(--sub);cursor:pointer;padding:0 6px}
+.h2next .nxn i{font-style:normal;width:34px;height:34px;border-radius:50%;background:var(--chip);color:var(--sub);display:grid;place-items:center;font-size:14px;font-weight:800}
+.h2next .nxn.now i{background:var(--accent);color:var(--onacc)}.h2next .nxn.now{color:var(--text)}
+.h2next .nxn.dn i{background:var(--ok);color:#fff}.h2next .nxn.dn{color:var(--ok-dk)}
+.h2next .nxln{width:30px;height:4px;border-radius:2px;background:var(--chip);margin-top:15px}.h2next .nxln.dn{background:var(--ok)}
+.h2next .nxr{border-top:0;margin-top:8px;padding-top:0;justify-content:center;gap:14px}
+.h2next.all .nxcard{background:var(--ivory);color:var(--text)}.h2next.all .nxcard h3,.h2next.all .nxcard p{color:var(--text)}
+.h2next.all .nxgo{background:var(--accent)!important;color:var(--onacc)!important}
+
+/* ===== 홈 나머지: 한 종류 카드(연한 아이보리 면, 테두리 없음), 아이콘은 남색 ===== */
+.h2hero,.h2hero.soft{background:var(--ivory)!important;border:0!important;border-radius:18px!important}
+.h2hero .h2ht small{color:var(--ok-dk)}
+.h2hero .cta,.h2hero.soft .cta{background:var(--card)!important;color:var(--text)!important;border:0!important;border-bottom:3px solid rgba(0,0,0,.1)!important;padding:10px!important;font-size:14px!important}
+.h2hero .h2qs{display:none!important}
+.h2hero .h2lvb,.h2hero.soft .h2lvb{background:var(--card)!important}
+.h2hero .h2ring .rt,.h2hero.soft .h2ring .rt{stroke:var(--tr,#e0dccf)!important}
+.h2hero .h2ring .rf,.h2hero.soft .h2ring .rf{stroke:var(--ok)!important}
+html[data-theme=dark] .h2hero .h2ring .rf{stroke:var(--ok)!important}
+html[data-theme=dark] .h2hero .cta,html[data-theme=dark] .h2hero.soft .cta{background:var(--card)!important;color:var(--text)!important;border-bottom-color:rgba(0,0,0,.3)!important}
+.h2t:has(.h2ti),html[data-theme=dark] .h2t:has(.h2ti){background:var(--ivory)!important;border:0!important;border-radius:16px!important}
+.h2ti,.h2ti.c1,.h2ti.c2,.h2ti.c3,.h2ti.c4,.h2ti.c5,.h2ti.c6,.h2ti.c7,.h2ti.c8,:root:not([data-theme=dark]) .h2ti,:root:not([data-theme=dark]) .h2ti.c2,:root:not([data-theme=dark]) .h2ti.c3,:root:not([data-theme=dark]) .h2ti.c4,:root:not([data-theme=dark]) .h2ti.c5,:root:not([data-theme=dark]) .h2ti.c6,:root:not([data-theme=dark]) .h2ti.c7,:root:not([data-theme=dark]) .h2ti.c8,html[data-theme=dark] .h2ti{background:var(--accent-soft)!important;color:var(--accent)!important;text-shadow:none!important;filter:none!important}
+html[data-theme=dark] .h2ti.c1{color:var(--accent)!important}
+.h2sent,html[data-theme=dark] .h2sent{background:var(--ivory)!important;border:0!important;border-radius:16px!important}
+.h2sent .lab{background:var(--sakura-soft)!important;color:var(--sakura)!important}
+.h2card.h2act,.h2card,.jr,.h2cul{background:var(--ivory)!important;border:0!important;border-radius:16px!important}
+.lvring b{color:var(--accent-text)!important}
+:root[data-theme=dark] .h2hero .cta,:root[data-theme=dark] .h2hero.soft .cta{color:var(--text)!important;background:var(--card)!important}
+.plustab a,.sub a{color:var(--accent-text)}
+/* 다크 모드 바탕도 남색 계열로 (회색 → 어두운 남색) */
+:root[data-theme=dark]{--bg:#11151f;--card:#1b2233;--line:#2a3348;--chip:#222b3f;--sub:#9aa3b8;--text:#edeff5;--track:color-mix(in srgb,#edeff5 14%,#1b2233)}
+:root:not([data-theme=dark]){--sakura:#b03a57}
+.h2sent .lab{font-weight:800}
+:root[data-theme=dark] body[data-view=exam] .tiles2 .t2.wide,:root[data-theme=dark] body[data-view=exam] .tiles2 .t2.wide *{color:var(--text)!important}
+:root[data-theme=dark] body[data-view=exam] .tiles2 .t2.wide small{color:var(--sub)!important}
