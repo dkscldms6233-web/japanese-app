@@ -53,7 +53,7 @@ function homeHtml(){
   const cur=S.findIndex(x=>!x.done);
   const path=S.map((x,i)=>`${i?`<span class="nxln${S[i-1].done?" dn":""}"></span>`:""}<button type="button" class="nxn${x.done?" dn":i===cur?" now":""}" data-nxt="${x.key}"><i>${x.done?"✓":i+1}</i><span>${x.label}</span></button>`).join("");
   const di=(window.PLUS&&PLUS.ddayInfo&&PLUS.ddayInfo()), dd=di?`<div class="nxdd${di.d<=7?" near":""}"><b>D-${di.d===0?"DAY":di.d}</b><span>JLPT ${E(di.lv)} · ${di.md}</span><i><em style="width:${Math.max(4,Math.min(100,Math.round((1-di.d/100)*100)))}%"></em></i></div>`:"";
-  return `${dd}<section class="h2next${all?" all":""}">
+  return `<section class="h2next${all?" all":""}">
    <div class="nxsay"><img src="img/coach.png?v=5" alt="" width="30" height="30"><span>${E(say)}</span></div>
    <div class="nxcard"><small>${all?"오늘 코스 완료":"오늘 할 한 칸"}</small><h3>${E(all?"정말 잘했어요!":nx.title)}</h3><p>${E(all?"더 하고 싶으면 이어서 해요":nx.sub)}</p>
     <button type="button" class="nxgo" data-nxt="go">${all?"더 해 볼까요?":"시작하기"}</button></div>
