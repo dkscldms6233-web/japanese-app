@@ -782,3 +782,20 @@ html[data-theme=dark] .hdd.near .hdn{border-bottom-color:#ff6b6b!important}
 /* ===== 따뜻한 회색 (포인트 색은 보라 그대로, 선·칩·보조 글자만 아주 옅게 따뜻하게) ===== */
 :root:not([data-theme=dark]){--chip:#f4f1ed;--line:#e9e4de;--sub:#6c6660}
 :root[data-theme=dark]{--chip:#37353a;--line:#3f3c3e;--sub:#a8a3a6}
+
+/* 플러스 화면: 그라데이션·떠다니는 방울을 걷고 평평하고 차분하게 (B안) */
+.plusbadge{background:var(--accent-soft)!important;color:var(--accent-text)!important;letter-spacing:.06em}
+.plushero{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line);box-shadow:none!important;padding:18px 16px!important}
+.plushero::after{display:none!important}
+.plushero h2{color:var(--text)!important;font-size:22px!important}.plushero p{color:var(--sub)!important;opacity:1!important}
+.plushero.on{border-color:var(--accent)}
+.plusstage{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line);box-shadow:none!important;padding:16px 12px 14px!important}
+.plusstage .psp{display:none!important}
+.plusstage .pstt{color:var(--text)!important;font-size:15px!important;margin-bottom:10px!important;text-align:left!important;padding:0 4px}
+.pbubs.pb3{gap:8px!important}.pb3 .pcell:nth-child(even){margin-top:0!important}
+.pbub{animation:none!important;background:var(--chip)!important;border:0!important;box-shadow:none!important;width:100%!important;height:auto!important;border-radius:14px!important;padding:14px 4px 10px!important}
+.pb3 .pbub{width:100%!important;height:auto!important}
+.pbub .pi{filter:none!important;color:var(--accent-text)}.pbub .pic{stroke:var(--accent-text)!important}
+.pbub b{color:var(--text)!important;font-size:12.5px!important}
+.pcell p{color:var(--sub)!important;margin-top:6px!important;font-size:12px!important}
+.pllist{border-radius:14px}
