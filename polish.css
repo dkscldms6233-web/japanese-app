@@ -1129,3 +1129,34 @@ html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border:2px
 :root:not([data-theme=dark]) .h2ti.c8{background:#c4323d}
 .g-match{--gc:#0b6a40}.g-wordle{--gc:#8f5a00}
 html[data-theme=dark] .g-match{--gc:#4fd49b}html[data-theme=dark] .g-wordle{--gc:#f0b84a}
+
+/* 게임 설명 글·버튼: 혼자 도트 글꼴이던 것을 앱 글꼴로 통일 (점수판·카운트다운·결과 칠판만 도트 글꼴) */
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .sub,html[data-px] body:has(#quizView .gbox) #quizView .gbox p,html[data-px] body:has(#quizView .gbox) #quizView .gbox h3,html[data-px] body:has(#quizView .gbox) #quizView .gbox .cta,html[data-px] body:has(#quizView .gbox) #quizView .gbox .pill:not(.on):not([data-act=gquit]){font-family:inherit!important;font-weight:600!important;letter-spacing:0}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox .cta{font-weight:800!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-top .sub,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-top .gnext{font-family:var(--pxf)!important;font-weight:400!important}
+html[data-px] body:has(#quizView .gbox) #quizView .gbox.cdbox .cdlab{font-family:var(--pxf)!important}
+
+/* ===== 홈: 역할별 색 구분 — 학습(보라) · 오늘 목표(초록) · 복습/출석은 각자 색 ===== */
+.h2hero,.h2hero.soft{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--line);box-shadow:none!important;padding:14px 16px 14px}
+.h2hero::after{display:none!important}
+.h2hero .h2ring .rt,.h2hero.soft .h2ring .rt{stroke:var(--track)!important}
+.h2hero .h2ring .rf,.h2hero.soft .h2ring .rf{stroke:#12915a!important}
+.h2hero .h2rw{width:64px;height:64px}.h2hero .h2rw b{font-size:15px;color:var(--text)!important}
+.h2hero .h2ht small{color:#0e7a4b;opacity:1;font-weight:800;letter-spacing:.02em}
+.h2hero .h2ht h3{font-size:19px;color:var(--text)!important}
+.h2hero .h2ht p{color:var(--sub)!important;opacity:1}
+.h2hero .cta,.h2hero.soft .cta{background:#12915a!important;color:#fff!important;border:0!important;border-bottom:3px solid #0b6a40!important;box-shadow:none!important}
+.h2hero .h2lvb,.h2hero.soft .h2lvb{background:var(--chip)!important;color:var(--text)!important}
+.h2hero .h2lvb svg{stroke:currentColor!important}
+.h2hero .h2qs{display:flex!important;flex-wrap:wrap;gap:6px}
+.h2hero .h2qc{background:var(--chip)!important;color:var(--text)!important;border:0}
+.h2hero .h2qc i{background:var(--card);color:var(--sub)}
+.h2hero .h2qc.dn{background:color-mix(in srgb,#12915a 14%,var(--card))!important;color:#0b6a40!important}
+.h2hero .h2qc.dn i{background:#12915a;color:#fff}
+html[data-theme=dark] .h2hero .h2ring .rf{stroke:#3fcf8e!important}
+html[data-theme=dark] .h2hero .h2ht small{color:#6fe0ac}
+html[data-theme=dark] .h2hero .cta,html[data-theme=dark] .h2hero.soft .cta{background:#3fcf8e!important;color:#0b2a1c!important;border-bottom-color:#2a9d6a!important}
+html[data-theme=dark] .h2hero .h2qc.dn{color:#8fe8c0!important}
+html[data-theme=dark] .h2hero .h2qc.dn i{background:#3fcf8e;color:#0b2a1c}
+/* 오늘의 코스(보라)와 확실히 구분: 코스 카드 위쪽에 보라 띠 */
+.h2next{border-top:4px solid var(--accent)}
