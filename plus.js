@@ -176,7 +176,13 @@ function renderTab(){
   /* 혜택이 많아져서: 위에는 대표 3가지를 방울로, 아래에는 모든 기능을 묶음별 목록으로 */
   const TOP=[0,4,6], CAP={0:"D-day 맞춤 학습",4:"10분 맞춤 플랜",6:"진짜 시험처럼"}, GROUPS=[["시험 준비",[0,2,6]],["내 약점 공부",[1,3,4,5]]];
   const row=i=>`<details class="plrow"><summary><span class="plic">${BEN[i][0]}</span><b>${BEN[i][1]}</b><span class="plch" aria-hidden="true"></span></summary><p>${BEN[i][2]}</p></details>`;
-  const ben=`<div class="plusstage"><i class="psp pa1"></i><i class="psp pa2"></i><i class="psp pa3"></i><i class="psp pa4"></i><i class="psp pa5"></i><h3 class="pstt">플러스, 이렇게 달라집니다</h3><div class="pbubs pb3">${TOP.map(i=>`<div class="pcell"><div class="pbub"><span class="pi">${BEN[i][0]}</span><b>${BEN[i][1]}</b></div><p>${CAP[i]}</p></div>`).join("")}</div></div>
+  const ben=`<div class="plb"><h3>플러스로 더해지는 것</h3>${TOP.map(i=>`<div class="plbr"><span class="plbi">${BEN[i][0]}</span><div><b>${BEN[i][1]}</b><span>${CAP[i]}</span></div></div>`).join("")}</div>
+   <div class="plcmp"><h3>무료와 플러스</h3><table><thead><tr><th></th><th>무료</th><th class="plp">플러스</th></tr></thead><tbody>
+    <tr><td>단어·퀴즈·게임·문법·뉴스</td><td>✓</td><td class="plp">✓</td></tr>
+    <tr><td>모의시험 연습 모드</td><td>✓</td><td class="plp">✓</td></tr>
+    <tr><td>맞춤 복습</td><td>하루 1번</td><td class="plp">무제한</td></tr>
+    <tr><td>합격 코치·맞춤 플랜</td><td>-</td><td class="plp">✓</td></tr>
+    <tr><td>실전 시험지 모드</td><td>-</td><td class="plp">✓</td></tr></tbody></table></div>
    <details class="pllist"><summary class="plhd">플러스 기능 ${BEN.length}가지 보기</summary>${GROUPS.map(([g,ids])=>`<h5 class="plgh">${g}</h5>${ids.map(row).join("")}`).join("")}</details>`;
   const free=!plus&&freeUsed();
   el.innerHTML=`<div class="plustab"><div class="plushero${plus?" on":""}"><span class="plusbadge">PLUS</span><h2>술술 플러스</h2>

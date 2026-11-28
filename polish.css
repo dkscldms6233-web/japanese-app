@@ -799,3 +799,15 @@ html[data-theme=dark] .hdd.near .hdn{border-bottom-color:#ff6b6b!important}
 .pbub b{color:var(--text)!important;font-size:12.5px!important}
 .pcell p{color:var(--sub)!important;margin-top:6px!important;font-size:12px!important}
 .pllist{border-radius:14px}
+
+/* 플러스 안내: 아이콘 목록 + 무료/플러스 비교표 */
+.plb,.plcmp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 6px;margin:0 0 12px}
+.plb h3,.plcmp h3{margin:0 0 6px;font-size:15px}
+.plbr{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.plb h3+.plbr{border-top:0}
+.plbi{flex:none;width:38px;height:38px;border-radius:11px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center}
+.plbi .pic{width:21px;height:21px;fill:none;stroke:var(--accent-text);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.plbr b{display:block;font-size:14.5px}.plbr span:not(.plbi){display:block;font-size:12.5px;color:var(--sub);margin-top:1px}
+.plcmp{padding-bottom:10px}.plcmp table{width:100%;border-collapse:collapse;font-size:13px}
+.plcmp th{font-weight:700;font-size:12px;color:var(--sub);padding:6px 4px;text-align:center}.plcmp th:first-child,.plcmp td:first-child{text-align:left}
+.plcmp td{padding:10px 4px;border-top:1px solid var(--line);text-align:center}
+.plcmp .plp{background:var(--accent-soft);color:var(--accent-text);font-weight:700}.plcmp th.plp{border-radius:10px 10px 0 0}.plcmp tr:last-child td.plp{border-radius:0 0 10px 10px}
