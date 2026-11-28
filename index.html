@@ -1050,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=192">
+<link rel="stylesheet" href="polish.css?v=193">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -1600,7 +1600,7 @@ function renderGrid(){
   $("grid").innerHTML = (posf==="경어"?kgPanel():"") + (shown.length ? shown.map(w=>kgHead(w)+`
     <div class="card lc-${LVNUM[w.lv]?w.lv:"X"}" ${w.kg?`data-kg="${w.kg}"`:""} data-key="${w.key}">
       <div class="ctop">${lvb(w.lv)}${w.lv2?lvb(w.lv2):""}${w.kg?`<span class="kgb" data-k="${w.kg}">${w.kg}</span>`:""}<i class="wst s${SMG[w.key]?((SMG[w.key].b||0)>=3?2:1):0}" title="${SMG[w.key]?((SMG[w.key].b||0)>=3?"암기 완료":"학습 중"):"아직 안 외웠어요"}"></i><span class="cbtns">${sayBtn("data-say",w.key)}<button class="star ${stars.has(w.key)?"on":""}" data-star="${w.key}" title="저장" aria-label="저장">${ic("star")}</button></span></div>
-      <div class="w${w.text.length>=6?" wl":""}">${R(w.f)}</div>
+      <div class="w${w.text.length>=6?" wl":""}"><span class="wh">${R(w.f)}</span></div>
       <div class="m">${E(w.ko)}</div>
       ${posTag(w.pos)}
     </div>`).join("") : `<div class="empty" style="grid-column:1/-1">${empty}</div>`);

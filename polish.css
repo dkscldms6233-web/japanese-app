@@ -1480,3 +1480,9 @@ html body .h2flame .fl3{flex:none}
 
 /* 게임 화면: 맨 위 배너가 혼자 흰색이던 것을 게임 배경과 이어지게 */
 html[data-px] body[data-view=game] header,html[data-px] body:has(#quizView .gbox) header,html[data-px] body[data-view=game] .top,html[data-px] body:has(#quizView .gbox) .top{background:transparent!important;box-shadow:none!important;border-bottom-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* 단어 카드 형광펜: 긴 단어가 여러 줄로 꺾여도 줄마다 글자 아래에만 칠해지게 (글자를 감싼 .wh에 칠해요) */
+#grid .card .w,html[data-theme=dark] #grid .card .w{display:block!important;background:none!important;padding:0!important;border-radius:0!important;align-self:flex-start;max-width:100%}
+#grid .card .w .wh{background:linear-gradient(transparent 66%,color-mix(in srgb,var(--lc,var(--nx)) 34%,transparent) 66%);padding:0 3px;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html[data-theme=dark] #grid .card .w .wh{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--lc,var(--nx)) 55%,transparent) 62%);color:#fff}
+#grid .card .w rt{background:none}
