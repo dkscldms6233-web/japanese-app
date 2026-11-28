@@ -1026,7 +1026,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-readq.js?v=3"></script>
 <script src="jlpt-reading.js?v=6"></script>
 <script src="jlpt-listen.js?v=5"></script>
-<script src="listen-audio.js?v=6"></script>
+<script src="listen-audio.js?v=7"></script>
 <script src="news-audio.js?v=3"></script>
 <script src="kana-strokes.js?v=2"></script>
 <script src="word-audio.js?v=4"></script>
@@ -1049,13 +1049,14 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-more5.js?v=1"></script>
 <script src="jlpt-scenes.js?v=1"></script>
 <script src="jlpt-listen2.js?v=2"></script>
+<script src="jlpt-listen3.js?v=1"></script>
 <script src="jlpt-reading2.js?v=1"></script>
 <script src="funny-audio.js?v=5"></script>
 <script src="exsay-audio.js?v=3" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=196">
+<link rel="stylesheet" href="polish.css?v=197">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2596,8 +2597,11 @@ function jListenExam(lv,k){
       const m=jShuf(opts,0), news=e.d.type==="news", kind=`청해 문제${gi+1} · ${LCAT_NAME[c]}`;
       const script=e.d.lines&&e.d.lines.length?`<div class="jscript"><b>스크립트</b>${e.d.lines.map(([w,t])=>`<div>${news?"":`<span class="jwho">${w==="F"?"여":"남"}</span> `}${R(t)}</div>`).join("")}</div>`:"";
       const base={sec:"listen",kind,lintro:i===0?LCAT_INTRO[c]:"",prompt:R(e.q.q),ph:1,opts:m.o.map(R),a:m.a,exp:E(e.q.e||"")};
+      /* 발화 표현·즉시 응답: 선택지를 글자로 보여 주지 않고 소리로 들려 줘요 (실제 시험처럼) */
+      if(three){ const rw=(e.d.lines&&e.d.lines[0])?(e.d.lines[0][0]==="F"?"M":"F"):(e.d.who||"F"), NUM=["いち","に","さん"];
+        base.optLines=m.o.flatMap((o,x)=>[["F",NUM[x]],[rw,plain(o)]]); base.dmeta={lv:e.d.lv,news:false}; }
       if(e.d.situ){ const sv=e.d.scene&&(window.JLPT_SCENES||{})[e.d.scene];
-        items.push({...base,stem:sv?`<div class="jscene">${sv}<div class="jscap">화살표가 가리키는 사람이 할 말을 골라요</div></div>`:`<div class="jsit"><b>상황</b>${E(e.d.situ)}</div>`,script,exp:E(e.q.e||"")+(sv?`<div class="sub" style="margin-top:6px">상황: ${E(e.d.situ)}</div>`:"")}); }
+        items.push({...base,stem:sv?`<div class="jscene">${sv}<div class="jscap"><b>상황</b> ${E(e.d.situ)}</div></div>`:`<div class="jsit"><b>상황</b>${E(e.d.situ)}</div>`,script}); }
       else items.push({...base,dlg:e.d.lines,dmeta:{lv:e.d.lv,news},script});
     });
   });
@@ -2638,7 +2642,12 @@ function renderJ(){
   const head=`<div class="qtop"><button class="qx" data-act="qquit" aria-label="그만하기">×</button><div class="prog"><div style="width:${Math.round(Q.i/Q.items.length*100)}%"></div></div></div>
    <div class="sub"><span class="jtag">${JSEC[it.sec]}</span>${it.kind} · ${Q.i+1} / ${Q.items.length}</div>${it.lintro?`<div class="jlintro">${E(it.lintro)}</div>`:""}`;
   let mid=it.stem;
-  if(it.dlg){
+  const hideOpt=!!it.optLines&&!done&&jListenOk();
+  if(it.optLines&&!it.dlg){
+    mid=it.stem+(jListenOk()?`<button class="cta sec" data-act="jplay" style="max-width:260px;margin:14px auto">선택지 듣기 ▶</button><div style="text-align:center;margin:-6px 0 8px">${spdHtml()}</div><div class="sub">${done?"":"몇 번이든 다시 들을 수 있습니다"}</div>`:"");
+    if(done) mid=it.stem+(it.script||"");
+  }
+  else if(it.dlg){
     mid=jListenOk()?`<button class="cta sec" data-act="jplay" style="max-width:260px;margin:18px auto">소리 듣기 ▶</button><div style="text-align:center;margin:-6px 0 8px">${spdHtml()}</div><div class="sub">${done?"":"몇 번이든 다시 들을 수 있습니다"}</div>`
       :`<div class="warn">이 기기에서는 일본어 음성을 쓸 수 없어서 스크립트를 보여 드립니다.</div>`+it.script;
     if(done&&jListenOk()) mid+=it.script;
@@ -2649,12 +2658,12 @@ function renderJ(){
       :`<div class="warn">이 기기에서는 일본어 음성을 쓸 수 없어서 문장을 보여 드립니다.</div><div class="jq">${it.jaR}</div>`;
   }
   const opts=`<div class="opts4">${it.opts.map((o,i)=>{ let c=""; if(done){ if(i===it.a) c="correct"; else if(i===Q.sel) c="wrong"; }
-    return `<button class="opt ${c}" data-act="jpick" data-i="${i}" ${done?"disabled":""}><kbd>${i+1}</kbd>${o}</button>`; }).join("")}</div>`;
+    return `<button class="opt ${c}" data-act="jpick" data-i="${i}" ${done?"disabled":""}><kbd>${i+1}</kbd>${hideOpt?`<span class="jopn">${i+1}번 · 듣고 고르기</span>`:o}</button>`; }).join("")}</div>`;
   const rv=done?`<div class="reveal ${ok?"ok":"ng"}"><div class="rvt">${ok?CHEER.ok(Q.i):CHEER.ng(Q.i)}</div><div>${it.exp}</div>
     <div class="qbtns"><button class="cta" data-act="jnext">${Q.i+1>=Q.items.length?"결과 보기":"계속하기"}</button></div></div>`:"";
   const pr=`<div class="sub jprompt ${it.sec==="read"?"jq2":""}" style="margin-top:10px">${it.ph?it.prompt:E(it.prompt)}</div>`;
   $("quizView").innerHTML=`<div class="qbox">${head}${it.sec==="read"?mid+pr:pr+mid}${opts}${rv}${it.dlg&&(window.LISTEN_AUDIO&&Object.keys(window.LISTEN_AUDIO).length)?`<div class="jcredit">음성: Microsoft Azure AI Speech (Nanami · Keita)</div>`:""}</div>`;
-  if(it.dlg&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeakDlg(it.dlg,it.dmeta); },250);
+  if((it.dlg||it.optLines)&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeakDlg([...(it.dlg||[]),...(it.optLines||[])],it.dmeta); },250);
   else if(it.listen&&!done&&jListenOk()) setTimeout(()=>{ if(Q&&Q.mode==="jlpt"&&Q.items[Q.i]===it&&Q.sel===null) jSpeak(it.listen); },250);
 }
 function jPick(i){
@@ -2807,12 +2816,13 @@ function paperEndSession(auto){
 }
 function paperQ(i,noStem){
   const it=Q.items[i], sel=Q.ans[i]; let mid=noStem?"":it.stem;
-  if(it.dlg||it.listen){
-    mid=jListenOk()?`<button type="button" class="cta sec epplay" data-act="jplay" data-idx="${i}">${Q.played[i]&&Q.opt.once?"이미 들었습니다":"소리 듣기 ▶"}</button>`
-      :`<div class="warn">이 기기에서는 일본어 음성을 쓸 수 없어서 문장을 보여 드립니다.</div>`+(it.dlg?it.script:`<div class="jq">${it.jaR}</div>`);
+  if(it.dlg||it.listen||it.optLines){
+    mid=(it.optLines&&!it.dlg?it.stem:"")+(jListenOk()?`<button type="button" class="cta sec epplay" data-act="jplay" data-idx="${i}">${Q.played[i]&&Q.opt.once?"이미 들었습니다":"소리 듣기 ▶"}</button>`
+      :`<div class="warn">이 기기에서는 일본어 음성을 쓸 수 없어서 문장을 보여 드립니다.</div>`+(it.dlg?it.script:`<div class="jq">${it.jaR||""}</div>`));
   }
   const pr=(KINDHEAD[it.kind]&&!it.cloze)?"":`<div class="eprompt">${it.ph?it.prompt:E(it.prompt)}</div>`;
-  const opts=it.opts.map((o,k)=>`<button type="button" class="eopt${sel===k?" on":""}" data-act="ppick" data-q="${i}" data-i="${k}"><kbd>${k+1}</kbd><span>${o}</span></button>`).join("");
+  const hideP=!!it.optLines&&jListenOk();
+  const opts=it.opts.map((o,k)=>`<button type="button" class="eopt${sel===k?" on":""}" data-act="ppick" data-q="${i}" data-i="${k}"><kbd>${k+1}</kbd><span>${hideP?`${k+1}번`:o}</span></button>`).join("");
   return `<div class="eq" data-q="${i}"><div class="eqn">${i+1}</div><div class="eqb">${(it.sec==="read"||noStem)?mid+pr:pr+mid}<div class="eopts">${opts}</div></div></div>`;
 }
 function paperSheetHtml(){
@@ -2938,7 +2948,7 @@ $("quizView").addEventListener("click",e=>{
   if(a==="lspdm"){ lspdMenu(b); return; }
   if(a==="lspd"){ lspdSet(+b.dataset.v); return; }
   if(a==="jplay"&&Q&&Q.paper&&Q.opt&&Q.opt.once&&b.dataset.idx!=null){ const ix=+b.dataset.idx; if(Q.played[ix]){ toast("시험에서는 한 번만 들려 줍니다"); return; } Q.played[ix]=1; b.textContent="재생 중…"; }
-  if(a==="jplay"){ const it=Q&&Q.items&&Q.items[b.dataset.idx!=null?+b.dataset.idx:Q.i]; if(it&&it.dlg) jSpeakDlg(it.dlg,it.dmeta); else if(it&&it.listen) jSpeak(it.listen); return; }
+  if(a==="jplay"){ const it=Q&&Q.items&&Q.items[b.dataset.idx!=null?+b.dataset.idx:Q.i]; if(it&&(it.dlg||it.optLines)) jSpeakDlg([...(it.dlg||[]),...(it.optLines||[])],it.dmeta); else if(it&&it.listen) jSpeak(it.listen); return; }
   if(a==="jretry"){ Q={mode:"jlpt",lv:Q.lv,sec:Q.sec,items:Q.wrong.slice(),i:0,score:0,sel:null,done:false,by:{},wrong:[]}; document.body.classList.remove("inr"); renderJ(); return; }
   if(a==="start") startQuiz(b.dataset.mode,null,+$("qn").value);
   else if(a==="qscope"){ qscope=b.dataset.s||""; quizSetup(); }
