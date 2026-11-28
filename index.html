@@ -1050,7 +1050,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=153">
+<link rel="stylesheet" href="polish.css?v=154">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2275,7 +2275,6 @@ function gResult({title,big,note,isNew,seen,marks,type,score}){
    ${rk.next?`<div class="gnext">다음 등급 「${E(rk.next.name)}」까지 ${rk.next.gap}점</div>`:`<div class="gnext">최고 등급이에요!</div>`}
    <div class="sub gres-note">${keep.map(E).join(" · ")}</div></div>
    <div class="gres-acts"><button class="pill on" data-act="gstart" data-g="${type}">한 판 더 ▶</button><button class="pill" data-act="again">처음으로</button></div>
-   ${type==="match"?`<button class="gres-link" data-act="mrank">주간 랭킹 보기 ›</button>`:""}
    <div class="gres-words"><div class="gwh"><b>이번 게임에 나온 단어 <span>${items.length}개</span></b><button class="pill xs" data-act="gsaveall">모두 저장</button></div>
    <div class="glist">${items.map(({w,st})=>`<div class="grow" data-act="open" data-key="${w.key}">
       <span class="gw">${R(w.f)}</span><span class="gk">${marks.has(w.key)?`<span class="gtag q">궁금</span>`:""}<span class="gtag ${st}">${TXT[st]}</span>${E(w.ko)}</span>
@@ -2355,7 +2354,6 @@ function endMatchNow(){
   sfx("end");
   const g=G, prev=getBest("match2"), isNew=g.score>0&&(prev==null||g.score>prev);
   if(isNew) setBest("match2",g.score);
-  if(window.MRANK) MRANK.submit(g.score);
   gResult({title:"짝 맞추기 결과",big:g.score+"점",score:g.score,isNew,seen:g.seen,marks:g.marks,type:"match",
     note:`${g.stopped?"게임을 중단했습니다":"시간이 끝났어요"}${prev!=null&&!isNew?` · 최고 기록 ${prev}점`:""}`});
 }
@@ -2855,7 +2853,6 @@ $("quizView").addEventListener("change",e=>{
 $("quizView").addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   const a=b.dataset.act;
-  if(a==="mrank"){ if(window.MRANK) MRANK.open(); return; }
   if(a==="gstart"){ ({match:startMatch,wordle:startWordle,shiri:startShiri,fall:startFall,kmatch:()=>KANA.kgame()})[b.dataset.g](); return; }
   if(a==="gmark"||a==="gstar"){
     const k=b.dataset.key, on=!stars.has(k);
@@ -3697,7 +3694,6 @@ renderLevels(); renderGrid(); setView("home");
 <script src="grammar-n3pdf.js?v=1"></script>
 <script src="grammar.js?v=13"></script>
 <script src="settings.js?v=10"></script>
-<script src="mrank.js?v=4"></script>
 <script src="plus.js?v=40"></script>
 <script>
 /* 짝 맞추기·경어 짝 맞추기 카드의 긴 글자: 카드 안에 안 들어가면 글자를 한 단계씩 줄입니다 */

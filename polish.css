@@ -1124,3 +1124,8 @@ html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .newbest{border:2px
 html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gres-words{background:var(--card)!important;border:2px solid var(--px)!important;border-radius:12px!important;box-shadow:0 3px 0 var(--px)}
 html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .gtag,html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border-radius:6px!important;font-family:inherit}
 html[data-px] body:has(#quizView .gbox) #quizView .gbox.gres .pill.xs{border:2px solid var(--px)!important}
+
+/* 글자 대비 보강 2 */
+:root:not([data-theme=dark]) .h2ti.c8{background:#c4323d}
+.g-match{--gc:#0b6a40}.g-wordle{--gc:#8f5a00}
+html[data-theme=dark] .g-match{--gc:#4fd49b}html[data-theme=dark] .g-wordle{--gc:#f0b84a}
