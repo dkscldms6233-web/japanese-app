@@ -771,3 +771,10 @@ html[data-theme=dark] .hdd.near .hdn{border-bottom-color:#ff6b6b!important}
 .kana .ktipd summary::-webkit-details-marker{display:none}.kana .ktipd .ktipin{margin-top:6px}
 .kfull .kcard .khint{display:none}
 .kfull .kcard .kch{box-shadow:0 1px 0 rgba(0,0,0,.06)}
+
+/* 단어장 고르기: 내 급수 먼저, 나머지는 접기 */
+.pkmore{margin:10px 0;border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.pkmore>summary{cursor:pointer;list-style:none;padding:12px 14px;font-size:14px;font-weight:700;color:var(--sub);display:flex;align-items:center;gap:8px}
+.pkmore>summary::-webkit-details-marker{display:none}.pkmore>summary::after{content:"›";margin-left:auto;font-size:18px;transition:transform .15s}.pkmore[open]>summary::after{transform:rotate(90deg)}
+.pkmore>.pkgrid{padding:0 10px 10px}
+.pkbadge{font-size:11.5px;background:var(--accent-soft);color:var(--accent-text);border-radius:999px;padding:2px 8px}

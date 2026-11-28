@@ -1048,7 +1048,7 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=114">
+<link rel="stylesheet" href="polish.css?v=115">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -1549,12 +1549,13 @@ function renderPick(){
   const nw=Object.keys(wrong).length, cnt=l=>ALL.filter(w=>w.lv===l||w.lv2===l).length, my=myLv();
   const SM=LS.get("jp-srs",{}), prog=l=>{ const ws=ALL.filter(w=>w.lv===l); let m=0,lr=0; ws.forEach(w=>{ const e=SM[w.key]; if(e){ if((e.b||0)>=3) m++; else lr++; } }); const n=ws.length||1; return `<span class="pgb"><i class="pm" style="width:${(m/n*100).toFixed(1)}%"></i><i class="pl" style="width:${(lr/n*100).toFixed(1)}%"></i></span><span class="pgt">암기 ${m} · 학습 중 ${lr}</span>`; };
   const card=(id,name,sub,n,c,pr)=>`<button class="pk ${pickMulti&&pickSel.has(id)?"sel":""}" data-pk="${id}" style="--lvc:${c||"var(--accent)"}"><b>${name}</b><small>${sub}</small><em>${n.toLocaleString()}개${n>PART?` · ${Math.ceil(n/PART)}파트`:""}</em>${pr||""}</button>`;
-  const lv=["N5","N4","N3","N2","N1"].map(l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`,prog(l))).join("");
+  const lvc=l=>card(l,l,LV_DESC[l],cnt(l),`var(--${l.toLowerCase()})`,prog(l)), LVS=["N5","N4","N3","N2","N1"], lvMine=my.length?LVS.filter(l=>my.includes(l)):LVS, lvOther=my.length?LVS.filter(l=>!my.includes(l)):[];
+  const lv=lvMine.map(lvc).join("")+(lvOther.length?`</div><details class="pkmore"><summary>다른 급수 보기 (${lvOther.join(" · ")})</summary><div class="pkgrid five">${lvOther.map(lvc).join("")}</div></details><div class="pkgrid five" style="display:none">`:"");
   const mine=ALL.filter(w=>w.key[0]==="c").length;
   $("pickBox").innerHTML=`<div class="pick"><h2>어떤 단어장을 열까요?</h2>
    <div class="sub"><span class="devonly">단어를 ${PART}개씩 파트로 나눠 보여 줘요${my.length?" · ":""}</span>${my.length?`내 급수: <b>${lvText(my)}</b>`:""}</div>
    <div class="pkgrid five">${lv}</div>
-   <div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}${card("경어","경어","존경어·겸양어·정중어",ALL.filter(w=>w.kg).length,"#e0507a")}</div>
+   <details class="pkmore"><summary>저장함 · 오답 노트 · 경어 · 전체${nw?` <b class="pkbadge">오답 ${nw}</b>`:""}</summary><div class="pkgrid four">${card("전체","전체","모든 급수",ALL.length)}${card("저장함","저장함","별표(★)를 단 단어",stars.size)}${card("오답 노트","오답 노트","틀린 단어",nw)}${card("내 단어","내 단어","직접 추가한 단어",mine)}${card("경어","경어","존경어·겸양어·정중어",ALL.filter(w=>w.kg).length,"#e0507a")}</div></details>
    <div class="pkrow"><label class="tg"><input type="checkbox" id="pkMulti" ${pickMulti?"checked":""}> 여러 급수를 함께 보기</label>
      <span>${my.length?`<button class="pill sm" data-pk="my">내 급수로 바로 보기</button> `:""}<button class="pill add sm" data-act="pkadd">＋ 단어 추가</button></span></div>
    ${pickMulti?`<div class="qbtns" style="justify-content:flex-start;margin-top:10px"><button class="pill on" data-act="pkopen" ${pickSel.size?"":"disabled"}>${pickSel.size?"선택한 급수 열기 ("+lvText(pickSel)+")":"위에서 급수를 골라 주세요"}</button></div>`:""}</div>`;
