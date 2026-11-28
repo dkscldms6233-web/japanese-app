@@ -62,16 +62,25 @@ const PACKS={
   art('<path d="M30 4l14 14-4 4-14-14z" fill="#8d6e63"/><path d="M26 8L8 36c-2 5 0 8 3 8 5-1 8-4 12-12z" fill="#2b2b33"/>'),
   art('<path d="M14 6h20v12a10 10 0 0 1-20 0z" fill="#ffd54a"/><path d="M14 9H8c0 6 2 9 7 10M34 9h6c0 6-2 9-7 10" fill="none" stroke="#ffd54a" stroke-width="3"/><rect x="21" y="27" width="6" height="8" fill="#e0b13a"/><rect x="14" y="35" width="20" height="6" rx="2" fill="#8d6e63"/>'),
   art('<rect x="6" y="14" width="36" height="22" rx="3" fill="#fff3d6"/><rect x="6" y="14" width="5" height="22" rx="2.500" fill="#e0b13a"/><rect x="37" y="14" width="5" height="22" rx="2.500" fill="#e0b13a"/><path d="M16 21h20M16 25h20M16 29h13" stroke="#b8a070" stroke-width="2" stroke-linecap="round"/><circle cx="35" cy="31" r="3" fill="#e5484d"/>'),
-  art('<path d="M5 34L9 14l9 9 6-13 6 13 9-9 4 20z" fill="#ffd54a"/><rect x="5" y="34" width="38" height="6" rx="2" fill="#e0b13a"/><circle cx="9" cy="14" r="2.500" fill="#e5484d"/><circle cx="24" cy="10" r="2.500" fill="#5b8de0"/><circle cx="39" cy="14" r="2.500" fill="#5cb87a"/>')]}
+  art('<path d="M5 34L9 14l9 9 6-13 6 13 9-9 4 20z" fill="#ffd54a"/><rect x="5" y="34" width="38" height="6" rx="2" fill="#e0b13a"/><circle cx="9" cy="14" r="2.500" fill="#e5484d"/><circle cx="24" cy="10" r="2.500" fill="#5b8de0"/><circle cx="39" cy="14" r="2.500" fill="#5cb87a"/>')]},
+ conq:{name:"정복자 팩",desc:"N5~N1을 모두 클리어하면 열려요",price:0,clr:"ALL",fx:true,st:[
+  art('<path d="M5 34L9 14l9 9 6-13 6 13 9-9 4 20z" fill="#ffd54a"/><rect x="5" y="34" width="38" height="6" rx="2" fill="#e0b13a"/><circle cx="24" cy="10" r="2.800" fill="#e5484d"/><circle cx="9" cy="14" r="2.500" fill="#5b8de0"/><circle cx="39" cy="14" r="2.500" fill="#5cb87a"/>'),
+  art('<path d="M12 4h8l4 14-6 4zM36 4h-8l-4 14 6 4z" fill="#26397a"/><circle cx="24" cy="31" r="12" fill="#ffd54a"/><circle cx="24" cy="31" r="8" fill="none" stroke="#e0b13a" stroke-width="2"/><path d="M24 25l1.800 3.800 4.200.5-3.100 2.900.8 4.100L24 34.200l-3.700 2.100.8-4.100-3.100-2.900 4.200-.5z" fill="#fff3b0"/>'),
+  art('<path d="M4 38C14 36 28 26 40 8c-6 14-14 24-26 32z" fill="#ffd45a"/><path d="M10 40C20 38 32 30 42 16c-5 12-14 22-24 26z" fill="#ffe58a"/>'),
+  art('<path d="M24 5c6 7 12 12 12 21a12 12 0 0 1-24 0c0-5 3-8 5-11 1 3 2 4 4 4-1-5-1-9 3-14z" fill="#ff7a2f"/><path d="M24 20c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 2 3 2z" fill="#ffd54a"/>'),
+  art('<path d="M24 4l5.500 12 13 1.500-9.700 8.800 2.800 12.800L24 32.400 12.400 39.100l2.800-12.800L5.500 17.500 18.500 16z" fill="#ffd54a"/><circle cx="24" cy="22" r="5" fill="#e5484d"/>'),
+  art('<path d="M6 30c0-12 8-22 18-22s18 10 18 22c-4-4-8-4-12-1-2-3-4-5-6-5s-4 2-6 5c-4-3-8-3-12 1z" fill="#e5484d"/><path d="M14 30c0-8 4-14 10-14s10 6 10 14" fill="none" stroke="#ffd54a" stroke-width="2.500"/><circle cx="24" cy="36" r="4" fill="#26397a"/>')]}
 };
 /* 표지: 문구 노트 느낌 (종이·줄·모눈·테이프·스프링) */
-const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},cloud:{name:"구름 파스텔",price:120},gold:{name:"황금 노트",price:0,lv:10}};
+const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},cloud:{name:"구름 파스텔",price:120},gold:{name:"황금 노트",price:0,lv:10},n5:{name:"벚꽃 정원",price:0,clr:"N5"},n4:{name:"별빛 하늘",price:0,clr:"N4"},n3:{name:"청해파",price:0,clr:"N3"},n2:{name:"붉은 격자",price:0,clr:"N2"},n1:{name:"봉황",price:0,clr:"N1"}};
 const KEY="jp-dia-deco";
 const deco=()=>{ try{ const d=A().LS.get(KEY,null)||{}; return {cover:COVERS[d.cover]?d.cover:"basic",pack:PACKS[d.pack]?d.pack:"study",own:Array.isArray(d.own)?d.own:[]}; }catch(e){ return {cover:"basic",pack:"study",own:[]}; } };
 const saveDeco=d=>{ try{ A().LS.set(KEY,d); }catch(e){} };
 const lvNow=()=>{ try{ return PATH.level(); }catch(e){ return 1; } };
 const needLv=id=>((PACKS[id]||COVERS[id]||{}).lv)||0;
-const owns=(d,id)=>needLv(id)?lvNow()>=needLv(id):((PACKS[id]&&PACKS[id].price===0)||(COVERS[id]&&COVERS[id].price===0)||d.own.includes(id));
+const needClr=id=>((PACKS[id]||COVERS[id]||{}).clr)||"";
+const clrOk=L=>{ try{ return PATH.cleared(L); }catch(e){ return false; } };
+const owns=(d,id)=>needClr(id)?clrOk(needClr(id)):needLv(id)?lvNow()>=needLv(id):((PACKS[id]&&PACKS[id].price===0)||(COVERS[id]&&COVERS[id].price===0)||d.own.includes(id));
 const ST=()=>PACKS[deco().pack].st;
 const pad=n=>String(n).padStart(2,"0");
 const ds=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -117,6 +126,7 @@ function dlg(){ let d=document.getElementById("diaDlg"); if(!d){ d=document.crea
 function pick(kind,id){
   const D=deco(), item=(kind==="cover"?COVERS:PACKS)[id]; if(!item) return;
   if(!owns(D,id)){
+    if(item.clr){ try{ A().toast((item.clr==="ALL"?"N5~N1을 모두":item.clr+"을(를)")+" 클리어하면 열려요"); }catch(e){} return; }
     if(item.lv){ try{ A().toast("레벨 "+item.lv+"이 되면 열려요 (지금 레벨 "+lvNow()+")"); }catch(e){} return; }
     let ok=false; try{ ok=PATH.gift.spendSeeds(item.price); }catch(e){}
     if(!ok){ try{ A().toast("씨앗이 모자라요. 공부하면 씨앗을 모을 수 있어요"); }catch(e){} return; }
@@ -132,8 +142,8 @@ function paint(){
     cells.push(`<div class="dday${isT?" t":""}">${on?stk(s,""):`<span class="dst none${isT?" today":""}">${i}</span>`}</div>`); }
   const n=monthCount(vy,vm,L), isNow=vy===new Date().getFullYear()&&vm===new Date().getMonth(), D=deco();
   const seeds=()=>{ try{ return PATH.gift.seeds(); }catch(e){ return 0; } };
-  const coverRow=Object.entries(COVERS).map(([id,c])=>{ const own=owns(D,id), on=D.cover===id; return `<button type="button" class="dco${on?" on":""}" data-diacover="${id}"><span class="dcsw" data-cover="${id}"></span><b>${c.name}</b><small>${on?"사용 중":own?"사용":c.lv?"Lv."+c.lv+"에 열려요":"씨앗 "+c.price}</small></button>`; }).join("");
-  const packRow=Object.entries(PACKS).map(([id,p])=>{ const own=owns(D,id), on=D.pack===id; return `<button type="button" class="dpk${on?" on":""}" data-diapack="${id}"><span class="dpks">${p.st.map(x=>`<span class="dst art">${x}</span>`).join("")}</span><span class="dpkt"><b>${p.name}</b><small>${p.desc}</small></span><em>${on?"사용 중":own?"사용":p.lv?"Lv."+p.lv:"씨앗 "+p.price}</em></button>`; }).join("");
+  const coverRow=Object.entries(COVERS).map(([id,c])=>{ const own=owns(D,id), on=D.cover===id; return `<button type="button" class="dco${on?" on":""}" data-diacover="${id}"><span class="dcsw" data-cover="${id}"></span><b>${c.name}</b><small>${on?"사용 중":own?"사용":c.clr?(c.clr+" 클리어 보상"):c.lv?"Lv."+c.lv+"에 열려요":"씨앗 "+c.price}</small></button>`; }).join("");
+  const packRow=Object.entries(PACKS).map(([id,p])=>{ const own=owns(D,id), on=D.pack===id; return `<button type="button" class="dpk${on?" on":""}" data-diapack="${id}"><span class="dpks">${p.st.map(x=>`<span class="dst art">${x}</span>`).join("")}</span><span class="dpkt"><b>${p.name}</b><small>${p.desc}</small></span><em>${on?"사용 중":own?"사용":p.clr?"클리어 보상":p.lv?"Lv."+p.lv:"씨앗 "+p.price}</em></button>`; }).join("");
   const decoPanel=decoOpen?`<div class="ddeco"><div class="ddh"><b>꾸미기</b><span class="dseed">씨앗 ${seeds()}개</span></div><p class="dlab">표지</p><div class="dcos">${coverRow}</div><p class="dlab">스티커 팩</p><div class="dpks2">${packRow}</div><p class="sub" style="margin:8px 2px 0;font-size:12px">씨앗은 공부하고 연속 출석·주간 리그로 모을 수 있어요</p></div>`:"";
   d.innerHTML=`<div class="dh"><h2 style="margin:0">공부 다이어리</h2><button class="x" data-diax aria-label="닫기">×</button></div>
    <div class="db"><div class="dnav"><button type="button" data-diam="-1" aria-label="지난 달">‹</button><b>${vy}년 ${vm+1}월</b><button type="button" data-diam="1" aria-label="다음 달" ${isNow?"disabled":""}>›</button></div>

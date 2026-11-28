@@ -384,7 +384,7 @@ function giftAct(a){
 
 /* ---------- 바깥(index.html·kana.js)에서 부르는 훅 ---------- */
 window.PATH={
-    level:()=>lvOf(xpState().t||0),giftInfo:()=>{ const J=journey(); let t=0; try{ t=earnedTitles().length; }catch(e){} return {s:J.s,pos:J.pos,pending:J.pending,titles:t}; },
+    level:()=>lvOf(xpState().t||0),cleared:L=>{ try{ return L==='ALL'?['N5','N4','N3','N2','N1'].every(levelCleared):levelCleared(L); }catch(e){ return false; } },giftInfo:()=>{ const J=journey(); let t=0; try{ t=earnedTitles().length; }catch(e){} return {s:J.s,pos:J.pos,pending:J.pending,titles:t}; },
     due:()=>dueKeys().length,nextNode:()=>{ const c=current(); return c?{id:c.n.id,L:c.n.L,label:c.n.label}:null; },startNode,
     frameStyle,frameFx,
   equip:()=>charState().equip||{},gift:{
