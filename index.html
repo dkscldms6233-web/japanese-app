@@ -1047,14 +1047,15 @@ try{var m=JSON.parse(localStorage.getItem("jp-theme")||'"auto"'),d=m==="dark"||(
 <script src="jlpt-n3pdf.js?v=3"></script>
 <script src="jlpt-ctx3.js?v=1"></script>
 <script src="jlpt-more5.js?v=1"></script>
-<script src="jlpt-listen2.js?v=1"></script>
+<script src="jlpt-scenes.js?v=1"></script>
+<script src="jlpt-listen2.js?v=2"></script>
 <script src="jlpt-reading2.js?v=1"></script>
 <script src="funny-audio.js?v=5"></script>
 <script src="exsay-audio.js?v=3" defer></script>
 <script>window.ARTICLES=(window.DAILY_ARTICLES||[]).concat(window.ARTICLES||[]);</script>
 <link rel="stylesheet" href="design-v2.css?v=112">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="polish.css?v=194">
+<link rel="stylesheet" href="polish.css?v=196">
 <script src="mascot-flat.js?v=2"></script>
 <script src="cheer.js?v=8"></script>
 <script src="tour.js?v=5"></script>
@@ -2571,7 +2572,7 @@ function jSpeakDlg(lines,meta){
  * N3 기준 6·6·3·4·9문항(총 28). 같은 문제가 되풀이되지 않게 안 푼 것부터 냅니다. */
 const LCAT_PLAN={N5:[["task",7],["point",6],["hatsu",5],["sokuji",6]],N4:[["task",8],["point",7],["hatsu",5],["sokuji",8]],N3:[["task",6],["point",6],["gaiyo",3],["hatsu",4],["sokuji",9]],N2:[["task",5],["point",6],["gaiyo",5],["sokuji",12]],N1:[["task",6],["point",7],["gaiyo",6],["sokuji",14]]};
 const LCAT_NAME={task:"과제 이해",point:"포인트 이해",gaiyo:"개요 이해",hatsu:"발화 표현",sokuji:"즉시 응답"};
-const LCAT_INTRO={task:"먼저 질문을 들어요. 그다음 대화를 듣고, 해야 할 일로 알맞은 것을 하나 골라요.",point:"먼저 질문을 듣고, 선택지를 읽어 볼 시간이 있어요. 그다음 대화를 듣고 이유·핵심으로 알맞은 것을 골라요.",gaiyo:"질문 없이 이야기를 먼저 듣고, 전체 내용으로 알맞은 것을 골라요. (이 앱에서는 질문이 화면에 함께 보여요)",hatsu:"상황을 읽고, 화살표 사람이 할 말로 알맞은 것을 골라요. (실제 시험은 그림이에요)",sokuji:"짧은 말을 듣고, 알맞은 대답을 골라요."};
+const LCAT_INTRO={task:"먼저 질문을 들어요. 그다음 대화를 듣고, 해야 할 일로 알맞은 것을 하나 골라요.",point:"먼저 질문을 듣고, 선택지를 읽어 볼 시간이 있어요. 그다음 대화를 듣고 이유·핵심으로 알맞은 것을 골라요.",gaiyo:"질문 없이 이야기를 먼저 듣고, 전체 내용으로 알맞은 것을 골라요. (이 앱에서는 질문이 화면에 함께 보여요)",hatsu:"그림을 보고, 화살표 사람이 할 말로 알맞은 것을 골라요.",sokuji:"짧은 말을 듣고, 알맞은 대답을 골라요."};
 function lcatOf(d,q){
   if(d.cat) return d.cat;
   const Q=plain(q.q), ls=d.lines;
@@ -2595,7 +2596,8 @@ function jListenExam(lv,k){
       const m=jShuf(opts,0), news=e.d.type==="news", kind=`청해 문제${gi+1} · ${LCAT_NAME[c]}`;
       const script=e.d.lines&&e.d.lines.length?`<div class="jscript"><b>스크립트</b>${e.d.lines.map(([w,t])=>`<div>${news?"":`<span class="jwho">${w==="F"?"여":"남"}</span> `}${R(t)}</div>`).join("")}</div>`:"";
       const base={sec:"listen",kind,lintro:i===0?LCAT_INTRO[c]:"",prompt:R(e.q.q),ph:1,opts:m.o.map(R),a:m.a,exp:E(e.q.e||"")};
-      if(e.d.situ) items.push({...base,stem:`<div class="jsit"><b>상황</b>${E(e.d.situ)}</div>`,script});
+      if(e.d.situ){ const sv=e.d.scene&&(window.JLPT_SCENES||{})[e.d.scene];
+        items.push({...base,stem:sv?`<div class="jscene">${sv}<div class="jscap">화살표가 가리키는 사람이 할 말을 골라요</div></div>`:`<div class="jsit"><b>상황</b>${E(e.d.situ)}</div>`,script,exp:E(e.q.e||"")+(sv?`<div class="sub" style="margin-top:6px">상황: ${E(e.d.situ)}</div>`:"")}); }
       else items.push({...base,dlg:e.d.lines,dmeta:{lv:e.d.lv,news},script});
     });
   });
