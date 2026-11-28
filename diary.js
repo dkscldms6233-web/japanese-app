@@ -72,7 +72,7 @@ const PACKS={
   art('<path d="M6 30c0-12 8-22 18-22s18 10 18 22c-4-4-8-4-12-1-2-3-4-5-6-5s-4 2-6 5c-4-3-8-3-12 1z" fill="#e5484d"/><path d="M14 30c0-8 4-14 10-14s10 6 10 14" fill="none" stroke="#ffd54a" stroke-width="2.500"/><circle cx="24" cy="36" r="4" fill="#26397a"/>')]}
 };
 /* 표지: 문구 노트 느낌 (종이·줄·모눈·테이프·스프링) */
-const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},cloud:{name:"구름 파스텔",price:120},gold:{name:"황금 노트",price:0,lv:10},n5:{name:"벚꽃 정원",price:0,clr:"N5"},n4:{name:"별빛 하늘",price:0,clr:"N4"},n3:{name:"청해파",price:0,clr:"N3"},n2:{name:"붉은 격자",price:0,clr:"N2"},n1:{name:"봉황",price:0,clr:"N1"}};
+const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},cloud:{name:"구름 파스텔",price:120},crane:{name:"종이학",price:120},gold:{name:"황금 노트",price:0,lv:10},n5:{name:"후지산",price:0,clr:"N5"},n4:{name:"별빛 하늘",price:0,clr:"N4"},n3:{name:"청해파",price:0,clr:"N3"},n2:{name:"붉은 격자",price:0,clr:"N2"},n1:{name:"봉황",price:0,clr:"N1"}};
 const KEY="jp-dia-deco";
 const deco=()=>{ try{ const d=A().LS.get(KEY,null)||{}; return {cover:COVERS[d.cover]?d.cover:"basic",pack:PACKS[d.pack]?d.pack:"study",own:Array.isArray(d.own)?d.own:[]}; }catch(e){ return {cover:"basic",pack:"study",own:[]}; } };
 const saveDeco=d=>{ try{ A().LS.set(KEY,d); }catch(e){} };
