@@ -1454,3 +1454,22 @@ html body .h2flame .fl3{flex:none}
 .nxcheer .nxch{display:flex;align-items:center;justify-content:space-between}.nxcheer b{font-size:13px;color:var(--sakura,#b03a57);font-weight:900}
 .nxcheer button{border:0;background:none;color:var(--sub);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
 .nxcheer p{margin:6px 0 0;font-size:14px;line-height:1.6;color:var(--text)}
+
+/* 응원 카드: 진짜 메시지가 도착한 것처럼 */
+.nxcheer.msg{position:relative;background:none;border:0;padding:0;margin:0 0 14px}
+.nxcheer.msg .nxmh{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.nxcheer.msg .nxav{width:40px;height:40px;border-radius:12px;flex:none;box-shadow:0 1px 4px rgba(20,30,60,.2)}
+.nxcheer.msg .nxwho{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.nxcheer.msg .nxwho b{font-size:14px;color:var(--text);font-weight:800}
+.nxcheer.msg .nxwho small{font-size:12px;color:var(--sakura,#b03a57);font-weight:800}
+.nxcheer.msg .nxtm{font-size:11px;color:var(--sub);align-self:flex-start;margin-top:3px}
+.nxcheer.msg .nxmh button{align-self:flex-start;border:0;background:none;color:var(--sub);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+.nxcheer.msg .nxbub{position:relative;margin-left:50px;padding:13px 15px;background:var(--card);border:1px solid var(--line);border-radius:4px 18px 18px 18px;box-shadow:0 2px 10px rgba(20,30,60,.08);animation:nxin .45s ease .9s both}
+.nxcheer.msg .nxbub p{margin:0;font-size:14.5px;line-height:1.65;color:var(--text)}
+.nxcheer.msg .nxtyp{position:absolute;left:50px;top:48px;display:flex;gap:4px;padding:11px 14px;background:var(--card);border:1px solid var(--line);border-radius:4px 16px 16px 16px;animation:nxtyp 1.1s ease both;pointer-events:none}
+.nxcheer.msg .nxtyp i{width:7px;height:7px;border-radius:50%;background:#b8bfcc;animation:nxdot .9s infinite}
+.nxcheer.msg .nxtyp i:nth-child(2){animation-delay:.15s}.nxcheer.msg .nxtyp i:nth-child(3){animation-delay:.3s}
+@keyframes nxdot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+@keyframes nxtyp{0%{opacity:0}10%{opacity:1}85%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes nxin{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.nxcheer.msg .nxbub{animation:none}.nxcheer.msg .nxtyp{display:none}}
