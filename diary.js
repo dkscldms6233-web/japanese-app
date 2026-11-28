@@ -58,7 +58,7 @@ const PACKS={
   art('<path d="M24 4l5.500 12 13 1.500-9.700 8.800 2.800 12.800L24 32.400 12.400 39.100l2.800-12.800L5.500 17.500 18.500 16z" fill="#ffd54a"/><path d="M24 11l3 7 7.500.8-5.600 5 1.600 7.400L24 27.200" fill="#ffe58a"/>')]}
 };
 /* 표지: 문구 노트 느낌 (종이·줄·모눈·테이프·스프링) */
-const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:0},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},sunset:{name:"노을",price:150},washi:{name:"와시 벚꽃",price:150},cloud:{name:"구름 파스텔",price:120}};
+const COVERS={basic:{name:"기본",price:0},paper:{name:"종이",price:0},lined:{name:"줄 노트",price:80},grid:{name:"모눈",price:0},tape:{name:"테이프",price:60},spiral:{name:"스프링",price:100},craft:{name:"크래프트",price:120},sunset:{name:"노을",price:150},cloud:{name:"구름 파스텔",price:120}};
 const KEY="jp-dia-deco";
 const deco=()=>{ try{ const d=A().LS.get(KEY,null)||{}; return {cover:COVERS[d.cover]?d.cover:"basic",pack:PACKS[d.pack]?d.pack:"study",own:Array.isArray(d.own)?d.own:[]}; }catch(e){ return {cover:"basic",pack:"study",own:[]}; } };
 const saveDeco=d=>{ try{ A().LS.set(KEY,d); }catch(e){} };
