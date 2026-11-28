@@ -3271,6 +3271,8 @@ function setView(v,opt){
   if(v==="list" && !(opt&&opt.keepStage)) setStage("pick");
   if(!QV(v)) bgmStop();   /* 게임·퀴즈 화면을 벗어날 때만 음악을 끕니다 */
   if(!QV(v)) quizFrom=null;
+  /* 게임 화면에서 다른 탭으로 나가면 게임 화면을 치워요(남아 있으면 홈에도 게임 배경이 깔리고 위쪽 로고가 사라져요) */
+  if(!QV(v)){ const q=$("quizView"); if(q&&q.querySelector(".gbox")){ try{ stopG(); }catch(e){} q.innerHTML=""; } }
   view=v; document.body.dataset.view=v; try{ if(window.PLUS&&PLUS.renderDday) PLUS.renderDday(); }catch(e){} hideSel(); document.body.classList.remove("inq","inr","kanamode","kcardmode","inpaper"); paperStop();
   const sec=QV(v)?"quiz":v; ["home","today","list","quiz","grammar","news","community","read","stats","plus"].forEach(n=>{ $(n+"View").hidden=n!==sec; });
   { const eff=v==="today"?"home":v, g=GROUP[eff]; if(g&&eff!=="read") lastSub[g]=eff;
