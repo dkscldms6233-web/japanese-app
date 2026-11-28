@@ -895,3 +895,29 @@ html[data-theme=dark] .h2t small{color:#cfcbd0}
 .h2next .nxt small{opacity:1}
 :root:not([data-theme=dark]) .h2next .nxgo .nxt small{color:rgba(255,255,255,.96)}
 :root[data-theme=dark] .h2next .nxgo .nxt small{color:var(--onacc,#101012)}
+
+/* 퀴즈 메뉴: 줄마다 서로 다른 색(겹치지 않게) */
+body[data-view=quiz] .tiles2 .t2:nth-child(1){--pc:#7a6cf0;--pbg:#ece9ff;--ptx:#33298f;--psub:#5a52a8}
+body[data-view=quiz] .tiles2 .t2:nth-child(2){--pc:#3aa6e8;--pbg:#def1fd;--ptx:#094f80;--psub:#2f6f9a}
+body[data-view=quiz] .tiles2 .t2:nth-child(3){--pc:#e0699a;--pbg:#fde6ef;--ptx:#7a1d44;--psub:#9a3c63}
+body[data-view=quiz] .tiles2 .t2:nth-child(4){--pc:#2fbf86;--pbg:#dff6ea;--ptx:#0b5f3e;--psub:#2c7a5b}
+body[data-view=quiz] .tiles2 .t2:nth-child(5){--pc:#e0a020;--pbg:#fff1d6;--ptx:#6b4300;--psub:#8a5f10}
+/* 문법: 박스 전체에 색을 입히지 않고 흰 카드 + 왼쪽 민트 선 + 민트 제목만 */
+.grwrap .gr,.grwrap .gr[open]{background:var(--card)!important;border:1px solid var(--line)!important;border-left:3px solid #12915a!important}
+html[data-theme=dark] .grwrap .gr,html[data-theme=dark] .grwrap .gr[open]{background:var(--card)!important;border-color:var(--line)!important;border-left:3px solid #3fcf8e!important}
+
+/* 게스트 안내·기록 화면 정리 */
+#onb .gstwarn div{background:var(--card)!important;border:1px solid var(--line)!important;border-left:3px solid #e0a020!important;color:var(--text)!important}
+#onb .gstwarn b{color:var(--text)!important}#onb .gstwarn span{color:var(--sub)!important}
+.kpis .kpi b,.kpis .kpi strong{font-weight:800}
+.kpis .k1{background:color-mix(in srgb,var(--accent) 7%,var(--card))}
+.kpis .k2{background:color-mix(in srgb,#e0641a 7%,var(--card))}
+.kpis .k3{background:color-mix(in srgb,#12915a 7%,var(--card))}
+.kpis .k4{background:color-mix(in srgb,#d4527a 7%,var(--card))}
+.kpis .k1 :is(b,strong,.v){color:var(--accent-text)}
+.kpis .k2 :is(b,strong,.v){color:#b84a0a}
+.kpis .k3 :is(b,strong,.v){color:#0e7a4b}
+.kpis .k4 :is(b,strong,.v){color:#b4325e}
+html[data-theme=dark] .kpis .k2 :is(b,strong,.v){color:#ffb27a}
+html[data-theme=dark] .kpis .k3 :is(b,strong,.v){color:#6fe0ac}
+html[data-theme=dark] .kpis .k4 :is(b,strong,.v){color:#ff9ab9}
