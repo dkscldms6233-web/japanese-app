@@ -57,5 +57,5 @@ function btnHtml(sec){ const n=get_(); return `<button type="button" class="cta$
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-nxt]"); if(!b) return; e.preventDefault();
   const v=b.dataset.nxt; if(v==="go") return run();
   const S=slots(), s=S.find(x=>x.key===v); if(s) run(s.t); },false);
-window.NEXT={mark,get:get_,run,homeHtml,btnHtml,course};
+window.NEXT={mark,get:get_,run,homeHtml,btnHtml,course,kanaPhase};
 })();

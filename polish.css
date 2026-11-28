@@ -755,3 +755,19 @@ html[data-theme=dark] .hdd.near .hdn{border-bottom-color:#ff6b6b!important}
 .h2next .nxr span{display:flex;align-items:center;gap:4px}.h2next .nxr i{font-style:normal;width:16px;height:16px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-size:10px}
 .h2next .nxr span.now{color:var(--accent-text)}.h2next .nxr span.now i{background:var(--accent);color:var(--onacc,#fff)}.h2next .nxr span.dn i{background:var(--accent-soft);color:var(--accent-text)}
 .h2next.all{border-color:var(--line);box-shadow:none}.h2next.all .nxgo{background:var(--accent-soft);color:var(--accent-text)}.h2next.all .nxi{background:var(--card)}
+
+/* B안 정돈: 한 화면에 눈에 띄는 것 하나만 */
+.h2hero.nxhide{display:none}
+.gstbar{padding:8px 12px!important;border-radius:12px!important;background:var(--bg)!important;border:1px solid var(--line)!important;font-size:12.5px!important}
+.gstbar .gstlink{white-space:nowrap}
+.h2next{border:1px solid var(--line);box-shadow:none;padding:14px}
+.h2next .nxh{margin-bottom:12px}
+.h2next .nxgo{min-height:72px;border-radius:14px}
+.h2next .nxi{width:46px;height:46px;border-radius:12px;font-size:24px}
+.h2next .nxt b{font-size:17px}
+.h2next .nxs button{border-color:var(--line);font-weight:600}
+.h2next .nxr{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.kana .ktipd{margin-top:8px;width:100%}.kana .ktipd summary{cursor:pointer;font-size:12.5px;font-weight:700;color:#2b2f55;opacity:.8;text-align:center;list-style:none}
+.kana .ktipd summary::-webkit-details-marker{display:none}.kana .ktipd .ktipin{margin-top:6px}
+.kfull .kcard .khint{display:none}
+.kfull .kcard .kch{box-shadow:0 1px 0 rgba(0,0,0,.06)}

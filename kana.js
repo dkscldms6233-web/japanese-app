@@ -181,6 +181,7 @@ ST.textContent=`.kana{max-width:640px;margin:0 auto}.kana h2{margin:4px 0 2px;fo
 .kfull .kcb{margin-top:auto}
 .ktrace{display:block!important}.ktrace .kwbox{max-width:min(300px,78vw)!important;margin:6px auto}.ktrace .ktbar{grid-template-columns:repeat(4,1fr);margin:8px 0 0}
 .kmn{margin-top:8px;max-width:100%;font-size:13px;line-height:1.5;font-weight:700;color:#2b2f55;background:rgba(255,255,255,.78);border-radius:14px;padding:7px 12px;text-align:left}
+.kints{display:flex;flex-direction:column;gap:10px;margin-top:14px}.kint{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card)}.kint i{flex:none;font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent-text);display:grid;place-items:center;font-size:13px;font-weight:800}.kint b{display:block;font-size:15px}.kint span{display:block;font-size:13.5px;color:var(--sub);margin-top:2px;line-height:1.5}
 .ktlinks{display:flex;justify-content:center;gap:18px;margin:10px 0 4px}.ktlinks button,.ktoff{border:0;background:none;color:var(--sub);font:inherit;font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer;padding:6px}.ktoff{display:block;margin:4px auto 0}
 .krest{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:10px 4px}.krbig{font-size:56px;line-height:1}
 .krchars{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}.krchars button{border:0;background:#fff;color:var(--k2);font:inherit;font-size:34px;font-weight:700;width:56px;height:62px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer}
@@ -412,7 +413,7 @@ function renderCard(){
    <div class="kro">${c[2]} <small>${c[1]}</small></div>
    ${mn?`<div class="kmn">💡 ${mn}</div>`:""}
    ${ex?`<div class="kexl">관련 단어</div><button type="button" class="kex" data-kana="wsay1" data-t="${ex.w}">${ex.img?`<img src="img/emoji/${ex.img}.png" alt="" width="52" height="52">`:""}<span class="kexw"><b>${ex.w}</b><span>${ex.m}</span>${koRead(ex.w)?`<i class="kexp">${koRead(ex.w)}</i>`:""}</span></button>`:""}
-   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${traceOn()?"":`<button type="button" class="ktoff" data-kana="ctron">✍ 따라쓰기 다시 켜기</button>`}${i===0?`<div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div>`:""}</div>
+   <div class="khint">글자와 그림을 눌러 보세요. 소리가 나요</div>${traceOn()?"":`<button type="button" class="ktoff" data-kana="ctron">✍ 따라쓰기 다시 켜기</button>`}${i===0?`<details class="ktipd"><summary>이 행 소리 설명 보기</summary><div class="ktipin">${k?(L.ktip||toK(L.tip)):L.tip}</div></details>`:""}</div>
   <div class="kbtns kcb" style="grid-template-columns:1fr 2fr">
    <button class="cta sec" data-kana="cprev" ${i?"":"disabled"}>‹ 이전</button>
    ${tr?`<button class="cta kgo" data-kana="cnext">✍ 따라 써 보기 ›</button>`:last?`<button class="cta kgo" data-kana="cdone">${L.i<9?"다 배웠습니다! 다음 행으로 ›":"다 배웠어요! 끝났어요"}</button>`:`<button class="cta kgo" data-kana="cnext">다음 글자 ›</button>`}</div>
@@ -488,13 +489,14 @@ function krEnd(){
 }
 /* 처음 오는 왕초보용 설명: 히라가나·가타카나가 뭔지부터 알려 줘요 */
 function renderIntro(k){
-  const box=(t,b,s)=>`<div class="ktip" style="margin:10px 0"><b>${t}</b><br>${b}${s?`<br><span style="color:var(--sub)">${s}</span>`:""}</div>`;
+  const row=(n,t,s)=>`<div class="kint"><i>${n}</i><div><b>${t}</b><span>${s}</span></div></div>`;
   root().innerHTML=`<div class="kana"><div class="kchead"><button class="back" data-kana="gohome">${ic("back")}홈으로</button></div>
-  <h2>일본어 글자, 이것부터 알아요</h2><div class="sub">처음이어도 괜찮습니다. 딱 3가지만 알고 시작해요.</div>
-  ${box("① 일본어에는 글자가 3종류 있습니다","<b>히라가나</b> あ い う — 동글동글, 일본어의 기본 글자<br><b>가타카나</b> ア イ ウ — 각진 모양, 외국어·외래어를 적을 때<br><b>한자</b> 日 本 語 — 뜻을 가진 글자","한국어의 ㄱㄴㄷ처럼, 히라가나·가타카나가 일본어의 '소리 글자'예요. 먼저 히라가나부터 배웁니다.")}
-  ${box("② 글자 하나 = 소리 하나","あ는 '아', い는 '이'처럼 글자마다 소리가 하나씩 정해져 있어요.","あ い う え お(아 이 우 에 오)가 모음이고, か き く け こ(카 키 쿠 케 코)처럼 자음이 붙어서 한 줄씩 늘어납니다. 총 46글자예요.")}
-  ${box("③ 카드로 이렇게 배워요","큰 글자 카드가 하나씩 나옵니다. 소리 듣기 버튼을 눌러 발음을 듣고, 예시 단어를 보고, 다음 카드로 넘겨요.","한 번에 다 외울 필요 없습니다. 하루에 한 줄(5글자)씩만 해도 충분해요. 중간에 나가도 그 글자부터 이어서 할 수 있습니다.")}
-  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:#5b5bf0;--k2:#8a63ff">알겠습니다! 카드로 시작</button></div></div>`;
+  <h2>일본어 글자, 딱 3가지만</h2><div class="sub">처음이어도 괜찮아요. 천천히 해요.</div>
+  <div class="kints">${row(1,"글자는 소리 하나씩","あ = 아, い = 이. 한글의 ㄱㄴㄷ처럼 '소리 글자'예요.")}
+  ${row(2,"히라가나부터","동글동글한 기본 글자 46개. 가타카나는 그다음에 해요.")}
+  ${row(3,"하루 한 줄이면 충분","5글자씩 카드로 보고, 듣고, 따라 써요. 나가도 이어서 할 수 있어요.")}</div>
+  <details class="kdet" style="margin-top:14px"><summary>글자 종류가 더 궁금해요</summary><div style="padding:0 0 10px;font-size:14px;line-height:1.7"><b>히라가나</b> あ い う — 일본어의 기본 글자<br><b>가타카나</b> ア イ ウ — 외국어·외래어를 적을 때<br><b>한자</b> 日 本 語 — 뜻을 가진 글자<br><span style="color:var(--sub)">あ い う え お(아 이 우 에 오)가 모음이고, か き く け こ처럼 자음이 붙어 한 줄씩 늘어나요.</span></div></details>
+  <div class="kbtns"><button class="cta kgo" data-kana="introgo" data-k="${k?"k":"h"}" style="--k1:#5b5bf0;--k2:#8a63ff">시작하기</button></div></div>`;
   window.scrollTo(0,0);
 }
 const introSeen=()=>{ try{ return !!localStorage.getItem("jp-kana-intro"); }catch(e){ return true; } };
